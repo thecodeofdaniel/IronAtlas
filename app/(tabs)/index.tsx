@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { Text, View, StyleSheet, TouchableOpacity } from 'react-native';
+import { Text, View, TouchableOpacity } from 'react-native';
 import DraggableFlatList, {
   RenderItemParams,
 } from 'react-native-draggable-flatlist';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import clsx from 'clsx';
 
 type Item = {
   id: number;
@@ -72,12 +73,10 @@ const Tree = ({ items, level = 0 }: TreeProps) => {
         activeOpacity={1}
         onLongPress={drag}
         disabled={isActive}
-        style={{
-          padding: 10,
-          marginVertical: 1,
-          paddingLeft: 10 * level,
-          backgroundColor: isActive ? 'red' : 'blue',
-        }}
+        className={clsx('p-2 my-[1]', {
+          'bg-red-500': isActive,
+          'bg-blue-500': !isActive,
+        })}
       >
         <Text className="text-green-500">{item.title}</Text>
       </TouchableOpacity>
