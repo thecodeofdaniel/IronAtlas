@@ -1,13 +1,3 @@
-// import { View, Text, SafeAreaView } from 'react-native';
-
-// export default function HomeScreen() {
-//   return (
-//     <View>
-//       <Text>Home</Text>
-//     </View>
-//   );
-// }
-
 import React, { useState } from 'react';
 import { Text, View, StyleSheet, TouchableOpacity } from 'react-native';
 import DraggableFlatList, {
@@ -24,37 +14,39 @@ type Item = {
   id: number;
   title: string;
   parentId: number | null;
-  order: number;
+  children: Item[];
 };
 
-const items = {
-  1: {
+const items = [
+  {
     id: 1,
     title: 'Hello',
     parentId: null,
-    order: 0,
+    children: [
+      {
+        id: 2,
+        title: 'World',
+        parentId: 1,
+        children: [],
+      },
+    ],
   },
-  2: {
-    id: 2,
-    title: 'World',
-    parentId: 1,
-    order: 0,
-  },
-  3: {
+  {
     id: 3,
-    title: 'Cruel',
+    title: 'Goodbye',
     parentId: null,
-    order: 1,
+    children: [],
   },
-};
+];
 
-const initialData1 = Object.values(items)
-  .filter((item) => item.parentId === null) // Filter items with parentId === null
-  .sort((a, b) => a.order - b.order); // Sort by order
+// const initialData1 = Object.values(items)
+//   .filter((item) => item.parentId === null) // Filter items with parentId === null
+//   .sort((a, b) => a.order - b.order); // Sort by order
 
-type ItemArr = typeof initialData1;
+type ItemArr = typeof items;
 
-const renderItem = ({ item, drag, isActive }: RenderItemParams<Item>) => {
+// One item
+const RenderItem = ({ item, drag, isActive }: RenderItemParams<Item>) => {
   return (
     <ScaleDecorator>
       <TouchableOpacity
@@ -63,51 +55,72 @@ const renderItem = ({ item, drag, isActive }: RenderItemParams<Item>) => {
         disabled={isActive}
         style={[styles.rowItem, { backgroundColor: isActive ? 'red' : 'blue' }]}
       >
-        <Text style={styles.text}>{item.title}</Text>
+        <Text style={styles.text}>
+          {item.title} {item.children.length > 0 ? 'has children' : 'nah'}{' '}
+        </Text>
       </TouchableOpacity>
     </ScaleDecorator>
   );
 };
 
-export default function Basic() {
-  const [data, setData] = useState<ItemArr>(initialData1);
+// export default function Basic() {
+//   const [data, setData] = useState<ItemArr>(items);
 
-  const onDragEndFunc = (dataList: ItemArr) => {
-    // Assuming dataList contains the objects with id, title, order, etc.
-    const updatedDataList = dataList.map((data, index) => ({
-      ...data, // Keep all other properties the same
-      order: index, // Set the order property to match the current index
-    }));
-    // .sort((a, b) => a.order - b.order); // Ensure that order remains intact
+//   const onDragEndFunc = (dataList: ItemArr) => {
+//     // const updatedDataList = dataList.map((data, index) => ({
+//     //   ...data, // Keep all other properties the same
+//     //   order: index, // Set the order property to match the current index
+//     // }));
+//     // // .sort((a, b) => a.order - b.order); // Ensure that order remains intact
 
-    console.log(updatedDataList);
-    setData(updatedDataList);
-  };
+//     // console.log(updatedDataList);
+//     // setData(updatedDataList);
 
-  return (
-    <GestureHandlerRootView>
-      <DraggableFlatList
-        data={data}
-        onDragEnd={({ data }) => onDragEndFunc(data)}
-        keyExtractor={(item) => item.id.toString()}
-        renderItem={renderItem}
-      />
-    </GestureHandlerRootView>
-  );
-}
+//     setData(dataList);
+//   };
 
-// function ListItem({ data, onDragEnd, keyExtractor, renderItem }: any) {
 //   return (
 //     <GestureHandlerRootView>
 //       <DraggableFlatList
 //         data={data}
 //         onDragEnd={({ data }) => onDragEndFunc(data)}
 //         keyExtractor={(item) => item.id.toString()}
-//         renderItem={renderItem}
+//         renderItem={RenderItem}
 //       />
 //     </GestureHandlerRootView>
 //   );
 // }
+
+// Recursive component to render the tree
+const Tree = ({ items, level = 0 }) => {
+  const [data, setData] = useState(items);
+
+  return (
+    <View style={{ paddingLeft: level * 20 }}>
+      {/* Indentation for each level */}
+      {items.map((item) => (
+        <View key={item.id} style={styles.itemContainer}>
+          <Text style={styles.itemText}>{item.title}</Text>
+          {/* Render children recursively if present */}
+          {item.children.length > 0 && (
+            <Tree items={item.children} level={level + 1} />
+          )}
+        </View>
+      ))}
+    </View>
+  );
+};
+
+const App = () => {
+  return (
+    <View style={styles.container}>
+      <Text style={styles.header}>Item Tree</Text>
+      <Tree items={items} />
+    </View>
+  );
+};
+
+export default App;
 
 const styles = StyleSheet.create({
   rowItem: {
@@ -120,5 +133,21 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
     textAlign: 'center',
+  },
+  container: {
+    flex: 1,
+    padding: 20,
+    backgroundColor: '#fff',
+  },
+  header: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 20,
+  },
+  itemContainer: {
+    marginBottom: 10,
+  },
+  itemText: {
+    fontSize: 18,
   },
 });
