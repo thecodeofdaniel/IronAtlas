@@ -1,33 +1,46 @@
 import React, { useState } from 'react';
 import { Text, View, StyleSheet, TouchableOpacity } from 'react-native';
 import DraggableFlatList, {
-  NestableScrollContainer,
-  NestableDraggableFlatList,
-  ScaleDecorator,
   RenderItemParams,
 } from 'react-native-draggable-flatlist';
-
-import { mapIndexToData } from '../../utils';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 type Item = {
   id: number;
   title: string;
   parentId: number | null;
+  order: number;
   children: Item[];
 };
 
-const items = [
+const items: Item[] = [
   {
     id: 1,
     title: 'Hello',
     parentId: null,
+    order: 0,
     children: [
       {
         id: 2,
         title: 'World',
         parentId: 1,
-        children: [],
+        order: 0,
+        children: [
+          {
+            id: 4,
+            title: 'Again',
+            parentId: 2,
+            order: 0,
+            children: [],
+          },
+          {
+            id: 5,
+            title: 'Too',
+            parentId: 2,
+            order: 1,
+            children: [],
+          },
+        ],
       },
     ],
   },
@@ -35,78 +48,62 @@ const items = [
     id: 3,
     title: 'Goodbye',
     parentId: null,
+    order: 1,
     children: [],
   },
 ];
 
-// const initialData1 = Object.values(items)
-//   .filter((item) => item.parentId === null) // Filter items with parentId === null
-//   .sort((a, b) => a.order - b.order); // Sort by order
+type TreeProps = {
+  items: Item[];
+  level: number;
+};
 
-type ItemArr = typeof items;
+const Tree = ({ items, level = 0 }: TreeProps) => {
+  const [dataList, setDataList] = useState<Item[]>(items);
 
-// One item
-const RenderItem = ({ item, drag, isActive }: RenderItemParams<Item>) => {
-  return (
-    <ScaleDecorator>
+  const RenderItem = ({
+    item,
+    drag,
+    isActive,
+    getIndex, // Include getIndex
+  }: RenderItemParams<Item>) => {
+    return (
       <TouchableOpacity
         activeOpacity={1}
         onLongPress={drag}
         disabled={isActive}
-        style={[styles.rowItem, { backgroundColor: isActive ? 'red' : 'blue' }]}
+        style={{
+          padding: 10,
+          marginVertical: 1,
+          paddingLeft: 10 * level,
+          backgroundColor: isActive ? 'red' : 'blue',
+        }}
       >
-        <Text style={styles.text}>
-          {item.title} {item.children.length > 0 ? 'has children' : 'nah'}{' '}
-        </Text>
+        <Text style={{ color: 'white' }}>{item.title}</Text>
       </TouchableOpacity>
-    </ScaleDecorator>
-  );
-};
-
-// export default function Basic() {
-//   const [data, setData] = useState<ItemArr>(items);
-
-//   const onDragEndFunc = (dataList: ItemArr) => {
-//     // const updatedDataList = dataList.map((data, index) => ({
-//     //   ...data, // Keep all other properties the same
-//     //   order: index, // Set the order property to match the current index
-//     // }));
-//     // // .sort((a, b) => a.order - b.order); // Ensure that order remains intact
-
-//     // console.log(updatedDataList);
-//     // setData(updatedDataList);
-
-//     setData(dataList);
-//   };
-
-//   return (
-//     <GestureHandlerRootView>
-//       <DraggableFlatList
-//         data={data}
-//         onDragEnd={({ data }) => onDragEndFunc(data)}
-//         keyExtractor={(item) => item.id.toString()}
-//         renderItem={RenderItem}
-//       />
-//     </GestureHandlerRootView>
-//   );
-// }
-
-// Recursive component to render the tree
-const Tree = ({ items, level = 0 }) => {
-  const [data, setData] = useState(items);
+    );
+  };
 
   return (
-    <View style={{ paddingLeft: level * 20 }}>
-      {/* Indentation for each level */}
-      {items.map((item) => (
-        <View key={item.id} style={styles.itemContainer}>
-          <Text style={styles.itemText}>{item.title}</Text>
-          {/* Render children recursively if present */}
-          {item.children.length > 0 && (
-            <Tree items={item.children} level={level + 1} />
-          )}
-        </View>
-      ))}
+    <View>
+      <DraggableFlatList
+        data={dataList}
+        onDragEnd={({ data }) => setDataList(data)}
+        keyExtractor={(item) => item.id.toString()}
+        renderItem={({ item, drag, isActive, getIndex }) => (
+          <View style={{ paddingLeft: 10 * level }}>
+            <RenderItem
+              item={item}
+              drag={drag}
+              isActive={isActive}
+              getIndex={getIndex}
+            />
+            {item.children.length > 0 && (
+              <Tree items={item.children} level={level + 1} />
+            )}
+          </View>
+        )}
+      />
     </View>
   );
 };
@@ -115,7 +112,9 @@ const App = () => {
   return (
     <View style={styles.container}>
       <Text style={styles.header}>Item Tree</Text>
-      <Tree items={items} />
+      <GestureHandlerRootView>
+        <Tree items={items} level={0} />
+      </GestureHandlerRootView>
     </View>
   );
 };
@@ -124,7 +123,7 @@ export default App;
 
 const styles = StyleSheet.create({
   rowItem: {
-    height: 60,
+    height: 100,
     alignItems: 'center',
     justifyContent: 'center',
   },
