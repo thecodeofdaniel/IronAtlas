@@ -79,7 +79,7 @@ const Tree = ({ items, level = 0 }: TreeProps) => {
           backgroundColor: isActive ? 'red' : 'blue',
         }}
       >
-        <Text style={{ color: 'white' }}>{item.title}</Text>
+        <Text className="text-green-500">{item.title}</Text>
       </TouchableOpacity>
     );
   };
@@ -110,8 +110,8 @@ const Tree = ({ items, level = 0 }: TreeProps) => {
 
 const App = () => {
   return (
-    <View style={styles.container}>
-      <Text style={styles.header}>Item Tree</Text>
+    <View className="flex flex-1 p-4">
+      <Text className="text-3xl font-bold mb-4">Item Tree</Text>
       <GestureHandlerRootView>
         <Tree items={items} level={0} />
       </GestureHandlerRootView>
@@ -120,33 +120,3 @@ const App = () => {
 };
 
 export default App;
-
-const styles = StyleSheet.create({
-  rowItem: {
-    height: 100,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  text: {
-    color: 'white',
-    fontSize: 24,
-    fontWeight: 'bold',
-    textAlign: 'center',
-  },
-  container: {
-    flex: 1,
-    padding: 20,
-    backgroundColor: '#fff',
-  },
-  header: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 20,
-  },
-  itemContainer: {
-    marginBottom: 10,
-  },
-  itemText: {
-    fontSize: 18,
-  },
-});
