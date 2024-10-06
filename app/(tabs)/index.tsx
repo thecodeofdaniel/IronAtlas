@@ -123,6 +123,39 @@ const Tree = ({ itemMap, itemIds, level = 0, setItemMap }: TreeProps) => {
     });
   };
 
+  const deleteItem = (itemId: number) => {
+    setItemMap((prevItems) => {
+      const newItems = { ...prevItems };
+
+      // Helper function to recursively delete an item and all its children
+      const deleteItemAndChildren = (id: number) => {
+        const item = newItems[id];
+        if (!item) return;
+
+        // Recursively delete all children first
+        item.children.forEach((childId) => {
+          deleteItemAndChildren(childId);
+        });
+
+        // If this item has a parent, remove it from parent's children array
+        if (item.parentId !== null && newItems[item.parentId]) {
+          newItems[item.parentId] = {
+            ...newItems[item.parentId],
+            children: newItems[item.parentId].children.filter(
+              (childId) => childId !== id
+            ),
+          };
+        }
+
+        // Delete the item itself
+        delete newItems[id];
+      };
+
+      deleteItemAndChildren(itemId);
+      return newItems;
+    });
+  };
+
   const RenderItem = ({
     item,
     drag,
@@ -169,7 +202,7 @@ const Tree = ({ itemMap, itemIds, level = 0, setItemMap }: TreeProps) => {
             ) : (
               <Ionicons name="pricetag" color={'white'} />
             )}
-            <TouchableOpacity onPress={() => createChild(item.id)}>
+            <TouchableOpacity onPress={() => deleteItem(item.id)}>
               <Ionicons name="ellipsis-horizontal-outline" color="white" />
             </TouchableOpacity>
           </View>
