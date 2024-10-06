@@ -1,18 +1,11 @@
-import { Ionicons } from '@expo/vector-icons';
-import clsx from 'clsx';
-import React from 'react';
-import { useState } from 'react';
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  Pressable,
-  FlatList,
-} from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { Text, View, TouchableOpacity, Pressable } from 'react-native';
 import DraggableFlatList, {
   RenderItemParams,
 } from 'react-native-draggable-flatlist';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import clsx from 'clsx';
+import { Ionicons } from '@expo/vector-icons';
 
 type Item = {
   id: number;
@@ -20,21 +13,21 @@ type Item = {
   parentId: number | null;
   order: number;
   isOpen: boolean;
-  children: number[]; // Array of child ids (numbers)
+  children: number[]; // Store only child IDs
 };
 
 type ItemMap = {
-  [key: number]: Item;
+  [key: number]: Item; // Create an ItemMap type
 };
 
-const itemMap: ItemMap = {
+const startingItems: ItemMap = {
   1: {
     id: 1,
     title: 'Hello',
     parentId: null,
     order: 0,
     isOpen: true,
-    children: [2], // Only store child ids
+    children: [2],
   },
   2: {
     id: 2,
@@ -70,155 +63,142 @@ const itemMap: ItemMap = {
   },
 };
 
-// const Tree = ({ items, level = 0, setItems }: TreeProps) => {
-//   const [dataList, setDataList] = useState<Item[]>(items);
-//   const [isOpen, setIsOpen] = useState(() => {
-//     return items.map((item) => {
-//       return item.isOpen;
-//     });
-//   });
-
-//   const RenderItem = ({
-//     item,
-//     drag,
-//     isActive,
-//     getIndex, // Include getIndex
-//   }: RenderItemParams<Item>) => {
-//     const currentIndex = getIndex();
-
-//     return (
-//       <TouchableOpacity
-//         activeOpacity={1}
-//         onLongPress={drag}
-//         disabled={isActive}
-//         className={clsx('p-2 my-[1] flex flex-row', {
-//           'bg-red-500': isActive,
-//           'bg-blue-800': !isActive,
-//         })}
-//       >
-//         {item.children.length > 0 && (
-//           <Pressable
-//             onPress={() =>
-//               setIsOpen((prev) => {
-//                 const index = getIndex()!; // Get the index where you want to change the value
-//                 // Create a new array based on the previous state
-//                 const newBoolArr = [...prev];
-//                 // console.log('before', newBoolArr);
-//                 // Toggle the value at the specified index
-//                 newBoolArr[index] = !prev[index];
-//                 // console.log('after', newBoolArr);
-//                 return newBoolArr; // Return the new array
-//               })
-//             }
-//           >
-//             <Ionicons
-//               name={
-//                 isOpen[currentIndex!]
-//                   ? 'chevron-down'
-//                   : 'chevron-forward-outline'
-//               }
-//               size={18}
-//               style={{ marginRight: 12 }}
-//               color={'white'}
-//             />
-//           </Pressable>
-//         )}
-//         {/* Options */}
-//         <View className="flex flex-row items-center justify-between flex-1">
-//           <Text className="text-white">{item.title}</Text>
-//           <View className="flex flex-row gap-4">
-//             {item.children.length === 0 ? (
-//               <Ionicons name="barbell" color={'white'} />
-//             ) : (
-//               <Ionicons name="pricetag" color={'white'} />
-//             )}
-//             <TouchableOpacity onPress={() => createSibling(item.parentId)}>
-//               <Ionicons name="ellipsis-horizontal-outline" color="white" />
-//             </TouchableOpacity>
-//           </View>
-//         </View>
-//       </TouchableOpacity>
-//     );
-//   };
-
-//   return (
-//     <View>
-//       <DraggableFlatList
-//         data={dataList}
-//         onDragEnd={({ data }) => setDataList(data)}
-//         keyExtractor={(item) => item.id.toString()}
-//         renderItem={({ item, drag, isActive, getIndex }) => (
-//           <View style={{ paddingLeft: 10 * level }}>
-//             <RenderItem
-//               item={item}
-//               drag={drag}
-//               isActive={isActive}
-//               getIndex={getIndex}
-//             />
-//             {item.children.length > 0 && isOpen[getIndex()!] && (
-//               <Tree
-//                 items={item.children}
-//                 level={level + 1}
-//                 setItems={setItems}
-//               />
-//             )}
-//           </View>
-//         )}
-//       />
-//     </View>
-//   );
-// };
-
-type TreeItemProps = {
-  itemId: number;
-  itemMap: ItemMap;
+type TreeProps = {
+  itemMap: ItemMap; // Accept itemMap as a prop
+  itemIds: number[]; // Accept item IDs as a prop
   level: number;
+  setItems: React.Dispatch<React.SetStateAction<ItemMap>>;
 };
 
-const TreeItem = ({ itemId, itemMap, level }: TreeItemProps) => {
-  const item = itemMap[itemId];
+const Tree = ({ itemMap, itemIds, level = 0, setItems }: TreeProps) => {
+  const [isOpen, setIsOpen] = useState(() =>
+    itemIds.map((id) => itemMap[id].isOpen)
+  );
 
-  if (!item) {
-    return null;
-  }
+  const createSibling = (parentId: number | null) => {
+    if (parentId === null) return; // Early return if no parentId
+    setItems((prevItems) => {
+      const newItems = { ...prevItems };
+      const parentItem = newItems[parentId];
+      const nextIndex = parentItem.children.length;
+
+      const newItem: Item = {
+        id: Date.now(), // Use a unique ID generator in a real scenario
+        title: 'ZZZZZZZZZZZZZZZZ',
+        parentId: parentItem.id,
+        order: nextIndex,
+        isOpen: false,
+        children: [],
+      };
+
+      parentItem.children.push(newItem.id);
+      newItems[newItem.id] = newItem; // Add the new item to the map
+      return newItems;
+    });
+  };
+
+  const RenderItem = ({
+    item,
+    drag,
+    isActive,
+    getIndex,
+  }: RenderItemParams<Item>) => {
+    const currentIndex = getIndex();
+
+    return (
+      <TouchableOpacity
+        activeOpacity={1}
+        onLongPress={drag}
+        disabled={isActive}
+        className={clsx('p-2 my-[1] flex flex-row', {
+          'bg-red-500': isActive,
+          'bg-blue-800': !isActive,
+        })}
+      >
+        {item.children.length > 0 && (
+          <Pressable
+            onPress={() => {
+              const newIsOpen = [...isOpen];
+              newIsOpen[currentIndex] = !isOpen[currentIndex];
+              setIsOpen(newIsOpen);
+            }}
+          >
+            <Ionicons
+              name={
+                isOpen[currentIndex]
+                  ? 'chevron-down'
+                  : 'chevron-forward-outline'
+              }
+              size={18}
+              style={{ marginRight: 12 }}
+              color={'white'}
+            />
+          </Pressable>
+        )}
+        <View className="flex flex-row items-center justify-between flex-1">
+          <Text className="text-white">{item.title}</Text>
+          <View className="flex flex-row gap-4">
+            {item.children.length === 0 ? (
+              <Ionicons name="barbell" color={'white'} />
+            ) : (
+              <Ionicons name="pricetag" color={'white'} />
+            )}
+            <TouchableOpacity onPress={() => createSibling(item.parentId)}>
+              <Ionicons name="ellipsis-horizontal-outline" color="white" />
+            </TouchableOpacity>
+          </View>
+        </View>
+      </TouchableOpacity>
+    );
+  };
 
   return (
-    <View style={{ paddingLeft: level * 20, marginVertical: 4 }}>
-      {/* Render the current item */}
-      <Text className="text-xl">{item.title}</Text>
-
-      {/* Render FlatList of children */}
-      <FlatList
-        data={item.children}
-        keyExtractor={(childId) => childId.toString()}
-        renderItem={({ item: childId }) => (
-          <TreeItem itemId={childId} itemMap={itemMap} level={level + 1} />
-        )}
-      />
+    <View>
+      {itemIds.map((id) => {
+        const item = itemMap[id];
+        return (
+          <View key={item.id} style={{ paddingLeft: 10 * level }}>
+            <RenderItem
+              item={item}
+              drag={() => {}}
+              isActive={false}
+              getIndex={() => itemIds.indexOf(item.id)}
+            />
+            {item.children.length > 0 && isOpen[itemIds.indexOf(item.id)] && (
+              <Tree
+                itemMap={itemMap}
+                itemIds={item.children}
+                level={level + 1}
+                setItems={setItems}
+              />
+            )}
+          </View>
+        );
+      })}
     </View>
   );
 };
 
-export default function TabTwoScreen() {
-  const [items, setItems] = useState<ItemMap>(itemMap);
+const App = () => {
+  const [items, setItems] = useState<ItemMap>(startingItems);
 
-  const rootItems = Object.values(items).filter(
-    (item) => item.parentId === null
-  );
+  const rootItemIds = Object.values(items)
+    .filter((item) => item.parentId === null)
+    .map((item) => item.id);
 
   return (
     <View className="flex flex-1 p-4">
       <Text className="text-3xl font-bold mb-4">Item Tree</Text>
       <GestureHandlerRootView>
-        {/* Render FlatList of root items */}
-        <FlatList
-          data={rootItems}
-          keyExtractor={(item) => item.id.toString()}
-          renderItem={({ item }) => (
-            <TreeItem itemId={item.id} itemMap={items} level={0} />
-          )}
+        <Tree
+          itemMap={items}
+          itemIds={rootItemIds}
+          level={0}
+          setItems={setItems}
         />
       </GestureHandlerRootView>
     </View>
   );
-}
+};
+
+export default App;
