@@ -180,8 +180,27 @@ const Tree = ({ itemMap, itemIds, level = 0, setItemMap }: TreeProps) => {
     <View>
       <DraggableFlatList
         data={items}
-        onDragEnd={({ data }) => {
-          // Handle reordering here
+        onDragEnd={({ data: dataList }) => {
+          const updatedList = dataList.map((data, index) => {
+            return {
+              ...data,
+              order: index, // Update the order based on the index
+            };
+          });
+
+          console.log(updatedList); // This will log the reordered data
+
+          // Use setItemMap to update the state
+          setItemMap((prevItemMap) => {
+            const updatedItemMap = { ...prevItemMap };
+
+            // Update the itemMap with the reordered data
+            updatedList.forEach((item) => {
+              updatedItemMap[item.id] = item;
+            });
+
+            return updatedItemMap;
+          });
         }}
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item, drag, isActive, getIndex }) => {
@@ -211,11 +230,15 @@ const Tree = ({ itemMap, itemIds, level = 0, setItemMap }: TreeProps) => {
 };
 
 const App = () => {
-  const [itemMap, setItemMap] = useState<ItemMap>(startingItems);
+  // console.log('Render Tree again');
+  const [itemMap, setItemMap] = useState<ItemMap>(() => startingItems);
 
   const rootItemIds = Object.values(itemMap)
     .filter((item) => item.parentId === null)
+    .sort((a, b) => a.order - b.order) // Sort by the 'order' key
     .map((item) => item.id);
+
+  console.log(rootItemIds);
 
   return (
     <View className="flex flex-1 p-4">
