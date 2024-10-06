@@ -7,6 +7,8 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import clsx from 'clsx';
 import { Ionicons } from '@expo/vector-icons';
 
+import Popover from 'react-native-popover-view';
+
 type Item = {
   id: number;
   title: string;
@@ -81,6 +83,7 @@ const Tree = ({ items, level = 0 }: TreeProps) => {
     getIndex, // Include getIndex
   }: RenderItemParams<Item>) => {
     const currentIndex = getIndex();
+    const popoverRef = React.useRef();
 
     return (
       <TouchableOpacity
@@ -128,9 +131,22 @@ const Tree = ({ items, level = 0 }: TreeProps) => {
             ) : (
               <Ionicons name="pricetag" color={'white'} />
             )}
-            <TouchableOpacity>
-              <Ionicons name="ellipsis-horizontal-outline" color="white" />
-            </TouchableOpacity>
+            <Popover
+              arrowSize={{ width: 0, height: 0 }}
+              ref={popoverRef}
+              from={
+                <TouchableOpacity>
+                  <Ionicons name="ellipsis-horizontal-outline" color="white" />
+                </TouchableOpacity>
+              }
+            >
+              <TouchableOpacity
+                onPress={() => popoverRef.current.requestClose()}
+                className="p-4"
+              >
+                <Text>Tap to close me</Text>
+              </TouchableOpacity>
+            </Popover>
           </View>
         </View>
       </TouchableOpacity>
