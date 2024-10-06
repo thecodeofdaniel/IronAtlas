@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Text, View, TouchableOpacity, Pressable } from 'react-native';
 import DraggableFlatList, {
   RenderItemParams,
@@ -18,7 +18,7 @@ type Item = {
   children: Item[];
 };
 
-const items: Item[] = [
+const startingItems: Item[] = [
   {
     id: 1,
     title: 'Hello',
@@ -66,15 +66,47 @@ const items: Item[] = [
 type TreeProps = {
   items: Item[];
   level: number;
+  setItems: React.Dispatch<React.SetStateAction<Item[]>>;
 };
 
-const Tree = ({ items, level = 0 }: TreeProps) => {
+const Tree = ({ items, level = 0, setItems }: TreeProps) => {
   const [dataList, setDataList] = useState<Item[]>(items);
   const [isOpen, setIsOpen] = useState(() => {
     return items.map((item) => {
       return item.isOpen;
     });
   });
+
+  const createSibling = (parentId: number | null) => {
+    try {
+      setItems((prevItems) =>
+        prevItems.map((item) => {
+          if (item.id === parentId) {
+            const nextIndex = item.children.length;
+
+            const newObj = {
+              id: Date.now(), // or generate a unique ID
+              title: 'ZZZZZZZZZZZZZZZZ',
+              parentId: item.id,
+              order: nextIndex,
+              isOpen: false,
+              children: [],
+            };
+
+            return {
+              ...item,
+              children: [...item.children, newObj],
+            };
+          }
+          return item;
+        })
+      );
+    } catch (error) {
+      console.error('Failed to create sibling:', error);
+    }
+  };
+
+  console.log(JSON.stringify(dataList));
 
   const RenderItem = ({
     item,
@@ -131,7 +163,10 @@ const Tree = ({ items, level = 0 }: TreeProps) => {
             ) : (
               <Ionicons name="pricetag" color={'white'} />
             )}
-            <Popover
+            <TouchableOpacity onPress={() => createSibling(item.parentId)}>
+              <Ionicons name="ellipsis-horizontal-outline" color="white" />
+            </TouchableOpacity>
+            {/* <Popover
               arrowSize={{ width: 0, height: 0 }}
               ref={popoverRef}
               from={
@@ -141,12 +176,15 @@ const Tree = ({ items, level = 0 }: TreeProps) => {
               }
             >
               <TouchableOpacity
-                onPress={() => popoverRef.current.requestClose()}
+                onPress={() => {
+                  createSibling(item.parentId);
+                  // popoverRef.current.requestClose();
+                }}
                 className="p-4"
               >
-                <Text>Tap to close me</Text>
+                <Text>Create tag and close</Text>
               </TouchableOpacity>
-            </Popover>
+            </Popover> */}
           </View>
         </View>
       </TouchableOpacity>
@@ -168,7 +206,11 @@ const Tree = ({ items, level = 0 }: TreeProps) => {
               getIndex={getIndex}
             />
             {item.children.length > 0 && isOpen[getIndex()!] && (
-              <Tree items={item.children} level={level + 1} />
+              <Tree
+                items={item.children}
+                level={level + 1}
+                setItems={setItems}
+              />
             )}
           </View>
         )}
@@ -178,11 +220,16 @@ const Tree = ({ items, level = 0 }: TreeProps) => {
 };
 
 const App = () => {
+  const [items, setItems] = useState<Item[]>(() => startingItems);
+
+  // console.log('Update:', update);
+  // console.log(items);
+
   return (
     <View className="flex flex-1 p-4">
       <Text className="text-3xl font-bold mb-4">Item Tree</Text>
       <GestureHandlerRootView>
-        <Tree items={items} level={0} />
+        <Tree items={items} level={0} setItems={setItems} />
       </GestureHandlerRootView>
     </View>
   );
