@@ -97,23 +97,27 @@ const Tree = ({ itemMap, itemIds, level = 0, setItemMap }: TreeProps) => {
   //   });
   // };
 
-  const createChild = (parentId: number | null) => {
-    if (parentId === null) return; // Early return if no parentId
+  const createChild = (pressedId: number) => {
     setItemMap((prevItems) => {
       const newItems = { ...prevItems };
-      const parentItem = newItems[parentId];
-      const nextIndex = parentItem.children.length;
+      const pressedItem = newItems[pressedId];
+      const nextIndex = pressedItem.children.length;
 
       const newItem: Item = {
         id: Date.now(), // Use a unique ID generator in a real scenario
         title: 'ZZZZZZZZZZZZZZZZ',
-        parentId: parentItem.id,
+        parentId: pressedItem.id,
         order: nextIndex,
         isOpen: false,
         children: [],
       };
 
-      parentItem.children.push(newItem.id);
+      // Create a new copy of the pressed item with the updated children array
+      newItems[pressedId] = {
+        ...pressedItem,
+        children: [...pressedItem.children, newItem.id], // Create new array instead of using push
+      };
+
       newItems[newItem.id] = newItem; // Add the new item to the map
       return newItems;
     });
@@ -165,7 +169,7 @@ const Tree = ({ itemMap, itemIds, level = 0, setItemMap }: TreeProps) => {
             ) : (
               <Ionicons name="pricetag" color={'white'} />
             )}
-            <TouchableOpacity onPress={() => createSibling(item.parentId)}>
+            <TouchableOpacity onPress={() => createChild(item.id)}>
               <Ionicons name="ellipsis-horizontal-outline" color="white" />
             </TouchableOpacity>
           </View>
