@@ -174,6 +174,7 @@ const Tree = ({ itemMap, itemIds, level = 0, setItemMap }: TreeProps) => {
     );
   };
 
+  // console.log(itemIds);
   const items: Item[] = itemIds.map((id) => itemMap[id]);
 
   return (
@@ -181,25 +182,28 @@ const Tree = ({ itemMap, itemIds, level = 0, setItemMap }: TreeProps) => {
       <DraggableFlatList
         data={items}
         onDragEnd={({ data: dataList }) => {
-          const updatedList = dataList.map((data, index) => {
-            return {
-              ...data,
-              order: index, // Update the order based on the index
-            };
-          });
-
-          console.log(updatedList); // This will log the reordered data
-
-          // Use setItemMap to update the state
           setItemMap((prevItemMap) => {
-            const updatedItemMap = { ...prevItemMap };
+            const newItemMap = { ...prevItemMap };
 
-            // Update the itemMap with the reordered data
-            updatedList.forEach((item) => {
-              updatedItemMap[item.id] = item;
+            // First, update the order of items
+            dataList.forEach((item, index) => {
+              newItemMap[item.id] = {
+                ...newItemMap[item.id],
+                order: index,
+              };
             });
 
-            return updatedItemMap;
+            // Then, update the parent's children array to reflect the new order
+            if (dataList.length > 0 && dataList[0].parentId !== null) {
+              const parentId = dataList[0].parentId;
+              const newChildrenOrder = dataList.map((item) => item.id);
+              newItemMap[parentId] = {
+                ...newItemMap[parentId],
+                children: newChildrenOrder,
+              };
+            }
+
+            return newItemMap;
           });
         }}
         keyExtractor={(item) => item.id.toString()}
@@ -230,15 +234,13 @@ const Tree = ({ itemMap, itemIds, level = 0, setItemMap }: TreeProps) => {
 };
 
 const App = () => {
-  // console.log('Render Tree again');
-  const [itemMap, setItemMap] = useState<ItemMap>(() => startingItems);
+  console.log('Render Tree again');
+  const [itemMap, setItemMap] = useState<ItemMap>(startingItems);
 
   const rootItemIds = Object.values(itemMap)
     .filter((item) => item.parentId === null)
     .sort((a, b) => a.order - b.order) // Sort by the 'order' key
     .map((item) => item.id);
-
-  console.log(rootItemIds);
 
   return (
     <View className="flex flex-1 p-4">
