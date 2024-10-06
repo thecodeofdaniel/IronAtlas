@@ -89,7 +89,7 @@ const Tree = ({ items, level = 0 }: TreeProps) => {
         disabled={isActive}
         className={clsx('p-2 my-[1] flex flex-row', {
           'bg-red-500': isActive,
-          'bg-blue-500': !isActive,
+          'bg-blue-800': !isActive,
         })}
       >
         {item.children.length > 0 && (
@@ -119,7 +119,20 @@ const Tree = ({ items, level = 0 }: TreeProps) => {
             />
           </Pressable>
         )}
-        <Text className="text-green-500">{item.title}</Text>
+        {/* Options */}
+        <View className="flex flex-row items-center justify-between flex-1">
+          <Text className="text-white">{item.title}</Text>
+          <View className="flex flex-row gap-4">
+            {item.children.length === 0 ? (
+              <Ionicons name="barbell" color={'white'} />
+            ) : (
+              <Ionicons name="pricetag" color={'white'} />
+            )}
+            <TouchableOpacity>
+              <Ionicons name="ellipsis-horizontal-outline" color="white" />
+            </TouchableOpacity>
+          </View>
+        </View>
       </TouchableOpacity>
     );
   };
