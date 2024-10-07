@@ -20,7 +20,7 @@ type ExerciseTreeStateVal = {
 
 export type ExerciseTreeStateFunctions = {
   reorder: (dataList: Exercise[]) => void;
-  createChild: (pressedId: number) => void;
+  createChild: (pressedId: number, title: string) => void;
   deleteTagOrExercise: (pressedId: number) => void;
   editTitle: (pressedId: number, newTitle: string) => void;
 };
@@ -106,7 +106,7 @@ export const useExerciseTreeStore = create<
 
       return { exerciseMap: newItemMap };
     }),
-  createChild: (pressedId: number) =>
+  createChild: (pressedId: number, title: string) =>
     set((state) => {
       const newItems = { ...state.exerciseMap };
       const pressedItem = newItems[pressedId];
@@ -114,7 +114,7 @@ export const useExerciseTreeStore = create<
 
       const newItem: Exercise = {
         id: Date.now(), // Use a unique ID generator in a real scenario
-        title: 'ZZZZZZZZZZZZZZZZ',
+        title: title,
         parentId: pressedItem.id,
         order: nextIndex,
         isOpen: false,

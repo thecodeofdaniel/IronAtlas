@@ -25,7 +25,7 @@ export default function AddExerciseOrMuscleModal({
   };
 
   const handleUpdate = () => {
-    setter.createChild(pressedId);
+    setter.createChild(pressedId, name);
     closeModal();
     router.back();
   };
