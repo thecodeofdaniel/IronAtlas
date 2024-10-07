@@ -18,6 +18,7 @@ import {
   useActionSheet,
 } from '@expo/react-native-action-sheet';
 import { Redirect, useRouter } from 'expo-router';
+import { useModalStore } from '@/store/modalStore';
 
 type TreeProps = {
   exerciseMap: ExerciseMap; // Accept itemMap as a prop
@@ -36,8 +37,9 @@ const Tree = ({
   const [isOpen, setIsOpen] = useState(() =>
     exerciseChildren.map((id) => exerciseMap[id].isOpen)
   );
-  const { showActionSheetWithOptions } = useActionSheet();
   const router = useRouter();
+  const { showActionSheetWithOptions } = useActionSheet();
+  const openModal = useModalStore((state) => state.openModal);
 
   const handleOnPress = (pressedId: number) => {
     console.log('By', pressedId);
@@ -51,7 +53,7 @@ const Tree = ({
         cancelButtonIndex,
         destructiveButtonIndex,
       },
-      (selectedIndex: number) => {
+      (selectedIndex?: number) => {
         switch (selectedIndex) {
           case destructiveButtonIndex:
             setter.deleteTagOrExercise(pressedId);
@@ -60,14 +62,11 @@ const Tree = ({
             setter.createChild(pressedId);
             break;
           case 2:
-            console.log('Pressed update');
-            router.push({
-              pathname: '/modal',
-              params: { id: pressedId },
-            });
+            openModal('editExerciseOrMuscle', { id: pressedId });
+            router.push('/modal');
             break;
           case cancelButtonIndex:
-          // cancel
+            break;
         }
       }
     );
