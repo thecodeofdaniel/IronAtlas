@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Text, View, TouchableOpacity, Pressable } from 'react-native';
+import { Text, View, TouchableOpacity, Pressable, Button } from 'react-native';
 import DraggableFlatList, {
   RenderItemParams,
 } from 'react-native-draggable-flatlist';
@@ -7,6 +7,8 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import clsx from 'clsx';
 import { Ionicons } from '@expo/vector-icons';
 import { Link } from 'expo-router';
+import { useBearStore } from '@/store/store';
+import { useExerciseTreeStore } from '@/store/exerciseTreeStore';
 
 type Item = {
   id: number;
@@ -77,7 +79,11 @@ type TreeProps = {
   itemMap: ItemMap; // Accept itemMap as a prop
   itemIds: number[]; // Accept item IDs as a prop
   level: number;
-  setItemMap: React.Dispatch<React.SetStateAction<ItemMap>>;
+  setItemMap: {
+    reorder: (dataList: Item[]) => void;
+    createChild: (pressedId: number) => void;
+    deleteTagOrExercise: (pressedId: number) => void;
+  };
 };
 
 const Tree = ({ itemMap, itemIds, level = 0, setItemMap }: TreeProps) => {
@@ -238,29 +244,7 @@ const Tree = ({ itemMap, itemIds, level = 0, setItemMap }: TreeProps) => {
       <DraggableFlatList
         data={items}
         onDragEnd={({ data: dataList }) => {
-          setItemMap((prevItemMap) => {
-            const newItemMap = { ...prevItemMap };
-
-            // First, update the order of items
-            dataList.forEach((item, index) => {
-              newItemMap[item.id] = {
-                ...newItemMap[item.id],
-                order: index,
-              };
-            });
-
-            // Then, update the parent's children array to reflect the new order
-            if (dataList.length > 0 && dataList[0].parentId !== null) {
-              const parentId = dataList[0].parentId;
-              const newChildrenOrder = dataList.map((item) => item.id);
-              newItemMap[parentId] = {
-                ...newItemMap[parentId],
-                children: newChildrenOrder,
-              };
-            }
-
-            return newItemMap;
-          });
+          setItemMap.reorder(dataList);
         }}
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item, drag, isActive, getIndex }) => {
@@ -291,16 +275,26 @@ const Tree = ({ itemMap, itemIds, level = 0, setItemMap }: TreeProps) => {
 
 const App = () => {
   console.log('Render Tree again');
-  const [itemMap, setItemMap] = useState<ItemMap>(startingItems);
+  // const [itemMap, setItemMap] = useState<ItemMap>(startingItems);
+  const {
+    exerciseTree: itemMap,
+    reorder,
+    createChild,
+    deleteTagOrExercise,
+  } = useExerciseTreeStore((state) => state);
+  // const [itemMap, setItemMap] = useState<ItemMap>(exerciseTree);
+
+  const setItemMap = {
+    reorder,
+    createChild,
+    deleteTagOrExercise,
+  };
 
   // This would be zero
   const rootItemIds = Object.values(itemMap)
     .filter((item) => item.parentId === null)
     .sort((a, b) => a.order - b.order) // Sort by the 'order' key
     .map((item) => item.id);
-
-  // console.log(rootItemIds);
-  // const items = itemMap[0].children.map((id) => itemMap[id]);
 
   return (
     <View className="flex flex-1 p-4">
@@ -312,12 +306,6 @@ const App = () => {
           level={0}
           setItemMap={setItemMap}
         />
-        {/* <Tree
-          itemMap={itemMap}
-          itemIds={itemMap[0].children}
-          level={0}
-          setItemMap={setItemMap}
-        /> */}
       </GestureHandlerRootView>
     </View>
   );
