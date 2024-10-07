@@ -59,7 +59,9 @@ const Tree = ({
             setter.deleteTagOrExercise(pressedId);
             break;
           case 1:
-            setter.createChild(pressedId);
+            openModal('addExerciseOrMuscle', { pressedId: pressedId });
+            router.push('/modal');
+            // setter.createChild(pressedId);
             break;
           case 2:
             openModal('editExerciseOrMuscle', { id: pressedId });

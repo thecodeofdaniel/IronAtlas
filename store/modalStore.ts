@@ -12,13 +12,16 @@ export type ModalData = {
   // settings: {
   //   section?: 'account' | 'preferences';
   // };
-  confirmation: {
-    title: string;
-    message: string;
-    onConfirm: () => void;
-  };
+  // confirmation: {
+  //   title: string;
+  //   message: string;
+  //   onConfirm: () => void;
+  // };
   editExerciseOrMuscle: {
     id: number;
+  };
+  addExerciseOrMuscle: {
+    pressedId: number;
   };
 };
 

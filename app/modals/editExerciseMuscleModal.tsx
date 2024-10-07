@@ -18,6 +18,8 @@ export default function EditExerciseOrMuscleModal({
   const id = modalData.id;
   const { exerciseMap, setter } = useExerciseTreeStoreWithSetter();
   const ogName = exerciseMap[id].title;
+  const type =
+    exerciseMap[id].children.length === 0 ? 'Exercise' : 'Muscle Category';
 
   // Prefill the input with the existing exercise name
   const [name, setName] = useState(ogName);
@@ -43,7 +45,7 @@ export default function EditExerciseOrMuscleModal({
     <>
       <Stack.Screen options={{ headerTitle: 'Edit' }} />
       <View className="flex-1 p-4">
-        <Text className="text-xl mb-2">Edit Exercise Name</Text>
+        <Text className="text-xl mb-2">Edit {type} Name</Text>
         <TextInput
           className="h-10 border px-2 border-gray-400"
           value={name}
