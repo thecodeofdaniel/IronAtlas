@@ -6,6 +6,7 @@ import DraggableFlatList, {
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import clsx from 'clsx';
 import { Ionicons } from '@expo/vector-icons';
+import { Link } from 'expo-router';
 
 type Item = {
   id: number;
@@ -21,10 +22,19 @@ type ItemMap = {
 };
 
 const startingItems: ItemMap = {
+  // Root
+  0: {
+    id: 0,
+    title: 'Root',
+    parentId: null,
+    order: 0,
+    isOpen: true,
+    children: [1, 3],
+  },
   1: {
     id: 1,
     title: 'Hello',
-    parentId: null,
+    parentId: 0,
     order: 0,
     isOpen: true,
     children: [2],
@@ -40,7 +50,7 @@ const startingItems: ItemMap = {
   3: {
     id: 3,
     title: 'Goodbye',
-    parentId: null,
+    parentId: 0,
     order: 1,
     isOpen: false,
     children: [],
@@ -194,6 +204,7 @@ const Tree = ({ itemMap, itemIds, level = 0, setItemMap }: TreeProps) => {
             />
           </Pressable>
         )}
+        {/* Tags and options */}
         <View className="flex flex-row items-center justify-between flex-1">
           <Text className="text-white">{item.title}</Text>
           <View className="flex flex-row gap-4">
@@ -202,9 +213,17 @@ const Tree = ({ itemMap, itemIds, level = 0, setItemMap }: TreeProps) => {
             ) : (
               <Ionicons name="pricetag" color={'white'} />
             )}
-            <TouchableOpacity onPress={() => deleteItem(item.id)}>
-              <Ionicons name="ellipsis-horizontal-outline" color="white" />
-            </TouchableOpacity>
+            {/* The root item would not have  */}
+            {level > 0 && (
+              // <TouchableOpacity onPress={() => deleteItem(item.id)}>
+              //   <Ionicons name="ellipsis-horizontal-outline" color="white" />
+              // </TouchableOpacity>
+              <Link href={'/modal'} asChild>
+                <TouchableOpacity>
+                  <Ionicons name="ellipsis-horizontal-outline" color="white" />
+                </TouchableOpacity>
+              </Link>
+            )}
           </View>
         </View>
       </TouchableOpacity>
@@ -274,10 +293,14 @@ const App = () => {
   console.log('Render Tree again');
   const [itemMap, setItemMap] = useState<ItemMap>(startingItems);
 
+  // This would be zero
   const rootItemIds = Object.values(itemMap)
     .filter((item) => item.parentId === null)
     .sort((a, b) => a.order - b.order) // Sort by the 'order' key
     .map((item) => item.id);
+
+  // console.log(rootItemIds);
+  // const items = itemMap[0].children.map((id) => itemMap[id]);
 
   return (
     <View className="flex flex-1 p-4">
@@ -289,6 +312,12 @@ const App = () => {
           level={0}
           setItemMap={setItemMap}
         />
+        {/* <Tree
+          itemMap={itemMap}
+          itemIds={itemMap[0].children}
+          level={0}
+          setItemMap={setItemMap}
+        /> */}
       </GestureHandlerRootView>
     </View>
   );
