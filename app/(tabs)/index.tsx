@@ -8,7 +8,7 @@ import clsx from 'clsx';
 import { Ionicons } from '@expo/vector-icons';
 import {
   ExerciseTreeStateSetters,
-  useExerciseTreeStoreFuncs,
+  useExerciseTreeStoreWithSetter,
 } from '@/store/exerciseTreeStore';
 
 type Item = {
@@ -165,7 +165,7 @@ const Tree = ({ itemMap, itemIds, level = 0, setter }: TreeProps) => {
         renderItem={({ item, drag, isActive, getIndex }) => {
           const currentIndex = itemIds.indexOf(item.id);
           return (
-            <View key={item.id} style={{ paddingLeft: 10 * level }}>
+            <View key={item.id} style={{ paddingLeft: 5 * level }}>
               <RenderItem
                 item={item}
                 drag={drag}
@@ -189,24 +189,13 @@ const Tree = ({ itemMap, itemIds, level = 0, setter }: TreeProps) => {
 };
 
 const App = () => {
-  const { exerciseTree, setter } = useExerciseTreeStoreFuncs();
-
-  // This would be zero
-  const rootItemIds = Object.values(exerciseTree)
-    .filter((item) => item.parentId === null)
-    .sort((a, b) => a.order - b.order) // Sort by the 'order' key
-    .map((item) => item.id);
+  const { exerciseTree, setter } = useExerciseTreeStoreWithSetter();
 
   return (
     <View className="flex flex-1 p-4">
       <Text className="text-3xl font-bold mb-4">Item Tree</Text>
       <GestureHandlerRootView>
-        <Tree
-          itemMap={exerciseTree}
-          itemIds={rootItemIds}
-          level={0}
-          setter={setter}
-        />
+        <Tree itemMap={exerciseTree} itemIds={[0]} level={0} setter={setter} />
       </GestureHandlerRootView>
     </View>
   );

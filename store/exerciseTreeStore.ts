@@ -13,24 +13,15 @@ type ItemMap = {
   [key: number]: Item; // Create an ItemMap type
 };
 
+type ExerciseTreeStateVal = {
+  exerciseTree: ItemMap;
+};
+
 export type ExerciseTreeStateSetters = {
   reorder: (dataList: Item[]) => void;
   createChild: (pressedId: number) => void;
   deleteTagOrExercise: (pressedId: number) => void;
 };
-
-type ExerciseTreeStateVal = {
-  exerciseTree: ItemMap;
-};
-
-// type ExerciseTreeState = {
-//   exerciseTree: ItemMap;
-//   // reorder: (dataList: Item[]) => void;
-//   // createChild: (pressedId: number) => void;
-//   // deleteTagOrExercise: (pressedId: number) => void;
-// } & ExerciseTreeStateSetters;
-
-type ExerciseTreeState = ExerciseTreeStateVal & ExerciseTreeStateSetters;
 
 const startingTree: ItemMap = {
   // Root
@@ -84,92 +75,9 @@ const startingTree: ItemMap = {
   },
 };
 
-// const createChild = (pressedId: number) => {
-//   setItemMap((prevItems) => {
-//     const newItems = { ...prevItems };
-//     const pressedItem = newItems[pressedId];
-//     const nextIndex = pressedItem.children.length;
-
-//     const newItem: Item = {
-//       id: Date.now(), // Use a unique ID generator in a real scenario
-//       title: 'ZZZZZZZZZZZZZZZZ',
-//       parentId: pressedItem.id,
-//       order: nextIndex,
-//       isOpen: false,
-//       children: [],
-//     };
-
-//     // Create a new copy of the pressed item with the updated children array
-//     newItems[pressedId] = {
-//       ...pressedItem,
-//       children: [...pressedItem.children, newItem.id], // Create new array instead of using push
-//     };
-
-//     newItems[newItem.id] = newItem; // Add the new item to the map
-//     return newItems;
-//   });
-// };
-
-// const deleteItem = (itemId: number) => {
-//   setItemMap((prevItems) => {
-//     const newItems = { ...prevItems };
-
-//     // Helper function to recursively delete an item and all its children
-//     const deleteItemAndChildren = (id: number) => {
-//       const item = newItems[id];
-//       if (!item) return;
-
-//       // Recursively delete all children first
-//       item.children.forEach((childId) => {
-//         deleteItemAndChildren(childId);
-//       });
-
-//       // If this item has a parent, remove it from parent's children array
-//       if (item.parentId !== null && newItems[item.parentId]) {
-//         newItems[item.parentId] = {
-//           ...newItems[item.parentId],
-//           children: newItems[item.parentId].children.filter(
-//             (childId) => childId !== id
-//           ),
-//         };
-//       }
-
-//       // Delete the item itself
-//       delete newItems[id];
-//     };
-
-//     deleteItemAndChildren(itemId);
-//     return newItems;
-//   });
-// };
-
-// onDragEnd={({ data: dataList }) => {
-//   setItemMap((prevItemMap) => {
-//     const newItemMap = { ...prevItemMap };
-
-//     // First, update the order of items
-//     dataList.forEach((item, index) => {
-//       newItemMap[item.id] = {
-//         ...newItemMap[item.id],
-//         order: index,
-//       };
-//     });
-
-//     // Then, update the parent's children array to reflect the new order
-//     if (dataList.length > 0 && dataList[0].parentId !== null) {
-//       const parentId = dataList[0].parentId;
-//       const newChildrenOrder = dataList.map((item) => item.id);
-//       newItemMap[parentId] = {
-//         ...newItemMap[parentId],
-//         children: newChildrenOrder,
-//       };
-//     }
-
-//     return newItemMap;
-//   });
-// }}
-
-export const useExerciseTreeStore = create<ExerciseTreeState>()((set) => ({
+export const useExerciseTreeStore = create<
+  ExerciseTreeStateVal & ExerciseTreeStateSetters
+>()((set) => ({
   exerciseTree: startingTree,
   reorder: (dataList: Item[]) =>
     set((state) => {
@@ -256,11 +164,9 @@ export const useExerciseTreeStore = create<ExerciseTreeState>()((set) => ({
   // increase: (by) => set((state) => ({ bears: state.bears + by })),
 }));
 
-type ExerciseTreeHook = ExerciseTreeStateVal & {
+export function useExerciseTreeStoreWithSetter(): ExerciseTreeStateVal & {
   setter: ExerciseTreeStateSetters;
-};
-
-export function useExerciseTreeStoreFuncs(): ExerciseTreeHook {
+} {
   const { exerciseTree, reorder, createChild, deleteTagOrExercise } =
     useExerciseTreeStore((state) => state);
 
