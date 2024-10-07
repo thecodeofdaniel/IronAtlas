@@ -1,29 +1,29 @@
 import { create } from 'zustand';
 
-type Item = {
+export type Exercise = {
   id: number;
   title: string;
   parentId: number | null;
   order: number;
   isOpen: boolean;
-  children: number[]; // Store only child IDs
+  children: number[]; // Store only child IDs // If child empty then it's an exercise
 };
 
-type ItemMap = {
-  [key: number]: Item; // Create an ItemMap type
+export type ExerciseMap = {
+  [key: number]: Exercise; // Create an ItemMap type
 };
 
 type ExerciseTreeStateVal = {
-  exerciseTree: ItemMap;
+  exerciseMap: ExerciseMap;
 };
 
-export type ExerciseTreeStateSetters = {
-  reorder: (dataList: Item[]) => void;
+export type ExerciseTreeStateFunctions = {
+  reorder: (dataList: Exercise[]) => void;
   createChild: (pressedId: number) => void;
   deleteTagOrExercise: (pressedId: number) => void;
 };
 
-const startingTree: ItemMap = {
+const startingTree: ExerciseMap = {
   // Root
   0: {
     id: 0,
@@ -76,12 +76,12 @@ const startingTree: ItemMap = {
 };
 
 export const useExerciseTreeStore = create<
-  ExerciseTreeStateVal & ExerciseTreeStateSetters
+  ExerciseTreeStateVal & ExerciseTreeStateFunctions
 >()((set) => ({
-  exerciseTree: startingTree,
-  reorder: (dataList: Item[]) =>
+  exerciseMap: startingTree,
+  reorder: (dataList: Exercise[]) =>
     set((state) => {
-      const newItemMap = { ...state.exerciseTree };
+      const newItemMap = { ...state.exerciseMap };
 
       // First, update the order of items
       dataList.forEach((item, index) => {
@@ -102,15 +102,15 @@ export const useExerciseTreeStore = create<
         };
       }
 
-      return { exerciseTree: newItemMap };
+      return { exerciseMap: newItemMap };
     }),
   createChild: (pressedId: number) =>
     set((state) => {
-      const newItems = { ...state.exerciseTree };
+      const newItems = { ...state.exerciseMap };
       const pressedItem = newItems[pressedId];
       const nextIndex = pressedItem.children.length;
 
-      const newItem: Item = {
+      const newItem: Exercise = {
         id: Date.now(), // Use a unique ID generator in a real scenario
         title: 'ZZZZZZZZZZZZZZZZ',
         parentId: pressedItem.id,
@@ -127,11 +127,11 @@ export const useExerciseTreeStore = create<
 
       newItems[newItem.id] = newItem; // Add the new item to the map
 
-      return { exerciseTree: newItems };
+      return { exerciseMap: newItems };
     }),
   deleteTagOrExercise: (pressedId: number) =>
     set((state) => {
-      const newItems = { ...state.exerciseTree };
+      const newItems = { ...state.exerciseMap };
 
       // Helper function to recursively delete an item and all its children
       const deleteItemAndChildren = (id: number) => {
@@ -159,19 +159,19 @@ export const useExerciseTreeStore = create<
 
       deleteItemAndChildren(pressedId);
 
-      return { exerciseTree: newItems };
+      return { exerciseMap: newItems };
     }),
   // increase: (by) => set((state) => ({ bears: state.bears + by })),
 }));
 
 export function useExerciseTreeStoreWithSetter(): ExerciseTreeStateVal & {
-  setter: ExerciseTreeStateSetters;
+  setter: ExerciseTreeStateFunctions;
 } {
-  const { exerciseTree, reorder, createChild, deleteTagOrExercise } =
+  const { exerciseMap, reorder, createChild, deleteTagOrExercise } =
     useExerciseTreeStore((state) => state);
 
   return {
-    exerciseTree,
+    exerciseMap,
     setter: {
       reorder,
       createChild,

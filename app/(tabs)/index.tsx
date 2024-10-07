@@ -7,85 +7,27 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import clsx from 'clsx';
 import { Ionicons } from '@expo/vector-icons';
 import {
-  ExerciseTreeStateSetters,
   useExerciseTreeStoreWithSetter,
+  type Exercise,
+  type ExerciseMap,
+  type ExerciseTreeStateFunctions,
 } from '@/store/exerciseTreeStore';
 
-type Item = {
-  id: number;
-  title: string;
-  parentId: number | null;
-  order: number;
-  isOpen: boolean;
-  children: number[]; // Store only child IDs
-};
-
-type ItemMap = {
-  [key: number]: Item; // Create an ItemMap type
-};
-
-const startingItems: ItemMap = {
-  // Root
-  0: {
-    id: 0,
-    title: 'Root',
-    parentId: null,
-    order: 0,
-    isOpen: true,
-    children: [1, 3],
-  },
-  1: {
-    id: 1,
-    title: 'Hello',
-    parentId: 0,
-    order: 0,
-    isOpen: true,
-    children: [2],
-  },
-  2: {
-    id: 2,
-    title: 'World',
-    parentId: 1,
-    order: 0,
-    isOpen: false,
-    children: [4, 5],
-  },
-  3: {
-    id: 3,
-    title: 'Goodbye',
-    parentId: 0,
-    order: 1,
-    isOpen: false,
-    children: [],
-  },
-  4: {
-    id: 4,
-    title: 'Again',
-    parentId: 2,
-    order: 0,
-    isOpen: false,
-    children: [],
-  },
-  5: {
-    id: 5,
-    title: 'Too',
-    parentId: 2,
-    order: 1,
-    isOpen: false,
-    children: [],
-  },
-};
-
 type TreeProps = {
-  itemMap: ItemMap; // Accept itemMap as a prop
-  itemIds: number[]; // Accept item IDs as a prop
+  exerciseMap: ExerciseMap; // Accept itemMap as a prop
+  exerciseChildren: number[]; // Accept item IDs as a prop
   level: number;
-  setter: ExerciseTreeStateSetters;
+  setter: ExerciseTreeStateFunctions;
 };
 
-const Tree = ({ itemMap, itemIds, level = 0, setter }: TreeProps) => {
+const Tree = ({
+  exerciseMap,
+  exerciseChildren,
+  level = 0,
+  setter,
+}: TreeProps) => {
   const [isOpen, setIsOpen] = useState(() =>
-    itemIds.map((id) => itemMap[id].isOpen)
+    exerciseChildren.map((id) => exerciseMap[id].isOpen)
   );
 
   const RenderItem = ({
@@ -93,7 +35,7 @@ const Tree = ({ itemMap, itemIds, level = 0, setter }: TreeProps) => {
     drag,
     isActive,
     getIndex,
-  }: RenderItemParams<Item>) => {
+  }: RenderItemParams<Exercise>) => {
     const currentIndex = getIndex()!;
 
     return (
@@ -152,18 +94,18 @@ const Tree = ({ itemMap, itemIds, level = 0, setter }: TreeProps) => {
     );
   };
 
-  const items: Item[] = itemIds.map((id) => itemMap[id]);
+  const exercises: Exercise[] = exerciseChildren.map((id) => exerciseMap[id]);
 
   return (
     <View>
       <DraggableFlatList
-        data={items}
-        onDragEnd={({ data: dataList }) => {
-          setter.reorder(dataList);
+        data={exercises}
+        onDragEnd={({ data }) => {
+          setter.reorder(data);
         }}
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item, drag, isActive, getIndex }) => {
-          const currentIndex = itemIds.indexOf(item.id);
+          const currentIndex = exerciseChildren.indexOf(item.id);
           return (
             <View key={item.id} style={{ paddingLeft: 5 * level }}>
               <RenderItem
@@ -174,8 +116,8 @@ const Tree = ({ itemMap, itemIds, level = 0, setter }: TreeProps) => {
               />
               {item.children.length > 0 && isOpen[currentIndex] && (
                 <Tree
-                  itemMap={itemMap}
-                  itemIds={item.children}
+                  exerciseMap={exerciseMap}
+                  exerciseChildren={item.children}
                   level={level + 1}
                   setter={setter}
                 />
@@ -189,13 +131,18 @@ const Tree = ({ itemMap, itemIds, level = 0, setter }: TreeProps) => {
 };
 
 const App = () => {
-  const { exerciseTree, setter } = useExerciseTreeStoreWithSetter();
+  const { exerciseMap, setter } = useExerciseTreeStoreWithSetter();
 
   return (
     <View className="flex flex-1 p-4">
       <Text className="text-3xl font-bold mb-4">Item Tree</Text>
       <GestureHandlerRootView>
-        <Tree itemMap={exerciseTree} itemIds={[0]} level={0} setter={setter} />
+        <Tree
+          exerciseMap={exerciseMap}
+          exerciseChildren={[0]}
+          level={0}
+          setter={setter}
+        />
       </GestureHandlerRootView>
     </View>
   );
