@@ -8,7 +8,11 @@ import clsx from 'clsx';
 import { Ionicons } from '@expo/vector-icons';
 import { Link } from 'expo-router';
 import { useBearStore } from '@/store/store';
-import { useExerciseTreeStore } from '@/store/exerciseTreeStore';
+import {
+  ExerciseTreeStateSetters,
+  useExerciseTreeStore,
+  useExerciseTreeStoreFuncs,
+} from '@/store/exerciseTreeStore';
 
 type Item = {
   id: number;
@@ -79,39 +83,13 @@ type TreeProps = {
   itemMap: ItemMap; // Accept itemMap as a prop
   itemIds: number[]; // Accept item IDs as a prop
   level: number;
-  setItemMap: {
-    reorder: (dataList: Item[]) => void;
-    createChild: (pressedId: number) => void;
-    deleteTagOrExercise: (pressedId: number) => void;
-  };
+  setItemMap: ExerciseTreeStateSetters;
 };
 
 const Tree = ({ itemMap, itemIds, level = 0, setItemMap }: TreeProps) => {
   const [isOpen, setIsOpen] = useState(() =>
     itemIds.map((id) => itemMap[id].isOpen)
   );
-
-  // const createSibling = (parentId: number | null) => {
-  //   if (parentId === null) return; // Early return if no parentId
-  //   setItemMap((prevItems) => {
-  //     const newItems = { ...prevItems };
-  //     const parentItem = newItems[parentId];
-  //     const nextIndex = parentItem.children.length;
-
-  //     const newItem: Item = {
-  //       id: Date.now(), // Use a unique ID generator in a real scenario
-  //       title: 'ZZZZZZZZZZZZZZZZ',
-  //       parentId: parentItem.id,
-  //       order: nextIndex,
-  //       isOpen: false,
-  //       children: [],
-  //     };
-
-  //     parentItem.children.push(newItem.id);
-  //     newItems[newItem.id] = newItem; // Add the new item to the map
-  //     return newItems;
-  //   });
-  // };
 
   const createChild = (pressedId: number) => {
     setItemMap((prevItems) => {
@@ -276,19 +254,22 @@ const Tree = ({ itemMap, itemIds, level = 0, setItemMap }: TreeProps) => {
 const App = () => {
   console.log('Render Tree again');
   // const [itemMap, setItemMap] = useState<ItemMap>(startingItems);
-  const {
-    exerciseTree: itemMap,
-    reorder,
-    createChild,
-    deleteTagOrExercise,
-  } = useExerciseTreeStore((state) => state);
+  // const {
+  //   exerciseTree: itemMap,
+  //   reorder,
+  //   createChild,
+  //   deleteTagOrExercise,
+  // } = useExerciseTreeStore((state) => state);
+
+  const { exerciseTree: itemMap, setter } = useExerciseTreeStoreFuncs();
+
   // const [itemMap, setItemMap] = useState<ItemMap>(exerciseTree);
 
-  const setItemMap = {
-    reorder,
-    createChild,
-    deleteTagOrExercise,
-  };
+  // const setItemMap = {
+  //   reorder,
+  //   createChild,
+  //   deleteTagOrExercise,
+  // };
 
   // This would be zero
   const rootItemIds = Object.values(itemMap)
@@ -304,7 +285,7 @@ const App = () => {
           itemMap={itemMap}
           itemIds={rootItemIds}
           level={0}
-          setItemMap={setItemMap}
+          setItemMap={setter}
         />
       </GestureHandlerRootView>
     </View>

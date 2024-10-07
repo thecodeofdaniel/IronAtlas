@@ -13,12 +13,24 @@ type ItemMap = {
   [key: number]: Item; // Create an ItemMap type
 };
 
-type ExerciseTreeState = {
-  exerciseTree: ItemMap;
+export type ExerciseTreeStateSetters = {
   reorder: (dataList: Item[]) => void;
   createChild: (pressedId: number) => void;
   deleteTagOrExercise: (pressedId: number) => void;
 };
+
+type ExerciseTreeStateVal = {
+  exerciseTree: ItemMap;
+};
+
+// type ExerciseTreeState = {
+//   exerciseTree: ItemMap;
+//   // reorder: (dataList: Item[]) => void;
+//   // createChild: (pressedId: number) => void;
+//   // deleteTagOrExercise: (pressedId: number) => void;
+// } & ExerciseTreeStateSetters;
+
+type ExerciseTreeState = ExerciseTreeStateVal & ExerciseTreeStateSetters;
 
 const startingTree: ItemMap = {
   // Root
@@ -186,7 +198,7 @@ export const useExerciseTreeStore = create<ExerciseTreeState>()((set) => ({
     }),
   createChild: (pressedId: number) =>
     set((state) => {
-      const newItems = { ...state };
+      const newItems = { ...state.exerciseTree };
       const pressedItem = newItems[pressedId];
       const nextIndex = pressedItem.children.length;
 
@@ -210,7 +222,7 @@ export const useExerciseTreeStore = create<ExerciseTreeState>()((set) => ({
     }),
   deleteTagOrExercise: (pressedId: number) =>
     set((state) => {
-      const newItems = { ...state };
+      const newItems = { ...state.exerciseTree };
 
       // Helper function to recursively delete an item and all its children
       const deleteItemAndChildren = (id: number) => {
@@ -241,3 +253,21 @@ export const useExerciseTreeStore = create<ExerciseTreeState>()((set) => ({
     }),
   // increase: (by) => set((state) => ({ bears: state.bears + by })),
 }));
+
+type ExerciseTreeHook = ExerciseTreeStateVal & {
+  setter: ExerciseTreeStateSetters;
+};
+
+export function useExerciseTreeStoreFuncs(): ExerciseTreeHook {
+  const { exerciseTree, reorder, createChild, deleteTagOrExercise } =
+    useExerciseTreeStore((state) => state);
+
+  return {
+    exerciseTree,
+    setter: {
+      reorder,
+      createChild,
+      deleteTagOrExercise,
+    },
+  };
+}
