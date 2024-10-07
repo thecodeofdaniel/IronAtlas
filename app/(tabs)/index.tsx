@@ -13,6 +13,10 @@ import {
   type ExerciseTreeStateFunctions,
 } from '@/store/exerciseTreeStore';
 import Popover, { Rect } from 'react-native-popover-view';
+import {
+  ActionSheetProvider,
+  useActionSheet,
+} from '@expo/react-native-action-sheet';
 
 type TreeProps = {
   exerciseMap: ExerciseMap; // Accept itemMap as a prop
@@ -27,9 +31,41 @@ const Tree = ({
   level = 0,
   setter,
 }: TreeProps) => {
+  // console.log('Render Tree');
   const [isOpen, setIsOpen] = useState(() =>
     exerciseChildren.map((id) => exerciseMap[id].isOpen)
   );
+  const { showActionSheetWithOptions } = useActionSheet();
+
+  const handleOnPress = (pressedId: number) => {
+    console.log('By', pressedId);
+    const options = ['Delete', 'Create', 'Update', 'Cancel'];
+    const destructiveButtonIndex = 0;
+    const cancelButtonIndex = options.length - 1;
+
+    showActionSheetWithOptions(
+      {
+        options,
+        cancelButtonIndex,
+        destructiveButtonIndex,
+      },
+      (selectedIndex: number) => {
+        switch (selectedIndex) {
+          case destructiveButtonIndex:
+            setter.deleteTagOrExercise(pressedId);
+            break;
+          case 1:
+            console.log('here');
+            setter.createChild(pressedId);
+            break;
+          case 2:
+            break;
+          case cancelButtonIndex:
+          // cancel
+        }
+      }
+    );
+  };
 
   const RenderItem = ({
     item,
@@ -78,27 +114,9 @@ const Tree = ({
             ) : (
               <Ionicons name="pricetag" color={'white'} />
             )}
-            <Popover
-              arrowSize={{ width: 0, height: 0 }}
-              from={
-                <TouchableOpacity>
-                  <Ionicons name="ellipsis-horizontal-outline" color="white" />
-                </TouchableOpacity>
-              }
-            >
-              {/* <Text>This is the contents of the popover</Text> */}
-              <View className="p-2 gap-2">
-                <Button
-                  title="Create"
-                  onPress={() => setter.createChild(item.id)}
-                />
-                <Button
-                  title="Delete"
-                  color={'red'}
-                  onPress={() => setter.deleteTagOrExercise(item.id)}
-                />
-              </View>
-            </Popover>
+            <TouchableOpacity onPress={() => handleOnPress(item.id)}>
+              <Ionicons name="ellipsis-horizontal-outline" color="white" />
+            </TouchableOpacity>
           </View>
         </View>
       </TouchableOpacity>
@@ -148,12 +166,14 @@ const App = () => {
     <View className="flex flex-1 p-4">
       <Text className="text-3xl font-bold mb-4">Item Tree</Text>
       <GestureHandlerRootView>
-        <Tree
-          exerciseMap={exerciseMap}
-          exerciseChildren={[0]}
-          level={0}
-          setter={setter}
-        />
+        <ActionSheetProvider>
+          <Tree
+            exerciseMap={exerciseMap}
+            exerciseChildren={[0]}
+            level={0}
+            setter={setter}
+          />
+        </ActionSheetProvider>
       </GestureHandlerRootView>
     </View>
   );
