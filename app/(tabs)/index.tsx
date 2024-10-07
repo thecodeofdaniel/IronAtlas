@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Text, View, TouchableOpacity, Pressable, Button } from 'react-native';
 import DraggableFlatList, {
   RenderItemParams,
@@ -6,11 +6,8 @@ import DraggableFlatList, {
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import clsx from 'clsx';
 import { Ionicons } from '@expo/vector-icons';
-import { Link } from 'expo-router';
-import { useBearStore } from '@/store/store';
 import {
   ExerciseTreeStateSetters,
-  useExerciseTreeStore,
   useExerciseTreeStoreFuncs,
 } from '@/store/exerciseTreeStore';
 
@@ -83,72 +80,13 @@ type TreeProps = {
   itemMap: ItemMap; // Accept itemMap as a prop
   itemIds: number[]; // Accept item IDs as a prop
   level: number;
-  setItemMap: ExerciseTreeStateSetters;
+  setter: ExerciseTreeStateSetters;
 };
 
-const Tree = ({ itemMap, itemIds, level = 0, setItemMap }: TreeProps) => {
+const Tree = ({ itemMap, itemIds, level = 0, setter }: TreeProps) => {
   const [isOpen, setIsOpen] = useState(() =>
     itemIds.map((id) => itemMap[id].isOpen)
   );
-
-  const createChild = (pressedId: number) => {
-    setItemMap((prevItems) => {
-      const newItems = { ...prevItems };
-      const pressedItem = newItems[pressedId];
-      const nextIndex = pressedItem.children.length;
-
-      const newItem: Item = {
-        id: Date.now(), // Use a unique ID generator in a real scenario
-        title: 'ZZZZZZZZZZZZZZZZ',
-        parentId: pressedItem.id,
-        order: nextIndex,
-        isOpen: false,
-        children: [],
-      };
-
-      // Create a new copy of the pressed item with the updated children array
-      newItems[pressedId] = {
-        ...pressedItem,
-        children: [...pressedItem.children, newItem.id], // Create new array instead of using push
-      };
-
-      newItems[newItem.id] = newItem; // Add the new item to the map
-      return newItems;
-    });
-  };
-
-  const deleteItem = (itemId: number) => {
-    setItemMap((prevItems) => {
-      const newItems = { ...prevItems };
-
-      // Helper function to recursively delete an item and all its children
-      const deleteItemAndChildren = (id: number) => {
-        const item = newItems[id];
-        if (!item) return;
-
-        // Recursively delete all children first
-        item.children.forEach((childId) => {
-          deleteItemAndChildren(childId);
-        });
-
-        // If this item has a parent, remove it from parent's children array
-        if (item.parentId !== null && newItems[item.parentId]) {
-          newItems[item.parentId] = {
-            ...newItems[item.parentId],
-            children: newItems[item.parentId].children.filter(
-              (childId) => childId !== id
-            ),
-          };
-        }
-
-        // Delete the item itself
-        delete newItems[id];
-      };
-
-      deleteItemAndChildren(itemId);
-      return newItems;
-    });
-  };
 
   const RenderItem = ({
     item,
@@ -156,7 +94,7 @@ const Tree = ({ itemMap, itemIds, level = 0, setItemMap }: TreeProps) => {
     isActive,
     getIndex,
   }: RenderItemParams<Item>) => {
-    const currentIndex = getIndex();
+    const currentIndex = getIndex()!;
 
     return (
       <TouchableOpacity
@@ -199,14 +137,14 @@ const Tree = ({ itemMap, itemIds, level = 0, setItemMap }: TreeProps) => {
             )}
             {/* The root item would not have  */}
             {level > 0 && (
-              // <TouchableOpacity onPress={() => deleteItem(item.id)}>
-              //   <Ionicons name="ellipsis-horizontal-outline" color="white" />
-              // </TouchableOpacity>
-              <Link href={'/modal'} asChild>
-                <TouchableOpacity>
-                  <Ionicons name="ellipsis-horizontal-outline" color="white" />
-                </TouchableOpacity>
-              </Link>
+              <TouchableOpacity onPress={() => setter.createChild(item.id)}>
+                <Ionicons name="ellipsis-horizontal-outline" color="white" />
+              </TouchableOpacity>
+              // <Link href={'/modal'} asChild>
+              //   <TouchableOpacity>
+              //     <Ionicons name="ellipsis-horizontal-outline" color="white" />
+              //   </TouchableOpacity>
+              // </Link>
             )}
           </View>
         </View>
@@ -214,7 +152,6 @@ const Tree = ({ itemMap, itemIds, level = 0, setItemMap }: TreeProps) => {
     );
   };
 
-  // console.log(itemIds);
   const items: Item[] = itemIds.map((id) => itemMap[id]);
 
   return (
@@ -222,7 +159,7 @@ const Tree = ({ itemMap, itemIds, level = 0, setItemMap }: TreeProps) => {
       <DraggableFlatList
         data={items}
         onDragEnd={({ data: dataList }) => {
-          setItemMap.reorder(dataList);
+          setter.reorder(dataList);
         }}
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item, drag, isActive, getIndex }) => {
@@ -240,7 +177,7 @@ const Tree = ({ itemMap, itemIds, level = 0, setItemMap }: TreeProps) => {
                   itemMap={itemMap}
                   itemIds={item.children}
                   level={level + 1}
-                  setItemMap={setItemMap}
+                  setter={setter}
                 />
               )}
             </View>
@@ -252,27 +189,10 @@ const Tree = ({ itemMap, itemIds, level = 0, setItemMap }: TreeProps) => {
 };
 
 const App = () => {
-  console.log('Render Tree again');
-  // const [itemMap, setItemMap] = useState<ItemMap>(startingItems);
-  // const {
-  //   exerciseTree: itemMap,
-  //   reorder,
-  //   createChild,
-  //   deleteTagOrExercise,
-  // } = useExerciseTreeStore((state) => state);
-
-  const { exerciseTree: itemMap, setter } = useExerciseTreeStoreFuncs();
-
-  // const [itemMap, setItemMap] = useState<ItemMap>(exerciseTree);
-
-  // const setItemMap = {
-  //   reorder,
-  //   createChild,
-  //   deleteTagOrExercise,
-  // };
+  const { exerciseTree, setter } = useExerciseTreeStoreFuncs();
 
   // This would be zero
-  const rootItemIds = Object.values(itemMap)
+  const rootItemIds = Object.values(exerciseTree)
     .filter((item) => item.parentId === null)
     .sort((a, b) => a.order - b.order) // Sort by the 'order' key
     .map((item) => item.id);
@@ -282,10 +202,10 @@ const App = () => {
       <Text className="text-3xl font-bold mb-4">Item Tree</Text>
       <GestureHandlerRootView>
         <Tree
-          itemMap={itemMap}
+          itemMap={exerciseTree}
           itemIds={rootItemIds}
           level={0}
-          setItemMap={setter}
+          setter={setter}
         />
       </GestureHandlerRootView>
     </View>
