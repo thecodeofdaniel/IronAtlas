@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { produce } from 'immer';
 
 export type Exercise = {
   id: number;
@@ -21,6 +22,7 @@ export type ExerciseTreeStateFunctions = {
   reorder: (dataList: Exercise[]) => void;
   createChild: (pressedId: number) => void;
   deleteTagOrExercise: (pressedId: number) => void;
+  editTitle: (pressedId: number, newTitle: string) => void;
 };
 
 const startingTree: ExerciseMap = {
@@ -161,13 +163,30 @@ export const useExerciseTreeStore = create<
 
       return { exerciseMap: newItems };
     }),
+  // editTitle: (pressedId: number, newTitle: string) =>
+  //   set((state) => {
+  //     const newExerciseMap = { ...state.exerciseMap };
+
+  //     newExerciseMap[pressedId] = {
+  //       ...newExerciseMap[pressedId],
+  //       title: newTitle,
+  //     };
+
+  //     return { exerciseMap: newExerciseMap };
+  //   }),
+  editTitle: (pressedId: number, newTitle: string) =>
+    set(
+      produce((state) => {
+        state.exerciseMap[pressedId].title = newTitle;
+      })
+    ),
   // increase: (by) => set((state) => ({ bears: state.bears + by })),
 }));
 
 export function useExerciseTreeStoreWithSetter(): ExerciseTreeStateVal & {
   setter: ExerciseTreeStateFunctions;
 } {
-  const { exerciseMap, reorder, createChild, deleteTagOrExercise } =
+  const { exerciseMap, reorder, createChild, deleteTagOrExercise, editTitle } =
     useExerciseTreeStore((state) => state);
 
   return {
@@ -176,6 +195,7 @@ export function useExerciseTreeStoreWithSetter(): ExerciseTreeStateVal & {
       reorder,
       createChild,
       deleteTagOrExercise,
+      editTitle,
     },
   };
 }

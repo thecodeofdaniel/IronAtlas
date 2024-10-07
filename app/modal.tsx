@@ -5,7 +5,7 @@ import { useExerciseTreeStoreWithSetter } from '@/store/exerciseTreeStore';
 
 export default function Modal() {
   const { id } = useLocalSearchParams<{ id: string }>();
-  const { exerciseMap } = useExerciseTreeStoreWithSetter();
+  const { exerciseMap, setter } = useExerciseTreeStoreWithSetter();
   const router = useRouter();
   const ogName = exerciseMap[+id].title;
 
@@ -17,12 +17,10 @@ export default function Modal() {
     if (!name) return;
 
     const trimmedName = name.trim();
-    if (!trimmedName) return;
+    if (trimmedName === '' || !trimmedName) return;
 
-    if (name.trim()) {
-      // updateExerciseName(+id, name); // Update the exercise name in the store
-      router.back(); // Navigate back after update
-    }
+    setter.editTitle(+id, trimmedName);
+    router.back(); // Navigate back after update
   };
 
   // Handle the cancel button press
