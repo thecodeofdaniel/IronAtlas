@@ -218,7 +218,8 @@ export const useExerciseTreeStore = create<ExerciseTreeState>()((set) => ({
       };
 
       newItems[newItem.id] = newItem; // Add the new item to the map
-      return newItems;
+
+      return { exerciseTree: newItems };
     }),
   deleteTagOrExercise: (pressedId: number) =>
     set((state) => {
@@ -249,7 +250,8 @@ export const useExerciseTreeStore = create<ExerciseTreeState>()((set) => ({
       };
 
       deleteItemAndChildren(pressedId);
-      return newItems;
+
+      return { exerciseTree: newItems };
     }),
   // increase: (by) => set((state) => ({ bears: state.bears + by })),
 }));
