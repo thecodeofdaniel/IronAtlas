@@ -17,6 +17,7 @@ import {
   ActionSheetProvider,
   useActionSheet,
 } from '@expo/react-native-action-sheet';
+import { Redirect, useRouter } from 'expo-router';
 
 type TreeProps = {
   exerciseMap: ExerciseMap; // Accept itemMap as a prop
@@ -36,10 +37,11 @@ const Tree = ({
     exerciseChildren.map((id) => exerciseMap[id].isOpen)
   );
   const { showActionSheetWithOptions } = useActionSheet();
+  const router = useRouter();
 
   const handleOnPress = (pressedId: number) => {
     console.log('By', pressedId);
-    const options = ['Delete', 'Create', 'Update', 'Cancel'];
+    const options = ['Delete', 'Create', 'Edit', 'Cancel'];
     const destructiveButtonIndex = 0;
     const cancelButtonIndex = options.length - 1;
 
@@ -55,10 +57,14 @@ const Tree = ({
             setter.deleteTagOrExercise(pressedId);
             break;
           case 1:
-            console.log('here');
             setter.createChild(pressedId);
             break;
           case 2:
+            console.log('Pressed update');
+            router.push({
+              pathname: '/modal',
+              params: { id: pressedId },
+            });
             break;
           case cancelButtonIndex:
           // cancel
