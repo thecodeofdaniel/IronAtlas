@@ -108,8 +108,6 @@ function ExerciseList({ exercises, setter }: ExerciseListProps) {
     );
   };
 
-  console.log(exercises);
-
   return (
     <View className="flex-1 pt-2 px-2">
       <GestureHandlerRootView>
@@ -126,37 +124,53 @@ function ExerciseList({ exercises, setter }: ExerciseListProps) {
 
 export default function Exercises() {
   const { exercises, setter } = useExerciseStoreWithSetter();
+  const { showActionSheetWithOptions } = useActionSheet();
 
-  const addExercise = () => {
-    const newExercise = {
-      id: Date.now(),
-      title: 'Incline Chest Press',
-    };
+  const handlePress = () => {
+    const options = ['Add Exercise', 'Cancel'];
+    const cancelButtonIndex = options.length - 1;
 
-    setter.createExercise(newExercise);
+    showActionSheetWithOptions(
+      {
+        options,
+        cancelButtonIndex,
+      },
+      (selectedIndex?: number) => {
+        switch (selectedIndex) {
+          case 0:
+            break;
+          case cancelButtonIndex:
+            break;
+        }
+      }
+    );
   };
+
+  // const addExercise = () => {
+  //   const newExercise = {
+  //     id: Date.now(),
+  //     title: 'Incline Chest Press',
+  //   };
+
+  //   setter.createExercise(newExercise);
+  // };
 
   return (
     <>
       <Stack.Screen
         options={{
+          title: 'Exercises',
           headerShown: true,
           headerRight: () => {
             return (
-              <TouchableOpacity onPress={addExercise}>
-                <Ionicons
-                  name="add"
-                  size={24}
-                  className="mr-4 justify-center items-center"
-                />
+              <TouchableOpacity onPress={handlePress}>
+                <Ionicons name="add" size={24} />
               </TouchableOpacity>
             );
           },
         }}
       />
-      <ActionSheetProvider>
-        <ExerciseList exercises={exercises} setter={setter} />
-      </ActionSheetProvider>
+      <ExerciseList exercises={exercises} setter={setter} />
     </>
   );
 }

@@ -6,6 +6,7 @@ import 'react-native-reanimated';
 import * as SplashScreen from 'expo-splash-screen';
 
 import '../global.css';
+import { ActionSheetProvider } from '@expo/react-native-action-sheet';
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -27,10 +28,12 @@ export default function RootLayout() {
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="modal" />
-      </Stack>
+      <ActionSheetProvider>
+        <Stack>
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          <Stack.Screen name="modal" />
+        </Stack>
+      </ActionSheetProvider>
     </SafeAreaView>
   );
 }
