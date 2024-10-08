@@ -119,7 +119,7 @@ const Tree = ({
             {item.children.length === 0 ? (
               <Ionicons name="barbell" color={'white'} />
             ) : (
-              <Ionicons name="pricetag" color={'white'} />
+              <Ionicons name="body-outline" color={'white'} />
             )}
             <TouchableOpacity onPress={() => handleOnPress(item.id)}>
               <Ionicons name="ellipsis-horizontal-outline" color="white" />

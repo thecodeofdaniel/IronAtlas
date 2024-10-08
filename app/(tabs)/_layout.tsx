@@ -10,19 +10,6 @@ export default function TabLayout() {
         headerShown: false,
       }}
     >
-      {/* <Tabs.Screen
-        name="index"
-        options={{
-          title: 'Home',
-          tabBarIcon: ({ color, focused }) => (
-            <Ionicons
-              name={focused ? 'home' : 'home-outline'}
-              color={color}
-              size={20}
-            />
-          ),
-        }}
-      /> */}
       <Tabs.Screen
         name="index"
         options={{
@@ -30,6 +17,19 @@ export default function TabLayout() {
           tabBarIcon: ({ color, focused }) => (
             <Ionicons
               name={focused ? 'code-slash' : 'code-slash-outline'}
+              color={color}
+              size={20}
+            />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="exercises"
+        options={{
+          title: 'Exercises',
+          tabBarIcon: ({ color, focused }) => (
+            <Ionicons
+              name={focused ? 'barbell' : 'barbell-outline'}
               color={color}
               size={20}
             />
