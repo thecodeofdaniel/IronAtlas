@@ -4,6 +4,7 @@ import {
 } from '@expo/react-native-action-sheet';
 import { Ionicons } from '@expo/vector-icons';
 import clsx from 'clsx';
+import { Stack } from 'expo-router';
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import DraggableFlatList, {
@@ -35,8 +36,12 @@ const exercisesInitial: Exercise[] = [
   },
 ];
 
-function ExerciseList() {
-  const [exercises, setExercises] = useState<Exercise[]>(exercisesInitial);
+type ExerciseListProps = {
+  exercises: Exercise[];
+  setExercises: React.Dispatch<React.SetStateAction<Exercise[]>>;
+};
+
+function ExerciseList({ exercises, setExercises }: ExerciseListProps) {
   const { showActionSheetWithOptions } = useActionSheet();
 
   const handleOnPress = (pressedId: number) => {
@@ -104,8 +109,7 @@ function ExerciseList() {
   console.log(exercises);
 
   return (
-    <View className="pt-8 flex-1">
-      <Text>exercises</Text>
+    <View className="flex-1 pt-2 px-2">
       <GestureHandlerRootView>
         <DraggableFlatList
           data={exercises}
@@ -119,9 +123,38 @@ function ExerciseList() {
 }
 
 export default function Exercises() {
+  const [exercises, setExercises] = useState<Exercise[]>(exercisesInitial);
+
+  const addExercise = () => {
+    const newExercise = {
+      id: Date.now(),
+      title: 'Incline Chest Press',
+    };
+
+    setExercises((prev) => [newExercise, ...prev]);
+  };
+
   return (
-    <ActionSheetProvider>
-      <ExerciseList />
-    </ActionSheetProvider>
+    <>
+      <Stack.Screen
+        options={{
+          headerShown: true,
+          headerRight: () => {
+            return (
+              <TouchableOpacity onPress={addExercise}>
+                <Ionicons
+                  name="add"
+                  size={24}
+                  className="mr-4 justify-center items-center"
+                />
+              </TouchableOpacity>
+            );
+          },
+        }}
+      />
+      <ActionSheetProvider>
+        <ExerciseList exercises={exercises} setExercises={setExercises} />
+      </ActionSheetProvider>
+    </>
   );
 }
