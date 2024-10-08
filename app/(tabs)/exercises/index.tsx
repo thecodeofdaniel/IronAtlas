@@ -1,4 +1,8 @@
 import {
+  ExerciseStateFunctions,
+  useExerciseStoreWithSetter,
+} from '@/store/exerciseStore';
+import {
   ActionSheetProvider,
   useActionSheet,
 } from '@expo/react-native-action-sheet';
@@ -38,10 +42,10 @@ const exercisesInitial: Exercise[] = [
 
 type ExerciseListProps = {
   exercises: Exercise[];
-  setExercises: React.Dispatch<React.SetStateAction<Exercise[]>>;
+  setter: ExerciseStateFunctions;
 };
 
-function ExerciseList({ exercises, setExercises }: ExerciseListProps) {
+function ExerciseList({ exercises, setter }: ExerciseListProps) {
   const { showActionSheetWithOptions } = useActionSheet();
 
   const handleOnPress = (pressedId: number) => {
@@ -71,9 +75,7 @@ function ExerciseList({ exercises, setExercises }: ExerciseListProps) {
   };
 
   const handleDelete = (pressedId: number) => {
-    setExercises((prev) => {
-      return prev.filter((exercise) => exercise.id !== pressedId);
-    });
+    setter.deleteExercise(pressedId);
   };
 
   const renderItem = ({
@@ -113,7 +115,7 @@ function ExerciseList({ exercises, setExercises }: ExerciseListProps) {
       <GestureHandlerRootView>
         <DraggableFlatList
           data={exercises}
-          onDragEnd={({ data }) => setExercises(data)}
+          onDragEnd={({ data }) => setter.setExercises(data)}
           keyExtractor={(item) => item.id.toString()}
           renderItem={renderItem}
         />
@@ -123,7 +125,7 @@ function ExerciseList({ exercises, setExercises }: ExerciseListProps) {
 }
 
 export default function Exercises() {
-  const [exercises, setExercises] = useState<Exercise[]>(exercisesInitial);
+  const { exercises, setter } = useExerciseStoreWithSetter();
 
   const addExercise = () => {
     const newExercise = {
@@ -131,7 +133,7 @@ export default function Exercises() {
       title: 'Incline Chest Press',
     };
 
-    setExercises((prev) => [newExercise, ...prev]);
+    setter.createExercise(newExercise);
   };
 
   return (
@@ -153,7 +155,7 @@ export default function Exercises() {
         }}
       />
       <ActionSheetProvider>
-        <ExerciseList exercises={exercises} setExercises={setExercises} />
+        <ExerciseList exercises={exercises} setter={setter} />
       </ActionSheetProvider>
     </>
   );
