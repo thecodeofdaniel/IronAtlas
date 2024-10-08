@@ -17,6 +17,9 @@ export type ModalData = {
   //   message: string;
   //   onConfirm: () => void;
   // };
+  createExercise: {
+    title: string;
+  };
   editExerciseOrMuscle: {
     id: number;
   };
