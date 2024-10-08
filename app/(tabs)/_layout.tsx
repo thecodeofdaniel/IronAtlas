@@ -11,12 +11,12 @@ export default function TabLayout() {
       }}
     >
       <Tabs.Screen
-        name="index"
+        name="exercises"
         options={{
-          title: 'Explore',
+          title: 'Exercises',
           tabBarIcon: ({ color, focused }) => (
             <Ionicons
-              name={focused ? 'code-slash' : 'code-slash-outline'}
+              name={focused ? 'barbell' : 'barbell-outline'}
               color={color}
               size={20}
             />
@@ -24,12 +24,12 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="exercises"
+        name="index"
         options={{
-          title: 'Exercises',
+          title: 'Explore',
           tabBarIcon: ({ color, focused }) => (
             <Ionicons
-              name={focused ? 'barbell' : 'barbell-outline'}
+              name={focused ? 'code-slash' : 'code-slash-outline'}
               color={color}
               size={20}
             />

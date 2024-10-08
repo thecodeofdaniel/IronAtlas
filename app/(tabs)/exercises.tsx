@@ -1,3 +1,8 @@
+import {
+  ActionSheetProvider,
+  useActionSheet,
+} from '@expo/react-native-action-sheet';
+import { Ionicons } from '@expo/vector-icons';
 import clsx from 'clsx';
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
@@ -30,8 +35,41 @@ const exercisesInitial: Exercise[] = [
   },
 ];
 
-export default function Exercises() {
+function ExerciseList() {
   const [exercises, setExercises] = useState<Exercise[]>(exercisesInitial);
+  const { showActionSheetWithOptions } = useActionSheet();
+
+  const handleOnPress = (pressedId: number) => {
+    console.log('By', pressedId);
+    const options = ['Delete', 'Edit', 'Cancel'];
+    const destructiveButtonIndex = 0;
+    const cancelButtonIndex = options.length - 1;
+
+    showActionSheetWithOptions(
+      {
+        options,
+        cancelButtonIndex,
+        destructiveButtonIndex,
+      },
+      (selectedIndex?: number) => {
+        switch (selectedIndex) {
+          case destructiveButtonIndex:
+            handleDelete(pressedId);
+            break;
+          case 1:
+            break;
+          case cancelButtonIndex:
+            break;
+        }
+      }
+    );
+  };
+
+  const handleDelete = (pressedId: number) => {
+    setExercises((prev) => {
+      return prev.filter((exercise) => exercise.id !== pressedId);
+    });
+  };
 
   const renderItem = ({
     item,
@@ -39,7 +77,7 @@ export default function Exercises() {
     isActive,
     getIndex,
   }: RenderItemParams<Exercise>) => {
-    const index = getIndex();
+    const index = getIndex()!;
 
     return (
       <TouchableOpacity
@@ -51,9 +89,14 @@ export default function Exercises() {
           'bg-blue-800': !isActive,
         })}
       >
-        <Text className="text-white">
-          {item.title} @{index}
-        </Text>
+        <View className="flex flex-row justify-between flex-1">
+          <Text className="text-white">
+            {item.title} @{index}
+          </Text>
+          <TouchableOpacity onPress={() => handleOnPress(exercises[index].id)}>
+            <Ionicons name="ellipsis-horizontal-outline" color="white" />
+          </TouchableOpacity>
+        </View>
       </TouchableOpacity>
     );
   };
@@ -72,5 +115,13 @@ export default function Exercises() {
         />
       </GestureHandlerRootView>
     </View>
+  );
+}
+
+export default function Exercises() {
+  return (
+    <ActionSheetProvider>
+      <ExerciseList />
+    </ActionSheetProvider>
   );
 }
