@@ -1,31 +1,18 @@
 import { create } from 'zustand';
 import { produce } from 'immer';
 
-export type Exercise = {
-  id: number;
-  title: string;
-  parentId: number | null;
-  order: number;
-  isOpen: boolean;
-  children: number[]; // Store only child IDs // If child empty then it's an exercise
+type TagTreeStateVal = {
+  tagMap: TagMap;
 };
 
-export type ExerciseMap = {
-  [key: number]: Exercise; // Create an ItemMap type
+export type TagTreeStateFunctions = {
+  reorderTags: (dataList: Tag[]) => void;
+  createChildTag: (pressedId: number, title: string) => void;
+  deleteTag: (pressedId: number) => void;
+  editTagTitle: (pressedId: number, newTitle: string) => void;
 };
 
-type ExerciseTreeStateVal = {
-  exerciseMap: ExerciseMap;
-};
-
-export type ExerciseTreeStateFunctions = {
-  reorder: (dataList: Exercise[]) => void;
-  createChild: (pressedId: number, title: string) => void;
-  deleteTagOrExercise: (pressedId: number) => void;
-  editTitle: (pressedId: number, newTitle: string) => void;
-};
-
-const startingTree: ExerciseMap = {
+const startingTree: TagMap = {
   // Root
   0: {
     id: 0,
@@ -77,13 +64,13 @@ const startingTree: ExerciseMap = {
   },
 };
 
-export const useExerciseTreeStore = create<
-  ExerciseTreeStateVal & ExerciseTreeStateFunctions
->()((set) => ({
-  exerciseMap: startingTree,
-  reorder: (dataList: Exercise[]) =>
+type TagTreeStore = TagTreeStateVal & TagTreeStateFunctions;
+
+export const useTagTreeStore = create<TagTreeStore>()((set) => ({
+  tagMap: startingTree,
+  reorderTags: (dataList: Tag[]) =>
     set((state) => {
-      const newItemMap = { ...state.exerciseMap };
+      const newItemMap = { ...state.tagMap };
 
       // First, update the order of items
       dataList.forEach((item, index) => {
@@ -104,15 +91,15 @@ export const useExerciseTreeStore = create<
         };
       }
 
-      return { exerciseMap: newItemMap };
+      return { tagMap: newItemMap };
     }),
-  createChild: (pressedId: number, title: string) =>
+  createChildTag: (pressedId: number, title: string) =>
     set((state) => {
-      const newItems = { ...state.exerciseMap };
+      const newItems = { ...state.tagMap };
       const pressedItem = newItems[pressedId];
       const nextIndex = pressedItem.children.length;
 
-      const newItem: Exercise = {
+      const newItem: Tag = {
         id: Date.now(), // Use a unique ID generator in a real scenario
         title: title,
         parentId: pressedItem.id,
@@ -129,11 +116,11 @@ export const useExerciseTreeStore = create<
 
       newItems[newItem.id] = newItem; // Add the new item to the map
 
-      return { exerciseMap: newItems };
+      return { tagMap: newItems };
     }),
-  deleteTagOrExercise: (pressedId: number) =>
+  deleteTag: (pressedId: number) =>
     set((state) => {
-      const newItems = { ...state.exerciseMap };
+      const newItems = { ...state.tagMap };
 
       // Helper function to recursively delete an item and all its children
       const deleteItemAndChildren = (id: number) => {
@@ -161,41 +148,30 @@ export const useExerciseTreeStore = create<
 
       deleteItemAndChildren(pressedId);
 
-      return { exerciseMap: newItems };
+      return { tagMap: newItems };
     }),
-  // editTitle: (pressedId: number, newTitle: string) =>
-  //   set((state) => {
-  //     const newExerciseMap = { ...state.exerciseMap };
-
-  //     newExerciseMap[pressedId] = {
-  //       ...newExerciseMap[pressedId],
-  //       title: newTitle,
-  //     };
-
-  //     return { exerciseMap: newExerciseMap };
-  //   }),
-  editTitle: (pressedId: number, newTitle: string) =>
+  editTagTitle: (pressedId: number, newTitle: string) =>
     set(
-      produce((state) => {
-        state.exerciseMap[pressedId].title = newTitle;
+      produce<TagTreeStore>((state) => {
+        state.tagMap[pressedId].title = newTitle;
       })
     ),
   // increase: (by) => set((state) => ({ bears: state.bears + by })),
 }));
 
-export function useExerciseTreeStoreWithSetter(): ExerciseTreeStateVal & {
-  setter: ExerciseTreeStateFunctions;
+export function useTagTreeStoreWithSetter(): TagTreeStateVal & {
+  setter: TagTreeStateFunctions;
 } {
-  const { exerciseMap, reorder, createChild, deleteTagOrExercise, editTitle } =
-    useExerciseTreeStore((state) => state);
+  const { tagMap, reorderTags, createChildTag, deleteTag, editTagTitle } =
+    useTagTreeStore((state) => state);
 
   return {
-    exerciseMap,
+    tagMap,
     setter: {
-      reorder,
-      createChild,
-      deleteTagOrExercise,
-      editTitle,
+      reorderTags,
+      createChildTag,
+      deleteTag,
+      editTagTitle,
     },
   };
 }

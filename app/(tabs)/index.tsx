@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useState } from 'react';
 import { Text, View, TouchableOpacity, Pressable, Button } from 'react-native';
 import DraggableFlatList, {
   RenderItemParams,
@@ -7,35 +7,27 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import clsx from 'clsx';
 import { Ionicons } from '@expo/vector-icons';
 import {
-  useExerciseTreeStoreWithSetter,
-  type Exercise,
-  type ExerciseMap,
-  type ExerciseTreeStateFunctions,
+  useTagTreeStoreWithSetter,
+  type TagTreeStateFunctions,
 } from '@/store/exerciseTreeStore';
-import Popover, { Rect } from 'react-native-popover-view';
 import {
   ActionSheetProvider,
   useActionSheet,
 } from '@expo/react-native-action-sheet';
-import { Redirect, useRouter } from 'expo-router';
+import { useRouter } from 'expo-router';
 import { useModalStore } from '@/store/modalStore';
 
 type TreeProps = {
-  exerciseMap: ExerciseMap; // Accept itemMap as a prop
-  exerciseChildren: number[]; // Accept item IDs as a prop
+  tagMap: TagMap; // Accept itemMap as a prop
+  tagChildren: number[]; // Accept item IDs as a prop
   level: number;
-  setter: ExerciseTreeStateFunctions;
+  setter: TagTreeStateFunctions;
 };
 
-const Tree = ({
-  exerciseMap,
-  exerciseChildren,
-  level = 0,
-  setter,
-}: TreeProps) => {
+const Tree = ({ tagMap, tagChildren, level = 0, setter }: TreeProps) => {
   // console.log('Render Tree');
   const [isOpen, setIsOpen] = useState(() =>
-    exerciseChildren.map((id) => exerciseMap[id].isOpen)
+    tagChildren.map((id) => tagMap[id].isOpen)
   );
   const router = useRouter();
   const { showActionSheetWithOptions } = useActionSheet();
@@ -56,7 +48,7 @@ const Tree = ({
       (selectedIndex?: number) => {
         switch (selectedIndex) {
           case destructiveButtonIndex:
-            setter.deleteTagOrExercise(pressedId);
+            setter.deleteTag(pressedId);
             break;
           case 1:
             openModal('addExerciseOrMuscle', { pressedId: pressedId });
@@ -79,7 +71,7 @@ const Tree = ({
     drag,
     isActive,
     getIndex,
-  }: RenderItemParams<Exercise>) => {
+  }: RenderItemParams<Tag>) => {
     const currentIndex = getIndex()!;
 
     return (
@@ -130,18 +122,18 @@ const Tree = ({
     );
   };
 
-  const exercises: Exercise[] = exerciseChildren.map((id) => exerciseMap[id]);
+  const tags: Tag[] = tagChildren.map((id) => tagMap[id]);
 
   return (
     <View>
       <DraggableFlatList
-        data={exercises}
+        data={tags}
         onDragEnd={({ data }) => {
-          setter.reorder(data);
+          setter.reorderTags(data);
         }}
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item, drag, isActive, getIndex }) => {
-          const currentIndex = exerciseChildren.indexOf(item.id);
+          const currentIndex = tagChildren.indexOf(item.id);
           return (
             <View key={item.id} style={{ paddingLeft: 5 * level }}>
               <RenderItem
@@ -152,8 +144,8 @@ const Tree = ({
               />
               {item.children.length > 0 && isOpen[currentIndex] && (
                 <Tree
-                  exerciseMap={exerciseMap}
-                  exerciseChildren={item.children}
+                  tagMap={tagMap}
+                  tagChildren={item.children}
                   level={level + 1}
                   setter={setter}
                 />
@@ -167,19 +159,14 @@ const Tree = ({
 };
 
 const App = () => {
-  const { exerciseMap, setter } = useExerciseTreeStoreWithSetter();
+  const { tagMap, setter } = useTagTreeStoreWithSetter();
 
   return (
     <View className="flex flex-1 p-4">
       <Text className="text-3xl font-bold mb-4">Item Tree</Text>
       <GestureHandlerRootView>
         <ActionSheetProvider>
-          <Tree
-            exerciseMap={exerciseMap}
-            exerciseChildren={[0]}
-            level={0}
-            setter={setter}
-          />
+          <Tree tagMap={tagMap} tagChildren={[0]} level={0} setter={setter} />
         </ActionSheetProvider>
       </GestureHandlerRootView>
     </View>

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, Button } from 'react-native';
 import { ModalData } from '@/store/modalStore';
 import { Stack, useRouter } from 'expo-router';
-import { useExerciseTreeStoreWithSetter } from '@/store/exerciseTreeStore';
+import { useTagTreeStoreWithSetter } from '@/store/exerciseTreeStore';
 
 type Props = {
   modalData: ModalData['addExerciseOrMuscle'];
@@ -14,7 +14,7 @@ export default function AddExerciseOrMuscleModal({
   closeModal,
 }: Props) {
   const router = useRouter();
-  const { exerciseMap, setter } = useExerciseTreeStoreWithSetter();
+  const { tagMap: exerciseMap, setter } = useTagTreeStoreWithSetter();
   const [name, setName] = useState('');
 
   const pressedId = modalData.pressedId;
@@ -25,7 +25,7 @@ export default function AddExerciseOrMuscleModal({
   };
 
   const handleUpdate = () => {
-    setter.createChild(pressedId, name);
+    setter.createChildTag(pressedId, name);
     closeModal();
     router.back();
   };

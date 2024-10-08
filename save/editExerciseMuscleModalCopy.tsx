@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, Button } from 'react-native';
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
-import { useExerciseTreeStoreWithSetter } from '@/store/exerciseTreeStore';
+import { useTagTreeStoreWithSetter } from '@/store/exerciseTreeStore';
 
 export default function EditExerciseOrMuscleModal() {
   const { id } = useLocalSearchParams<{ id: string }>();
-  const { exerciseMap, setter } = useExerciseTreeStoreWithSetter();
+  const { tagMap: exerciseMap, setter } = useTagTreeStoreWithSetter();
   const router = useRouter();
   const ogName = exerciseMap[+id].title;
 
@@ -19,7 +19,7 @@ export default function EditExerciseOrMuscleModal() {
     const trimmedName = name.trim();
     if (trimmedName === '' || !trimmedName) return;
 
-    setter.editTitle(+id, trimmedName);
+    setter.editTagTitle(+id, trimmedName);
     router.back(); // Navigate back after update
   };
 

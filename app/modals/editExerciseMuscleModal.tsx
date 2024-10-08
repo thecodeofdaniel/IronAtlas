@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, Button } from 'react-native';
 import { Stack, useRouter } from 'expo-router';
-import { useExerciseTreeStoreWithSetter } from '@/store/exerciseTreeStore';
+import { useTagTreeStoreWithSetter } from '@/store/exerciseTreeStore';
 import { ModalData } from '@/store/modalStore';
 
 type Props = {
@@ -16,7 +16,7 @@ export default function EditExerciseOrMuscleModal({
   const router = useRouter();
 
   const id = modalData.id;
-  const { exerciseMap, setter } = useExerciseTreeStoreWithSetter();
+  const { tagMap: exerciseMap, setter } = useTagTreeStoreWithSetter();
   const ogName = exerciseMap[id].title;
   const type =
     exerciseMap[id].children.length === 0 ? 'Exercise' : 'Muscle Category';
@@ -31,7 +31,7 @@ export default function EditExerciseOrMuscleModal({
     const trimmedName = name.trim();
     if (trimmedName === '' || !trimmedName) return;
 
-    setter.editTitle(id, trimmedName);
+    setter.editTagTitle(id, trimmedName);
     closeModal();
     router.back(); // Navigate back after update
   };
