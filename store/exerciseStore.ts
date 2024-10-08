@@ -9,6 +9,7 @@ export type ExerciseStateFunctions = {
   createExercise: (newExercise: Exercise) => void;
   setExercises: (newExercise: Exercise[]) => void;
   deleteExercise: (id: number) => void;
+  editExercise: (id: number, editedExercise: Partial<Exercise>) => void;
 };
 
 const exercisesInitial: Exercise[] = [
@@ -52,14 +53,35 @@ export const useExerciseStore = create<
         );
       })
     ),
+  editExercise: (id: number, editedExercise: Partial<Exercise>) =>
+    set(
+      produce((state: ExerciseStateVal & ExerciseStateFunctions) => {
+        const index = state.exercises.findIndex(
+          (exercise) => exercise.id === id
+        );
+
+        if (index !== -1) {
+          state.exercises[index] = {
+            ...state.exercises[index], // existing values
+            ...editedExercise, // override with new values
+            id: state.exercises[index].id, // keep same index
+          };
+        }
+      })
+    ),
   // increase: (by) => set((state) => ({ bears: state.bears + by })),
 }));
 
 export function useExerciseStoreWithSetter(): ExerciseStateVal & {
   setter: ExerciseStateFunctions;
 } {
-  const { exercises, createExercise, setExercises, deleteExercise } =
-    useExerciseStore((state) => state);
+  const {
+    exercises,
+    createExercise,
+    setExercises,
+    deleteExercise,
+    editExercise,
+  } = useExerciseStore((state) => state);
 
   return {
     exercises,
@@ -67,6 +89,7 @@ export function useExerciseStoreWithSetter(): ExerciseStateVal & {
       createExercise,
       setExercises,
       deleteExercise,
+      editExercise,
     },
   };
 }

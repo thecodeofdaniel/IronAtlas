@@ -21,6 +21,8 @@ type ExerciseListProps = {
 
 function ExerciseList({ exercises, setter }: ExerciseListProps) {
   const { showActionSheetWithOptions } = useActionSheet();
+  const openModal = useModalStore((state) => state.openModal);
+  const router = useRouter();
 
   const handleOnPress = (pressedId: number) => {
     console.log('By', pressedId);
@@ -40,6 +42,8 @@ function ExerciseList({ exercises, setter }: ExerciseListProps) {
             handleDelete(pressedId);
             break;
           case 1:
+            openModal('editExercise', { id: pressedId });
+            router.push('/modal');
             break;
           case cancelButtonIndex:
             break;

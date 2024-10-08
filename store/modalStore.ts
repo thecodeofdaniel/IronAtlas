@@ -20,6 +20,9 @@ export type ModalData = {
   createExercise: {
     title: string;
   };
+  editExercise: {
+    id: number;
+  };
   editExerciseOrMuscle: {
     id: number;
   };

@@ -11,7 +11,7 @@ export default function TabLayout() {
       }}
     >
       <Tabs.Screen
-        name='exercises'
+        name="exercises"
         options={{
           title: 'Exercises',
           tabBarIcon: ({ color, focused }) => (
