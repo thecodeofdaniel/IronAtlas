@@ -2,43 +2,17 @@ import {
   ExerciseStateFunctions,
   useExerciseStoreWithSetter,
 } from '@/store/exerciseStore';
-import {
-  ActionSheetProvider,
-  useActionSheet,
-} from '@expo/react-native-action-sheet';
+import { useModalStore } from '@/store/modalStore';
+import { useActionSheet } from '@expo/react-native-action-sheet';
 import { Ionicons } from '@expo/vector-icons';
 import clsx from 'clsx';
-import { Stack } from 'expo-router';
-import React, { useState } from 'react';
+import { Stack, useRouter } from 'expo-router';
+import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import DraggableFlatList, {
   RenderItemParams,
 } from 'react-native-draggable-flatlist';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-
-type Exercise = {
-  id: number;
-  title: string;
-};
-
-const exercisesInitial: Exercise[] = [
-  {
-    id: 1,
-    title: 'Bench Press',
-  },
-  {
-    id: 2,
-    title: 'Squats',
-  },
-  {
-    id: 3,
-    title: 'Pullup',
-  },
-  {
-    id: 4,
-    title: 'Deadlift',
-  },
-];
 
 type ExerciseListProps = {
   exercises: Exercise[];
@@ -125,6 +99,8 @@ function ExerciseList({ exercises, setter }: ExerciseListProps) {
 export default function Exercises() {
   const { exercises, setter } = useExerciseStoreWithSetter();
   const { showActionSheetWithOptions } = useActionSheet();
+  const openModal = useModalStore((state) => state.openModal);
+  const router = useRouter();
 
   const handlePress = () => {
     const options = ['Add Exercise', 'Cancel'];
@@ -138,6 +114,8 @@ export default function Exercises() {
       (selectedIndex?: number) => {
         switch (selectedIndex) {
           case 0:
+            openModal('createExercise');
+            router.push('/modal');
             break;
           case cancelButtonIndex:
             break;
@@ -145,15 +123,6 @@ export default function Exercises() {
       }
     );
   };
-
-  // const addExercise = () => {
-  //   const newExercise = {
-  //     id: Date.now(),
-  //     title: 'Incline Chest Press',
-  //   };
-
-  //   setter.createExercise(newExercise);
-  // };
 
   return (
     <>

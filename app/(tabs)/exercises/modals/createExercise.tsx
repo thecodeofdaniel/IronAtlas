@@ -4,39 +4,39 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, Button } from 'react-native';
 import { ModalData } from '@/store/modalStore';
 import { Stack, useRouter } from 'expo-router';
-import { useExerciseTreeStoreWithSetter } from '@/store/exerciseTreeStore';
+import { useExerciseStore } from '@/store/exerciseStore';
 
 type Props = {
   modalData: ModalData['createExercise'];
   closeModal: () => void;
 };
 
-export default function CreateExercise({
-  modalData,
-  closeModal,
-}: Props) {
-  const router = useRouter();
-  // const { exerciseMap, setter } = useExerciseTreeStoreWithSetter();
+export default function CreateExercise({ modalData, closeModal }: Props) {
+  const createExercise = useExerciseStore((state) => state.createExercise);
   const [name, setName] = useState('');
+  const router = useRouter();
 
-  // const pressedId = modalData.pressedId;
+  const addExercise = () => {
+    if (!name || name === '') {
+      return;
+    }
 
-  const handleCancel = () => {
+    const newExercise = {
+      id: Date.now(),
+      title: name,
+    };
+
+    createExercise(newExercise);
+
     closeModal();
     router.back();
   };
-
-  // const handleUpdate = () => {
-  //   setter.createChild(pressedId, name);
-  //   closeModal();
-  //   router.back();
-  // };
 
   return (
     <>
       <Stack.Screen options={{ headerTitle: 'Add' }} />
       <View className="flex-1 p-4">
-        <Text className="text-xl mb-2">Add Exercise or Muscle Category</Text>
+        <Text className="text-xl mb-2">Exercise Name</Text>
         <TextInput
           className="h-10 border px-2 border-gray-400"
           value={name}
@@ -44,12 +44,19 @@ export default function CreateExercise({
           placeholder="Enter exercise name"
         />
         <View className="flex-row justify-between mt-4">
-          <Button title="Cancel" onPress={handleCancel} color="red" />
-          {/* <Button
-            title="Update"
-            onPress={handleUpdate}
+          <Button
+            title="Cancel"
+            onPress={() => {
+              closeModal();
+              router.back();
+            }}
+            color="red"
+          />
+          <Button
+            title="Create"
+            onPress={addExercise}
             disabled={name.trim() === ''}
-          /> */}
+          />
         </View>
       </View>
     </>

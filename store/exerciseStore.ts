@@ -1,11 +1,6 @@
 import { create } from 'zustand';
 import { produce } from 'immer';
 
-type Exercise = {
-  id: number;
-  title: string;
-};
-
 type ExerciseStateVal = {
   exercises: Exercise[];
 };
