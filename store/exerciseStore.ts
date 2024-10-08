@@ -12,6 +12,9 @@ export type ExerciseStateFunctions = {
   editExercise: (id: number, editedExercise: Partial<Exercise>) => void;
 };
 
+// have a list of ids which indiacte the order of exercises
+// have a obj with keys of those ids
+
 const exercisesInitial: Exercise[] = [
   {
     id: 1,
