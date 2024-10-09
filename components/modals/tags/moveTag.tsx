@@ -93,7 +93,7 @@ export default function MoveTag({ modalData, closeModal }: Props) {
   const router = useRouter();
 
   const handleUpdate = () => {
-    if (!selected) return;
+    if (selected === null) return;
     setter.moveTag(selected, idToBeMoved);
     closeModal();
     router.back();
