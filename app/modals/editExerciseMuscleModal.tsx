@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, Button } from 'react-native';
 import { Stack, useRouter } from 'expo-router';
-import { useTagTreeStoreWithSetter } from '@/store/exerciseTreeStore';
+import { useTagTreeStoreWithSetter } from '@/store/tagTreeStore';
 import { ModalData } from '@/store/modalStore';
 
 type Props = {

@@ -9,7 +9,7 @@ import { Ionicons } from '@expo/vector-icons';
 import {
   useTagTreeStoreWithSetter,
   type TagTreeStateFunctions,
-} from '@/store/exerciseTreeStore';
+} from '@/store/tagTreeStore';
 import {
   ActionSheetProvider,
   useActionSheet,
