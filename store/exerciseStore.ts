@@ -19,6 +19,7 @@ const exercisesInitial: Exercise[] = [
   {
     id: 1,
     title: 'Bench Press',
+    // this only stores the tag that has no children, to make it easy when user changes
   },
   {
     id: 2,

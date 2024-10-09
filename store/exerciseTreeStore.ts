@@ -12,11 +12,14 @@ export type TagTreeStateFunctions = {
   editTagTitle: (pressedId: number, newTitle: string) => void;
 };
 
+// take all the parentId's with null and turn them into 0s
+// create a 0 root which represents all tags
+
 const startingTree: TagMap = {
   // Root
   0: {
-    id: 0,
-    title: 'Root',
+    id: 0, // 0 does not exist in db, we put this here
+    title: 'All',
     parentId: null,
     order: 0,
     isOpen: true,
@@ -24,15 +27,15 @@ const startingTree: TagMap = {
   },
   1: {
     id: 1,
-    title: 'Hello',
+    title: 'Upper',
     parentId: 0,
     order: 0,
     isOpen: true,
-    children: [2],
+    children: [2, 6],
   },
   2: {
     id: 2,
-    title: 'World',
+    title: 'Chest',
     parentId: 1,
     order: 0,
     isOpen: false,
@@ -40,7 +43,7 @@ const startingTree: TagMap = {
   },
   3: {
     id: 3,
-    title: 'Goodbye',
+    title: 'Lower',
     parentId: 0,
     order: 1,
     isOpen: false,
@@ -48,7 +51,7 @@ const startingTree: TagMap = {
   },
   4: {
     id: 4,
-    title: 'Again',
+    title: 'Upper Chest',
     parentId: 2,
     order: 0,
     isOpen: false,
@@ -56,8 +59,32 @@ const startingTree: TagMap = {
   },
   5: {
     id: 5,
-    title: 'Too',
+    title: 'Middle Chest',
     parentId: 2,
+    order: 1,
+    isOpen: false,
+    children: [],
+  },
+  6: {
+    id: 6,
+    title: 'Arms',
+    parentId: 1,
+    order: 0,
+    isOpen: false,
+    children: [7, 8],
+  },
+  7: {
+    id: 7,
+    title: 'Triceps',
+    parentId: 6,
+    order: 0,
+    isOpen: false,
+    children: [],
+  },
+  8: {
+    id: 8,
+    title: 'Biceps',
+    parentId: 1,
     order: 1,
     isOpen: false,
     children: [],
