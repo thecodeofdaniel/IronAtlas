@@ -10,6 +10,7 @@ export type TagTreeStateFunctions = {
   createChildTag: (pressedId: number, title: string) => void;
   deleteTag: (pressedId: number) => void;
   editTagTitle: (pressedId: number, newTitle: string) => void;
+  moveTag: (pressedId: number) => void;
 };
 
 // take all the parentId's with null and turn them into 0s
@@ -183,14 +184,24 @@ export const useTagTreeStore = create<TagTreeStore>()((set) => ({
         state.tagMap[pressedId].title = newTitle;
       })
     ),
+  moveTag: () =>
+    set((state) => {
+      return { tagMap: state.tagMap };
+    }),
   // increase: (by) => set((state) => ({ bears: state.bears + by })),
 }));
 
 export function useTagTreeStoreWithSetter(): TagTreeStateVal & {
   setter: TagTreeStateFunctions;
 } {
-  const { tagMap, reorderTags, createChildTag, deleteTag, editTagTitle } =
-    useTagTreeStore((state) => state);
+  const {
+    tagMap,
+    reorderTags,
+    createChildTag,
+    deleteTag,
+    editTagTitle,
+    moveTag,
+  } = useTagTreeStore((state) => state);
 
   return {
     tagMap,
@@ -199,6 +210,7 @@ export function useTagTreeStoreWithSetter(): TagTreeStateVal & {
       createChildTag,
       deleteTag,
       editTagTitle,
+      moveTag,
     },
   };
 }

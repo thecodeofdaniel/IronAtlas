@@ -17,16 +17,20 @@ export type ModalData = {
   //   message: string;
   //   onConfirm: () => void;
   // };
+  // CRUD: Create, Read, Update, Delete
   createExercise: {
     title: string;
   };
   editExercise: {
     id: number;
   };
-  editExerciseOrMuscle: {
+  createTag: {
+    pressedId: number;
+  };
+  updateTag: {
     id: number;
   };
-  addExerciseOrMuscle: {
+  moveTag: {
     pressedId: number;
   };
 };

@@ -5,7 +5,7 @@ import { Stack, useRouter } from 'expo-router';
 import { useTagTreeStoreWithSetter } from '@/store/tagTreeStore';
 
 type Props = {
-  modalData: ModalData['addExerciseOrMuscle'];
+  modalData: ModalData['createTag'];
   closeModal: () => void;
 };
 

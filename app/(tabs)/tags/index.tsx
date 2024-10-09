@@ -69,15 +69,19 @@ const Tree = ({ tagMap, tagChildren, level = 0, setter }: TreeProps) => {
 
   const handleOnPress = (pressedId: number, level: number) => {
     const baseOptions = ['Create', 'Cancel'];
-    const options = [...(level > 0 ? ['Delete', 'Edit'] : []), ...baseOptions];
+    const options = [
+      ...(level > 0 ? ['Delete', 'Edit', 'Move'] : []),
+      ...baseOptions,
+    ];
 
     const cancelButtonIndex = options.length - 1;
     const destructiveButtonIndex = level > 0 ? 0 : undefined;
 
     const actions = {
       Delete: () => setter.deleteTag(pressedId),
-      Create: () => openModal('addExerciseOrMuscle', { pressedId }),
-      Edit: () => openModal('editExerciseOrMuscle', { id: pressedId }),
+      Create: () => openModal('createTag', { pressedId }),
+      Edit: () => openModal('updateTag', { id: pressedId }),
+      Move: () => openModal('moveTag', { pressedId }),
     };
 
     showActionSheetWithOptions(

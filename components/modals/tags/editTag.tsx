@@ -5,7 +5,7 @@ import { useTagTreeStoreWithSetter } from '@/store/tagTreeStore';
 import { ModalData } from '@/store/modalStore';
 
 type Props = {
-  modalData: ModalData['editExerciseOrMuscle'];
+  modalData: ModalData['updateTag'];
   closeModal: () => void;
 };
 
