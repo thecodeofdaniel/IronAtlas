@@ -3,6 +3,7 @@ import { View, Text, TextInput, Button } from 'react-native';
 import { ModalData } from '@/store/modalStore';
 import { Stack, useRouter } from 'expo-router';
 import { useTagTreeStoreWithSetter } from '@/store/tagTreeStore';
+import { formatTag, isValidTag } from '@/utils/utils';
 
 type Props = {
   modalData: ModalData['createTag'];
@@ -11,7 +12,7 @@ type Props = {
 
 export default function CreateTag({ modalData, closeModal }: Props) {
   const router = useRouter();
-  const { tagMap: exerciseMap, setter } = useTagTreeStoreWithSetter();
+  const { tagSet, setter } = useTagTreeStoreWithSetter();
   const [name, setName] = useState('');
 
   const pressedId = modalData.pressedId;
@@ -22,6 +23,16 @@ export default function CreateTag({ modalData, closeModal }: Props) {
   };
 
   const handleUpdate = () => {
+    if (!isValidTag(name)) {
+      console.log('Not a valid tag name:', name);
+      return;
+    }
+
+    if (tagSet.has(formatTag(name))) {
+      console.log('Tag alreay exists', name);
+      return;
+    }
+
     setter.createChildTag(pressedId, name);
     closeModal();
     router.back();
@@ -31,7 +42,7 @@ export default function CreateTag({ modalData, closeModal }: Props) {
     <>
       <Stack.Screen options={{ headerTitle: 'Add' }} />
       <View className="flex-1 p-4">
-        <Text className="text-xl mb-2">Add Exercise or Muscle Category</Text>
+        <Text className="text-xl mb-2">Add Body Section Tag</Text>
         <TextInput
           className="h-10 border px-2 border-gray-400"
           value={name}

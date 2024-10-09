@@ -5,9 +5,13 @@ export function formatTag(input: string) {
     .toLowerCase(); // Convert the entire string to lowercase
 }
 
-export function validateTag(input: string): boolean {
+export function isValidTag(_input: string): boolean {
   // Check for empty input or leading/trailing spaces
-  if (!input.trim() || input !== input.trim()) {
+  if (_input === null || _input === '') return false;
+
+  const input = _input.trim();
+
+  if (input === '') {
     return false;
   }
 
