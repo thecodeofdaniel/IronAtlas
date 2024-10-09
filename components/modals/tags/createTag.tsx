@@ -33,7 +33,7 @@ export default function CreateTag({ modalData, closeModal }: Props) {
       return;
     }
 
-    setter.createChildTag(pressedId, name);
+    setter.createChildTag(pressedId, name.trim());
     closeModal();
     router.back();
   };
@@ -54,7 +54,7 @@ export default function CreateTag({ modalData, closeModal }: Props) {
           <Button
             title="Update"
             onPress={handleUpdate}
-            disabled={name.trim() === ''}
+            disabled={name === ''}
           />
         </View>
       </View>

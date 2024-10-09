@@ -3,6 +3,7 @@ import { View, Text, TextInput, Button } from 'react-native';
 import { Stack, useRouter } from 'expo-router';
 import { useTagTreeStoreWithSetter } from '@/store/tagTreeStore';
 import { ModalData } from '@/store/modalStore';
+import { formatTag, isValidTag } from '@/utils/utils';
 
 type Props = {
   modalData: ModalData['updateTag'];
@@ -13,22 +14,25 @@ export default function EditTag({ modalData, closeModal }: Props) {
   const router = useRouter();
 
   const id = modalData.id;
-  const { tagMap: exerciseMap, setter } = useTagTreeStoreWithSetter();
-  const ogName = exerciseMap[id].title;
-  const type =
-    exerciseMap[id].children.length === 0 ? 'Exercise' : 'Muscle Category';
+  const { tagMap, tagSet, setter } = useTagTreeStoreWithSetter();
+  const ogName = tagMap[id].title;
 
   // Prefill the input with the existing exercise name
   const [name, setName] = useState(ogName);
 
   // Handle the update button press
   const handleUpdate = () => {
-    if (!name) return;
+    if (!isValidTag(name)) {
+      console.log('Not a valid tag name:', name);
+      return;
+    }
 
-    const trimmedName = name.trim();
-    if (trimmedName === '' || !trimmedName) return;
+    if (tagSet.has(formatTag(name))) {
+      console.log('Tag alreay exists', name);
+      return;
+    }
 
-    setter.editTagTitle(id, trimmedName);
+    setter.editTagTitle(id, name.trim());
     closeModal();
     router.back(); // Navigate back after update
   };
@@ -42,7 +46,7 @@ export default function EditTag({ modalData, closeModal }: Props) {
     <>
       <Stack.Screen options={{ headerTitle: 'Edit' }} />
       <View className="flex-1 p-4">
-        <Text className="text-xl mb-2">Edit {type} Name</Text>
+        <Text className="text-xl mb-2">Edit Tag Name</Text>
         <TextInput
           className="h-10 border px-2 border-gray-400"
           value={name}
