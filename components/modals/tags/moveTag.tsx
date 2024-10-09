@@ -17,7 +17,6 @@ type TreeProps = {
   tagMap: TagMap; // Accept itemMap as a prop
   tagChildren: number[]; // Accept item IDs as a prop
   level: number;
-  setter: TagTreeStateFunctions;
   idToBeMoved: number;
   selected: number | null;
   setSelected: React.Dispatch<React.SetStateAction<number | null>>;
@@ -27,7 +26,6 @@ const Tree = ({
   tagMap,
   tagChildren,
   level = 0,
-  setter,
   idToBeMoved,
   selected,
   setSelected,
@@ -72,7 +70,6 @@ const Tree = ({
                   tagMap={tagMap}
                   tagChildren={item.children}
                   level={level + 1}
-                  setter={setter}
                   idToBeMoved={idToBeMoved}
                   selected={selected}
                   setSelected={setSelected}
@@ -117,7 +114,6 @@ export default function MoveTag({ modalData, closeModal }: Props) {
           tagMap={tagMap}
           tagChildren={[0]}
           level={0}
-          setter={setter}
           idToBeMoved={idToBeMoved}
           selected={selected}
           setSelected={setSelected}
