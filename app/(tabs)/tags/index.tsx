@@ -33,13 +33,43 @@ const Tree = ({ tagMap, tagChildren, level = 0, setter }: TreeProps) => {
   const { showActionSheetWithOptions } = useActionSheet();
   const openModal = useModalStore((state) => state.openModal);
 
+  // const handleOnPress = (pressedId: number, level: number) => {
+  //   const options = [
+  //     ...(level > 0 ? ['Delete'] : []),
+  //     'Create',
+  //     'Edit',
+  //     'Cancel',
+  //   ];
+
+  //   const cancelButtonIndex = options.length - 1;
+  //   const destructiveButtonIndex = level > 0 ? 0 : undefined;
+
+  //   const actions = {
+  //     Delete: () => setter.deleteTag(pressedId),
+  //     Create: () => openModal('addExerciseOrMuscle', { pressedId }),
+  //     Edit: () => openModal('editExerciseOrMuscle', { id: pressedId }),
+  //   };
+
+  //   showActionSheetWithOptions(
+  //     {
+  //       options,
+  //       cancelButtonIndex,
+  //       destructiveButtonIndex,
+  //     },
+  //     (selectedIndex?: number) => {
+  //       if (selectedIndex === undefined || selectedIndex === cancelButtonIndex)
+  //         return;
+
+  //       const action = actions[options[selectedIndex] as keyof typeof actions];
+  //       action();
+  //       if (options[selectedIndex] !== 'Delete') router.push('/modal');
+  //     }
+  //   );
+  // };
+
   const handleOnPress = (pressedId: number, level: number) => {
-    const options = [
-      ...(level > 0 ? ['Delete'] : []),
-      'Create',
-      'Edit',
-      'Cancel',
-    ];
+    const baseOptions = ['Create', 'Cancel'];
+    const options = [...(level > 0 ? ['Delete', 'Edit'] : []), ...baseOptions];
 
     const cancelButtonIndex = options.length - 1;
     const destructiveButtonIndex = level > 0 ? 0 : undefined;
