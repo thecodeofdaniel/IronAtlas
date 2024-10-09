@@ -27,13 +27,11 @@ export default function RootLayout() {
   }
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
-      <ActionSheetProvider>
-        <Stack>
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          <Stack.Screen name="modal" />
-        </Stack>
-      </ActionSheetProvider>
-    </SafeAreaView>
+    <ActionSheetProvider>
+      <Stack>
+        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        <Stack.Screen name="modal" />
+      </Stack>
+    </ActionSheetProvider>
   );
 }
