@@ -92,6 +92,11 @@ export default function MoveTag({ modalData, closeModal }: Props) {
   const [selected, setSelected] = useState<number | null>(null);
   const router = useRouter();
 
+  const handleCancel = () => {
+    closeModal();
+    router.back();
+  };
+
   const handleUpdate = () => {
     if (selected === null) return;
     setter.moveTag(selected, idToBeMoved);
@@ -101,7 +106,9 @@ export default function MoveTag({ modalData, closeModal }: Props) {
 
   return (
     <>
-      <Stack.Screen options={{ headerTitle: 'Move Tag' }} />
+      <Stack.Screen
+        options={{ headerTitle: 'Move Tag', headerBackTitle: 'Tags' }}
+      />
       <View className="p-2 flex flex-col gap-2">
         <Text className="text-xl font-medium">
           Select the tag you want to put this under
@@ -115,8 +122,8 @@ export default function MoveTag({ modalData, closeModal }: Props) {
           selected={selected}
           setSelected={setSelected}
         />
-        <View className="flex flex-row justify-between ml-auto">
-          <></>
+        <View className="flex flex-row justify-between">
+          <Button title="Cancel" color={'red'} onPress={handleCancel} />
           <Button
             title="Update"
             disabled={selected === null}
