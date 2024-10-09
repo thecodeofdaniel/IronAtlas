@@ -1,4 +1,4 @@
-import { View, Text, FlatList, TouchableOpacity } from 'react-native';
+import { View, Text, FlatList, TouchableOpacity, Button } from 'react-native';
 import React, { useState } from 'react';
 import { ModalData } from '@/store/modalStore';
 import {
@@ -6,7 +6,7 @@ import {
   useTagTreeStoreWithSetter,
 } from '@/store/tagTreeStore';
 import clsx from 'clsx';
-import { Stack } from 'expo-router';
+import { Stack, useRouter } from 'expo-router';
 
 type Props = {
   modalData: ModalData['moveTag'];
@@ -33,15 +33,16 @@ const Tree = ({
   setSelected,
 }: TreeProps) => {
   const RenderItem = ({ item }: { item: Tag }) => {
+    const isDisabled =
+      idToBeMoved === item.id || item.id === tagMap[idToBeMoved].parentId;
     return (
       <TouchableOpacity
         activeOpacity={1}
-        disabled={item.id === idToBeMoved}
+        disabled={isDisabled}
         className={clsx('p-2 my-[1]', {
           'bg-blue-800': selected !== item.id,
           'bg-red-600': selected === item.id,
-          'bg-gray-400':
-            idToBeMoved === item.id || item.id === tagMap[idToBeMoved].parentId,
+          'bg-gray-400': isDisabled,
         })}
         onPress={() => setSelected(item.id)}
       >
@@ -89,6 +90,14 @@ export default function MoveTag({ modalData, closeModal }: Props) {
   const idToBeMoved = modalData.pressedId;
   const { tagMap, setter } = useTagTreeStoreWithSetter();
   const [selected, setSelected] = useState<number | null>(null);
+  const router = useRouter();
+
+  const handleUpdate = () => {
+    if (!selected) return;
+    setter.moveTag(selected, idToBeMoved);
+    closeModal();
+    router.back();
+  };
 
   return (
     <>
@@ -106,6 +115,14 @@ export default function MoveTag({ modalData, closeModal }: Props) {
           selected={selected}
           setSelected={setSelected}
         />
+        <View className="flex flex-row justify-between ml-auto">
+          <></>
+          <Button
+            title="Update"
+            disabled={selected === null}
+            onPress={handleUpdate}
+          />
+        </View>
       </View>
     </>
   );

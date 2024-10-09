@@ -10,7 +10,7 @@ export type TagTreeStateFunctions = {
   createChildTag: (pressedId: number, title: string) => void;
   deleteTag: (pressedId: number) => void;
   editTagTitle: (pressedId: number, newTitle: string) => void;
-  moveTag: (pressedId: number) => void;
+  moveTag: (pressedId: number, idToMove: number) => void;
 };
 
 // take all the parentId's with null and turn them into 0s
@@ -184,10 +184,24 @@ export const useTagTreeStore = create<TagTreeStore>()((set) => ({
         state.tagMap[pressedId].title = newTitle;
       })
     ),
-  moveTag: () =>
-    set((state) => {
-      return { tagMap: state.tagMap };
-    }),
+  moveTag: (pressedId, idToMove) =>
+    set(
+      produce<TagTreeStore>((state) => {
+        // Get the old parentId (0 if root)
+        const oldParentId = state.tagMap[idToMove].parentId ?? 0;
+
+        // Remove idToMove from the old parent's children array
+        state.tagMap[oldParentId].children = state.tagMap[
+          oldParentId
+        ].children.filter((id) => id !== idToMove);
+
+        // Update the parentId of the tag being moved
+        state.tagMap[idToMove].parentId = pressedId;
+
+        // Add idToMove to the new parent's children array
+        state.tagMap[pressedId].children.push(idToMove);
+      })
+    ),
   // increase: (by) => set((state) => ({ bears: state.bears + by })),
 }));
 
