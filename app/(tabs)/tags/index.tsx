@@ -153,7 +153,7 @@ const Tree = ({ tagMap, tagChildren, level = 0, setter }: TreeProps) => {
 };
 
 export default function TagTab() {
-  const { tagMap, setter } = useTagTreeStoreWithSetter();
+  const { tagMap, tagSet, setter } = useTagTreeStoreWithSetter();
 
   return (
     <>

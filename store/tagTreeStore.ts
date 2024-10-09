@@ -1,8 +1,10 @@
 import { create } from 'zustand';
-import { produce } from 'immer';
+import { produce, enableMapSet } from 'immer';
+import { formatTag } from '@/utils/utils';
 
 type TagTreeStateVal = {
   tagMap: TagMap;
+  tagSet: Set<string>;
 };
 
 export type TagTreeStateFunctions = {
@@ -92,10 +94,16 @@ const startingTree: TagMap = {
   },
 };
 
+// Use set to make tags unique
+enableMapSet();
+const tags = Object.values(startingTree).map((tag) => formatTag(tag.title));
+const startingTagSet = new Set(tags);
+
 type TagTreeStore = TagTreeStateVal & TagTreeStateFunctions;
 
 export const useTagTreeStore = create<TagTreeStore>()((set) => ({
   tagMap: startingTree,
+  tagSet: startingTagSet,
   reorderTags: (dataList: Tag[]) =>
     set((state) => {
       const newItemMap = { ...state.tagMap };
@@ -144,44 +152,46 @@ export const useTagTreeStore = create<TagTreeStore>()((set) => ({
 
       newItems[newItem.id] = newItem; // Add the new item to the map
 
-      return { tagMap: newItems };
+      return {
+        tagMap: newItems,
+        tagSet: new Set([...state.tagSet, formatTag(newItem.title)]),
+      };
     }),
   deleteTag: (pressedId: number) =>
-    set((state) => {
-      const newItems = { ...state.tagMap };
+    set(
+      produce<TagTreeStore>((state) => {
+        // Helper function to recursively delete an item and all its children
+        const deleteItemAndChildren = (id: number) => {
+          const item = state.tagMap[id];
+          if (!item) return;
 
-      // Helper function to recursively delete an item and all its children
-      const deleteItemAndChildren = (id: number) => {
-        const item = newItems[id];
-        if (!item) return;
+          // Recursively delete all children first
+          item.children.forEach((childId) => {
+            deleteItemAndChildren(childId);
+          });
 
-        // Recursively delete all children first
-        item.children.forEach((childId) => {
-          deleteItemAndChildren(childId);
-        });
+          // If this item has a parent, remove it from parent's children array
+          if (item.parentId !== null && state.tagMap[item.parentId]) {
+            state.tagMap[item.parentId].children = state.tagMap[
+              item.parentId
+            ].children.filter((childId) => childId !== id);
+          }
 
-        // If this item has a parent, remove it from parent's children array
-        if (item.parentId !== null && newItems[item.parentId]) {
-          newItems[item.parentId] = {
-            ...newItems[item.parentId],
-            children: newItems[item.parentId].children.filter(
-              (childId) => childId !== id
-            ),
-          };
-        }
+          // Delete the item itself
+          state.tagSet.delete(formatTag(item.title));
+          delete state.tagMap[id];
+        };
 
-        // Delete the item itself
-        delete newItems[id];
-      };
-
-      deleteItemAndChildren(pressedId);
-
-      return { tagMap: newItems };
-    }),
+        deleteItemAndChildren(pressedId);
+      })
+    ),
   editTagTitle: (pressedId: number, newTitle: string) =>
     set(
       produce<TagTreeStore>((state) => {
+        const prevTitle = formatTag(state.tagMap[pressedId].title);
+        state.tagSet.delete(prevTitle);
         state.tagMap[pressedId].title = newTitle;
+        state.tagSet.add(formatTag(newTitle));
       })
     ),
   moveTag: (pressedId, idToMove) =>
@@ -210,6 +220,7 @@ export function useTagTreeStoreWithSetter(): TagTreeStateVal & {
 } {
   const {
     tagMap,
+    tagSet,
     reorderTags,
     createChildTag,
     deleteTag,
@@ -219,6 +230,7 @@ export function useTagTreeStoreWithSetter(): TagTreeStateVal & {
 
   return {
     tagMap,
+    tagSet,
     setter: {
       reorderTags,
       createChildTag,
