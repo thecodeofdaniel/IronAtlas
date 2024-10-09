@@ -14,7 +14,7 @@ import {
   ActionSheetProvider,
   useActionSheet,
 } from '@expo/react-native-action-sheet';
-import { useRouter } from 'expo-router';
+import { Stack, useRouter } from 'expo-router';
 import { useModalStore } from '@/store/modalStore';
 
 type TreeProps = {
@@ -33,11 +33,22 @@ const Tree = ({ tagMap, tagChildren, level = 0, setter }: TreeProps) => {
   const { showActionSheetWithOptions } = useActionSheet();
   const openModal = useModalStore((state) => state.openModal);
 
-  const handleOnPress = (pressedId: number) => {
-    console.log('By', pressedId);
-    const options = ['Delete', 'Create', 'Edit', 'Cancel'];
-    const destructiveButtonIndex = 0;
+  const handleOnPress = (pressedId: number, level: number) => {
+    const options = [
+      ...(level > 0 ? ['Delete'] : []),
+      'Create',
+      'Edit',
+      'Cancel',
+    ];
+
     const cancelButtonIndex = options.length - 1;
+    const destructiveButtonIndex = level > 0 ? 0 : undefined;
+
+    const actions = {
+      Delete: () => setter.deleteTag(pressedId),
+      Create: () => openModal('addExerciseOrMuscle', { pressedId }),
+      Edit: () => openModal('editExerciseOrMuscle', { id: pressedId }),
+    };
 
     showActionSheetWithOptions(
       {
@@ -46,22 +57,12 @@ const Tree = ({ tagMap, tagChildren, level = 0, setter }: TreeProps) => {
         destructiveButtonIndex,
       },
       (selectedIndex?: number) => {
-        switch (selectedIndex) {
-          case destructiveButtonIndex:
-            setter.deleteTag(pressedId);
-            break;
-          case 1:
-            openModal('addExerciseOrMuscle', { pressedId: pressedId });
-            router.push('/modal');
-            // setter.createChild(pressedId);
-            break;
-          case 2:
-            openModal('editExerciseOrMuscle', { id: pressedId });
-            router.push('/modal');
-            break;
-          case cancelButtonIndex:
-            break;
-        }
+        if (selectedIndex === undefined || selectedIndex === cancelButtonIndex)
+          return;
+
+        const action = actions[options[selectedIndex] as keyof typeof actions];
+        action();
+        if (options[selectedIndex] !== 'Delete') router.push('/modal');
       }
     );
   };
@@ -107,16 +108,9 @@ const Tree = ({ tagMap, tagChildren, level = 0, setter }: TreeProps) => {
         {/* Tags and options */}
         <View className="flex flex-row items-center justify-between flex-1">
           <Text className="text-white">{item.title}</Text>
-          <View className="flex flex-row gap-4">
-            {item.children.length === 0 ? (
-              <Ionicons name="barbell" color={'white'} />
-            ) : (
-              <Ionicons name="body-outline" color={'white'} />
-            )}
-            <TouchableOpacity onPress={() => handleOnPress(item.id)}>
-              <Ionicons name="ellipsis-horizontal-outline" color="white" />
-            </TouchableOpacity>
-          </View>
+          <TouchableOpacity onPress={() => handleOnPress(item.id, level)}>
+            <Ionicons name="ellipsis-horizontal-outline" color="white" />
+          </TouchableOpacity>
         </View>
       </TouchableOpacity>
     );
@@ -162,13 +156,17 @@ export default function TagTab() {
   const { tagMap, setter } = useTagTreeStoreWithSetter();
 
   return (
-    <View className="flex flex-1 p-4">
-      <Text className="text-3xl font-bold mb-4">Item Tree</Text>
-      <GestureHandlerRootView>
-        <ActionSheetProvider>
-          <Tree tagMap={tagMap} tagChildren={[0]} level={0} setter={setter} />
-        </ActionSheetProvider>
-      </GestureHandlerRootView>
-    </View>
+    <>
+      <Stack.Screen
+        options={{ title: 'Body Section Tags', headerShown: true }}
+      />
+      <View className="flex flex-1 pt-2 px-2">
+        <GestureHandlerRootView>
+          <ActionSheetProvider>
+            <Tree tagMap={tagMap} tagChildren={[0]} level={0} setter={setter} />
+          </ActionSheetProvider>
+        </GestureHandlerRootView>
+      </View>
+    </>
   );
 }

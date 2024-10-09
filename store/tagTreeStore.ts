@@ -84,7 +84,7 @@ const startingTree: TagMap = {
   8: {
     id: 8,
     title: 'Biceps',
-    parentId: 1,
+    parentId: 6,
     order: 1,
     isOpen: false,
     children: [],
