@@ -9,10 +9,7 @@ type Props = {
   closeModal: () => void;
 };
 
-export default function EditExerciseOrMuscleModal({
-  modalData,
-  closeModal,
-}: Props) {
+export default function EditTag({ modalData, closeModal }: Props) {
   const router = useRouter();
 
   const id = modalData.id;

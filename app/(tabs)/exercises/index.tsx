@@ -100,7 +100,7 @@ function ExerciseList({ exercises, setter }: ExerciseListProps) {
   );
 }
 
-export default function Exercises() {
+export default function ExercisesTab() {
   const { exercises, setter } = useExerciseStoreWithSetter();
   const { showActionSheetWithOptions } = useActionSheet();
   const openModal = useModalStore((state) => state.openModal);

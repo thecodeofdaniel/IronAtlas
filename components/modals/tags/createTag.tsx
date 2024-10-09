@@ -9,10 +9,7 @@ type Props = {
   closeModal: () => void;
 };
 
-export default function AddExerciseOrMuscleModal({
-  modalData,
-  closeModal,
-}: Props) {
+export default function CreateTag({ modalData, closeModal }: Props) {
   const router = useRouter();
   const { tagMap: exerciseMap, setter } = useTagTreeStoreWithSetter();
   const [name, setName] = useState('');

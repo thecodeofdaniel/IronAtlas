@@ -14,28 +14,29 @@ export default function TabLayout() {
         name="exercises"
         options={{
           title: 'Exercises',
-          tabBarIcon: ({ color, focused }) => (
+          tabBarIcon: ({ color, size, focused }) => (
             <Ionicons
               name={focused ? 'barbell' : 'barbell-outline'}
               color={color}
-              size={20}
+              size={size}
             />
           ),
         }}
       />
       <Tabs.Screen
-        name="index"
+        name="tags"
         options={{
-          title: 'Explore',
-          tabBarIcon: ({ color, focused }) => (
+          title: 'Tags',
+          tabBarIcon: ({ color, size, focused }) => (
             <Ionicons
-              name={focused ? 'code-slash' : 'code-slash-outline'}
+              name={focused ? 'pricetag' : 'pricetag-outline'}
               color={color}
-              size={20}
+              size={size}
             />
           ),
         }}
       />
+      <Tabs.Screen name="index" options={{ href: null }} />
     </Tabs>
   );
 }

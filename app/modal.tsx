@@ -1,10 +1,10 @@
 // Modal Manager
 
 import { ModalData, useModalStore } from '@/store/modalStore';
-import EditExerciseOrMuscleModal from './modals/editExerciseMuscleModal';
-import AddExerciseOrMuscleModal from './modals/addExerciseOrMuscleModal';
-import CreateExercise from './(tabs)/exercises/modals/createExercise';
-import EditExercise from './(tabs)/exercises/modals/editExercise';
+import EditExerciseOrMuscleModal from '../components/modals/tags/editTag';
+import AddExerciseOrMuscleModal from '../components/modals/tags/createTag';
+import CreateExercise from '../components/modals/exercises/createExercise';
+import EditExercise from '../components/modals/exercises/editExercise';
 
 export default function Modal() {
   const { activeModal, modalData, closeModal } = useModalStore();
