@@ -11,7 +11,7 @@ export type TagTreeStateFunctions = {
   reorderTags: (dataList: Tag[]) => void;
   createChildTag: (pressedId: number, title: string) => void;
   deleteTag: (pressedId: number) => void;
-  editTagTitle: (pressedId: number, newTitle: string) => void;
+  editTagTitle: (pressedId: number, newLabel: string, newValue: string) => void;
   moveTag: (pressedId: number, idToMove: number) => void;
 };
 
@@ -22,7 +22,8 @@ const startingTree: TagMap = {
   // Root
   0: {
     id: 0, // 0 does not exist in db, we put this here
-    title: 'All',
+    label: 'All',
+    value: 'all',
     parentId: null,
     order: 0,
     isOpen: true,
@@ -30,7 +31,8 @@ const startingTree: TagMap = {
   },
   1: {
     id: 1,
-    title: 'Upper',
+    label: 'Upper',
+    value: 'upper',
     parentId: 0,
     order: 0,
     isOpen: true,
@@ -38,7 +40,8 @@ const startingTree: TagMap = {
   },
   2: {
     id: 2,
-    title: 'Chest',
+    label: 'Chest',
+    value: 'chest',
     parentId: 1,
     order: 0,
     isOpen: false,
@@ -46,7 +49,8 @@ const startingTree: TagMap = {
   },
   3: {
     id: 3,
-    title: 'Lower',
+    label: 'Lower',
+    value: 'lower',
     parentId: 0,
     order: 1,
     isOpen: false,
@@ -54,7 +58,8 @@ const startingTree: TagMap = {
   },
   4: {
     id: 4,
-    title: 'Upper Chest',
+    label: 'Upper Chest',
+    value: 'upper_chest',
     parentId: 2,
     order: 0,
     isOpen: false,
@@ -62,7 +67,8 @@ const startingTree: TagMap = {
   },
   5: {
     id: 5,
-    title: 'Middle Chest',
+    label: 'Middle Chest',
+    value: 'middle_chest',
     parentId: 2,
     order: 1,
     isOpen: false,
@@ -70,7 +76,8 @@ const startingTree: TagMap = {
   },
   6: {
     id: 6,
-    title: 'Arms',
+    label: 'Arms',
+    value: 'arms',
     parentId: 1,
     order: 0,
     isOpen: false,
@@ -78,7 +85,8 @@ const startingTree: TagMap = {
   },
   7: {
     id: 7,
-    title: 'Triceps',
+    label: 'Triceps',
+    value: 'triceps',
     parentId: 6,
     order: 0,
     isOpen: false,
@@ -86,7 +94,8 @@ const startingTree: TagMap = {
   },
   8: {
     id: 8,
-    title: 'Biceps',
+    label: 'Biceps',
+    value: 'biceps',
     parentId: 6,
     order: 1,
     isOpen: false,
@@ -96,7 +105,7 @@ const startingTree: TagMap = {
 
 // Use set to make tags unique
 enableMapSet();
-const tags = Object.values(startingTree).map((tag) => formatTag(tag.title));
+const tags = Object.values(startingTree).map((tag) => tag.value);
 const startingTagSet = new Set(tags);
 
 type TagTreeStore = TagTreeStateVal & TagTreeStateFunctions;
@@ -137,7 +146,8 @@ export const useTagTreeStore = create<TagTreeStore>()((set) => ({
 
       const newItem: Tag = {
         id: Date.now(), // Use a unique ID generator in a real scenario
-        title: title,
+        label: title,
+        value: formatTag(title),
         parentId: pressedItem.id,
         order: nextIndex,
         isOpen: false,
@@ -154,7 +164,7 @@ export const useTagTreeStore = create<TagTreeStore>()((set) => ({
 
       return {
         tagMap: newItems,
-        tagSet: new Set([...state.tagSet, formatTag(newItem.title)]),
+        tagSet: new Set([...state.tagSet, newItem.value]),
       };
     }),
   deleteTag: (pressedId: number) =>
@@ -178,20 +188,20 @@ export const useTagTreeStore = create<TagTreeStore>()((set) => ({
           }
 
           // Delete the item itself
-          state.tagSet.delete(formatTag(item.title));
+          state.tagSet.delete(item.value);
           delete state.tagMap[id];
         };
 
         deleteItemAndChildren(pressedId);
       })
     ),
-  editTagTitle: (pressedId: number, newTitle: string) =>
+  editTagTitle: (pressedId: number, newTitle: string, newValue: string) =>
     set(
       produce<TagTreeStore>((state) => {
-        const prevTitle = formatTag(state.tagMap[pressedId].title);
-        state.tagSet.delete(prevTitle);
-        state.tagMap[pressedId].title = newTitle;
-        state.tagSet.add(formatTag(newTitle));
+        const prevTagVal = state.tagMap[pressedId].value;
+        state.tagSet.delete(prevTagVal);
+        state.tagMap[pressedId].label = newTitle;
+        state.tagSet.add(newValue);
       })
     ),
   moveTag: (pressedId, idToMove) =>

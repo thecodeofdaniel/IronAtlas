@@ -5,7 +5,8 @@ type Exercise = {
 
 type Tag = {
   id: number;
-  title: string;
+  label: string;
+  value: string;
   parentId: number | null;
   order: number;
   isOpen: boolean;

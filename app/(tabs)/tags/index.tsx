@@ -107,7 +107,7 @@ const Tree = ({ tagMap, tagChildren, level = 0, setter }: TreeProps) => {
         )}
         {/* Tags and options */}
         <View className="flex flex-row items-center justify-between flex-1">
-          <Text className="text-white">{item.title}</Text>
+          <Text className="text-white">{item.label}</Text>
           <TouchableOpacity onPress={() => handleOnPress(item.id, level)}>
             <Ionicons name="ellipsis-horizontal-outline" color="white" />
           </TouchableOpacity>

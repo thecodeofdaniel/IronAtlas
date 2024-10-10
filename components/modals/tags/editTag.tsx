@@ -15,7 +15,7 @@ export default function EditTag({ modalData, closeModal }: Props) {
 
   const id = modalData.id;
   const { tagMap, tagSet, setter } = useTagTreeStoreWithSetter();
-  const ogName = tagMap[id].title;
+  const ogName = tagMap[id].label;
 
   // Prefill the input with the existing exercise name
   const [name, setName] = useState(ogName);
@@ -27,12 +27,14 @@ export default function EditTag({ modalData, closeModal }: Props) {
       return;
     }
 
-    if (tagSet.has(formatTag(name))) {
+    const tagValue = formatTag(name);
+
+    if (tagSet.has(tagValue)) {
       console.log('Tag alreay exists', name);
       return;
     }
 
-    setter.editTagTitle(id, name.trim());
+    setter.editTagTitle(id, name.trim(), tagValue);
     closeModal();
     router.back(); // Navigate back after update
   };

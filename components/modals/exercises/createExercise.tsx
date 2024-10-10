@@ -37,8 +37,8 @@ export default function CreateExercise({ modalData, closeModal }: Props) {
 
     Object.values(tagMap).forEach((tag) => {
       arr.push({
-        label: tag.title,
-        value: formatTag(tag.title),
+        label: tag.label,
+        value: tag.value,
         selectable: true,
         disabled: false,
       });

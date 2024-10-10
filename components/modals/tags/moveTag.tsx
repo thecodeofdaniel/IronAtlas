@@ -47,7 +47,7 @@ const Tree = ({
         {/* Tags and options */}
         <View className="flex flex-row items-center justify-between flex-1">
           <Text className="text-white">
-            {item.title} {idToBeMoved === item.id && ' <'}
+            {item.label} {idToBeMoved === item.id && ' <'}
           </Text>
         </View>
       </TouchableOpacity>
