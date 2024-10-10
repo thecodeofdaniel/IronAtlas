@@ -28,13 +28,14 @@ export default function EditTag({ modalData, closeModal }: Props) {
     }
 
     const tagValue = formatTag(name);
+    const tagLabel = name.trim();
 
-    if (tagSet.has(tagValue)) {
+    if (tagSet.has(tagValue) && tagMap[id].label === tagLabel) {
       console.log('Tag alreay exists', name);
       return;
     }
 
-    setter.editTagTitle(id, name.trim(), tagValue);
+    setter.editTagTitle(id, tagLabel, tagValue);
     closeModal();
     router.back(); // Navigate back after update
   };
