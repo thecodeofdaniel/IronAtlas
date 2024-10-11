@@ -65,19 +65,19 @@ function Tree({
           setSelected((prev) => {
             // Determine if chosen id is already included in array
             const isAlreadySelected = prev.chosen.includes(item.id);
-            let chosenList: number[] = isAlreadySelected
+            let newChosenList: number[] = isAlreadySelected
               ? prev.chosen.filter((id) => id !== item.id) // remove from array
               : [...prev.chosen, item.id]; // add to array
 
             // Add preSelected ids to set according to chosen ids
             const preSelectedSet = new Set<number>();
-            for (const chosen of chosenList) {
+            for (const chosen of newChosenList) {
               const parentIds = getAllParentIds(tagMap, chosen);
               parentIds.forEach((id) => preSelectedSet.add(id));
             }
 
             return {
-              chosen: chosenList,
+              chosen: newChosenList,
               preSelected: preSelectedSet,
             };
           })
@@ -163,7 +163,21 @@ export default function CreateExerciseModal({ modalData, closeModal }: Props) {
 
   return (
     <>
-      <Stack.Screen options={{ headerTitle: 'Add' }} />
+      <Stack.Screen
+        options={{
+          headerTitle: 'Add',
+          headerBackTitle: 'Exercises',
+          headerRight: () => (
+            <TouchableOpacity
+              onPress={addExercise}
+              disabled={name.trim() === ''}
+              className="px-4 py-2 rounded-md bg-blue-500"
+            >
+              <Text className="text-white">Create</Text>
+            </TouchableOpacity>
+          ),
+        }}
+      />
 
       <View className="flex-1 p-2 gap-4">
         <View>
@@ -185,8 +199,7 @@ export default function CreateExerciseModal({ modalData, closeModal }: Props) {
             setSelected={setSelected}
           />
         </View>
-
-        <View className="flex-row justify-between">
+        {/* <View className="flex-row justify-between">
           <TouchableOpacity
             onPress={() => {
               closeModal();
@@ -204,7 +217,7 @@ export default function CreateExerciseModal({ modalData, closeModal }: Props) {
           >
             <Text>Create</Text>
           </TouchableOpacity>
-        </View>
+        </View> */}
       </View>
     </>
   );
