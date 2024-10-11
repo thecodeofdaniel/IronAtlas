@@ -3,7 +3,7 @@
 import { ModalData, useModalStore } from '@/store/modalStore';
 import EditExerciseOrMuscleModal from '../components/modals/tags/editTag';
 import AddExerciseOrMuscleModal from '../components/modals/tags/createTag';
-import CreateExercise from '../components/modals/exercises/createExercise';
+import CreateExerciseModal from '../components/modals/exercises/createExercise';
 import EditExercise from '../components/modals/exercises/editExercise';
 import MoveTag from '@/components/modals/tags/moveTag';
 
@@ -13,7 +13,7 @@ export default function Modal() {
   return (
     <>
       {activeModal === 'createExercise' && (
-        <CreateExercise
+        <CreateExerciseModal
           modalData={modalData as ModalData['createExercise']}
           closeModal={closeModal}
         />

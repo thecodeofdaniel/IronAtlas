@@ -3,6 +3,7 @@ type Exercise = {
   label: string;
   value: string;
   order: number;
+  // specific tag ids
 };
 
 type ExerciseMap = {
@@ -17,6 +18,7 @@ type Tag = {
   order: number;
   isOpen: boolean;
   children: number[]; // Store only child IDs // If child empty then it's an exercise
+  // exercises ids associated with tag
 };
 
 type TagMap = {

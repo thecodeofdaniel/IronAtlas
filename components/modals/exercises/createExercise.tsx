@@ -1,53 +1,145 @@
-// Add exercise
-
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button } from 'react-native';
+import {
+  View,
+  Text,
+  TextInput,
+  FlatList,
+  TouchableOpacity,
+} from 'react-native';
 import { ModalData } from '@/store/modalStore';
 import { Stack, useRouter } from 'expo-router';
 import { useExerciseStore } from '@/store/exerciseStore';
-import DropDownPicker from 'react-native-dropdown-picker';
 import { useTagTreeStoreWithSetter } from '@/store/tagTreeStore';
 import { formatTagOrExercise, isValidTagOrExercise } from '@/utils/utils';
+import clsx from 'clsx';
+
+const getAllParentIds = (tree: TagMap, id: number): number[] => {
+  const parentIds: number[] = [];
+
+  let currentId = id;
+  let parentId = tree[currentId]?.parentId;
+
+  while (parentId !== null) {
+    parentIds.push(parentId);
+    currentId = parentId;
+    parentId = tree[currentId]?.parentId;
+  }
+
+  return parentIds;
+};
+
+type TreeProps = {
+  tagMap: TagMap; // Accept itemMap as a prop
+  tagChildren: number[]; // Accept item IDs as a prop
+  level: number;
+  selected: {
+    chosen: number[];
+    preSelected: Set<number>;
+  };
+  setSelected: React.Dispatch<
+    React.SetStateAction<{
+      chosen: number[];
+      preSelected: Set<number>;
+    }>
+  >;
+};
+
+function Tree({
+  tagMap,
+  tagChildren,
+  level = 0,
+  selected,
+  setSelected,
+}: TreeProps) {
+  const RenderItem = ({ item }: { item: Tag }) => {
+    return (
+      <TouchableOpacity
+        className={clsx('p-2 my-[1] bg-blue-800', {
+          'opacity-20': selected.preSelected.has(item.id),
+          'bg-red-500':
+            selected.chosen.includes(item.id) ||
+            selected.preSelected.has(item.id),
+        })}
+        disabled={selected.preSelected.has(item.id)}
+        onPress={() =>
+          setSelected((prev) => {
+            // Determine if chosen id is already included in array
+            const isAlreadySelected = prev.chosen.includes(item.id);
+            let chosenList: number[] = isAlreadySelected
+              ? prev.chosen.filter((id) => id !== item.id) // remove from array
+              : [...prev.chosen, item.id]; // add to array
+
+            // Add preSelected ids to set according to chosen ids
+            const preSelectedSet = new Set<number>();
+            for (const chosen of chosenList) {
+              const parentIds = getAllParentIds(tagMap, chosen);
+              parentIds.forEach((id) => preSelectedSet.add(id));
+            }
+
+            return {
+              chosen: chosenList,
+              preSelected: preSelectedSet,
+            };
+          })
+        }
+      >
+        {/* Tags and options */}
+        <View className="flex flex-row items-center justify-between flex-1">
+          <Text className="text-white">{item.label}</Text>
+        </View>
+      </TouchableOpacity>
+    );
+  };
+
+  const tags = tagChildren.map((id) => tagMap[id]);
+
+  return (
+    <View>
+      <FlatList
+        data={tags}
+        keyExtractor={(item) => item.id.toString()}
+        renderItem={({ item }) => {
+          return (
+            <View key={item.id} style={{ paddingLeft: 5 * level }}>
+              <RenderItem item={item} />
+              {item.children.length > 0 &&
+                // prevents chosen id from showing children
+                !selected.chosen.includes(item.id) && (
+                  <Tree
+                    tagMap={tagMap}
+                    tagChildren={item.children}
+                    level={level + 1}
+                    selected={selected}
+                    setSelected={setSelected}
+                  />
+                )}
+            </View>
+          );
+        }}
+      />
+    </View>
+  );
+}
 
 type Props = {
   modalData: ModalData['createExercise'];
   closeModal: () => void;
 };
 
-type TagItem = {
-  label: string;
-  value: string;
-  selectable: boolean;
-  disabled: boolean;
-};
-
-export default function CreateExercise({ modalData, closeModal }: Props) {
+export default function CreateExerciseModal({ modalData, closeModal }: Props) {
+  const router = useRouter();
   const createExercise = useExerciseStore((state) => state.createExercise);
   const { tagMap, setter } = useTagTreeStoreWithSetter();
   const [name, setName] = useState('');
-  const [open, setOpen] = useState(false);
-  const [value, setValue] = useState([]);
-  // const [items, setItems] = useState([
-  //   { label: 'Apple', value: 'apple' },
-  //   { label: 'Banana', value: 'banana' },
-  //   { label: 'Pear', value: 'pear' },
-  // ]);
-  const [items, setItems] = useState(() => {
-    const arr: TagItem[] = [];
-
-    Object.values(tagMap).forEach((tag) => {
-      arr.push({
-        label: tag.label,
-        value: tag.value,
-        selectable: true,
-        disabled: false,
-      });
-    });
-
-    return arr;
+  const [selected, setSelected] = useState<{
+    chosen: number[];
+    preSelected: Set<number>;
+  }>({
+    chosen: [],
+    preSelected: new Set([]),
   });
 
-  const router = useRouter();
+  console.log(selected);
 
   const addExercise = () => {
     if (!name) return;
@@ -69,51 +161,49 @@ export default function CreateExercise({ modalData, closeModal }: Props) {
     router.back();
   };
 
-  const handleSelect = (items: TagItem) => {};
-
   return (
     <>
       <Stack.Screen options={{ headerTitle: 'Add' }} />
-      <View className="flex-1 p-4">
-        <Text className="text-xl mb-2">Exercise Name</Text>
-        <TextInput
-          className="h-10 border px-2 border-gray-400"
-          value={name}
-          onChangeText={setName}
-          placeholder="Enter exercise name"
-        />
-        <View className="flex-row justify-between mt-4">
-          <Button
-            title="Cancel"
+
+      <View className="flex-1 p-2 gap-4">
+        <View>
+          <Text className="text-xl">Exercise Name</Text>
+          <TextInput
+            className="h-10 border px-2 border-gray-400"
+            value={name}
+            onChangeText={setName}
+            placeholder="Enter exercise name"
+          />
+        </View>
+        <View>
+          <Text className="text-xl">Select body section tags</Text>
+          <Tree
+            tagMap={tagMap}
+            tagChildren={[0]}
+            level={0}
+            selected={selected}
+            setSelected={setSelected}
+          />
+        </View>
+
+        <View className="flex-row justify-between">
+          <TouchableOpacity
             onPress={() => {
               closeModal();
               router.back();
             }}
-            color="red"
-          />
-          <Button
-            title="Create"
+            className="border px-4 py-2 rounded-md"
+          >
+            <Text>Cancel</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
             onPress={addExercise}
             disabled={name.trim() === ''}
-          />
-        </View>
-        <View className="flex-1">
-          <View className="flex-1 items-center justify-center px-4">
-            <DropDownPicker
-              multiple={true}
-              open={open}
-              value={value}
-              items={items}
-              setOpen={setOpen}
-              setValue={setValue}
-              // setItems={setItems}
-              placeholder={'Choose a fruit.'}
-              disabledItemLabelStyle={{ opacity: 0.2 }}
-            />
-          </View>
-          <View className="flex-1 items-center justify-center">
-            <Text>Chosen fruit: {value === null ? 'none' : value}</Text>
-          </View>
+            className="border px-4 py-2 rounded-md"
+          >
+            <Text>Create</Text>
+          </TouchableOpacity>
         </View>
       </View>
     </>
