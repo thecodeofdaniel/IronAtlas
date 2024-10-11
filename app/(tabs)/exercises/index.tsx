@@ -15,11 +15,16 @@ import DraggableFlatList, {
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 type ExerciseListProps = {
-  exercises: Exercise[];
+  exerciseMap: ExerciseMap;
+  exerciseList: number[];
   setter: ExerciseStateFunctions;
 };
 
-function ExerciseList({ exercises, setter }: ExerciseListProps) {
+function ExerciseList({
+  exerciseMap,
+  exerciseList,
+  setter,
+}: ExerciseListProps) {
   const { showActionSheetWithOptions } = useActionSheet();
   const openModal = useModalStore((state) => state.openModal);
   const router = useRouter();
@@ -57,11 +62,11 @@ function ExerciseList({ exercises, setter }: ExerciseListProps) {
   };
 
   const renderItem = ({
-    item,
+    item: exerciseId,
     drag,
     isActive,
     getIndex,
-  }: RenderItemParams<Exercise>) => {
+  }: RenderItemParams<number>) => {
     const index = getIndex()!;
 
     return (
@@ -76,9 +81,9 @@ function ExerciseList({ exercises, setter }: ExerciseListProps) {
       >
         <View className="flex flex-row justify-between flex-1">
           <Text className="text-white">
-            {item.label} @{index}
+            {exerciseMap[exerciseId].label} @{index}
           </Text>
-          <TouchableOpacity onPress={() => handleOnPress(exercises[index].id)}>
+          <TouchableOpacity onPress={() => handleOnPress(exerciseId)}>
             <Ionicons name="ellipsis-horizontal-outline" color="white" />
           </TouchableOpacity>
         </View>
@@ -90,9 +95,12 @@ function ExerciseList({ exercises, setter }: ExerciseListProps) {
     <View className="flex-1 pt-2 px-2">
       <GestureHandlerRootView>
         <DraggableFlatList
-          data={exercises}
+          data={exerciseList}
           onDragEnd={({ data }) => setter.setExercises(data)}
-          keyExtractor={(item) => item.id.toString()}
+          // keyExtractor={(item) => item.id.toString()}
+          keyExtractor={(item, index) =>
+            exerciseMap[exerciseList[index]].id.toString()
+          }
           renderItem={renderItem}
         />
       </GestureHandlerRootView>
@@ -101,7 +109,7 @@ function ExerciseList({ exercises, setter }: ExerciseListProps) {
 }
 
 export default function ExercisesTab() {
-  const { exercises, setter } = useExerciseStoreWithSetter();
+  const { exerciseMap, exercisesList, setter } = useExerciseStoreWithSetter();
   const { showActionSheetWithOptions } = useActionSheet();
   const openModal = useModalStore((state) => state.openModal);
   const router = useRouter();
@@ -143,7 +151,11 @@ export default function ExercisesTab() {
           },
         }}
       />
-      <ExerciseList exercises={exercises} setter={setter} />
+      <ExerciseList
+        exerciseMap={exerciseMap}
+        exerciseList={exercisesList}
+        setter={setter}
+      />
     </>
   );
 }

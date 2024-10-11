@@ -17,6 +17,7 @@ export type TagTreeStateFunctions = {
 
 // take all the parentId's with null and turn them into 0s
 // create a 0 root which represents all tags
+// order key is important as it sets up array for children
 
 const startingTree: TagMap = {
   // Root

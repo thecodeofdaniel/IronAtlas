@@ -2,6 +2,11 @@ type Exercise = {
   id: number;
   label: string;
   value: string;
+  order: number;
+};
+
+type ExerciseMap = {
+  [key: number]: Exercise;
 };
 
 type Tag = {
