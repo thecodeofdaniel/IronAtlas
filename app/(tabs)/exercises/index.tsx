@@ -119,10 +119,13 @@ function ExerciseList({
 }
 
 export default function ExercisesTab() {
-  const { exerciseMap, exercisesList, setter } = useExerciseStoreWithSetter();
+  const { exerciseMap, exercisesList, exerciseSet, setter } =
+    useExerciseStoreWithSetter();
   const { showActionSheetWithOptions } = useActionSheet();
   const openModal = useModalStore((state) => state.openModal);
   const router = useRouter();
+
+  console.log(exerciseSet);
 
   const handlePress = () => {
     const options = ['Add Exercise', 'Cancel'];

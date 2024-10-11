@@ -1,19 +1,21 @@
 import { create } from 'zustand';
 import { produce } from 'immer';
+import { formatTagOrExercise } from '@/utils/utils';
 
 type ExerciseStateVal = {
   exerciseMap: ExerciseMap;
   exercisesList: number[];
+  exerciseSet: Set<string>;
 };
 
 export type ExerciseStateFunctions = {
   createExercise: (newExercise: Exercise) => void;
   updateExerciseList: (newExerciseList: number[]) => void;
   deleteExercise: (id: number) => void;
-  updateExercise: (id: number, editedExercise: Partial<Exercise>) => void;
+  updateExercise: (id: number, editedExercise: Exercise) => void;
 };
 
-const exerciseMapInitial: ExerciseMap = {
+const startingExerciseMap: ExerciseMap = {
   1: {
     id: 1,
     label: 'Bench Press',
@@ -43,11 +45,18 @@ const exerciseMapInitial: ExerciseMap = {
 // Order of exercises
 const exerciseListInitial = [1, 2, 3, 4];
 
+// Create set
+const exercises = Object.values(startingExerciseMap).map(
+  (exercise) => exercise.value
+);
+const startingExerciseSet = new Set(exercises);
+
 type ExerciseStore = ExerciseStateVal & ExerciseStateFunctions;
 
 export const useExerciseStore = create<ExerciseStore>()((set) => ({
-  exerciseMap: exerciseMapInitial,
+  exerciseMap: startingExerciseMap,
   exercisesList: exerciseListInitial,
+  exerciseSet: startingExerciseSet,
   createExercise: (newExercise: Exercise) =>
     set((state) => {
       return {
@@ -56,6 +65,7 @@ export const useExerciseStore = create<ExerciseStore>()((set) => ({
           [newExercise.id]: newExercise,
         },
         exercisesList: [newExercise.id, ...state.exercisesList],
+        exerciseSet: new Set([...state.exerciseSet, newExercise.value]),
       };
     }),
   updateExerciseList: (newExercisesList: number[]) =>
@@ -83,13 +93,20 @@ export const useExerciseStore = create<ExerciseStore>()((set) => ({
         });
       })
     ),
-  updateExercise: (id: number, editedExercise: Partial<Exercise>) =>
+  updateExercise: (id: number, editedExercise: Exercise) =>
     set(
       produce<ExerciseStore>((state) => {
+        // Remove value from set
+        state.exerciseSet.delete(state.exerciseMap[id].value);
+
+        // Change value inside map
         state.exerciseMap[id] = {
           ...state.exerciseMap[id],
           ...editedExercise,
         };
+
+        // Add new value to set
+        state.exerciseSet.add(editedExercise.value);
       })
     ),
   // increase: (by) => set((state) => ({ bears: state.bears + by })),
@@ -101,20 +118,22 @@ export function useExerciseStoreWithSetter(): ExerciseStateVal & {
   const {
     exerciseMap,
     exercisesList,
+    exerciseSet,
     createExercise,
     updateExerciseList,
     deleteExercise,
-    updateExercise: editExercise,
+    updateExercise,
   } = useExerciseStore((state) => state);
 
   return {
     exerciseMap,
     exercisesList,
+    exerciseSet,
     setter: {
       createExercise,
       updateExerciseList,
       deleteExercise,
-      updateExercise: editExercise,
+      updateExercise,
     },
   };
 }

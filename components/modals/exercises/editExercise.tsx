@@ -3,6 +3,7 @@ import { View, Text, TextInput, Button } from 'react-native';
 import { ModalData } from '@/store/modalStore';
 import { Stack, useRouter } from 'expo-router';
 import { useExerciseStore } from '@/store/exerciseStore';
+import { formatTagOrExercise } from '@/utils/utils';
 
 type Props = {
   modalData: ModalData['editExercise'];
@@ -11,14 +12,30 @@ type Props = {
 
 export default function EditExercise({ modalData, closeModal }: Props) {
   const id = modalData.id;
-  const { exerciseMap, updateExercise: editExercise } = useExerciseStore((state) => state);
-  const [exercise, setExercise] = useState(exerciseMap[id]);
+  const { exerciseMap, updateExercise } = useExerciseStore((state) => state);
+  const [newExercise, setNewExercise] = useState(exerciseMap[id]);
   const router = useRouter();
 
   const addExercise = () => {
-    if (!exercise) return;
+    if (!newExercise) return;
 
-    editExercise(id, exercise);
+    const newLabel = newExercise.label.trim();
+
+    if (newLabel === '') {
+      console.log('Empty string');
+      return;
+    }
+
+    if (newLabel === exerciseMap[id].label) {
+      console.log('same label as before');
+      return;
+    }
+
+    updateExercise(id, {
+      ...newExercise,
+      label: newLabel,
+      value: formatTagOrExercise(newLabel),
+    });
     closeModal();
     router.back();
   };
@@ -32,9 +49,9 @@ export default function EditExercise({ modalData, closeModal }: Props) {
         <Text className="text-xl mb-2">Exercise Name</Text>
         <TextInput
           className="h-10 border px-2 border-gray-400"
-          value={exercise?.label}
+          value={newExercise?.label}
           onChangeText={(text) =>
-            setExercise((prev) => {
+            setNewExercise((prev) => {
               return {
                 ...prev,
                 label: text,

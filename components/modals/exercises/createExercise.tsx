@@ -7,7 +7,7 @@ import { Stack, useRouter } from 'expo-router';
 import { useExerciseStore } from '@/store/exerciseStore';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { useTagTreeStoreWithSetter } from '@/store/tagTreeStore';
-import { formatTagOrExercise } from '@/utils/utils';
+import { formatTagOrExercise, isValidTagOrExercise } from '@/utils/utils';
 
 type Props = {
   modalData: ModalData['createExercise'];
@@ -50,9 +50,11 @@ export default function CreateExercise({ modalData, closeModal }: Props) {
   const router = useRouter();
 
   const addExercise = () => {
-    if (!name || name === '') {
-      return;
-    }
+    if (!name) return;
+
+    const trimmedName = name.trim();
+
+    if (!isValidTagOrExercise(trimmedName)) return;
 
     const newExercise = {
       id: Date.now(),
