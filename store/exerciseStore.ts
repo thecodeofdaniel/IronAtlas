@@ -6,22 +6,12 @@ type ExerciseStateVal = {
   exercisesList: number[];
 };
 
-// export type ExerciseStateFunctions = {
-//   createExercise: (newExercise: Exercise) => void;
-//   setExercises: (newExerciseList: Exercise[]) => void;
-//   // deleteExercise: (id: number) => void;
-//   // editExercise: (id: number, editedExercise: Partial<Exercise>) => void;
-// };
-
 export type ExerciseStateFunctions = {
   createExercise: (newExercise: Exercise) => void;
-  setExercises: (newExerciseList: number[]) => void;
+  updateExerciseList: (newExerciseList: number[]) => void;
   deleteExercise: (id: number) => void;
-  editExercise: (id: number, editedExercise: Partial<Exercise>) => void;
+  updateExercise: (id: number, editedExercise: Partial<Exercise>) => void;
 };
-
-// have a list of ids which indiacte the order of exercises
-// have a obj with keys of those ids
 
 const exerciseMapInitial: ExerciseMap = {
   1: {
@@ -68,7 +58,7 @@ export const useExerciseStore = create<ExerciseStore>()((set) => ({
         exercisesList: [newExercise.id, ...state.exercisesList],
       };
     }),
-  setExercises: (newExercisesList: number[]) =>
+  updateExerciseList: (newExercisesList: number[]) =>
     set(
       produce<ExerciseStore>((state) => {
         state.exercisesList = newExercisesList;
@@ -93,7 +83,7 @@ export const useExerciseStore = create<ExerciseStore>()((set) => ({
         });
       })
     ),
-  editExercise: (id: number, editedExercise: Partial<Exercise>) =>
+  updateExercise: (id: number, editedExercise: Partial<Exercise>) =>
     set(
       produce<ExerciseStore>((state) => {
         state.exerciseMap[id] = {
@@ -105,72 +95,6 @@ export const useExerciseStore = create<ExerciseStore>()((set) => ({
   // increase: (by) => set((state) => ({ bears: state.bears + by })),
 }));
 
-// const exercisesInitial: Exercise[] = [
-//   {
-//     id: 1,
-//     label: 'Bench Press',
-//     value: 'bench_press',
-//     order: 1,
-//   },
-//   {
-//     id: 2,
-//     label: 'Squats',
-//     value: 'squats',
-//     order: 2,
-//   },
-//   {
-//     id: 3,
-//     label: 'Pullup',
-//     value: 'pullup',
-//     order: 3,
-//   },
-//   {
-//     id: 4,
-//     label: 'Deadlift',
-//     value: 'deadlift',
-//     order: 4,
-//   },
-// ];
-
-// export const useExerciseStore = create<ExerciseStore>()((set) => ({
-//   exercises: exercisesInitial,
-//   createExercise: (newExercise: Exercise) =>
-//     set((state) => {
-//       return { exercises: [newExercise, ...state.exercises] };
-//     }),
-//   setExercises: (newExercises: Exercise[]) =>
-//     set(
-//       produce((state) => {
-//         state.exercises = newExercises;
-//       })
-//     ),
-//   deleteExercise: (id: number) =>
-//     set(
-//       produce((state) => {
-//         state.exercises = state.exercises.filter(
-//           (exercise: Exercise) => exercise.id !== id
-//         );
-//       })
-//     ),
-//   editExercise: (id: number, editedExercise: Partial<Exercise>) =>
-//     set(
-//       produce((state: ExerciseStateVal & ExerciseStateFunctions) => {
-//         const index = state.exercises.findIndex(
-//           (exercise) => exercise.id === id
-//         );
-
-//         if (index !== -1) {
-//           state.exercises[index] = {
-//             ...state.exercises[index], // existing values
-//             ...editedExercise, // override with new values
-//             id: state.exercises[index].id, // keep same index
-//           };
-//         }
-//       })
-//     ),
-//   // increase: (by) => set((state) => ({ bears: state.bears + by })),
-// }));
-
 export function useExerciseStoreWithSetter(): ExerciseStateVal & {
   setter: ExerciseStateFunctions;
 } {
@@ -178,9 +102,9 @@ export function useExerciseStoreWithSetter(): ExerciseStateVal & {
     exerciseMap,
     exercisesList,
     createExercise,
-    setExercises,
+    updateExerciseList,
     deleteExercise,
-    editExercise,
+    updateExercise: editExercise,
   } = useExerciseStore((state) => state);
 
   return {
@@ -188,9 +112,9 @@ export function useExerciseStoreWithSetter(): ExerciseStateVal & {
     exercisesList,
     setter: {
       createExercise,
-      setExercises,
+      updateExerciseList,
       deleteExercise,
-      editExercise,
+      updateExercise: editExercise,
     },
   };
 }

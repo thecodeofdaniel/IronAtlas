@@ -108,7 +108,7 @@ function ExerciseList({
           onDragEnd={({ data }) => {
             // Convert Exercise objects back to ID array when updating store
             const newOrder = data.map((exercise) => exercise.id);
-            setter.setExercises(newOrder);
+            setter.updateExerciseList(newOrder);
           }}
           keyExtractor={(exercise) => exercise.id.toString()}
           renderItem={renderItem}

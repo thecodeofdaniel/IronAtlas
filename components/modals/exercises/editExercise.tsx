@@ -11,7 +11,7 @@ type Props = {
 
 export default function EditExercise({ modalData, closeModal }: Props) {
   const id = modalData.id;
-  const { exerciseMap, editExercise } = useExerciseStore((state) => state);
+  const { exerciseMap, updateExercise: editExercise } = useExerciseStore((state) => state);
   const [exercise, setExercise] = useState(exerciseMap[id]);
   const router = useRouter();
 
