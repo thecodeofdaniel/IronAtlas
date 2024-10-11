@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { produce, enableMapSet } from 'immer';
-import { formatTag } from '@/utils/utils';
+import { formatTagOrExercise } from '@/utils/utils';
 
 type TagTreeStateVal = {
   tagMap: TagMap;
@@ -147,7 +147,7 @@ export const useTagTreeStore = create<TagTreeStore>()((set) => ({
       const newItem: Tag = {
         id: Date.now(), // Use a unique ID generator in a real scenario
         label: title,
-        value: formatTag(title),
+        value: formatTagOrExercise(title),
         parentId: pressedItem.id,
         order: nextIndex,
         isOpen: false,

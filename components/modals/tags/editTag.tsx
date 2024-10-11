@@ -3,7 +3,7 @@ import { View, Text, TextInput, Button } from 'react-native';
 import { Stack, useRouter } from 'expo-router';
 import { useTagTreeStoreWithSetter } from '@/store/tagTreeStore';
 import { ModalData } from '@/store/modalStore';
-import { formatTag, isValidTag } from '@/utils/utils';
+import { formatTagOrExercise, isValidTagOrExercise } from '@/utils/utils';
 
 type Props = {
   modalData: ModalData['updateTag'];
@@ -22,12 +22,12 @@ export default function EditTag({ modalData, closeModal }: Props) {
 
   // Handle the update button press
   const handleUpdate = () => {
-    if (!isValidTag(name)) {
+    if (!isValidTagOrExercise(name)) {
       console.log('Not a valid tag name:', name);
       return;
     }
 
-    const tagValue = formatTag(name);
+    const tagValue = formatTagOrExercise(name);
     const tagLabel = name.trim();
 
     if (tagSet.has(tagValue) && tagMap[id].label === tagLabel) {

@@ -7,7 +7,7 @@ import { Stack, useRouter } from 'expo-router';
 import { useExerciseStore } from '@/store/exerciseStore';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { useTagTreeStoreWithSetter } from '@/store/tagTreeStore';
-import { formatTag } from '@/utils/utils';
+import { formatTagOrExercise } from '@/utils/utils';
 
 type Props = {
   modalData: ModalData['createExercise'];
@@ -56,7 +56,8 @@ export default function CreateExercise({ modalData, closeModal }: Props) {
 
     const newExercise = {
       id: Date.now(),
-      title: name,
+      label: name,
+      value: formatTagOrExercise(name),
     };
 
     createExercise(newExercise);

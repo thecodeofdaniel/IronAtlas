@@ -1,6 +1,7 @@
 type Exercise = {
   id: number;
-  title: string;
+  label: string;
+  value: string;
 };
 
 type Tag = {

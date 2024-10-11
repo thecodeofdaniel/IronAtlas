@@ -34,14 +34,14 @@ export default function EditExercise({ modalData, closeModal }: Props) {
         <Text className="text-xl mb-2">Exercise Name</Text>
         <TextInput
           className="h-10 border px-2 border-gray-400"
-          value={exercise?.title}
+          value={exercise?.label}
           onChangeText={(text) =>
             setExercise((prev) => {
               if (!prev) return;
 
               return {
                 ...prev,
-                title: text,
+                label: text,
               };
             })
           }

@@ -76,7 +76,7 @@ function ExerciseList({ exercises, setter }: ExerciseListProps) {
       >
         <View className="flex flex-row justify-between flex-1">
           <Text className="text-white">
-            {item.title} @{index}
+            {item.label} @{index}
           </Text>
           <TouchableOpacity onPress={() => handleOnPress(exercises[index].id)}>
             <Ionicons name="ellipsis-horizontal-outline" color="white" />

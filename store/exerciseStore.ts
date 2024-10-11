@@ -18,26 +18,29 @@ export type ExerciseStateFunctions = {
 const exercisesInitial: Exercise[] = [
   {
     id: 1,
-    title: 'Bench Press',
-    // this only stores the tag that has no children, to make it easy when user changes
+    label: 'Bench Press',
+    value: 'bench_press',
   },
   {
     id: 2,
-    title: 'Squats',
+    label: 'Squats',
+    value: 'squats',
   },
   {
     id: 3,
-    title: 'Pullup',
+    label: 'Pullup',
+    value: 'pullup',
   },
   {
     id: 4,
-    title: 'Deadlift',
+    label: 'Deadlift',
+    value: 'deadlift',
   },
 ];
 
-export const useExerciseStore = create<
-  ExerciseStateVal & ExerciseStateFunctions
->()((set) => ({
+type ExerciseStore = ExerciseStateVal & ExerciseStateFunctions;
+
+export const useExerciseStore = create<ExerciseStore>()((set) => ({
   exercises: exercisesInitial,
   createExercise: (newExercise: Exercise) =>
     set((state) => {

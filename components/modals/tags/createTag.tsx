@@ -3,7 +3,7 @@ import { View, Text, TextInput, Button } from 'react-native';
 import { ModalData } from '@/store/modalStore';
 import { Stack, useRouter } from 'expo-router';
 import { useTagTreeStoreWithSetter } from '@/store/tagTreeStore';
-import { formatTag, isValidTag } from '@/utils/utils';
+import { formatTagOrExercise, isValidTagOrExercise } from '@/utils/utils';
 
 type Props = {
   modalData: ModalData['createTag'];
@@ -23,12 +23,12 @@ export default function CreateTag({ modalData, closeModal }: Props) {
   };
 
   const handleUpdate = () => {
-    if (!isValidTag(name)) {
+    if (!isValidTagOrExercise(name)) {
       console.log('Not a valid tag name:', name);
       return;
     }
 
-    if (tagSet.has(formatTag(name))) {
+    if (tagSet.has(formatTagOrExercise(name))) {
       console.log('Tag alreay exists', name);
       return;
     }
