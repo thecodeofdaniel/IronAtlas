@@ -25,6 +25,7 @@ function ExerciseList({
   exerciseList,
   setter,
 }: ExerciseListProps) {
+  console.log('Render ExerciseList');
   const { showActionSheetWithOptions } = useActionSheet();
   const openModal = useModalStore((state) => state.openModal);
   const router = useRouter();
@@ -44,7 +45,10 @@ function ExerciseList({
       (selectedIndex?: number) => {
         switch (selectedIndex) {
           case destructiveButtonIndex:
-            handleDelete(pressedId);
+            // First update the list, then delete from map
+            // const newList = exerciseList.filter((id) => id !== pressedId);
+            // setter.setExercises(newList);
+            setter.deleteExercise(pressedId);
             break;
           case 1:
             openModal('editExercise', { id: pressedId });
@@ -57,10 +61,6 @@ function ExerciseList({
     );
   };
 
-  const handleDelete = (pressedId: number) => {
-    setter.deleteExercise(pressedId);
-  };
-
   const renderItem = ({
     item: exerciseId,
     drag,
@@ -68,6 +68,12 @@ function ExerciseList({
     getIndex,
   }: RenderItemParams<number>) => {
     const index = getIndex()!;
+    const exercise = exerciseMap[exerciseId];
+
+    // Skip rendering if exercise doesn't exist in map
+    if (!exercise) {
+      return null;
+    }
 
     return (
       <TouchableOpacity
@@ -81,26 +87,32 @@ function ExerciseList({
       >
         <View className="flex flex-row justify-between flex-1">
           <Text className="text-white">
-            {exerciseMap[exerciseId].label} @{index}
+            {exercise.label} @{index}
           </Text>
           <TouchableOpacity onPress={() => handleOnPress(exerciseId)}>
-            <Ionicons name="ellipsis-horizontal-outline" color="white" />
+            <Ionicons name="ellipsis-horizontal" color="white" size={24} />
           </TouchableOpacity>
         </View>
       </TouchableOpacity>
     );
   };
 
+  // Filter out any IDs that don't exist in the map
+  const validExerciseList = exerciseList.filter((id) => exerciseMap[id]);
+  console.log(validExerciseList);
+
   return (
     <View className="flex-1 pt-2 px-2">
       <GestureHandlerRootView>
         <DraggableFlatList
-          data={exerciseList}
+          data={validExerciseList}
           onDragEnd={({ data }) => setter.setExercises(data)}
-          // keyExtractor={(item) => item.id.toString()}
-          keyExtractor={(item, index) =>
-            exerciseMap[exerciseList[index]].id.toString()
-          }
+          keyExtractor={(id) => {
+            const exercise = exerciseMap[id];
+            console.log(`${exercise} with ${id}`);
+            return exercise ? exercise.id.toString() : id.toString();
+            // return exercise.id.toString();
+          }}
           renderItem={renderItem}
         />
       </GestureHandlerRootView>

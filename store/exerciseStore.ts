@@ -76,9 +76,17 @@ export const useExerciseStore = create<ExerciseStore>()((set) => ({
         // state.exercises = state.exercises.filter(
         //   (exercise: Exercise) => exercise.id !== id
         // );
+        // Remove from the list of IDs
+        state.exercisesList = state.exercisesList.filter(
+          (exerciseId) => exerciseId !== id
+        );
+
         delete state.exerciseMap[id]; // remove from map
-        const exerciseIndex = state.exerciseMap[id].order;
-        state.exercisesList.splice(exerciseIndex, 1);
+
+        // Update order in map to match new list
+        state.exercisesList.forEach((exerciseId, index) => {
+          state.exerciseMap[exerciseId].order = index;
+        });
       })
     ),
   editExercise: (id: number, editedExercise: Partial<Exercise>) =>
