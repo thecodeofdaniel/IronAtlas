@@ -21,24 +21,28 @@ const startingExerciseMap: ExerciseMap = {
     label: 'Bench Press',
     value: 'bench_press',
     order: 0,
+    tags: new Set(),
   },
   2: {
     id: 2,
     label: 'Squats',
     value: 'squats',
     order: 1,
+    tags: new Set(),
   },
   3: {
     id: 3,
     label: 'Pullup',
     value: 'pullup',
     order: 2,
+    tags: new Set(),
   },
   4: {
     id: 4,
     label: 'Deadlift',
     value: 'deadlift',
     order: 3,
+    tags: new Set(),
   },
 };
 

@@ -29,6 +29,7 @@ const startingTree: TagMap = {
     order: 0,
     isOpen: true,
     children: [1, 3],
+    exercies: new Set(),
   },
   1: {
     id: 1,
@@ -38,6 +39,7 @@ const startingTree: TagMap = {
     order: 0,
     isOpen: true,
     children: [2, 6],
+    exercies: new Set(),
   },
   2: {
     id: 2,
@@ -47,6 +49,7 @@ const startingTree: TagMap = {
     order: 0,
     isOpen: false,
     children: [4, 5],
+    exercies: new Set(),
   },
   3: {
     id: 3,
@@ -56,6 +59,7 @@ const startingTree: TagMap = {
     order: 1,
     isOpen: false,
     children: [],
+    exercies: new Set(),
   },
   4: {
     id: 4,
@@ -65,6 +69,7 @@ const startingTree: TagMap = {
     order: 0,
     isOpen: false,
     children: [],
+    exercies: new Set(),
   },
   5: {
     id: 5,
@@ -74,6 +79,7 @@ const startingTree: TagMap = {
     order: 1,
     isOpen: false,
     children: [],
+    exercies: new Set(),
   },
   6: {
     id: 6,
@@ -83,6 +89,7 @@ const startingTree: TagMap = {
     order: 0,
     isOpen: false,
     children: [7, 8],
+    exercies: new Set(),
   },
   7: {
     id: 7,
@@ -92,6 +99,7 @@ const startingTree: TagMap = {
     order: 0,
     isOpen: false,
     children: [],
+    exercies: new Set(),
   },
   8: {
     id: 8,
@@ -101,6 +109,7 @@ const startingTree: TagMap = {
     order: 1,
     isOpen: false,
     children: [],
+    exercies: new Set(),
   },
 };
 
@@ -153,6 +162,7 @@ export const useTagTreeStore = create<TagTreeStore>()((set) => ({
         order: nextIndex,
         isOpen: false,
         children: [],
+        exercies: new Set(),
       };
 
       // Create a new copy of the pressed item with the updated children array
