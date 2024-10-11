@@ -7,7 +7,7 @@ import { useActionSheet } from '@expo/react-native-action-sheet';
 import { Ionicons } from '@expo/vector-icons';
 import clsx from 'clsx';
 import { Stack, useRouter } from 'expo-router';
-import React from 'react';
+import React, { useMemo } from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import DraggableFlatList, {
   RenderItemParams,
@@ -25,13 +25,20 @@ function ExerciseList({
   exerciseList,
   setter,
 }: ExerciseListProps) {
-  console.log('Render ExerciseList');
   const { showActionSheetWithOptions } = useActionSheet();
   const openModal = useModalStore((state) => state.openModal);
   const router = useRouter();
 
-  const handleOnPress = (pressedId: number) => {
-    console.log('By', pressedId);
+  // Transform IDs into Exercise objects
+  const exercises = useMemo(
+    () =>
+      exerciseList
+        .map((id) => exerciseMap[id])
+        .filter((exercise): exercise is Exercise => exercise !== undefined),
+    [exerciseList, exerciseMap]
+  );
+
+  const handleOnPress = (exercise: Exercise) => {
     const options = ['Delete', 'Edit', 'Cancel'];
     const destructiveButtonIndex = 0;
     const cancelButtonIndex = options.length - 1;
@@ -45,13 +52,10 @@ function ExerciseList({
       (selectedIndex?: number) => {
         switch (selectedIndex) {
           case destructiveButtonIndex:
-            // First update the list, then delete from map
-            // const newList = exerciseList.filter((id) => id !== pressedId);
-            // setter.setExercises(newList);
-            setter.deleteExercise(pressedId);
+            setter.deleteExercise(exercise.id);
             break;
           case 1:
-            openModal('editExercise', { id: pressedId });
+            openModal('editExercise', { id: exercise.id });
             router.push('/modal');
             break;
           case cancelButtonIndex:
@@ -62,18 +66,12 @@ function ExerciseList({
   };
 
   const renderItem = ({
-    item: exerciseId,
+    item: exercise,
     drag,
     isActive,
     getIndex,
-  }: RenderItemParams<number>) => {
+  }: RenderItemParams<Exercise>) => {
     const index = getIndex()!;
-    const exercise = exerciseMap[exerciseId];
-
-    // Skip rendering if exercise doesn't exist in map
-    if (!exercise) {
-      return null;
-    }
 
     return (
       <TouchableOpacity
@@ -89,30 +87,29 @@ function ExerciseList({
           <Text className="text-white">
             {exercise.label} @{index}
           </Text>
-          <TouchableOpacity onPress={() => handleOnPress(exerciseId)}>
-            <Ionicons name="ellipsis-horizontal" color="white" size={24} />
+          <TouchableOpacity onPress={() => handleOnPress(exercise)}>
+            <Ionicons
+              name="ellipsis-horizontal-outline"
+              color="white"
+              size={24}
+            />
           </TouchableOpacity>
         </View>
       </TouchableOpacity>
     );
   };
 
-  // Filter out any IDs that don't exist in the map
-  const validExerciseList = exerciseList.filter((id) => exerciseMap[id]);
-  console.log(validExerciseList);
-
   return (
     <View className="flex-1 pt-2 px-2">
       <GestureHandlerRootView>
         <DraggableFlatList
-          data={validExerciseList}
-          onDragEnd={({ data }) => setter.setExercises(data)}
-          keyExtractor={(id) => {
-            const exercise = exerciseMap[id];
-            console.log(`${exercise} with ${id}`);
-            return exercise ? exercise.id.toString() : id.toString();
-            // return exercise.id.toString();
+          data={exercises}
+          onDragEnd={({ data }) => {
+            // Convert Exercise objects back to ID array when updating store
+            const newOrder = data.map((exercise) => exercise.id);
+            setter.setExercises(newOrder);
           }}
+          keyExtractor={(exercise) => exercise.id.toString()}
           renderItem={renderItem}
         />
       </GestureHandlerRootView>
