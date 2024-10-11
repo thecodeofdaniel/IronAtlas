@@ -11,10 +11,8 @@ type Props = {
 
 export default function EditExercise({ modalData, closeModal }: Props) {
   const id = modalData.id;
-  const { exercises, editExercise } = useExerciseStore((state) => state);
-  const [exercise, setExercise] = useState(() => {
-    return exercises.find((exercise) => exercise.id === id);
-  });
+  const { exerciseMap, editExercise } = useExerciseStore((state) => state);
+  const [exercise, setExercise] = useState(exerciseMap[id]);
   const router = useRouter();
 
   const addExercise = () => {
@@ -37,8 +35,6 @@ export default function EditExercise({ modalData, closeModal }: Props) {
           value={exercise?.label}
           onChangeText={(text) =>
             setExercise((prev) => {
-              if (!prev) return;
-
               return {
                 ...prev,
                 label: text,

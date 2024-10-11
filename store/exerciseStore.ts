@@ -61,6 +61,10 @@ export const useExerciseStore = create<ExerciseStore>()((set) => ({
   createExercise: (newExercise: Exercise) =>
     set((state) => {
       return {
+        exerciseMap: {
+          ...state.exerciseMap,
+          [newExercise.id]: newExercise,
+        },
         exercisesList: [newExercise.id, ...state.exercisesList],
       };
     }),

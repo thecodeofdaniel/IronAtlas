@@ -25,6 +25,7 @@ function ExerciseList({
   exerciseList,
   setter,
 }: ExerciseListProps) {
+  console.log('Render ExerciseList');
   const { showActionSheetWithOptions } = useActionSheet();
   const openModal = useModalStore((state) => state.openModal);
   const router = useRouter();

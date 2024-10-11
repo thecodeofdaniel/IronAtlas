@@ -58,6 +58,7 @@ export default function CreateExercise({ modalData, closeModal }: Props) {
       id: Date.now(),
       label: name,
       value: formatTagOrExercise(name),
+      order: 0, // since new exercise will be at the top
     };
 
     createExercise(newExercise);
