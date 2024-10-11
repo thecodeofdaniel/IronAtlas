@@ -77,15 +77,17 @@ export const useExerciseStore = create<ExerciseStore>()((set) => ({
   deleteExercise: (id: number) =>
     set(
       produce<ExerciseStore>((state) => {
-        // state.exercises = state.exercises.filter(
-        //   (exercise: Exercise) => exercise.id !== id
-        // );
         // Remove from the list of IDs
         state.exercisesList = state.exercisesList.filter(
           (exerciseId) => exerciseId !== id
         );
 
-        delete state.exerciseMap[id]; // remove from map
+        // Remove exercise form set
+        const exerciseToBeRemoved = state.exerciseMap[id];
+        state.exerciseSet.delete(exerciseToBeRemoved.value);
+
+        // remove from map
+        delete state.exerciseMap[id];
 
         // Update order in map to match new list
         state.exercisesList.forEach((exerciseId, index) => {
