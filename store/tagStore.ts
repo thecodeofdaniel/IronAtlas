@@ -2,12 +2,12 @@ import { create } from 'zustand';
 import { produce, enableMapSet } from 'immer';
 import { formatTagOrExercise } from '@/utils/utils';
 
-type TagTreeStateVal = {
+type TagStateVal = {
   tagMap: TagMap;
   tagSet: Set<string>;
 };
 
-export type TagTreeStateFunctions = {
+export type TagStateFunctions = {
   reorderTags: (dataList: Tag[]) => void;
   createChildTag: (pressedId: number, title: string) => void;
   deleteTag: (pressedId: number) => void;
@@ -118,9 +118,9 @@ enableMapSet();
 const tags = Object.values(startingTree).map((tag) => tag.value);
 const startingTagSet = new Set(tags);
 
-type TagTreeStore = TagTreeStateVal & TagTreeStateFunctions;
+type TagStore = TagStateVal & TagStateFunctions;
 
-export const useTagTreeStore = create<TagTreeStore>()((set) => ({
+export const useTagStore = create<TagStore>()((set) => ({
   tagMap: startingTree,
   tagSet: startingTagSet,
   reorderTags: (dataList: Tag[]) =>
@@ -180,7 +180,7 @@ export const useTagTreeStore = create<TagTreeStore>()((set) => ({
     }),
   deleteTag: (pressedId: number) =>
     set(
-      produce<TagTreeStore>((state) => {
+      produce<TagStore>((state) => {
         // Helper function to recursively delete an item and all its children
         const deleteItemAndChildren = (id: number) => {
           const item = state.tagMap[id];
@@ -208,7 +208,7 @@ export const useTagTreeStore = create<TagTreeStore>()((set) => ({
     ),
   editTagTitle: (pressedId: number, newTitle: string, newValue: string) =>
     set(
-      produce<TagTreeStore>((state) => {
+      produce<TagStore>((state) => {
         const prevTagVal = state.tagMap[pressedId].value;
         state.tagSet.delete(prevTagVal);
         state.tagMap[pressedId].label = newTitle;
@@ -217,7 +217,7 @@ export const useTagTreeStore = create<TagTreeStore>()((set) => ({
     ),
   moveTag: (pressedId, idToMove) =>
     set(
-      produce<TagTreeStore>((state) => {
+      produce<TagStore>((state) => {
         // Get the old parentId (0 if root)
         const oldParentId = state.tagMap[idToMove].parentId ?? 0;
 
@@ -236,8 +236,8 @@ export const useTagTreeStore = create<TagTreeStore>()((set) => ({
   // increase: (by) => set((state) => ({ bears: state.bears + by })),
 }));
 
-export function useTagTreeStoreWithSetter(): TagTreeStateVal & {
-  setter: TagTreeStateFunctions;
+export function useTagStoreWithSetter(): TagStateVal & {
+  setter: TagStateFunctions;
 } {
   const {
     tagMap,
@@ -247,7 +247,7 @@ export function useTagTreeStoreWithSetter(): TagTreeStateVal & {
     deleteTag,
     editTagTitle,
     moveTag,
-  } = useTagTreeStore((state) => state);
+  } = useTagStore((state) => state);
 
   return {
     tagMap,

@@ -6,10 +6,7 @@ import DraggableFlatList, {
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import clsx from 'clsx';
 import { Ionicons } from '@expo/vector-icons';
-import {
-  useTagTreeStoreWithSetter,
-  type TagTreeStateFunctions,
-} from '@/store/tagTreeStore';
+import { useTagStoreWithSetter, TagStateFunctions } from '@/store/tagStore';
 import {
   ActionSheetProvider,
   useActionSheet,
@@ -21,7 +18,7 @@ type TreeProps = {
   tagMap: TagMap; // Accept itemMap as a prop
   tagChildren: number[]; // Accept item IDs as a prop
   level: number;
-  setter: TagTreeStateFunctions;
+  setter: TagStateFunctions;
 };
 
 const Tree = ({ tagMap, tagChildren, level = 0, setter }: TreeProps) => {
@@ -153,7 +150,7 @@ const Tree = ({ tagMap, tagChildren, level = 0, setter }: TreeProps) => {
 };
 
 export default function TagTab() {
-  const { tagMap, tagSet, setter } = useTagTreeStoreWithSetter();
+  const { tagMap, tagSet, setter } = useTagStoreWithSetter();
 
   return (
     <>

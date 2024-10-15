@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, Button } from 'react-native';
 import { Stack, useRouter } from 'expo-router';
-import { useTagTreeStoreWithSetter } from '@/store/tagTreeStore';
+import { useTagStoreWithSetter } from '@/store/tagStore';
 import { ModalData } from '@/store/modalStore';
 import { formatTagOrExercise, isValidTagOrExercise } from '@/utils/utils';
 
@@ -14,7 +14,7 @@ export default function EditTag({ modalData, closeModal }: Props) {
   const router = useRouter();
 
   const id = modalData.id;
-  const { tagMap, tagSet, setter } = useTagTreeStoreWithSetter();
+  const { tagMap, tagSet, setter } = useTagStoreWithSetter();
   const ogName = tagMap[id].label;
 
   // Prefill the input with the existing exercise name

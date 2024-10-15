@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, Button } from 'react-native';
 import { ModalData } from '@/store/modalStore';
 import { Stack, useRouter } from 'expo-router';
-import { useTagTreeStoreWithSetter } from '@/store/tagTreeStore';
+import { useTagStoreWithSetter } from '@/store/tagStore';
 import { formatTagOrExercise, isValidTagOrExercise } from '@/utils/utils';
 
 type Props = {
@@ -12,7 +12,7 @@ type Props = {
 
 export default function CreateTag({ modalData, closeModal }: Props) {
   const router = useRouter();
-  const { tagSet, setter } = useTagTreeStoreWithSetter();
+  const { tagSet, setter } = useTagStoreWithSetter();
   const [name, setName] = useState('');
 
   const pressedId = modalData.pressedId;
