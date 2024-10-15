@@ -9,11 +9,11 @@ import TagTree from './common/tagTree';
 import { formatTagOrExercise, isValidTagOrExercise } from '@/utils/utils';
 
 type CreateOrUpdateExerciseProps = {
-  modalData: ModalData['createOrUpdateExercise'];
+  modalData: ModalData['upsertExercise'];
   closeModal: () => void;
 };
 
-export default function CreateOrUpdateExercise({
+export default function UpsertExercise({
   modalData,
   closeModal,
 }: CreateOrUpdateExerciseProps) {

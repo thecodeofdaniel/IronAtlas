@@ -56,8 +56,7 @@ function ExerciseList({
             setter.deleteExercise(exercise.id);
             break;
           case 1:
-            // openModal('editExercise', { id: exercise.id });
-            openModal('createOrUpdateExercise', {
+            openModal('upsertExercise', {
               id: exercise.id,
             });
             router.push('/modal');
@@ -143,7 +142,7 @@ export default function ExercisesTab() {
         switch (selectedIndex) {
           case 0:
             // openModal('createExercise');
-            openModal('createOrUpdateExercise');
+            openModal('upsertExercise', {});
             router.push('/modal');
             break;
           case cancelButtonIndex:

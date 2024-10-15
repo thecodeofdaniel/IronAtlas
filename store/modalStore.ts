@@ -22,7 +22,7 @@ export type ModalData = {
   editExercise: {
     id: number;
   };
-  createOrUpdateExercise: {
+  upsertExercise: {
     id?: number;
   };
   createTag: {
