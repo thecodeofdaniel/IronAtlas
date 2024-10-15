@@ -6,12 +6,19 @@ import AddExerciseOrMuscleModal from '../components/modals/tags/createTag';
 import CreateExerciseModal from '../components/modals/exercises/createExercise';
 import EditExercise from '../components/modals/exercises/editExercise';
 import MoveTag from '@/components/modals/tags/moveTag';
+import CreateOrUpdateExercise from '@/components/modals/exercises/createOrUpdateExercise';
 
 export default function Modal() {
   const { activeModal, modalData, closeModal } = useModalStore();
 
   return (
     <>
+      {activeModal === 'createOrUpdateExercise' && (
+        <CreateOrUpdateExercise
+          modalData={modalData as ModalData['createOrUpdateExercise']}
+          closeModal={closeModal}
+        />
+      )}
       {activeModal === 'createExercise' && (
         <CreateExerciseModal
           modalData={modalData as ModalData['createExercise']}

@@ -18,11 +18,12 @@ export type ModalData = {
   //   onConfirm: () => void;
   // };
   // CRUD: Create, Read, Update, Delete
-  createExercise: {
-    title: string;
-  };
+  createExercise: {};
   editExercise: {
     id: number;
+  };
+  createOrUpdateExercise: {
+    id?: number;
   };
   createTag: {
     pressedId: number;

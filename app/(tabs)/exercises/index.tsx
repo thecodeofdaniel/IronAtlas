@@ -56,7 +56,10 @@ function ExerciseList({
             setter.deleteExercise(exercise.id);
             break;
           case 1:
-            openModal('editExercise', { id: exercise.id });
+            // openModal('editExercise', { id: exercise.id });
+            openModal('createOrUpdateExercise', {
+              id: exercise.id,
+            });
             router.push('/modal');
             break;
           case cancelButtonIndex:
@@ -139,7 +142,8 @@ export default function ExercisesTab() {
       (selectedIndex?: number) => {
         switch (selectedIndex) {
           case 0:
-            openModal('createExercise');
+            // openModal('createExercise');
+            openModal('createOrUpdateExercise');
             router.push('/modal');
             break;
           case cancelButtonIndex:
