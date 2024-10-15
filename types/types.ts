@@ -18,9 +18,9 @@ type Tag = {
   parentId: number | null;
   order: number;
   isOpen: boolean;
-  children: number[]; // Store only child IDs // If child empty then it's an exercise
+  children: number[];
   // exercises ids associated with tag
-  exercies: Set<number>;
+  exercises: Set<number>;
 };
 
 type TagMap = {
