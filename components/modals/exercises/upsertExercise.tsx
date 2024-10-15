@@ -4,8 +4,8 @@ import { ModalData } from '@/store/modalStore';
 import { Stack, useRouter } from 'expo-router';
 import { useExerciseStoreWithSetter } from '@/store/exerciseStore';
 import { useTagTreeStoreWithSetter } from '@/store/tagTreeStore';
-import { getAllParentIds } from './utils/utils';
-import TagTree from './common/tagTree';
+import { getAllParentIds } from '@/utils/utils';
+import TagTree from '../../selectFromTagTree';
 import { formatTagOrExercise, isValidTagOrExercise } from '@/utils/utils';
 
 type CreateOrUpdateExerciseProps = {

@@ -1,8 +1,8 @@
 import { FlatList, TouchableOpacity, View, Text } from 'react-native';
-import { getAllParentIds } from '../utils/utils';
+import { getAllParentIds } from '@/utils/utils';
 import clsx from 'clsx';
 
-type TreeProps = {
+type SelectFromTagTreeProps = {
   tagMap: TagMap; // Accept itemMap as a prop
   tagChildren: number[]; // Accept item IDs as a prop
   level: number;
@@ -18,13 +18,13 @@ type TreeProps = {
   >;
 };
 
-export default function TagTree({
+export default function SelectFromTagTree({
   tagMap,
   tagChildren,
   level = 0,
   selected,
   setSelected,
-}: TreeProps) {
+}: SelectFromTagTreeProps) {
   const RenderItem = ({ item }: { item: Tag }) => {
     return (
       <TouchableOpacity
@@ -78,7 +78,7 @@ export default function TagTree({
             {item.children.length > 0 &&
               // prevents chosen id from showing children
               !selected.chosen.includes(item.id) && (
-                <TagTree
+                <SelectFromTagTree
                   tagMap={tagMap}
                   tagChildren={item.children}
                   level={level + 1}
