@@ -22,10 +22,6 @@ type TreeProps = {
 };
 
 const Tree = ({ tagMap, tagChildren, level = 0, setter }: TreeProps) => {
-  // console.log('Render Tree');
-  const [isOpen, setIsOpen] = useState(() =>
-    tagChildren.map((id) => tagMap[id].isOpen)
-  );
   const router = useRouter();
   const { showActionSheetWithOptions } = useActionSheet();
   const openModal = useModalStore((state) => state.openModal);
@@ -77,7 +73,7 @@ const Tree = ({ tagMap, tagChildren, level = 0, setter }: TreeProps) => {
         activeOpacity={1}
         onLongPress={drag}
         disabled={isActive}
-        className={clsx('p-2 my-[1] flex flex-row', {
+        className={clsx('p-2 my-[1] flex flex-row items-center', {
           'bg-red-500': isActive,
           'bg-blue-800': !isActive,
         })}
@@ -85,19 +81,13 @@ const Tree = ({ tagMap, tagChildren, level = 0, setter }: TreeProps) => {
         {item.children.length > 0 && (
           <Pressable
             onPress={() => {
-              const newIsOpen = [...isOpen];
-              newIsOpen[currentIndex] = !isOpen[currentIndex];
-              setIsOpen(newIsOpen);
+              setter.toggleTagOpen(item.id);
             }}
           >
             <Ionicons
-              name={
-                isOpen[currentIndex]
-                  ? 'chevron-down'
-                  : 'chevron-forward-outline'
-              }
-              size={18}
-              style={{ marginRight: 12 }}
+              name={item.isOpen ? 'chevron-down' : 'chevron-forward-outline'}
+              size={14}
+              style={{ marginRight: 4 }}
               color={'white'}
             />
           </Pressable>
@@ -124,16 +114,15 @@ const Tree = ({ tagMap, tagChildren, level = 0, setter }: TreeProps) => {
         }}
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item, drag, isActive, getIndex }) => {
-          const currentIndex = tagChildren.indexOf(item.id);
           return (
-            <View key={item.id} style={{ paddingLeft: 5 * level }}>
+            <View key={item.id} style={{ paddingLeft: 3 * level }}>
               <RenderItem
                 item={item}
                 drag={drag}
                 isActive={isActive}
                 getIndex={getIndex}
               />
-              {item.children.length > 0 && isOpen[currentIndex] && (
+              {item.children.length > 0 && item.isOpen && (
                 <Tree
                   tagMap={tagMap}
                   tagChildren={item.children}
@@ -150,7 +139,7 @@ const Tree = ({ tagMap, tagChildren, level = 0, setter }: TreeProps) => {
 };
 
 export default function TagTab() {
-  const { tagMap, tagSet, setter } = useTagStoreWithSetter();
+  const { tagMap, setter } = useTagStoreWithSetter();
 
   return (
     <>

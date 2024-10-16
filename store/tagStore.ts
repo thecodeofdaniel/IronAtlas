@@ -8,6 +8,7 @@ type TagStateVal = {
 };
 
 export type TagStateFunctions = {
+  toggleTagOpen: (pressedId: number) => void;
   reorderTags: (dataList: Tag[]) => void;
   createChildTag: (pressedId: number, title: string) => void;
   deleteTag: (pressedId: number) => void;
@@ -123,6 +124,20 @@ type TagStore = TagStateVal & TagStateFunctions;
 export const useTagStore = create<TagStore>()((set) => ({
   tagMap: startingTree,
   tagSet: startingTagSet,
+  toggleTagOpen: (pressedId: number) =>
+    set((state) => {
+      const newTagMap = { ...state.tagMap };
+
+      // Flip isOpen like on/off switch
+      newTagMap[pressedId] = {
+        ...newTagMap[pressedId],
+        isOpen: !newTagMap[pressedId].isOpen,
+      };
+
+      return {
+        tagMap: newTagMap,
+      };
+    }),
   reorderTags: (dataList: Tag[]) =>
     set((state) => {
       const newItemMap = { ...state.tagMap };
@@ -242,6 +257,7 @@ export function useTagStoreWithSetter(): TagStateVal & {
   const {
     tagMap,
     tagSet,
+    toggleTagOpen,
     reorderTags,
     createChildTag,
     deleteTag,
@@ -253,6 +269,7 @@ export function useTagStoreWithSetter(): TagStateVal & {
     tagMap,
     tagSet,
     setter: {
+      toggleTagOpen,
       reorderTags,
       createChildTag,
       deleteTag,
