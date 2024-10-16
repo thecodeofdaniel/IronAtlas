@@ -11,11 +11,10 @@ type Props = {
 };
 
 export default function CreateTag({ modalData, closeModal }: Props) {
-  const router = useRouter();
-  const { tagSet, setter } = useTagStoreWithSetter();
-  const [name, setName] = useState('');
-
   const pressedId = modalData.pressedId;
+  const router = useRouter();
+  const { tagMap, tagSet, setter } = useTagStoreWithSetter();
+  const [name, setName] = useState('');
 
   const handleCancel = () => {
     closeModal();
@@ -42,7 +41,10 @@ export default function CreateTag({ modalData, closeModal }: Props) {
     <>
       <Stack.Screen options={{ headerTitle: 'Add' }} />
       <View className="flex-1 p-4">
-        <Text className="text-xl mb-2">Add Body Section Tag</Text>
+        <Text className="text-xl mb-2">
+          Add tag under{' '}
+          <Text className="font-bold underline">{tagMap[pressedId].label}</Text>
+        </Text>
         <TextInput
           className="h-10 border px-2 border-gray-400"
           value={name}
