@@ -3,6 +3,7 @@ import {
   useExerciseStoreWithSetter,
 } from '@/store/exerciseStore';
 import { useModalStore } from '@/store/modalStore';
+import { TagStateFunctions, useTagStoreWithSetter } from '@/store/tagStore';
 import { useActionSheet } from '@expo/react-native-action-sheet';
 import { Ionicons } from '@expo/vector-icons';
 import clsx from 'clsx';
@@ -17,13 +18,17 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 type ExerciseListProps = {
   exerciseMap: ExerciseMap;
   exerciseList: number[];
-  setter: ExerciseStateFunctions;
+  exerciseSetter: ExerciseStateFunctions;
+  tagMap: TagMap;
+  tagSetter: TagStateFunctions;
 };
 
 function ExerciseList({
   exerciseMap,
   exerciseList,
-  setter,
+  exerciseSetter,
+  tagMap,
+  tagSetter,
 }: ExerciseListProps) {
   console.log('Render ExerciseList');
   const { showActionSheetWithOptions } = useActionSheet();
@@ -53,7 +58,14 @@ function ExerciseList({
       (selectedIndex?: number) => {
         switch (selectedIndex) {
           case destructiveButtonIndex:
-            setter.deleteExercise(exercise.id);
+            // Grab each tag from set and remove associated exercise from tag
+            [...exercise.tags].forEach((tagId) => {
+              console.log(tagMap[tagId]);
+              return tagSetter.removeExercise(tagId, exercise.id);
+            });
+
+            // Remove the exercise from exercise list
+            exerciseSetter.deleteExercise(exercise.id);
             break;
           case 1:
             openModal('upsertExercise', {
@@ -110,7 +122,7 @@ function ExerciseList({
           onDragEnd={({ data }) => {
             // Convert Exercise objects back to ID array when updating store
             const newOrder = data.map((exercise) => exercise.id);
-            setter.updateExerciseList(newOrder);
+            exerciseSetter.updateExerciseList(newOrder);
           }}
           keyExtractor={(exercise) => exercise.id.toString()}
           renderItem={renderItem}
@@ -121,11 +133,12 @@ function ExerciseList({
 }
 
 export default function ExercisesTab() {
+  const router = useRouter();
   const { exerciseMap, exercisesList, exerciseSet, setter } =
     useExerciseStoreWithSetter();
+  const { tagMap, setter: tagSetter } = useTagStoreWithSetter();
   const { showActionSheetWithOptions } = useActionSheet();
   const openModal = useModalStore((state) => state.openModal);
-  const router = useRouter();
 
   console.log(exerciseSet);
 
@@ -170,7 +183,9 @@ export default function ExercisesTab() {
       <ExerciseList
         exerciseMap={exerciseMap}
         exerciseList={exercisesList}
-        setter={setter}
+        exerciseSetter={setter}
+        tagMap={tagMap}
+        tagSetter={tagSetter}
       />
     </>
   );
