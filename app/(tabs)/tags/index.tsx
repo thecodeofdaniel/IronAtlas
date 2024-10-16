@@ -27,14 +27,16 @@ const Tree = ({ tagMap, tagChildren, level = 0, setter }: TreeProps) => {
   const openModal = useModalStore((state) => state.openModal);
 
   const handleOnPress = (pressedId: number, level: number) => {
+    const tag = tagMap[pressedId];
     const baseOptions = ['Create', 'Cancel'];
     const options = [
-      ...(level > 0 ? ['Delete', 'Edit', 'Move'] : []),
+      ...(level > 0 && tag.children.length === 0 ? ['Delete'] : []),
+      ...(level > 0 ? ['Edit', 'Move'] : []),
       ...baseOptions,
     ];
 
     const cancelButtonIndex = options.length - 1;
-    const destructiveButtonIndex = level > 0 ? 0 : undefined;
+    const destructiveButtonIndex = options.indexOf('Delete');
 
     const actions = {
       Delete: () => setter.deleteTag(pressedId),
