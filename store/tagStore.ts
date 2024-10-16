@@ -14,6 +14,7 @@ export type TagStateFunctions = {
   deleteTag: (pressedId: number) => void;
   editTagTitle: (pressedId: number, newLabel: string, newValue: string) => void;
   moveTag: (pressedId: number, idToMove: number) => void;
+  addExercise: (tagId: number, exerciseId: number) => void;
   removeExercise: (tagId: number, exerciseId: number) => void;
 };
 
@@ -249,12 +250,15 @@ export const useTagStore = create<TagStore>()((set) => ({
         state.tagMap[pressedId].children.push(idToMove);
       })
     ),
+  addExercise: (tagId, exerciseId) =>
+    set(
+      produce<TagStore>((state) => {
+        state.tagMap[tagId].exercises.add(exerciseId);
+      })
+    ),
   removeExercise: (tagId, exerciseId) =>
     set(
       produce<TagStore>((state) => {
-        // exercises.forEach((exercise) =>
-        //   state.tagMap[tagId].exercises.delete(exercise)
-        // );
         state.tagMap[tagId].exercises.delete(exerciseId);
       })
     ),
@@ -273,6 +277,7 @@ export function useTagStoreWithSetter(): TagStateVal & {
     deleteTag,
     editTagTitle,
     moveTag,
+    addExercise,
     removeExercise,
   } = useTagStore((state) => state);
 
@@ -286,6 +291,7 @@ export function useTagStoreWithSetter(): TagStateVal & {
       deleteTag,
       editTagTitle,
       moveTag,
+      addExercise,
       removeExercise,
     },
   };

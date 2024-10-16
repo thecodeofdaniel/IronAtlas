@@ -20,7 +20,7 @@ export default function UpsertExercise({
   const router = useRouter();
   const id = modalData.id;
   const { exerciseMap, setter: exerciseSetter } = useExerciseStoreWithSetter();
-  const { tagMap } = useTagStoreWithSetter();
+  const { tagMap, setter: tagSetter } = useTagStoreWithSetter();
 
   // Fill out the data
   const [label, setLabel] = useState(id ? exerciseMap[id].label : '');
@@ -68,6 +68,12 @@ export default function UpsertExercise({
         tags: new Set(selected.chosen),
       };
 
+      // Add exercise to associated tags
+      selected.chosen.forEach((tagId) =>
+        tagSetter.addExercise(tagId, newExercise.id)
+      );
+
+      // Add exercise to exercise pool
       exerciseSetter.createExercise(newExercise);
     }
 
