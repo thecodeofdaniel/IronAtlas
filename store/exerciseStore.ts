@@ -13,6 +13,7 @@ export type ExerciseStateFunctions = {
   updateExerciseList: (newExerciseList: number[]) => void;
   deleteExercise: (id: number) => void;
   updateExercise: (id: number, editedExercise: Exercise) => void;
+  removeTagFromExercise: (id: number, tagId: number) => void;
 };
 
 const startingExerciseMap: ExerciseMap = {
@@ -115,6 +116,12 @@ export const useExerciseStore = create<ExerciseStore>()((set) => ({
         state.exerciseSet.add(editedExercise.value);
       })
     ),
+  removeTagFromExercise: (id, tagId) =>
+    set(
+      produce<ExerciseStore>((state) => {
+        state.exerciseMap[id].tags.delete(tagId);
+      })
+    ),
   // increase: (by) => set((state) => ({ bears: state.bears + by })),
 }));
 
@@ -129,6 +136,7 @@ export function useExerciseStoreWithSetter(): ExerciseStateVal & {
     updateExerciseList,
     deleteExercise,
     updateExercise,
+    removeTagFromExercise,
   } = useExerciseStore((state) => state);
 
   return {
@@ -140,6 +148,7 @@ export function useExerciseStoreWithSetter(): ExerciseStateVal & {
       updateExerciseList,
       deleteExercise,
       updateExercise,
+      removeTagFromExercise,
     },
   };
 }

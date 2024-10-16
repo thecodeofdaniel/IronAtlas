@@ -13,15 +13,27 @@ import {
 } from '@expo/react-native-action-sheet';
 import { Stack, useRouter } from 'expo-router';
 import { useModalStore } from '@/store/modalStore';
+import {
+  ExerciseStateFunctions,
+  useExerciseStore,
+  useExerciseStoreWithSetter,
+} from '@/store/exerciseStore';
 
-type TreeProps = {
+type DraggableTreeProps = {
   tagMap: TagMap; // Accept itemMap as a prop
   tagChildren: number[]; // Accept item IDs as a prop
   level: number;
   setter: TagStateFunctions;
+  exerciseSetter: ExerciseStateFunctions;
 };
 
-const Tree = ({ tagMap, tagChildren, level = 0, setter }: TreeProps) => {
+const DraggableTree = ({
+  tagMap,
+  tagChildren,
+  level = 0,
+  setter,
+  exerciseSetter,
+}: DraggableTreeProps) => {
   const router = useRouter();
   const { showActionSheetWithOptions } = useActionSheet();
   const openModal = useModalStore((state) => state.openModal);
@@ -39,7 +51,17 @@ const Tree = ({ tagMap, tagChildren, level = 0, setter }: TreeProps) => {
     const destructiveButtonIndex = options.indexOf('Delete');
 
     const actions = {
-      Delete: () => setter.deleteTag(pressedId),
+      Delete: () => {
+        // grab the associated exercises with that tag
+        // go through each exercise and delete that tag from set
+        const exerciseIds = [...tagMap[pressedId].exercises];
+        exerciseIds.forEach((exerciseId) =>
+          exerciseSetter.removeTagFromExercise(exerciseId, pressedId)
+        );
+
+        // delete tag itself
+        setter.deleteTag(pressedId);
+      },
       Create: () => openModal('createTag', { pressedId }),
       Edit: () => openModal('updateTag', { id: pressedId }),
       Move: () => openModal('moveTag', { pressedId }),
@@ -125,11 +147,12 @@ const Tree = ({ tagMap, tagChildren, level = 0, setter }: TreeProps) => {
                 getIndex={getIndex}
               />
               {item.children.length > 0 && item.isOpen && (
-                <Tree
+                <DraggableTree
                   tagMap={tagMap}
                   tagChildren={item.children}
                   level={level + 1}
                   setter={setter}
+                  exerciseSetter={exerciseSetter}
                 />
               )}
             </View>
@@ -142,6 +165,7 @@ const Tree = ({ tagMap, tagChildren, level = 0, setter }: TreeProps) => {
 
 export default function TagTab() {
   const { tagMap, setter } = useTagStoreWithSetter();
+  const { setter: exerciseSetter } = useExerciseStoreWithSetter();
 
   return (
     <>
@@ -151,7 +175,13 @@ export default function TagTab() {
       <View className="flex flex-1 pt-2 px-2">
         <GestureHandlerRootView>
           <ActionSheetProvider>
-            <Tree tagMap={tagMap} tagChildren={[0]} level={0} setter={setter} />
+            <DraggableTree
+              tagMap={tagMap}
+              tagChildren={[0]}
+              level={0}
+              setter={setter}
+              exerciseSetter={exerciseSetter}
+            />
           </ActionSheetProvider>
         </GestureHandlerRootView>
       </View>
