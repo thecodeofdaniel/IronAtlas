@@ -36,6 +36,19 @@ export default function TabLayout() {
           ),
         }}
       />
+      <Tabs.Screen
+        name="database"
+        options={{
+          title: 'DB',
+          tabBarIcon: ({ color, size, focused }) => (
+            <Ionicons
+              name={focused ? 'server' : 'server-outline'}
+              color={color}
+              size={size}
+            />
+          ),
+        }}
+      />
       <Tabs.Screen name="index" options={{ href: null }} />
     </Tabs>
   );
