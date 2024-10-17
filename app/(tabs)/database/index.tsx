@@ -7,7 +7,7 @@ import * as SQLite from 'expo-sqlite';
 import * as FileSystem from 'expo-file-system';
 
 // Drizzle
-import { DB_NAME, expoDb } from '@/app/_layout';
+import { DB_NAME, expoDb } from '@/db/instance';
 import { seed } from '@/db/seed';
 
 const getDbTables = async () => {
