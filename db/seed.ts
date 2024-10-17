@@ -1,4 +1,4 @@
-import { db } from '@/app/_layout';
+import { db } from '@/db/instance';
 import * as schema from './schema';
 
 const startingTags = [
