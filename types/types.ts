@@ -26,3 +26,25 @@ type Tag = {
 type TagMap = {
   [key: number]: Tag; // Create an ItemMap type
 };
+
+// type Workout = {
+//   id: number;
+//   duration: number; // in seconds
+//   notes: string;
+//   partitionIds: number[];
+// };
+
+// type WorkoutPartition = {
+//   id: number;
+//   exerciseId: number;
+//   notes: string;
+//   settIds: number[];
+// };
+
+// type Sett = {
+//   id: number;
+//   weight: number;
+//   reps: number;
+//   rpe: number;
+//   type: string;
+// };
