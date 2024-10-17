@@ -1,6 +1,8 @@
 import { create } from 'zustand';
 import { produce, enableMapSet } from 'immer';
 import { formatTagOrExercise } from '@/utils/utils';
+import * as schema from '@/db/schema';
+import { db } from '@/db/instance';
 
 type TagStateVal = {
   tagMap: TagMap;
@@ -120,6 +122,59 @@ const startingTree: TagMap = {
 enableMapSet();
 const tags = Object.values(startingTree).map((tag) => tag.value);
 const startingTagSet = new Set(tags);
+
+function transformDbTagsToState(): TagMap {
+  const tagMap: TagMap = {
+    0: {
+      id: 0,
+      label: 'All',
+      value: 'all',
+      parentId: null,
+      order: 0,
+      isOpen: true,
+      children: [],
+      exercises: new Set(),
+    },
+  };
+
+  const dbTags = db.select().from(schema.tag).all();
+  const exerciseTags = db.select().from(schema.exerciseTags).all();
+
+  // First pass: create all tag objects and populate exercises
+  dbTags.forEach((dbTag) => {
+    const exercises = new Set(
+      exerciseTags
+        .filter((et) => et.tagId === dbTag.id)
+        .map((et) => et.exerciseId)
+    );
+
+    tagMap[dbTag.id] = {
+      id: dbTag.id,
+      label: dbTag.label,
+      value: dbTag.value,
+      parentId: dbTag.parentId === null ? 0 : dbTag.parentId,
+      order: dbTag.order,
+      isOpen: dbTag.isOpen,
+      children: [],
+      // exercises: new Set(dbTag.exercises.map((exercise) => exercise.value)),
+      exercises: exercises,
+    };
+  });
+
+  // Second pass: populate children arrays
+  Object.values(tagMap).forEach((tag) => {
+    if (tag.parentId !== null) {
+      tagMap[tag.parentId].children.push(tag.id);
+    }
+  });
+
+  // Sort children arrays by order
+  Object.values(tagMap).forEach((tag) => {
+    tag.children.sort((a, b) => tagMap[a].order - tagMap[b].order);
+  });
+
+  return tagMap;
+}
 
 type TagStore = TagStateVal & TagStateFunctions;
 
