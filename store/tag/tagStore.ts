@@ -98,39 +98,44 @@ export const useTagStore = create<TagStore>()((set, get) => ({
       return { tagMap: newItemMap };
     }),
   createChildTag: async (pressedId: number, title: string) => {
-    const [newTag] = await db
-      .insert(schema.tag)
-      .values({
-        label: title,
-        value: formatTagOrExercise(title),
-        order: get().tagMap[pressedId].children.length,
-        isOpen: false,
-        parentId: pressedId,
-      })
-      .returning();
+    try {
+      // Create tag within db
+      const [newTag] = await db
+        .insert(schema.tag)
+        .values({
+          label: title,
+          value: formatTagOrExercise(title),
+          order: get().tagMap[pressedId].children.length,
+          isOpen: false,
+          parentId: pressedId,
+        })
+        .returning();
 
-    set((state) => {
-      const newTagMap = { ...state.tagMap };
-      const pressedTag = newTagMap[pressedId];
+      set((state) => {
+        const newTagMap = { ...state.tagMap };
+        const pressedTag = newTagMap[pressedId];
 
-      // Create a new copy of the pressed item with the updated children array
-      newTagMap[pressedId] = {
-        ...pressedTag,
-        children: [...pressedTag.children, newTag.id], // Create new array instead of using push
-      };
+        // Update the parentTag's children
+        newTagMap[pressedId] = {
+          ...pressedTag,
+          children: [...pressedTag.children, newTag.id],
+        };
 
-      // newTagMap[newItem.id] = newItem; // Add the new item to the map
-      newTagMap[newTag.id] = {
-        ...newTag,
-        children: [],
-        exercises: new Set(),
-      };
+        // Add new tag to the map
+        newTagMap[newTag.id] = {
+          ...newTag,
+          children: [],
+          exercises: new Set(),
+        };
 
-      return {
-        tagMap: newTagMap,
-        tagSet: new Set([...state.tagSet, newTag.value]),
-      };
-    });
+        return {
+          tagMap: newTagMap,
+          tagSet: new Set([...state.tagSet, newTag.value]),
+        };
+      });
+    } catch (error) {
+      console.error('Failed to create child tag:', error);
+    }
   },
 
   deleteTag: (pressedId: number) =>
