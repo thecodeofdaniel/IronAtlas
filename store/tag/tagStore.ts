@@ -73,6 +73,15 @@ export const useTagStore = create<TagStore>()((set, get) => ({
           ...newItemMap[item.id],
           order: index,
         };
+
+        // Update database asynchronously
+        db.update(schema.tag)
+          .set({ order: index })
+          .where(eq(schema.tag.id, item.id))
+          .execute()
+          .catch((error) => {
+            console.error('Failed to update tag order state', error);
+          });
       });
 
       // Then, update the parent's children array to reflect the new order
