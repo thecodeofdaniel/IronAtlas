@@ -181,15 +181,30 @@ export const useTagStore = create<TagStore>()((set, get) => ({
       console.error('Error: Deleting tag and associated exercises', error);
     }
   },
-  editTagTitle: (pressedId: number, newTitle: string, newValue: string) =>
-    set(
-      produce<TagStore>((state) => {
-        const prevTagVal = state.tagMap[pressedId].value;
-        state.tagSet.delete(prevTagVal);
-        state.tagMap[pressedId].label = newTitle;
-        state.tagSet.add(newValue);
-      })
-    ),
+  editTagTitle: async (
+    pressedId: number,
+    newTitle: string,
+    newValue: string
+  ) => {
+    await db
+      .update(schema.tag)
+      .set({ label: newTitle, value: newValue })
+      .where(eq(schema.tag.id, pressedId));
+
+    try {
+      set(
+        produce<TagStore>((state) => {
+          const prevTagVal = state.tagMap[pressedId].value;
+          state.tagSet.delete(prevTagVal);
+          state.tagMap[pressedId].label = newTitle;
+          state.tagMap[pressedId].value = newValue;
+          state.tagSet.add(newValue);
+        })
+      );
+    } catch (error) {
+      console.error('Error: Trying to edit tag', error);
+    }
+  },
   moveTag: (pressedId, idToMove) =>
     set(
       produce<TagStore>((state) => {
