@@ -59,3 +59,8 @@ export default function transformDbTagsToState(): TagStateVal {
     tagSet,
   };
 }
+
+/** If the parentId is 0, then the parentId is null in the db */
+export function trueParentId(parentId: number): number | null {
+  return parentId === 0 ? null : parentId;
+}

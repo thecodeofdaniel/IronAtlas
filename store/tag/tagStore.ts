@@ -5,6 +5,7 @@ import * as schema from '@/db/schema';
 import { db } from '@/db/instance';
 import { eq } from 'drizzle-orm';
 import transformDbTagsToState from './transform';
+import { trueParentId } from './transform';
 
 export type TagStateVal = {
   tagMap: TagMap;
@@ -107,7 +108,7 @@ export const useTagStore = create<TagStore>()((set, get) => ({
           value: formatTagOrExercise(title),
           order: get().tagMap[pressedId].children.length,
           isOpen: false,
-          parentId: pressedId,
+          parentId: trueParentId(pressedId),
         })
         .returning();
 
@@ -209,7 +210,7 @@ export const useTagStore = create<TagStore>()((set, get) => ({
         .update(schema.tag)
         // If tag is moved under root (0) then update as null in db
         .set({
-          parentId: idToBeUnder === 0 ? null : idToBeUnder,
+          parentId: trueParentId(idToBeUnder),
           order: get().tagMap[idToBeUnder].children.length,
         })
         .where(eq(schema.tag.id, idToMove));
