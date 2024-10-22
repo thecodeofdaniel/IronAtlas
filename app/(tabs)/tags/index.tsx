@@ -105,7 +105,7 @@ const DraggableTree = ({
           'bg-blue-800': !isActive,
         })}
       >
-        {item.children.length > 0 && (
+        {item.children.length > 0 && level > 0 && (
           <Pressable
             onPress={() => {
               setter.toggleTagOpen(item.id);
