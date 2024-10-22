@@ -138,18 +138,15 @@ export const useTagStore = create<TagStore>()((set, get) => ({
     }
   },
   deleteTag: async (pressedId: number) => {
-    // TODO: Remove tag from db. Pay attention if parentId is deleted
-    // TODO: Remove associated exercises with tag
-
-    // Remove tag from tag table
-    await db.delete(schema.tag).where(eq(schema.tag.id, pressedId));
-
-    // Remove exercises associated with tag in many to many table
-    await db
-      .delete(schema.exerciseTags)
-      .where(eq(schema.exerciseTags.tagId, pressedId));
-
     try {
+      // Remove tag from tag table
+      await db.delete(schema.tag).where(eq(schema.tag.id, pressedId));
+
+      // Remove exercises associated with tag in many to many table
+      await db
+        .delete(schema.exerciseTags)
+        .where(eq(schema.exerciseTags.tagId, pressedId));
+
       set(
         produce<TagStore>((state) => {
           // Helper function to recursively delete an item and all its children
@@ -186,12 +183,12 @@ export const useTagStore = create<TagStore>()((set, get) => ({
     newTitle: string,
     newValue: string
   ) => {
-    await db
-      .update(schema.tag)
-      .set({ label: newTitle, value: newValue })
-      .where(eq(schema.tag.id, pressedId));
-
     try {
+      await db
+        .update(schema.tag)
+        .set({ label: newTitle, value: newValue })
+        .where(eq(schema.tag.id, pressedId));
+
       set(
         produce<TagStore>((state) => {
           const prevTagVal = state.tagMap[pressedId].value;
@@ -205,24 +202,39 @@ export const useTagStore = create<TagStore>()((set, get) => ({
       console.error('Error: Trying to edit tag', error);
     }
   },
-  moveTag: (pressedId, idToMove) =>
-    set(
-      produce<TagStore>((state) => {
-        // Get the old parentId (0 if root)
-        const oldParentId = state.tagMap[idToMove].parentId ?? 0;
+  moveTag: async (idToBeUnder, idToMove) => {
+    try {
+      // Update the parentId and order
+      await db
+        .update(schema.tag)
+        // If tag is moved under root (0) then update as null in db
+        .set({
+          parentId: idToBeUnder === 0 ? null : idToBeUnder,
+          order: get().tagMap[idToBeUnder].children.length,
+        })
+        .where(eq(schema.tag.id, idToMove));
 
-        // Remove idToMove from the old parent's children array
-        state.tagMap[oldParentId].children = state.tagMap[
-          oldParentId
-        ].children.filter((id) => id !== idToMove);
+      set(
+        produce<TagStore>((state) => {
+          // Get the old parentId (0 if root)
+          const oldParentId = state.tagMap[idToMove].parentId ?? 0;
 
-        // Update the parentId of the tag being moved
-        state.tagMap[idToMove].parentId = pressedId;
+          // Remove idToMove from the old parent's children array
+          state.tagMap[oldParentId].children = state.tagMap[
+            oldParentId
+          ].children.filter((id) => id !== idToMove);
 
-        // Add idToMove to the new parent's children array
-        state.tagMap[pressedId].children.push(idToMove);
-      })
-    ),
+          // Update the parentId of the tag being moved
+          state.tagMap[idToMove].parentId = idToBeUnder;
+
+          // Add idToMove to the new parent's children array
+          state.tagMap[idToBeUnder].children.push(idToMove);
+        })
+      );
+    } catch (error) {
+      console.error('Error: Unable to move tag', error);
+    }
+  },
   addExercise: (tagId, exerciseId) =>
     set(
       produce<TagStore>((state) => {
