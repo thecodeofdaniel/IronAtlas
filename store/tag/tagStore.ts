@@ -97,36 +97,42 @@ export const useTagStore = create<TagStore>()((set, get) => ({
 
       return { tagMap: newItemMap };
     }),
-  createChildTag: (pressedId: number, title: string) =>
-    set((state) => {
-      const newItems = { ...state.tagMap };
-      const pressedItem = newItems[pressedId];
-      const nextIndex = pressedItem.children.length;
-
-      const newItem: Tag = {
-        id: Date.now(), // Use a unique ID generator in a real scenario
+  createChildTag: async (pressedId: number, title: string) => {
+    const [newTag] = await db
+      .insert(schema.tag)
+      .values({
         label: title,
         value: formatTagOrExercise(title),
-        parentId: pressedItem.id,
-        order: nextIndex,
+        order: get().tagMap[pressedId].children.length,
         isOpen: false,
+        parentId: pressedId,
+      })
+      .returning();
+
+    set((state) => {
+      const newTagMap = { ...state.tagMap };
+      const pressedTag = newTagMap[pressedId];
+
+      // Create a new copy of the pressed item with the updated children array
+      newTagMap[pressedId] = {
+        ...pressedTag,
+        children: [...pressedTag.children, newTag.id], // Create new array instead of using push
+      };
+
+      // newTagMap[newItem.id] = newItem; // Add the new item to the map
+      newTagMap[newTag.id] = {
+        ...newTag,
         children: [],
         exercises: new Set(),
       };
 
-      // Create a new copy of the pressed item with the updated children array
-      newItems[pressedId] = {
-        ...pressedItem,
-        children: [...pressedItem.children, newItem.id], // Create new array instead of using push
-      };
-
-      newItems[newItem.id] = newItem; // Add the new item to the map
-
       return {
-        tagMap: newItems,
-        tagSet: new Set([...state.tagSet, newItem.value]),
+        tagMap: newTagMap,
+        tagSet: new Set([...state.tagSet, newTag.value]),
       };
-    }),
+    });
+  },
+
   deleteTag: (pressedId: number) =>
     set(
       produce<TagStore>((state) => {
