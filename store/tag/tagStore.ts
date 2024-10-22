@@ -137,35 +137,50 @@ export const useTagStore = create<TagStore>()((set, get) => ({
       console.error('Failed to create child tag:', error);
     }
   },
+  deleteTag: async (pressedId: number) => {
+    // TODO: Remove tag from db. Pay attention if parentId is deleted
+    // TODO: Remove associated exercises with tag
 
-  deleteTag: (pressedId: number) =>
-    set(
-      produce<TagStore>((state) => {
-        // Helper function to recursively delete an item and all its children
-        const deleteItemAndChildren = (id: number) => {
-          const item = state.tagMap[id];
-          if (!item) return;
+    // Remove tag from tag table
+    await db.delete(schema.tag).where(eq(schema.tag.id, pressedId));
 
-          // Recursively delete all children first
-          item.children.forEach((childId) => {
-            deleteItemAndChildren(childId);
-          });
+    // Remove exercises associated with tag in many to many table
+    await db
+      .delete(schema.exerciseTags)
+      .where(eq(schema.exerciseTags.tagId, pressedId));
 
-          // If this item has a parent, remove it from parent's children array
-          if (item.parentId !== null && state.tagMap[item.parentId]) {
-            state.tagMap[item.parentId].children = state.tagMap[
-              item.parentId
-            ].children.filter((childId) => childId !== id);
-          }
+    try {
+      set(
+        produce<TagStore>((state) => {
+          // Helper function to recursively delete an item and all its children
+          const deleteItemAndChildren = (id: number) => {
+            const item = state.tagMap[id];
+            if (!item) return;
 
-          // Delete the item itself
-          state.tagSet.delete(item.value);
-          delete state.tagMap[id];
-        };
+            // Recursively delete all children first
+            item.children.forEach((childId) => {
+              deleteItemAndChildren(childId);
+            });
 
-        deleteItemAndChildren(pressedId);
-      })
-    ),
+            // If this item has a parent, remove it from parent's children array
+            if (item.parentId !== null && state.tagMap[item.parentId]) {
+              state.tagMap[item.parentId].children = state.tagMap[
+                item.parentId
+              ].children.filter((childId) => childId !== id);
+            }
+
+            // Delete the item itself
+            state.tagSet.delete(item.value);
+            delete state.tagMap[id];
+          };
+
+          deleteItemAndChildren(pressedId);
+        })
+      );
+    } catch (error) {
+      console.error('Error: Deleting tag and associated exercises', error);
+    }
+  },
   editTagTitle: (pressedId: number, newTitle: string, newValue: string) =>
     set(
       produce<TagStore>((state) => {
