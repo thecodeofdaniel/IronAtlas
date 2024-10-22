@@ -24,106 +24,15 @@ export type TagStateFunctions = {
 // create a 0 root which represents all tags
 // order key is important as it sets up array for children
 
-const startingTree: TagMap = {
-  // Root
-  0: {
-    id: 0, // 0 does not exist in db, we put this here
-    label: 'All',
-    value: 'all',
-    parentId: null,
-    order: 0,
-    isOpen: true,
-    children: [1, 3],
-    exercises: new Set(),
-  },
-  1: {
-    id: 1,
-    label: 'Upper',
-    value: 'upper',
-    parentId: 0,
-    order: 0,
-    isOpen: true,
-    children: [2, 6],
-    exercises: new Set(),
-  },
-  2: {
-    id: 2,
-    label: 'Chest',
-    value: 'chest',
-    parentId: 1,
-    order: 0,
-    isOpen: false,
-    children: [4, 5],
-    exercises: new Set(),
-  },
-  3: {
-    id: 3,
-    label: 'Lower',
-    value: 'lower',
-    parentId: 0,
-    order: 1,
-    isOpen: false,
-    children: [],
-    exercises: new Set(),
-  },
-  4: {
-    id: 4,
-    label: 'Upper Chest',
-    value: 'upper_chest',
-    parentId: 2,
-    order: 0,
-    isOpen: false,
-    children: [],
-    exercises: new Set(),
-  },
-  5: {
-    id: 5,
-    label: 'Middle Chest',
-    value: 'middle_chest',
-    parentId: 2,
-    order: 1,
-    isOpen: false,
-    children: [],
-    exercises: new Set(),
-  },
-  6: {
-    id: 6,
-    label: 'Arms',
-    value: 'arms',
-    parentId: 1,
-    order: 0,
-    isOpen: false,
-    children: [7, 8],
-    exercises: new Set(),
-  },
-  7: {
-    id: 7,
-    label: 'Triceps',
-    value: 'triceps',
-    parentId: 6,
-    order: 0,
-    isOpen: false,
-    children: [],
-    exercises: new Set(),
-  },
-  8: {
-    id: 8,
-    label: 'Biceps',
-    value: 'biceps',
-    parentId: 6,
-    order: 1,
-    isOpen: false,
-    children: [],
-    exercises: new Set(),
-  },
-};
-
 // Use set to make tags unique
 enableMapSet();
-const tags = Object.values(startingTree).map((tag) => tag.value);
-const startingTagSet = new Set(tags);
+// const tags = Object.values(startingTree).map((tag) => tag.value);
+// const startingTagSet = new Set(tags);
 
-function transformDbTagsToState(): TagMap {
+function transformDbTagsToState(): {
+  tagMap: TagMap;
+  tagSet: Set<string>;
+} {
   const tagMap: TagMap = {
     0: {
       id: 0,
@@ -137,10 +46,12 @@ function transformDbTagsToState(): TagMap {
     },
   };
 
+  const tagSet: Set<string> = new Set();
+
   const dbTags = db.select().from(schema.tag).all();
   const exerciseTags = db.select().from(schema.exerciseTags).all();
 
-  // First pass: create all tag objects and populate exercises
+  // First pass: create all tag objects and add associated exercises
   dbTags.forEach((dbTag) => {
     const exercises = new Set(
       exerciseTags
@@ -159,28 +70,34 @@ function transformDbTagsToState(): TagMap {
       // exercises: new Set(dbTag.exercises.map((exercise) => exercise.value)),
       exercises: exercises,
     };
+
+    // TODO put all tag values into a set and return
+    tagSet.add(dbTag.value);
   });
 
-  // Second pass: populate children arrays
+  // Second pass: populate children arrays for each tag object and sort by order
   Object.values(tagMap).forEach((tag) => {
     if (tag.parentId !== null) {
       tagMap[tag.parentId].children.push(tag.id);
     }
   });
-
-  // Sort children arrays by order
   Object.values(tagMap).forEach((tag) => {
     tag.children.sort((a, b) => tagMap[a].order - tagMap[b].order);
   });
 
-  return tagMap;
+  return {
+    tagMap,
+    tagSet,
+  };
 }
+
+const starting = transformDbTagsToState();
 
 type TagStore = TagStateVal & TagStateFunctions;
 
 export const useTagStore = create<TagStore>()((set) => ({
-  tagMap: startingTree,
-  tagSet: startingTagSet,
+  tagMap: starting.tagMap,
+  tagSet: starting.tagSet,
   toggleTagOpen: (pressedId: number) =>
     set((state) => {
       const newTagMap = { ...state.tagMap };
