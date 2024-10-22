@@ -3,6 +3,7 @@ import { produce, enableMapSet } from 'immer';
 import { formatTagOrExercise } from '@/utils/utils';
 import * as schema from '@/db/schema';
 import { db } from '@/db/instance';
+import { eq } from 'drizzle-orm';
 
 type TagStateVal = {
   tagMap: TagMap;
@@ -95,22 +96,34 @@ const starting = transformDbTagsToState();
 
 type TagStore = TagStateVal & TagStateFunctions;
 
-export const useTagStore = create<TagStore>()((set) => ({
+export const useTagStore = create<TagStore>()((set, get) => ({
   tagMap: starting.tagMap,
   tagSet: starting.tagSet,
   toggleTagOpen: (pressedId: number) =>
     set((state) => {
       const newTagMap = { ...state.tagMap };
+      const newValue = !newTagMap[pressedId].isOpen;
 
-      // Flip isOpen like on/off switch
       newTagMap[pressedId] = {
         ...newTagMap[pressedId],
-        isOpen: !newTagMap[pressedId].isOpen,
+        isOpen: newValue,
       };
 
-      return {
-        tagMap: newTagMap,
-      };
+      // Return the new state immediately
+      const newState = { tagMap: newTagMap };
+
+      // Perform the database update asynchronously
+      db.update(schema.tag)
+        .set({ isOpen: newValue })
+        .where(eq(schema.tag.id, pressedId))
+        .execute()
+        .catch((error) => {
+          console.error('Failed to update tag open state:', error);
+          // Revert the state change if the DB update fails
+          set(() => ({ tagMap: get().tagMap }));
+        });
+
+      return newState;
     }),
   reorderTags: (dataList: Tag[]) =>
     set((state) => {
