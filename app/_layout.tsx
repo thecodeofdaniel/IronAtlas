@@ -7,7 +7,6 @@ import * as SplashScreen from 'expo-splash-screen';
 
 // Drizzle Stuff
 import { useDrizzleStudio } from 'expo-drizzle-studio-plugin';
-import * as schema from '@/db/schema';
 import { useMigrations } from 'drizzle-orm/expo-sqlite/migrator';
 import migrations from '@/db/drizzle/migrations';
 import { ActionSheetProvider } from '@expo/react-native-action-sheet';
@@ -17,7 +16,6 @@ import { expoDb, db } from '@/db/instance';
 
 // NativeWind
 import '../global.css';
-import { useExerciseStore } from '@/store/exerciseStore';
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -39,10 +37,6 @@ export default function RootLayout() {
 
   return <MigrateDB />;
 }
-
-// export const DB_NAME = 'db.db';
-// export const expoDb = openDatabaseSync(DB_NAME, { enableChangeListener: true });
-// export const db = drizzle(expoDb, { schema });
 
 function MigrateDB() {
   const { success, error } = useMigrations(db, migrations);
@@ -68,14 +62,6 @@ function MigrateDB() {
 
 function Init() {
   useDrizzleStudio(expoDb);
-
-  const fetchExercisesFromDB = useExerciseStore(
-    (state) => state.fetchExercisesFromDB
-  );
-
-  useEffect(() => {
-    fetchExercisesFromDB();
-  }, []);
 
   return (
     <ActionSheetProvider>

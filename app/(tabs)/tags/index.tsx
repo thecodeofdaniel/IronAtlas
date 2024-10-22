@@ -18,9 +18,8 @@ import { Stack, useRouter } from 'expo-router';
 import { useModalStore } from '@/store/modalStore';
 import {
   ExerciseStateFunctions,
-  useExerciseStore,
   useExerciseStoreWithSetter,
-} from '@/store/exerciseStore';
+} from '@/store/exercise/exerciseStore';
 
 type DraggableTreeProps = {
   tagMap: TagMap; // Accept itemMap as a prop

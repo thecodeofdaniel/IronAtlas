@@ -1,7 +1,7 @@
 import {
   ExerciseStateFunctions,
   useExerciseStoreWithSetter,
-} from '@/store/exerciseStore';
+} from '@/store/exercise/exerciseStore';
 import { useModalStore } from '@/store/modalStore';
 import {
   useTagStoreWithSetter,

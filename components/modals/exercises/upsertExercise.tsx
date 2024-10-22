@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity } from 'react-native';
 import { ModalData } from '@/store/modalStore';
 import { Stack, useRouter } from 'expo-router';
-import { useExerciseStoreWithSetter } from '@/store/exerciseStore';
+import { useExerciseStoreWithSetter } from '@/store/exercise/exerciseStore';
 import { useTagStoreWithSetter } from '@/store/tag/tagStore';
 import { getAllParentIds } from '@/utils/utils';
 import TagTree from '../../selectFromTagTree';
