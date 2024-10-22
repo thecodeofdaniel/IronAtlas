@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, Button } from 'react-native';
 import { Stack, useRouter } from 'expo-router';
-import { useTagStoreWithSetter } from '@/store/tagStore';
+import { useTagStoreWithSetter } from '@/store/tag/tagStore';
 import { ModalData } from '@/store/modalStore';
 import { formatTagOrExercise, isValidTagOrExercise } from '@/utils/utils';
 

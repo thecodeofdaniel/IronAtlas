@@ -3,7 +3,10 @@ import {
   useExerciseStoreWithSetter,
 } from '@/store/exerciseStore';
 import { useModalStore } from '@/store/modalStore';
-import { TagStateFunctions, useTagStoreWithSetter } from '@/store/tagStore';
+import {
+  useTagStoreWithSetter,
+  type TagStateFunctions,
+} from '@/store/tag/tagStore';
 import { useActionSheet } from '@expo/react-native-action-sheet';
 import { Ionicons } from '@expo/vector-icons';
 import clsx from 'clsx';

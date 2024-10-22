@@ -4,8 +4,9 @@ import { formatTagOrExercise } from '@/utils/utils';
 import * as schema from '@/db/schema';
 import { db } from '@/db/instance';
 import { eq } from 'drizzle-orm';
+import transformDbTagsToState from './transform';
 
-type TagStateVal = {
+export type TagStateVal = {
   tagMap: TagMap;
   tagSet: Set<string>;
 };
@@ -21,80 +22,17 @@ export type TagStateFunctions = {
   removeExercise: (tagId: number, exerciseId: number) => void;
 };
 
+export type TagStore = TagStateVal & TagStateFunctions;
+
 // take all the parentId's with null and turn them into 0s
 // create a 0 root which represents all tags
 // order key is important as it sets up array for children
 
 // Use set to make tags unique
 enableMapSet();
-// const tags = Object.values(startingTree).map((tag) => tag.value);
-// const startingTagSet = new Set(tags);
 
-function transformDbTagsToState(): {
-  tagMap: TagMap;
-  tagSet: Set<string>;
-} {
-  const tagMap: TagMap = {
-    0: {
-      id: 0,
-      label: 'All',
-      value: 'all',
-      parentId: null,
-      order: 0,
-      isOpen: true,
-      children: [],
-      exercises: new Set(),
-    },
-  };
-
-  const tagSet: Set<string> = new Set();
-
-  const dbTags = db.select().from(schema.tag).all();
-  const exerciseTags = db.select().from(schema.exerciseTags).all();
-
-  // First pass: create all tag objects and add associated exercises
-  dbTags.forEach((dbTag) => {
-    const exercises = new Set(
-      exerciseTags
-        .filter((et) => et.tagId === dbTag.id)
-        .map((et) => et.exerciseId)
-    );
-
-    tagMap[dbTag.id] = {
-      id: dbTag.id,
-      label: dbTag.label,
-      value: dbTag.value,
-      parentId: dbTag.parentId === null ? 0 : dbTag.parentId,
-      order: dbTag.order,
-      isOpen: dbTag.isOpen,
-      children: [],
-      // exercises: new Set(dbTag.exercises.map((exercise) => exercise.value)),
-      exercises: exercises,
-    };
-
-    // TODO put all tag values into a set and return
-    tagSet.add(dbTag.value);
-  });
-
-  // Second pass: populate children arrays for each tag object and sort by order
-  Object.values(tagMap).forEach((tag) => {
-    if (tag.parentId !== null) {
-      tagMap[tag.parentId].children.push(tag.id);
-    }
-  });
-  Object.values(tagMap).forEach((tag) => {
-    tag.children.sort((a, b) => tagMap[a].order - tagMap[b].order);
-  });
-
-  return {
-    tagMap,
-    tagSet,
-  };
-}
-
+// Transform
 const starting = transformDbTagsToState();
-
-type TagStore = TagStateVal & TagStateFunctions;
 
 export const useTagStore = create<TagStore>()((set, get) => ({
   tagMap: starting.tagMap,

@@ -6,7 +6,10 @@ import DraggableFlatList, {
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import clsx from 'clsx';
 import { Ionicons } from '@expo/vector-icons';
-import { useTagStoreWithSetter, TagStateFunctions } from '@/store/tagStore';
+import {
+  useTagStoreWithSetter,
+  type TagStateFunctions,
+} from '@/store/tag/tagStore';
 import {
   ActionSheetProvider,
   useActionSheet,

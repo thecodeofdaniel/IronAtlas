@@ -3,7 +3,7 @@ import { View, Text, TextInput, TouchableOpacity } from 'react-native';
 import { ModalData } from '@/store/modalStore';
 import { Stack, useRouter } from 'expo-router';
 import { useExerciseStoreWithSetter } from '@/store/exerciseStore';
-import { useTagStoreWithSetter } from '@/store/tagStore';
+import { useTagStoreWithSetter } from '@/store/tag/tagStore';
 import { getAllParentIds } from '@/utils/utils';
 import TagTree from '../../selectFromTagTree';
 import { formatTagOrExercise, isValidTagOrExercise } from '@/utils/utils';

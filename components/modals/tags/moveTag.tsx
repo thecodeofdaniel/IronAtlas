@@ -1,7 +1,7 @@
 import { View, Text, FlatList, TouchableOpacity, Button } from 'react-native';
 import React, { useState } from 'react';
 import { ModalData } from '@/store/modalStore';
-import { useTagStoreWithSetter } from '@/store/tagStore';
+import { useTagStoreWithSetter } from '@/store/tag/tagStore';
 import clsx from 'clsx';
 import { Stack, useRouter } from 'expo-router';
 
