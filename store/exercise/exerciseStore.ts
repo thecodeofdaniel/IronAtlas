@@ -12,7 +12,10 @@ export type ExerciseStateVal = {
 };
 
 export type ExerciseStateFunctions = {
-  createExercise: (newExercise: Exercise) => void;
+  createExercise: (
+    newExercise: schema.TInsertExercise,
+    chosenTags: Set<number>
+  ) => void;
   updateExerciseList: (newExerciseList: number[]) => void;
   deleteExercise: (id: number) => void;
   updateExercise: (id: number, editedExercise: Exercise) => void;
@@ -27,17 +30,39 @@ export const useExerciseStore = create<ExerciseStore>()((set) => ({
   exerciseMap: starting.exerciseMap,
   exercisesList: starting.exercisesList,
   exerciseSet: starting.exerciseSet,
-  createExercise: (newExercise: Exercise) =>
-    set((state) => {
-      return {
-        exerciseMap: {
-          ...state.exerciseMap,
-          [newExercise.id]: newExercise,
-        },
-        exercisesList: [newExercise.id, ...state.exercisesList],
-        exerciseSet: new Set([...state.exerciseSet, newExercise.value]),
-      };
-    }),
+  createExercise: async (newExercise, chosenTags) => {
+    try {
+      // Insert exercise
+      const [newExerciseFromDb] = await db
+        .insert(schema.exercise)
+        .values(newExercise)
+        .returning();
+
+      // Insert tags related to exercise
+      chosenTags.forEach(async (chosenTag) => {
+        await db.insert(schema.exerciseTags).values({
+          exerciseId: newExerciseFromDb.id,
+          tagId: chosenTag,
+        });
+      });
+
+      set((state) => {
+        return {
+          exerciseMap: {
+            ...state.exerciseMap,
+            [newExerciseFromDb.id]: {
+              ...newExerciseFromDb,
+              tags: chosenTags,
+            },
+          },
+          exercisesList: [newExerciseFromDb.id, ...state.exercisesList],
+          exerciseSet: new Set([...state.exerciseSet, newExerciseFromDb.value]),
+        };
+      });
+    } catch (error) {
+      console.error('Error: Not able to add exercise', error);
+    }
+  },
   // ------------------------------------------------------------------------
   // Updating the db first and waiting to see it successful
   updateExerciseList: async (newExercisesList: number[]) => {

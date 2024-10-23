@@ -7,6 +7,7 @@ import { useTagStoreWithSetter } from '@/store/tag/tagStore';
 import { getAllParentIds } from '@/utils/utils';
 import TagTree from '../../selectFromTagTree';
 import { formatTagOrExercise, isValidTagOrExercise } from '@/utils/utils';
+import { TInsertExercise } from '@/db/schema';
 
 type CreateOrUpdateExerciseProps = {
   modalData: ModalData['upsertExercise'];
@@ -60,21 +61,20 @@ export default function UpsertExercise({
         tags: new Set(selected.chosen),
       });
     } else {
-      const newExercise: Exercise = {
-        id: Date.now(),
+      const chosenTags = new Set(selected.chosen);
+
+      const newExercise: TInsertExercise = {
         label: trimmedLabel,
         value: formatTagOrExercise(trimmedLabel),
-        order: 0, // since new exercise will be at the top
-        tags: new Set(selected.chosen),
       };
 
-      // Add exercise to associated tags
-      selected.chosen.forEach((tagId) =>
-        tagSetter.addExercise(tagId, newExercise.id)
-      );
+      // // Add exercise to associated tags
+      // selected.chosen.forEach((tagId) =>
+      //   tagSetter.addExercise(tagId, newExercise.id)
+      // );
 
       // Add exercise to exercise pool
-      exerciseSetter.createExercise(newExercise);
+      exerciseSetter.createExercise(newExercise, chosenTags);
     }
 
     closeModal();
