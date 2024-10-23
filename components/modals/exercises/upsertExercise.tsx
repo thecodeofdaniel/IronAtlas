@@ -20,7 +20,11 @@ export default function UpsertExercise({
 }: CreateOrUpdateExerciseProps) {
   const router = useRouter();
   const id = modalData.id;
-  const { exerciseMap, setter: exerciseSetter } = useExerciseStoreWithSetter();
+  const {
+    exerciseMap,
+    exercisesList,
+    setter: exerciseSetter,
+  } = useExerciseStoreWithSetter();
   const { tagMap, setter: tagSetter } = useTagStoreWithSetter();
 
   // Fill out the data
@@ -66,6 +70,7 @@ export default function UpsertExercise({
       const newExercise: TInsertExercise = {
         label: trimmedLabel,
         value: formatTagOrExercise(trimmedLabel),
+        order: exercisesList.length,
       };
 
       // // Add exercise to associated tags

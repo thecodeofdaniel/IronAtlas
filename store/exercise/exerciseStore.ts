@@ -32,33 +32,37 @@ export const useExerciseStore = create<ExerciseStore>()((set) => ({
   exerciseSet: starting.exerciseSet,
   createExercise: async (newExercise, chosenTags) => {
     try {
-      // Insert exercise
-      const [newExerciseFromDb] = await db
-        .insert(schema.exercise)
-        .values(newExercise)
-        .returning();
+      const [newExerciseFromDb] = await db.transaction(async (tx) => {
+        // Insert exercise
+        const [exercise] = await tx
+          .insert(schema.exercise)
+          .values(newExercise)
+          .returning();
 
-      // Insert tags related to exercise
-      chosenTags.forEach(async (chosenTag) => {
-        await db.insert(schema.exerciseTags).values({
-          exerciseId: newExerciseFromDb.id,
-          tagId: chosenTag,
-        });
+        // Insert tags related to exercise
+        await Promise.all(
+          Array.from(chosenTags).map((chosenTag) =>
+            tx.insert(schema.exerciseTags).values({
+              exerciseId: exercise.id,
+              tagId: chosenTag,
+            })
+          )
+        );
+
+        return [exercise];
       });
 
-      set((state) => {
-        return {
-          exerciseMap: {
-            ...state.exerciseMap,
-            [newExerciseFromDb.id]: {
-              ...newExerciseFromDb,
-              tags: chosenTags,
-            },
+      set((state) => ({
+        exerciseMap: {
+          ...state.exerciseMap,
+          [newExerciseFromDb.id]: {
+            ...newExerciseFromDb,
+            tags: chosenTags,
           },
-          exercisesList: [newExerciseFromDb.id, ...state.exercisesList],
-          exerciseSet: new Set([...state.exerciseSet, newExerciseFromDb.value]),
-        };
-      });
+        },
+        exercisesList: [...state.exercisesList, newExerciseFromDb.id],
+        exerciseSet: new Set([...state.exerciseSet, newExerciseFromDb.value]),
+      }));
     } catch (error) {
       console.error('Error: Not able to add exercise', error);
     }
