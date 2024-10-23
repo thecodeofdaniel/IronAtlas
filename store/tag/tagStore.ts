@@ -4,8 +4,8 @@ import { formatTagOrExercise } from '@/utils/utils';
 import * as schema from '@/db/schema';
 import { db } from '@/db/instance';
 import { eq } from 'drizzle-orm';
-import transformDbTagsToState from './transform';
-import { trueParentId } from './transform';
+import transformDbTagsToState from './tagTransform';
+import { trueParentId } from './tagTransform';
 
 export type TagStateVal = {
   tagMap: TagMap;
