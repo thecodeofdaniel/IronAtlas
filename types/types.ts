@@ -29,22 +29,31 @@ type TagMap = {
 
 // type Workout = {
 //   id: number;
-//   duration: number; // in seconds
+//   title: string;
 //   notes: string;
-//   partitionIds: number[];
+//   exerciseWithinWorkoutIds: number[];
+//   startedAt: Date;
+//   completedAt: Date;
 // };
 
-// type WorkoutPartition = {
+// type ExerciseWithinWorkout = {
 //   id: number;
-//   exerciseId: number;
+//   workoutId: number;
+//   exerciseIds: number[];
+//   isGroup: boolean;
 //   notes: string;
+//   order: number;
 //   settIds: number[];
 // };
 
 // type Sett = {
 //   id: number;
+//   exerciseWithinWorkoutId: number;
+//   exerciseId: number;
 //   weight: number;
 //   reps: number;
 //   rpe: number;
-//   type: string;
+//   order: number;
+//   groupOrder: number; // this will be zero if not a group
+//   type: 'normal' | 'warmup' | 'dropset';
 // };
