@@ -51,7 +51,7 @@ export default function UpsertExercise({
     }
   });
 
-  const handleOnPress = () => {
+  const handleOnPress = async () => {
     if (!label) return;
 
     const trimmedLabel = label.trim();
@@ -73,13 +73,18 @@ export default function UpsertExercise({
         order: exercisesList.length,
       };
 
-      // // Add exercise to associated tags
-      // selected.chosen.forEach((tagId) =>
-      //   tagSetter.addExercise(tagId, newExercise.id)
-      // );
-
       // Add exercise to exercise pool
-      exerciseSetter.createExercise(newExercise, chosenTags);
+      const newExerciseId = await exerciseSetter.createExercise(
+        newExercise,
+        chosenTags
+      );
+
+      if (newExerciseId) {
+        // Add exercise to associated tags
+        selected.chosen.forEach((tagId) =>
+          tagSetter.addExercise(tagId, newExerciseId)
+        );
+      }
     }
 
     closeModal();

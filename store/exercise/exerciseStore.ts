@@ -15,7 +15,7 @@ export type ExerciseStateFunctions = {
   createExercise: (
     newExercise: schema.TInsertExercise,
     chosenTags: Set<number>
-  ) => void;
+  ) => Promise<number | null>;
   updateExerciseList: (newExerciseList: number[]) => void;
   deleteExercise: (id: number) => void;
   updateExercise: (id: number, editedExercise: Exercise) => void;
@@ -31,6 +31,8 @@ export const useExerciseStore = create<ExerciseStore>()((set) => ({
   exercisesList: starting.exercisesList,
   exerciseSet: starting.exerciseSet,
   createExercise: async (newExercise, chosenTags) => {
+    let newExerciseId = null;
+
     try {
       const [newExerciseFromDb] = await db.transaction(async (tx) => {
         // Insert exercise
@@ -52,6 +54,8 @@ export const useExerciseStore = create<ExerciseStore>()((set) => ({
         return [exercise];
       });
 
+      newExerciseId = newExerciseFromDb.id;
+
       set((state) => ({
         exerciseMap: {
           ...state.exerciseMap,
@@ -66,6 +70,8 @@ export const useExerciseStore = create<ExerciseStore>()((set) => ({
     } catch (error) {
       console.error('Error: Not able to add exercise', error);
     }
+
+    return newExerciseId;
   },
   // ------------------------------------------------------------------------
   // Updating the db first and waiting to see it successful
