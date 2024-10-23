@@ -58,7 +58,7 @@ function ExerciseList({
         cancelButtonIndex,
         destructiveButtonIndex,
       },
-      (selectedIndex?: number) => {
+      async (selectedIndex?: number) => {
         switch (selectedIndex) {
           case destructiveButtonIndex:
             // Grab each tag from set and remove associated exercise from tag
@@ -68,7 +68,15 @@ function ExerciseList({
             });
 
             // Remove the exercise from exercise list
-            exerciseSetter.deleteExercise(exercise.id);
+            const tagIds = await exerciseSetter.deleteExercise(exercise.id);
+
+            // Remove exercise from associated tag
+            if (tagIds) {
+              tagIds.forEach((tagId) =>
+                // Remove associated exercise with tag
+                tagSetter.removeExercise(tagId, exercise.id)
+              );
+            }
             break;
           case 1:
             openModal('upsertExercise', {

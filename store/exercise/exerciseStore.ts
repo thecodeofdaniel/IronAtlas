@@ -2,7 +2,7 @@ import { create } from 'zustand';
 import { produce } from 'immer';
 import { db } from '@/db/instance';
 import * as schema from '@/db/schema';
-import { eq } from 'drizzle-orm';
+import { eq, asc } from 'drizzle-orm';
 import transformDbExercisesToState from './exerciseTransform';
 
 export type ExerciseStateVal = {
@@ -16,8 +16,11 @@ export type ExerciseStateFunctions = {
     newExercise: schema.TInsertExercise,
     chosenTags: Set<number>
   ) => Promise<number | null>;
-  updateExerciseList: (newExerciseList: number[]) => void;
-  deleteExercise: (id: number) => void;
+  updateExerciseList: (newExerciseList: number[]) => Promise<void>;
+
+  /** Return assoicated tagIds with exercise */
+  deleteExercise: (id: number) => Promise<number[] | null>;
+
   updateExercise: (id: number, editedExercise: Exercise) => void;
   removeTagFromExercise: (id: number, tagId: number) => void;
 };
@@ -26,7 +29,7 @@ type ExerciseStore = ExerciseStateVal & ExerciseStateFunctions;
 
 const starting = transformDbExercisesToState();
 
-export const useExerciseStore = create<ExerciseStore>()((set) => ({
+export const useExerciseStore = create<ExerciseStore>()((set, get) => ({
   exerciseMap: starting.exerciseMap,
   exercisesList: starting.exercisesList,
   exerciseSet: starting.exerciseSet,
@@ -75,7 +78,7 @@ export const useExerciseStore = create<ExerciseStore>()((set) => ({
   },
   // ------------------------------------------------------------------------
   // Updating the db first and waiting to see it successful
-  updateExerciseList: async (newExercisesList: number[]) => {
+  updateExerciseList: async (newExercisesList) => {
     try {
       // Update the db
       await db.transaction(async (tx) => {
@@ -153,27 +156,44 @@ export const useExerciseStore = create<ExerciseStore>()((set) => ({
   //     // Optionally, notify the user about the failure
   //   });
   // },
-  deleteExercise: (id: number) =>
-    set(
-      produce<ExerciseStore>((state) => {
-        // Remove from the list of IDs
-        state.exercisesList = state.exercisesList.filter(
-          (exerciseId) => exerciseId !== id
-        );
+  deleteExercise: async (id) => {
+    try {
+      // Create new exerciseList
+      const newExerciseList = get().exercisesList.filter(
+        (exerciseId) => exerciseId !== id
+      );
 
-        // Remove exercise form set
-        const exerciseToBeRemoved = state.exerciseMap[id];
-        state.exerciseSet.delete(exerciseToBeRemoved.value);
+      // Delete exercise in db
+      await db.delete(schema.exercise).where(eq(schema.exercise.id, id));
 
-        // remove from map
-        delete state.exerciseMap[id];
+      // Update list and map by updating order
+      await get().updateExerciseList(newExerciseList);
 
-        // Update order in map to match new list
-        state.exercisesList.forEach((exerciseId, index) => {
-          state.exerciseMap[exerciseId].order = index;
-        });
-      })
-    ),
+      // Delete associated tags with exercise
+      const tagIds = await db
+        .delete(schema.exerciseTags)
+        .where(eq(schema.exerciseTags.exerciseId, id))
+        .returning({ tagId: schema.exerciseTags.tagId })
+        .then((tags) => tags.map((tag) => tag.tagId));
+      // console.log(tagIds);
+
+      set(
+        produce<ExerciseStore>((state) => {
+          // Remove exercise from set
+          const exerciseToBeRemoved = state.exerciseMap[id];
+          state.exerciseSet.delete(exerciseToBeRemoved.value);
+
+          // Remove from map
+          delete state.exerciseMap[id];
+        })
+      );
+
+      return tagIds;
+    } catch (error) {
+      console.error('Error: Deleting Exercise', error);
+      return null;
+    }
+  },
   updateExercise: (id: number, editedExercise: Exercise) =>
     set(
       produce<ExerciseStore>((state) => {
