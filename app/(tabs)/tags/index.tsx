@@ -58,7 +58,7 @@ const DraggableTree = ({
         // go through each exercise and delete that tag from set
         const exerciseIds = [...tagMap[pressedId].exercises];
         exerciseIds.forEach((exerciseId) =>
-          exerciseSetter.removeTagFromExercise(exerciseId, pressedId)
+          exerciseSetter.removeTagFromExerciseState(exerciseId, pressedId)
         );
 
         // delete tag itself
