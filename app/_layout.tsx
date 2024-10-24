@@ -18,6 +18,7 @@ import { expoDb, db } from '@/db/instance';
 import '../global.css';
 import { useExerciseStore } from '@/store/exercise/exerciseStore';
 import { useTagStore } from '@/store/tag/tagStore';
+import { useInitializeStores } from '@/hooks/useInitializeStores';
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -63,18 +64,9 @@ function MigrateDB() {
 }
 
 function Init() {
+  console.log('Init function');
   useDrizzleStudio(expoDb);
-
-  // Grab the initialize store functions that interact with the db
-  const initExerciseStore = useExerciseStore(
-    (state) => state.initExerciseStore
-  );
-  const initTagStore = useTagStore((state) => state.initTagStore);
-
-  useEffect(() => {
-    initExerciseStore();
-    initTagStore();
-  }, []); // Initialize the stores here that grab from the db
+  useInitializeStores();
 
   return (
     <ActionSheetProvider>
