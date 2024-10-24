@@ -2,7 +2,7 @@ CREATE TABLE `exercises` (
 	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
 	`label` text NOT NULL,
 	`value` text NOT NULL,
-	`order` integer DEFAULT 0 NOT NULL
+	`index` integer NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE `exercise_tags` (
@@ -18,7 +18,7 @@ CREATE TABLE `tags` (
 	`label` text NOT NULL,
 	`value` text NOT NULL,
 	`parent_id` integer,
-	`order` integer NOT NULL,
+	`index` integer NOT NULL,
 	`is_open` integer NOT NULL,
-	FOREIGN KEY (`parent_id`) REFERENCES `tags`(`id`) ON UPDATE no action ON DELETE cascade
+	FOREIGN KEY (`parent_id`) REFERENCES `tags`(`id`) ON UPDATE no action ON DELETE no action
 );

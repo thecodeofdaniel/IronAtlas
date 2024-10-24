@@ -13,6 +13,7 @@ export type TagStateVal = {
 };
 
 export type TagStateFunctions = {
+  initTagStore: () => void;
   toggleTagOpen: (pressedId: number) => void;
   reorderTags: (dataList: Tag[]) => void;
   createChildTag: (pressedId: number, title: string) => void;
@@ -33,11 +34,21 @@ export type TagStore = TagStateVal & TagStateFunctions;
 enableMapSet();
 
 // Transform
-const starting = transformDbTagsToState();
+// const starting = transformDbTagsToState();
 
 export const useTagStore = create<TagStore>()((set, get) => ({
-  tagMap: starting.tagMap,
-  tagSet: starting.tagSet,
+  // tagMap: starting.tagMap,
+  // tagSet: starting.tagSet,
+  tagMap: {},
+  tagSet: new Set<string>(),
+  initTagStore: () => {
+    const starting = transformDbTagsToState();
+
+    set({
+      tagMap: starting.tagMap,
+      tagSet: starting.tagSet,
+    });
+  },
   toggleTagOpen: (pressedId: number) =>
     set((state) => {
       const newTagMap = { ...state.tagMap };
@@ -72,12 +83,12 @@ export const useTagStore = create<TagStore>()((set, get) => ({
       dataList.forEach((item, index) => {
         newItemMap[item.id] = {
           ...newItemMap[item.id],
-          order: index,
+          index: index,
         };
 
         // Update database asynchronously
         db.update(schema.tag)
-          .set({ order: index })
+          .set({ index: index })
           .where(eq(schema.tag.id, item.id))
           .execute()
           .catch((error) => {
@@ -106,7 +117,7 @@ export const useTagStore = create<TagStore>()((set, get) => ({
         .values({
           label: title,
           value: formatTagOrExercise(title),
-          order: get().tagMap[pressedId].children.length,
+          index: get().tagMap[pressedId].children.length,
           isOpen: false,
           parentId: trueParentId(pressedId),
         })
@@ -211,7 +222,7 @@ export const useTagStore = create<TagStore>()((set, get) => ({
         // If tag is moved under root (0) then update as null in db
         .set({
           parentId: trueParentId(idToBeUnder),
-          order: get().tagMap[idToBeUnder].children.length,
+          index: get().tagMap[idToBeUnder].children.length,
         })
         .where(eq(schema.tag.id, idToMove));
 
@@ -257,6 +268,7 @@ export function useTagStoreWithSetter(): TagStateVal & {
   const {
     tagMap,
     tagSet,
+    initTagStore,
     toggleTagOpen,
     reorderTags,
     createChildTag,
@@ -271,6 +283,7 @@ export function useTagStoreWithSetter(): TagStateVal & {
     tagMap,
     tagSet,
     setter: {
+      initTagStore,
       toggleTagOpen,
       reorderTags,
       createChildTag,

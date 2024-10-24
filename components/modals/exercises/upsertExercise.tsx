@@ -70,7 +70,7 @@ export default function UpsertExercise({
       const newExercise: TInsertExercise = {
         label: trimmedLabel,
         value: formatTagOrExercise(trimmedLabel),
-        order: exercisesList.length,
+        index: exercisesList.length,
       };
 
       // Add exercise to exercise pool

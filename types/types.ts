@@ -2,7 +2,7 @@ type Exercise = {
   id: number;
   label: string;
   value: string;
-  order: number;
+  index: number;
   // specific tag ids
   tags: Set<number>;
 };
@@ -16,7 +16,7 @@ type Tag = {
   label: string;
   value: string;
   parentId: number | null;
-  order: number;
+  index: number;
   isOpen: boolean;
   children: number[];
   // exercises ids associated with tag

@@ -9,6 +9,8 @@ import * as FileSystem from 'expo-file-system';
 // Drizzle
 import { DB_NAME, expoDb } from '@/db/instance';
 import { seed } from '@/db/seed';
+import { useExerciseStore } from '@/store/exercise/exerciseStore';
+import { useTagStore } from '@/store/tag/tagStore';
 
 const getDbTables = async () => {
   try {
@@ -87,16 +89,23 @@ const deleteProxy = (title: string, func: () => any) =>
     { text: 'yes', onPress: () => func() },
   ]);
 
-const seedDb = async () => {
-  try {
-    await seed();
-    Alert.alert('Seeded DB!');
-  } catch (error) {
-    console.error('Seeding went wrong:', error);
-  }
-};
-
 export default function DatabaseTab() {
+  const initExerciseStore = useExerciseStore(
+    (state) => state.initExerciseStore
+  );
+  const initTagStore = useTagStore((state) => state.initTagStore);
+
+  const seedDb = async () => {
+    try {
+      await seed();
+      initExerciseStore();
+      initTagStore();
+      Alert.alert('Seeded DB!');
+    } catch (error) {
+      console.error('Seeding went wrong:', error);
+    }
+  };
+
   return (
     <>
       <Stack.Screen

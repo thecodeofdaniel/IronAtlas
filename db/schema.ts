@@ -11,7 +11,7 @@ export const exercise = sqliteTable('exercises', {
   id: integer('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
   label: text('label').notNull(),
   value: text('value').notNull(),
-  order: integer('order').default(0).notNull(),
+  index: integer('index').notNull(),
 });
 
 export const tag = sqliteTable('tags', {
@@ -19,10 +19,9 @@ export const tag = sqliteTable('tags', {
   label: text('label').notNull(),
   value: text('value').notNull(),
   parentId: integer('parent_id', { mode: 'number' }).references(
-    (): AnySQLiteColumn => tag.id,
-    { onDelete: 'cascade' }
+    (): AnySQLiteColumn => tag.id
   ),
-  order: integer('order').notNull(),
+  index: integer('index').notNull(),
   isOpen: integer('is_open', { mode: 'boolean' }).notNull(),
 });
 

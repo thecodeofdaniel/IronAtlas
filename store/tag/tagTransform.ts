@@ -9,7 +9,7 @@ export default function transformDbTagsToState(): TagStateVal {
       label: 'All',
       value: 'all',
       parentId: null,
-      order: 0,
+      index: 0,
       isOpen: true,
       children: [],
       exercises: new Set(),
@@ -34,7 +34,7 @@ export default function transformDbTagsToState(): TagStateVal {
         label: dbTag.label,
         value: dbTag.value,
         parentId: dbTag.parentId === null ? 0 : dbTag.parentId,
-        order: dbTag.order,
+        index: dbTag.index,
         isOpen: dbTag.isOpen,
         children: [],
         // exercises: new Set(dbTag.exercises.map((exercise) => exercise.value)),
@@ -52,16 +52,16 @@ export default function transformDbTagsToState(): TagStateVal {
       }
     });
     Object.values(tagMap).forEach((tag) => {
-      tag.children.sort((a, b) => tagMap[a].order - tagMap[b].order);
+      tag.children.sort((a, b) => tagMap[a].index - tagMap[b].index);
     });
   } catch (error) {
     console.error('Error fetching tags from DB:', error);
-  } finally {
-    return {
-      tagMap,
-      tagSet,
-    };
   }
+
+  return {
+    tagMap,
+    tagSet,
+  };
 }
 
 /** If the parentId is 0, then the parentId is null in the db */

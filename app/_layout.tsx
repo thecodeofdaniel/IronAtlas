@@ -16,6 +16,8 @@ import { expoDb, db } from '@/db/instance';
 
 // NativeWind
 import '../global.css';
+import { useExerciseStore } from '@/store/exercise/exerciseStore';
+import { useTagStore } from '@/store/tag/tagStore';
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -62,6 +64,17 @@ function MigrateDB() {
 
 function Init() {
   useDrizzleStudio(expoDb);
+
+  // Grab the initialize store functions that interact with the db
+  const initExerciseStore = useExerciseStore(
+    (state) => state.initExerciseStore
+  );
+  const initTagStore = useTagStore((state) => state.initTagStore);
+
+  useEffect(() => {
+    initExerciseStore();
+    initTagStore();
+  }, []); // Initialize the stores here that grab from the db
 
   return (
     <ActionSheetProvider>

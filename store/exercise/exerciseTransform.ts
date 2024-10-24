@@ -3,9 +3,9 @@ import * as schema from '@/db/schema';
 import { ExerciseStateVal } from './exerciseStore';
 
 export default function transformDbExercisesToState(): ExerciseStateVal {
-  let exerciseMap: ExerciseMap = {};
-  let exerciseSet: Set<string> = new Set();
-  let exercisesList: number[] = [];
+  const exerciseMap: ExerciseMap = {};
+  const exerciseSet: Set<string> = new Set();
+  const exercisesList: number[] = [];
 
   try {
     const exercisesData = db.select().from(schema.exercise).all();
@@ -27,25 +27,26 @@ export default function transformDbExercisesToState(): ExerciseStateVal {
         id: exerciseId,
         label: exerciseData.label,
         value: exerciseData.value,
-        order: exerciseData.order,
+        index: exerciseData.index,
         tags: tags,
       };
 
       // Update the set
       exerciseSet.add(exerciseData.value);
-      exercisesWithOrder.push({ id: exerciseId, order: exerciseData.order });
+      exercisesWithOrder.push({ id: exerciseId, order: exerciseData.index });
     }
 
     // Sort the exercises by their order and create exerciseList from that order
     exercisesWithOrder.sort((a, b) => a.order - b.order);
-    exercisesList = exercisesWithOrder.map((exercise) => exercise.id);
+    // exercisesList = exercisesWithOrder.map((exercise) => exercise.id);
+    exercisesWithOrder.map((exercise) => exercisesList.push(exercise.id));
   } catch (error) {
     console.error('Error fetching exercises from DB:', error);
-  } finally {
-    return {
-      exerciseMap,
-      exerciseSet,
-      exercisesList,
-    };
   }
+
+  return {
+    exerciseMap,
+    exerciseSet,
+    exercisesList,
+  };
 }

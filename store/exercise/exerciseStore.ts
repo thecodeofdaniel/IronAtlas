@@ -12,6 +12,7 @@ export type ExerciseStateVal = {
 };
 
 export type ExerciseStateFunctions = {
+  initExerciseStore: () => void;
   createExercise: (
     newExercise: schema.TInsertExercise,
     chosenTags: Set<number>
@@ -27,15 +28,26 @@ export type ExerciseStateFunctions = {
 
 type ExerciseStore = ExerciseStateVal & ExerciseStateFunctions;
 
-const starting = transformDbExercisesToState();
+// const starting = transformDbExercisesToState();
 
 export const useExerciseStore = create<ExerciseStore>()((set, get) => ({
-  exerciseMap: starting.exerciseMap,
-  exercisesList: starting.exercisesList,
-  exerciseSet: starting.exerciseSet,
+  // exerciseMap: starting.exerciseMap,
+  // exercisesList: starting.exercisesList,
+  // exerciseSet: starting.exerciseSet,
+  exerciseMap: {},
+  exercisesList: [],
+  exerciseSet: new Set<string>(),
+  initExerciseStore: () => {
+    const starting = transformDbExercisesToState();
+
+    set({
+      exerciseMap: starting.exerciseMap,
+      exercisesList: starting.exercisesList,
+      exerciseSet: starting.exerciseSet,
+    });
+  },
   createExercise: async (newExercise, chosenTags) => {
     let newExerciseId = null;
-
     try {
       const [newExerciseFromDb] = await db.transaction(async (tx) => {
         // Insert exercise
@@ -85,7 +97,7 @@ export const useExerciseStore = create<ExerciseStore>()((set, get) => ({
         for (const [index, exerciseId] of newExercisesList.entries()) {
           await tx
             .update(schema.exercise)
-            .set({ order: index })
+            .set({ index: index })
             .where(eq(schema.exercise.id, exerciseId));
         }
       });
@@ -98,7 +110,7 @@ export const useExerciseStore = create<ExerciseStore>()((set, get) => ({
 
           // Update the exerciseMap
           newExercisesList.forEach((exerciseId, index) => {
-            state.exerciseMap[exerciseId].order = index;
+            state.exerciseMap[exerciseId].index = index;
           });
         })
       );
@@ -226,6 +238,7 @@ export function useExerciseStoreWithSetter(): ExerciseStateVal & {
     exerciseMap,
     exercisesList,
     exerciseSet,
+    initExerciseStore,
     createExercise,
     updateExerciseList,
     deleteExercise,
@@ -238,6 +251,7 @@ export function useExerciseStoreWithSetter(): ExerciseStateVal & {
     exercisesList,
     exerciseSet,
     setter: {
+      initExerciseStore,
       createExercise,
       updateExerciseList,
       deleteExercise,
