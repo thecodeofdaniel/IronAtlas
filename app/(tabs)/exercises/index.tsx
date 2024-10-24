@@ -61,11 +61,11 @@ function ExerciseList({
       async (selectedIndex?: number) => {
         switch (selectedIndex) {
           case destructiveButtonIndex:
-            // Grab each tag from set and remove associated exercise from tag
-            [...exercise.tags].forEach((tagId) => {
-              console.log(tagMap[tagId]);
-              return tagSetter.removeExercise(tagId, exercise.id);
-            });
+            // // Grab each tag from set and remove associated exercise from tag
+            // [...exercise.tags].forEach((tagId) => {
+            //   // console.log(tagMap[tagId]);
+            //   return tagSetter.deleteExerciseFromTagState(tagId, exercise.id);
+            // });
 
             // Remove the exercise from exercise list
             const tagIds = await exerciseSetter.deleteExercise(exercise.id);
@@ -74,7 +74,7 @@ function ExerciseList({
             if (tagIds) {
               tagIds.forEach((tagId) =>
                 // Remove associated exercise with tag
-                tagSetter.removeExercise(tagId, exercise.id)
+                tagSetter.deleteExerciseFromTagState(tagId, exercise.id)
               );
             }
             break;

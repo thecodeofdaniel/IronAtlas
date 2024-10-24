@@ -82,7 +82,7 @@ export default function UpsertExercise({
       if (newExerciseId) {
         // Add exercise to associated tags
         selected.chosen.forEach((tagId) =>
-          tagSetter.addExercise(tagId, newExerciseId)
+          tagSetter.addExerciseToTagState(tagId, newExerciseId)
         );
       }
     }

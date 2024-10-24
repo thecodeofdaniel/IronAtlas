@@ -20,25 +20,16 @@ export type TagStateFunctions = {
   deleteTag: (pressedId: number) => void;
   editTagTitle: (pressedId: number, newLabel: string, newValue: string) => void;
   moveTag: (pressedId: number, idToMove: number) => void;
-  addExercise: (tagId: number, exerciseId: number) => void;
-  removeExercise: (tagId: number, exerciseId: number) => void;
+  addExerciseToTagState: (tagId: number, exerciseId: number) => void;
+  deleteExerciseFromTagState: (tagId: number, exerciseId: number) => void;
 };
 
 export type TagStore = TagStateVal & TagStateFunctions;
 
-// take all the parentId's with null and turn them into 0s
-// create a 0 root which represents all tags
-// order key is important as it sets up array for children
-
 // Use set to make tags unique
 enableMapSet();
 
-// Transform
-// const starting = transformDbTagsToState();
-
 export const useTagStore = create<TagStore>()((set, get) => ({
-  // tagMap: starting.tagMap,
-  // tagSet: starting.tagSet,
   tagMap: {},
   tagSet: new Set<string>(),
   initTagStore: () => {
@@ -247,19 +238,18 @@ export const useTagStore = create<TagStore>()((set, get) => ({
       console.error('Error: Unable to move tag', error);
     }
   },
-  addExercise: (tagId, exerciseId) =>
+  addExerciseToTagState: (tagId, exerciseId) =>
     set(
       produce<TagStore>((state) => {
         state.tagMap[tagId].exercises.add(exerciseId);
       })
     ),
-  removeExercise: (tagId, exerciseId) =>
+  deleteExerciseFromTagState: (tagId, exerciseId) =>
     set(
       produce<TagStore>((state) => {
         state.tagMap[tagId].exercises.delete(exerciseId);
       })
     ),
-  // increase: (by) => set((state) => ({ bears: state.bears + by })),
 }));
 
 export function useTagStoreWithSetter(): TagStateVal & {
@@ -275,8 +265,8 @@ export function useTagStoreWithSetter(): TagStateVal & {
     deleteTag,
     editTagTitle,
     moveTag,
-    addExercise,
-    removeExercise,
+    addExerciseToTagState,
+    deleteExerciseFromTagState,
   } = useTagStore((state) => state);
 
   return {
@@ -290,8 +280,8 @@ export function useTagStoreWithSetter(): TagStateVal & {
       deleteTag,
       editTagTitle,
       moveTag,
-      addExercise,
-      removeExercise,
+      addExerciseToTagState,
+      deleteExerciseFromTagState,
     },
   };
 }
