@@ -20,6 +20,7 @@ import {
   ExerciseStateFunctions,
   useExerciseStoreWithSetter,
 } from '@/store/exercise/exerciseStore';
+import { Link } from 'expo-router';
 
 type DraggableTreeProps = {
   tagMap: TagMap; // Accept itemMap as a prop
@@ -92,40 +93,46 @@ const DraggableTree = ({
     isActive,
     getIndex,
   }: RenderItemParams<Tag>) => {
-    const currentIndex = getIndex()!;
-
     return (
-      <TouchableOpacity
-        activeOpacity={1}
-        onLongPress={drag}
-        disabled={isActive}
-        className={clsx('p-2 my-[1] flex flex-row items-center', {
-          'bg-red-500': isActive,
-          'bg-blue-800': !isActive,
-        })}
+      <Link
+        href={{
+          pathname: '/(tabs)/tags/[tagId]',
+          params: { tagId: item.id.toString() },
+        }}
+        asChild
       >
-        {item.children.length > 0 && level > 0 && (
-          <Pressable
-            onPress={() => {
-              setter.toggleTagOpen(item.id);
-            }}
-          >
-            <Ionicons
-              name={item.isOpen ? 'chevron-down' : 'chevron-forward-outline'}
-              size={14}
-              style={{ marginRight: 4 }}
-              color={'white'}
-            />
-          </Pressable>
-        )}
-        {/* Tags and options */}
-        <View className="flex flex-row items-center justify-between flex-1">
-          <Text className="text-white">{item.label}</Text>
-          <TouchableOpacity onPress={() => handleOnPress(item.id, level)}>
-            <Ionicons name="ellipsis-horizontal-outline" color="white" />
-          </TouchableOpacity>
-        </View>
-      </TouchableOpacity>
+        <TouchableOpacity
+          activeOpacity={1}
+          onLongPress={drag}
+          disabled={isActive}
+          className={clsx('p-2 my-[1] flex flex-row items-center', {
+            'bg-red-500': isActive,
+            'bg-blue-800': !isActive,
+          })}
+        >
+          {item.children.length > 0 && level > 0 && (
+            <Pressable
+              onPress={() => {
+                setter.toggleTagOpen(item.id);
+              }}
+            >
+              <Ionicons
+                name={item.isOpen ? 'chevron-down' : 'chevron-forward-outline'}
+                size={14}
+                style={{ marginRight: 4 }}
+                color={'white'}
+              />
+            </Pressable>
+          )}
+          {/* Tags and options */}
+          <View className="flex flex-row items-center justify-between flex-1">
+            <Text className="text-white">{item.label}</Text>
+            <TouchableOpacity onPress={() => handleOnPress(item.id, level)}>
+              <Ionicons name="ellipsis-horizontal-outline" color="white" />
+            </TouchableOpacity>
+          </View>
+        </TouchableOpacity>
+      </Link>
     );
   };
 
