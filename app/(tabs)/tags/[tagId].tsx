@@ -4,19 +4,13 @@ import { Stack, useLocalSearchParams } from 'expo-router';
 import React, { useMemo } from 'react';
 import { View, Text, FlatList } from 'react-native';
 import * as schema from '@/db/schema';
-import { eq, inArray } from 'drizzle-orm';
-
-// type Tag = {
-//   id: number;
-//   label: string;
-//   children?: number[];
-// };
-
-// type TagMap = Record<number, Tag>;
+import { inArray } from 'drizzle-orm';
 
 function getAllChildrenIds(tagMap: TagMap, tagId: number): number[] {
   const tag = tagMap[tagId];
-  if (!tag || !tag.children || tag.children.length === 0) {
+
+  // If tag does not have children then return
+  if (tag.children.length === 0) {
     return [];
   }
 
