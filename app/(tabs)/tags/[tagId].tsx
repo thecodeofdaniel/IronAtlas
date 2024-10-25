@@ -1,21 +1,31 @@
+import { db } from '@/db/instance';
 import { useTagStoreWithSetter } from '@/store/tag/tagStore';
 import { Stack, useLocalSearchParams } from 'expo-router';
 import React, { useMemo } from 'react';
 import { View, Text, FlatList } from 'react-native';
+import * as schema from '@/db/schema';
+import { eq, inArray } from 'drizzle-orm';
 
-function getAllChildren(tagMap: TagMap, tagId: number): Tag[] {
+// type Tag = {
+//   id: number;
+//   label: string;
+//   children?: number[];
+// };
+
+// type TagMap = Record<number, Tag>;
+
+function getAllChildrenIds(tagMap: TagMap, tagId: number): number[] {
   const tag = tagMap[tagId];
-
   if (!tag || !tag.children || tag.children.length === 0) {
     return [];
   }
 
-  const children = tag.children.map((childId) => tagMap[childId]);
-  const grandchildren = tag.children.flatMap((childId) =>
-    getAllChildren(tagMap, childId)
+  const childrenIds = tag.children;
+  const grandchildrenIds = tag.children.flatMap((childId) =>
+    getAllChildrenIds(tagMap, childId)
   );
 
-  return [...children, ...grandchildren];
+  return [...childrenIds, ...grandchildrenIds];
 }
 
 export default function TagId() {
@@ -23,7 +33,40 @@ export default function TagId() {
   const { tagMap } = useTagStoreWithSetter();
 
   const currentTag = tagMap[+id];
-  const allChildren = useMemo(() => getAllChildren(tagMap, +id), [tagMap, id]);
+  const allChildrenIds = useMemo(
+    () => getAllChildrenIds(tagMap, +id),
+    [tagMap, id]
+  );
+
+  const allTagIds = [+id, ...allChildrenIds];
+
+  const exercises = useMemo(() => {
+    return db
+      .select({
+        exerciseId: schema.exerciseTags.exerciseId,
+        tagId: schema.exerciseTags.tagId,
+      })
+      .from(schema.exerciseTags)
+      .where(inArray(schema.exerciseTags.tagId, allTagIds))
+      .all();
+  }, [allTagIds]);
+
+  const exerciseIds = Array.from(
+    new Set(exercises.map((exercise) => exercise.exerciseId))
+  );
+
+  console.log(exerciseIds);
+
+  const exercisesByTag = useMemo(() => {
+    return exercises.reduce<Record<number, number[]>>(
+      (acc, { exerciseId, tagId }) => {
+        if (!acc[tagId]) acc[tagId] = [];
+        acc[tagId].push(exerciseId);
+        return acc;
+      },
+      {}
+    );
+  }, [exercises]);
 
   return (
     <>
@@ -34,13 +77,18 @@ export default function TagId() {
         }}
       />
       <View>
-        <Text>Current Tag: {currentTag.label}</Text>
+        <Text>Current Tag Exercises: {exercisesByTag[+id]?.length || 0}</Text>
         <Text>All Children:</Text>
         <FlatList
-          data={allChildren}
-          keyExtractor={(item) => item.id.toString()}
+          data={allChildrenIds}
+          keyExtractor={(item) => item.toString()}
           renderItem={({ item }) => (
-            <Text className="text-black">{item.label}</Text>
+            <View>
+              <Text className="text-black">{tagMap[item].label}</Text>
+              <Text className="text-gray-600">
+                Exercises: {exercisesByTag[item]?.length || 0}
+              </Text>
+            </View>
           )}
         />
       </View>
