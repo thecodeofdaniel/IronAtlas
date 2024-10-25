@@ -29,6 +29,7 @@ type ExerciseListProps = {
   exerciseSetter: ExerciseStateFunctions;
   tagMap: TagMap;
   tagSetter: TagStateFunctions;
+  isDraggable: boolean;
 };
 
 function ExerciseList({
@@ -37,6 +38,7 @@ function ExerciseList({
   exerciseSetter,
   tagMap,
   tagSetter,
+  isDraggable,
 }: ExerciseListProps) {
   console.log('Render ExerciseList');
   const { showActionSheetWithOptions } = useActionSheet();
@@ -107,7 +109,7 @@ function ExerciseList({
     return (
       <TouchableOpacity
         activeOpacity={1}
-        onLongPress={drag}
+        onLongPress={isDraggable ? drag : undefined}
         disabled={isActive}
         className={clsx('p-2 my-[1] flex flex-row', {
           'bg-red-500': isActive,
@@ -149,6 +151,7 @@ function ExerciseList({
 }
 
 export default function ExercisesTab() {
+  console.log('Render Exercises Tab');
   const router = useRouter();
   const { exerciseMap, exercisesList, exerciseSet, setter } =
     useExerciseStoreWithSetter();
@@ -189,7 +192,7 @@ export default function ExercisesTab() {
 
   const [open, setOpen] = useState(false);
   const [selectedTagIds, setSelectedTags] = useState<number[]>([]);
-  const [items, setItems] = useState(tags);
+  const [tagItems, setTagItems] = useState(tags);
 
   let filteredExercises = exercisesList;
 
@@ -243,12 +246,13 @@ export default function ExercisesTab() {
           <DropDownPicker
             mode="BADGE"
             multiple={true}
+            searchable
             open={open}
             value={selectedTagIds}
-            items={items}
+            items={tagItems}
             setOpen={setOpen}
             setValue={setSelectedTags}
-            setItems={setItems}
+            setItems={setTagItems}
             placeholder={'All Exercises'}
           />
         </View>
@@ -258,6 +262,7 @@ export default function ExercisesTab() {
           exerciseSetter={setter}
           tagMap={tagMap}
           tagSetter={tagSetter}
+          isDraggable={exercisesList.length === filteredExercises.length}
         />
       </View>
     </>
