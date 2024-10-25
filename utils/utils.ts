@@ -35,3 +35,19 @@ export const getAllParentIds = (tree: TagMap, id: number): number[] => {
 
   return parentIds;
 };
+
+export function getAllChildrenIds(tagMap: TagMap, tagId: number): number[] {
+  const tag = tagMap[tagId];
+
+  // If tag does not have children then return
+  if (tag.children.length === 0) {
+    return [];
+  }
+
+  const childrenIds = tag.children;
+  const grandchildrenIds = tag.children.flatMap((childId) =>
+    getAllChildrenIds(tagMap, childId)
+  );
+
+  return [...childrenIds, ...grandchildrenIds];
+}

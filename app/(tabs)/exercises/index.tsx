@@ -1,3 +1,4 @@
+import { db } from '@/db/instance';
 import {
   ExerciseStateFunctions,
   useExerciseStoreWithSetter,
@@ -11,12 +12,16 @@ import { useActionSheet } from '@expo/react-native-action-sheet';
 import { Ionicons } from '@expo/vector-icons';
 import clsx from 'clsx';
 import { Stack, useRouter } from 'expo-router';
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import DraggableFlatList, {
   RenderItemParams,
 } from 'react-native-draggable-flatlist';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import * as schema from '@/db/schema';
+import DropDownPicker from 'react-native-dropdown-picker';
+import { asc, eq, inArray } from 'drizzle-orm';
+import { getAllChildrenIds } from '@/utils/utils';
 
 type ExerciseListProps = {
   exerciseMap: ExerciseMap;
@@ -176,6 +181,48 @@ export default function ExercisesTab() {
     );
   };
 
+  const tags = db
+    .select({ label: schema.tag.label, value: schema.tag.id })
+    .from(schema.tag)
+    .orderBy(asc(schema.tag.label))
+    .all();
+
+  const [open, setOpen] = useState(false);
+  const [selectedTagIds, setSelectedTags] = useState<number[]>([]);
+  const [items, setItems] = useState(tags);
+
+  let filteredExercises = exercisesList;
+
+  if (selectedTagIds.length > 0) {
+    console.log('selectedtags', selectedTagIds);
+
+    const allTagIds = selectedTagIds.flatMap((tagId) => [
+      tagId,
+      ...getAllChildrenIds(tagMap, tagId),
+    ]);
+
+    filteredExercises = [
+      ...new Set(
+        db
+          .select({
+            exerciseId: schema.exerciseTags.exerciseId,
+            index: schema.exercise.index,
+          })
+          .from(schema.exerciseTags)
+          .innerJoin(
+            schema.exercise,
+            eq(schema.exerciseTags.exerciseId, schema.exercise.id)
+          )
+          .where(inArray(schema.exerciseTags.tagId, allTagIds))
+          .orderBy(asc(schema.exercise.index))
+          .all()
+          .map((result) => result.exerciseId)
+      ),
+    ];
+
+    console.log(filteredExercises);
+  }
+
   return (
     <>
       <Stack.Screen
@@ -191,13 +238,28 @@ export default function ExercisesTab() {
           },
         }}
       />
-      <ExerciseList
-        exerciseMap={exerciseMap}
-        exerciseList={exercisesList}
-        exerciseSetter={setter}
-        tagMap={tagMap}
-        tagSetter={tagSetter}
-      />
+      <View className="flex-1">
+        <View className="mt-2 mx-2 z-10">
+          <DropDownPicker
+            mode="BADGE"
+            multiple={true}
+            open={open}
+            value={selectedTagIds}
+            items={items}
+            setOpen={setOpen}
+            setValue={setSelectedTags}
+            setItems={setItems}
+            placeholder={'All Exercises'}
+          />
+        </View>
+        <ExerciseList
+          exerciseMap={exerciseMap}
+          exerciseList={filteredExercises}
+          exerciseSetter={setter}
+          tagMap={tagMap}
+          tagSetter={tagSetter}
+        />
+      </View>
     </>
   );
 }
