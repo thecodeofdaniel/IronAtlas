@@ -8,6 +8,9 @@ import { getAllParentIds } from '@/utils/utils';
 import TagTree from '../../selectFromTagTree';
 import { formatTagOrExercise, isValidTagOrExercise } from '@/utils/utils';
 import { TInsertExercise } from '@/db/schema';
+import { db } from '@/db/instance';
+import * as schema from '@/db/schema';
+import { eq } from 'drizzle-orm';
 
 type CreateOrUpdateExerciseProps = {
   modalData: ModalData['upsertExercise'];
@@ -33,16 +36,26 @@ export default function UpsertExercise({
     chosen: number[];
     preSelected: Set<number>;
   }>(() => {
+    // If we're editing a exercise
     if (id) {
-      const chosenTags = [...exerciseMap[id].tags];
+      // Grab the assoicated tags with exercise
+      const tagIds = db
+        .select({ tagId: schema.exerciseTags.tagId })
+        .from(schema.exerciseTags)
+        .where(eq(schema.exerciseTags.exerciseId, id))
+        .all()
+        .map((item) => item.tagId);
+
+      // Based on the tags returned we gather all parentIds
       const preSelected = new Set(
-        chosenTags.flatMap((tag) => getAllParentIds(tagMap, tag))
+        tagIds.flatMap((tag) => getAllParentIds(tagMap, tag))
       );
 
       return {
-        chosen: chosenTags,
+        chosen: tagIds,
         preSelected: preSelected,
       };
+      // If we're creating a new exercise
     } else {
       return {
         chosen: [],
@@ -79,12 +92,12 @@ export default function UpsertExercise({
         chosenTags
       );
 
-      if (newExerciseId) {
-        // Add exercise to associated tags
-        selected.chosen.forEach((tagId) =>
-          tagSetter.addExerciseToTagState(tagId, newExerciseId)
-        );
-      }
+      // if (newExerciseId) {
+      //   // Add exercise to associated tags
+      //   selected.chosen.forEach((tagId) =>
+      //     tagSetter.addExerciseToTagState(tagId, newExerciseId)
+      //   );
+      // }
     }
 
     closeModal();
