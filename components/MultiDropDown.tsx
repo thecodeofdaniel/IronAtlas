@@ -139,35 +139,19 @@ import React, { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { MultiSelect } from 'react-native-element-dropdown';
 import AntDesign from '@expo/vector-icons/AntDesign';
+import { Ionicons } from '@expo/vector-icons';
 
-const data = [
-  { label: 'Bench Press', value: '1' },
-  { label: 'Squats', value: '2' },
-  { label: 'Incline Bench Press', value: '3' },
-  { label: 'Bicep Curls', value: '4' },
-  { label: 'Item 5', value: '5' },
-  { label: 'Item 6', value: '6' },
-  { label: 'Item 7', value: '7' },
-  { label: 'Item 8', value: '8' },
-];
-
-type valueType = string;
-
-type Props = {
-  tags: { label: string; value: valueType }[];
-  selected: valueType[];
-  setSelected: React.Dispatch<React.SetStateAction<valueType[]>>;
+type MultiSelectProps = {
+  tags: { label: string; value: string }[];
+  selected: string[];
+  setSelected: React.Dispatch<React.SetStateAction<string[]>>;
 };
 
 export default function MultiSelectComponent({
   tags,
   selected,
   setSelected,
-}: Props) {
-  // const [selected, setSelected] = useState<number[]>([]);
-
-  // console.log(selected);
-
+}: MultiSelectProps) {
   return (
     <View className="p-1">
       <MultiSelect
@@ -187,6 +171,9 @@ export default function MultiSelectComponent({
         onChange={(item) => {
           setSelected(item);
         }}
+        renderRightIcon={(visible) => (
+          <Ionicons name={visible ? 'chevron-up' : 'chevron-down'} size={18} />
+        )}
         // renderLeftIcon={() => (
         //   <AntDesign
         //     style={styles.icon}
@@ -227,5 +214,8 @@ const styles = StyleSheet.create({
   },
   selectedStyle: {
     borderRadius: 12,
+    // backgroundColor: 'green',
+    // padding: 0,
+    // margin: 0,
   },
 });

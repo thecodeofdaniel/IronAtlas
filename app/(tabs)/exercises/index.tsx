@@ -40,7 +40,6 @@ function ExerciseList({
   tagSetter,
   isDraggable,
 }: ExerciseListProps) {
-  console.log('Render ExerciseList');
   const { showActionSheetWithOptions } = useActionSheet();
   const openModal = useModalStore((state) => state.openModal);
   const router = useRouter();
