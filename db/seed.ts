@@ -4,8 +4,8 @@ import * as schema from './schema';
 const startingTags: schema.TInsertTag[] = [
   {
     id: 1,
-    label: 'Upper',
-    value: 'upper',
+    label: 'Upper Body',
+    value: 'upper_body',
     parentId: null,
     index: 0,
     isOpen: true,
@@ -20,8 +20,8 @@ const startingTags: schema.TInsertTag[] = [
   },
   {
     id: 3,
-    label: 'Lower',
-    value: 'lower',
+    label: 'Lower Body',
+    value: 'lower_body',
     parentId: null,
     index: 1,
     isOpen: false,
@@ -59,6 +59,78 @@ const startingTags: schema.TInsertTag[] = [
     index: 1,
     isOpen: false,
   },
+  {
+    id: 9,
+    label: 'Shoulders',
+    value: 'shoulders',
+    parentId: 6,
+    index: 2,
+    isOpen: false,
+  },
+  {
+    id: 10,
+    label: 'Abs',
+    value: 'abs',
+    parentId: 1,
+    index: 2,
+    isOpen: false,
+  },
+  {
+    id: 11,
+    label: 'Back',
+    value: 'back',
+    parentId: 1,
+    index: 3,
+    isOpen: false,
+  },
+  {
+    id: 12,
+    label: 'Traps',
+    value: 'traps',
+    parentId: 11,
+    index: 0,
+    isOpen: false,
+  },
+  {
+    id: 13,
+    label: 'Quads',
+    value: 'quads',
+    parentId: 3,
+    index: 0,
+    isOpen: false,
+  },
+  {
+    id: 14,
+    label: 'Hamstrings',
+    value: 'hamstrings',
+    parentId: 3,
+    index: 1,
+    isOpen: false,
+  },
+  {
+    id: 15,
+    label: 'Glutes',
+    value: 'glutes',
+    parentId: 3,
+    index: 2,
+    isOpen: false,
+  },
+  {
+    id: 16,
+    label: 'Calves',
+    value: 'calves',
+    parentId: 3,
+    index: 3,
+    isOpen: false,
+  },
+  {
+    id: 17,
+    label: 'Lats',
+    value: 'lats',
+    parentId: 11,
+    index: 1,
+    isOpen: false,
+  },
 ];
 
 const startingExercises: schema.TInsertExercise[] = [
@@ -86,6 +158,18 @@ const startingExercises: schema.TInsertExercise[] = [
     value: 'deadlift',
     index: 3,
   },
+  {
+    id: 5,
+    label: 'Pulldown',
+    value: 'pulldown',
+    index: 4,
+  },
+  {
+    id: 6,
+    label: 'Bicep Curls',
+    value: 'bicep_curls',
+    index: 5,
+  },
 ];
 
 // "Bench Press" has "chest" and "triceps" tag
@@ -97,6 +181,10 @@ const startingRelationships = [
   {
     exerciseId: 1,
     tagId: 7,
+  },
+  {
+    exerciseId: 6,
+    tagId: 8,
   },
 ];
 
