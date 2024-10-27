@@ -19,13 +19,8 @@ import DraggableFlatList, {
 } from 'react-native-draggable-flatlist';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import * as schema from '@/db/schema';
-import DropDownPicker from 'react-native-dropdown-picker';
 import { asc, eq, inArray } from 'drizzle-orm';
 import { getAllChildrenIds } from '@/utils/utils';
-import {
-  MultipleSelectList,
-  SelectList,
-} from 'react-native-dropdown-select-list';
 import MultiDropDown from '@/components/MultiDropDown';
 
 type ExerciseListProps = {
@@ -164,8 +159,6 @@ export default function ExercisesTab() {
   const { showActionSheetWithOptions } = useActionSheet();
   const openModal = useModalStore((state) => state.openModal);
 
-  console.log(exerciseSet);
-
   const handlePress = () => {
     const options = ['Add Exercise', 'Cancel'];
     const cancelButtonIndex = options.length - 1;
@@ -189,15 +182,19 @@ export default function ExercisesTab() {
     );
   };
 
-  const tags = db
-    .select({ label: schema.tag.label, value: schema.tag.id })
-    .from(schema.tag)
-    .orderBy(asc(schema.tag.label))
-    .all()
-    .map((tag) => ({
-      ...tag,
-      value: String(tag.value),
-    }));
+  // Fetch tags initially until tagMap updates
+  const tags = useMemo(() => {
+    console.log('Run this function');
+    return db
+      .select({ label: schema.tag.label, value: schema.tag.id })
+      .from(schema.tag)
+      .orderBy(asc(schema.tag.label))
+      .all()
+      .map((tag) => ({
+        ...tag,
+        value: String(tag.value),
+      }));
+  }, [tagMap]);
 
   const [selected, setSelected] = useState<string[]>([]);
 
