@@ -26,6 +26,7 @@ import {
   MultipleSelectList,
   SelectList,
 } from 'react-native-dropdown-select-list';
+import MultiDropDown from '@/components/MultiDropDown';
 
 type ExerciseListProps = {
   exerciseMap: ExerciseMap;
@@ -137,7 +138,7 @@ function ExerciseList({
   };
 
   return (
-    <View className="flex-1 border">
+    <View className="flex-1">
       <GestureHandlerRootView>
         <DraggableFlatList
           data={exercises}
@@ -188,33 +189,25 @@ export default function ExercisesTab() {
     );
   };
 
-  // const tags = db
-  //   .select({ label: schema.tag.label, value: schema.tag.id })
-  //   .from(schema.tag)
-  //   .orderBy(asc(schema.tag.label))
-  //   .all();
-
   const tags = db
-    .select({ key: schema.tag.id, value: schema.tag.label })
+    .select({ label: schema.tag.label, value: schema.tag.id })
     .from(schema.tag)
     .orderBy(asc(schema.tag.label))
-    .all();
+    .all()
+    .map((tag) => ({
+      ...tag,
+      value: String(tag.value),
+    }));
 
-  const [open, setOpen] = useState(false);
-  const [selectedTagIds, setSelectedTags] = useState<number[]>([]);
-  const [tagItems, setTagItems] = useState(tags);
-  const [selected, setSelected] = React.useState('');
-
-  console.log(selectedTagIds);
+  const [selected, setSelected] = useState<string[]>([]);
 
   let filteredExercises = exercisesList;
 
-  if (selectedTagIds.length > 0) {
-    console.log('selectedtags', selectedTagIds);
-
-    const allTagIds = selectedTagIds.flatMap((tagId) => [
-      tagId,
-      ...getAllChildrenIds(tagMap, tagId),
+  // If the number of selected tags is greater than one then filter
+  if (selected.length > 0) {
+    const allTagIds = selected.flatMap((tagId) => [
+      +tagId,
+      ...getAllChildrenIds(tagMap, +tagId),
     ]);
 
     filteredExercises = [
@@ -235,8 +228,6 @@ export default function ExercisesTab() {
           .map((result) => result.exerciseId)
       ),
     ];
-
-    console.log(filteredExercises);
   }
 
   return (
@@ -254,31 +245,26 @@ export default function ExercisesTab() {
           },
         }}
       />
-      <View className="flex-1 m-2">
-        <View className="flex flex-row gap-1">
-          <View className="flex-1">
-            <MultipleSelectList
-              setSelected={setSelectedTags}
-              data={tags}
-              save="key"
-              label="Tags"
-              // placeholder="Select tags to filter"
-              // boxStyles={{ backgroundColor: 'red' }}
-              // dropdownItemStyles={{ backgroundColor: 'green', marginVertical: 1 }}
-              // dropdownStyles={{ backgroundColor: 'purple' }}
-              badgeStyles={{ backgroundColor: 'blue' }}
-              // boxStyles={{backgroundColor: 'green', flex: 1, flexDirection: 'row'}}
-            />
-          </View>
-        </View>
-        <ExerciseList
-          exerciseMap={exerciseMap}
-          exerciseList={filteredExercises}
-          exerciseSetter={setter}
-          tagMap={tagMap}
-          tagSetter={tagSetter}
-          isDraggable={exercisesList.length === filteredExercises.length}
+      <View className="flex flex-col gap-2 m-2 flex-1">
+        <MultiDropDown
+          tags={tags}
+          selected={selected}
+          setSelected={setSelected}
         />
+        {filteredExercises.length === 0 ? (
+          <View>
+            <Text>No exercises found :(</Text>
+          </View>
+        ) : (
+          <ExerciseList
+            exerciseMap={exerciseMap}
+            exerciseList={filteredExercises}
+            exerciseSetter={setter}
+            tagMap={tagMap}
+            tagSetter={tagSetter}
+            isDraggable={exercisesList.length === filteredExercises.length}
+          />
+        )}
       </View>
     </>
   );

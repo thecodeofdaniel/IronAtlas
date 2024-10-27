@@ -151,8 +151,22 @@ const data = [
   { label: 'Item 8', value: '8' },
 ];
 
-const MultiSelectComponent = () => {
-  const [selected, setSelected] = useState([]);
+type valueType = string;
+
+type Props = {
+  tags: { label: string; value: valueType }[];
+  selected: valueType[];
+  setSelected: React.Dispatch<React.SetStateAction<valueType[]>>;
+};
+
+export default function MultiSelectComponent({
+  tags,
+  selected,
+  setSelected,
+}: Props) {
+  // const [selected, setSelected] = useState<number[]>([]);
+
+  // console.log(selected);
 
   return (
     <View className="p-1">
@@ -164,7 +178,7 @@ const MultiSelectComponent = () => {
         // iconStyle={styles.iconStyle}
         search
         alwaysRenderSelectedItem
-        data={data}
+        data={tags}
         labelField="label"
         valueField="value"
         placeholder="Select tags to filter"
@@ -185,9 +199,7 @@ const MultiSelectComponent = () => {
       />
     </View>
   );
-};
-
-export default MultiSelectComponent;
+}
 
 const styles = StyleSheet.create({
   dropdown: {
