@@ -22,6 +22,10 @@ import * as schema from '@/db/schema';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { asc, eq, inArray } from 'drizzle-orm';
 import { getAllChildrenIds } from '@/utils/utils';
+import {
+  MultipleSelectList,
+  SelectList,
+} from 'react-native-dropdown-select-list';
 
 type ExerciseListProps = {
   exerciseMap: ExerciseMap;
@@ -133,7 +137,7 @@ function ExerciseList({
   };
 
   return (
-    <View className="flex-1 pt-2 px-2">
+    <View className="flex-1 border">
       <GestureHandlerRootView>
         <DraggableFlatList
           data={exercises}
@@ -184,8 +188,14 @@ export default function ExercisesTab() {
     );
   };
 
+  // const tags = db
+  //   .select({ label: schema.tag.label, value: schema.tag.id })
+  //   .from(schema.tag)
+  //   .orderBy(asc(schema.tag.label))
+  //   .all();
+
   const tags = db
-    .select({ label: schema.tag.label, value: schema.tag.id })
+    .select({ key: schema.tag.id, value: schema.tag.label })
     .from(schema.tag)
     .orderBy(asc(schema.tag.label))
     .all();
@@ -193,6 +203,9 @@ export default function ExercisesTab() {
   const [open, setOpen] = useState(false);
   const [selectedTagIds, setSelectedTags] = useState<number[]>([]);
   const [tagItems, setTagItems] = useState(tags);
+  const [selected, setSelected] = React.useState('');
+
+  console.log(selectedTagIds);
 
   let filteredExercises = exercisesList;
 
@@ -241,20 +254,22 @@ export default function ExercisesTab() {
           },
         }}
       />
-      <View className="flex-1">
-        <View className="mt-2 mx-2 z-10">
-          <DropDownPicker
-            mode="BADGE"
-            multiple={true}
-            searchable
-            open={open}
-            value={selectedTagIds}
-            items={tagItems}
-            setOpen={setOpen}
-            setValue={setSelectedTags}
-            setItems={setTagItems}
-            placeholder={'All Exercises'}
-          />
+      <View className="flex-1 m-2">
+        <View className="flex flex-row gap-1">
+          <View className="flex-1">
+            <MultipleSelectList
+              setSelected={setSelectedTags}
+              data={tags}
+              save="key"
+              label="Tags"
+              // placeholder="Select tags to filter"
+              // boxStyles={{ backgroundColor: 'red' }}
+              // dropdownItemStyles={{ backgroundColor: 'green', marginVertical: 1 }}
+              // dropdownStyles={{ backgroundColor: 'purple' }}
+              badgeStyles={{ backgroundColor: 'blue' }}
+              // boxStyles={{backgroundColor: 'green', flex: 1, flexDirection: 'row'}}
+            />
+          </View>
         </View>
         <ExerciseList
           exerciseMap={exerciseMap}
