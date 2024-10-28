@@ -8,7 +8,7 @@ import * as FileSystem from 'expo-file-system';
 
 // Drizzle
 import { DB_NAME, expoDb } from '@/db/instance';
-import { seed } from '@/db/seed';
+import { seed } from '@/db/seed/seed';
 import { reset } from '@/db/reset';
 
 const getDbTables = async () => {
