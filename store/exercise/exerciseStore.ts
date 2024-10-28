@@ -2,7 +2,7 @@ import { create } from 'zustand';
 import { produce } from 'immer';
 import { db } from '@/db/instance';
 import * as schema from '@/db/schema';
-import { eq, asc } from 'drizzle-orm';
+import { eq } from 'drizzle-orm';
 import transformDbExercisesToState from './exerciseTransform';
 
 export type ExerciseStateVal = {
@@ -22,14 +22,14 @@ export type ExerciseStateFunctions = {
   createExercise: (
     newExercise: schema.TInsertExercise,
     tagIds: number[]
-  ) => void;
+  ) => Promise<void>;
 
   /** Update exercise based on id */
   updateExercise: (
     id: number,
     editedExercise: Exercise,
     tagIds: number[]
-  ) => void;
+  ) => Promise<void>;
 };
 
 type ExerciseStore = ExerciseStateVal & ExerciseStateFunctions;
