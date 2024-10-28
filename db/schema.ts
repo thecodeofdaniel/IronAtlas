@@ -30,9 +30,11 @@ export const exerciseTags = sqliteTable(
   {
     exerciseId: integer('exercise_id', { mode: 'number' })
       .notNull()
+      // when exercise is deleted, so are the tags associated
       .references(() => exercise.id, { onDelete: 'cascade' }),
     tagId: integer('tag_id', { mode: 'number' })
       .notNull()
+      // when tag is deleted, so are the exercises associated
       .references(() => tag.id, { onDelete: 'cascade' }),
   },
   (table) => ({
