@@ -17,7 +17,7 @@ export type ExerciseStateFunctions = {
   updateExerciseList: (newExerciseList: number[]) => Promise<void>;
 
   /** Return assoicated tagIds with exercise */
-  deleteExercise: (id: number) => Promise<number[] | null>;
+  deleteExercise: (id: number) => Promise<void>;
 
   createExercise: (
     newExercise: schema.TInsertExercise,
@@ -30,8 +30,6 @@ export type ExerciseStateFunctions = {
     editedExercise: Exercise,
     tagIds: number[]
   ) => void;
-
-  // removeTagFromExerciseState: (id: number, tagId: number) => void;
 };
 
 type ExerciseStore = ExerciseStateVal & ExerciseStateFunctions;
@@ -113,40 +111,35 @@ export const useExerciseStore = create<ExerciseStore>()((set, get) => ({
   },
   deleteExercise: async (id) => {
     try {
+      await db.transaction(async (tx) => {
+        // Delete exercise in exercise table
+        await tx.delete(schema.exercise).where(eq(schema.exercise.id, id));
+
+        // Delete exercises from exercise_tags_relations table
+        await tx
+          .delete(schema.exerciseTags)
+          .where(eq(schema.exerciseTags.exerciseId, id));
+      });
+
       // Create new exerciseList
       const newExerciseList = get().exercisesList.filter(
         (exerciseId) => exerciseId !== id
       );
 
-      // Delete exercise in db
-      await db.delete(schema.exercise).where(eq(schema.exercise.id, id));
-
       // Update list and map by updating order
       await get().updateExerciseList(newExerciseList);
-
-      // Delete associated tags with exercise
-      const tagIds = await db
-        .delete(schema.exerciseTags)
-        .where(eq(schema.exerciseTags.exerciseId, id))
-        .returning({ tagId: schema.exerciseTags.tagId })
-        .then((tags) => tags.map((tag) => tag.tagId));
-      // console.log(tagIds);
 
       set(
         produce<ExerciseStore>((state) => {
           // Remove exercise from set
-          const exerciseToBeRemoved = state.exerciseMap[id];
-          state.exerciseSet.delete(exerciseToBeRemoved.value);
+          state.exerciseSet.delete(state.exerciseMap[id].value);
 
           // Remove from map
           delete state.exerciseMap[id];
         })
       );
-
-      return tagIds;
     } catch (error) {
-      console.error('Error: Deleting Exercise', error);
-      return null;
+      console.error('Error: from deleteExercise', error);
     }
   },
   updateExercise: async (id, editedExercise, tagIds) => {
@@ -194,12 +187,6 @@ export const useExerciseStore = create<ExerciseStore>()((set, get) => ({
       console.error('Error updating exercise in exerciseStore:', error);
     }
   },
-  // removeTagFromExerciseState: (id, tagId) =>
-  //   set(
-  //     produce<ExerciseStore>((state) => {
-  //       state.exerciseMap[id].tags.delete(tagId);
-  //     })
-  //   ),
 }));
 
 export function useExerciseStoreWithSetter(): ExerciseStateVal & {
@@ -214,7 +201,6 @@ export function useExerciseStoreWithSetter(): ExerciseStateVal & {
     updateExerciseList,
     deleteExercise,
     updateExercise,
-    // removeTagFromExerciseState,
   } = useExerciseStore((state) => state);
 
   return {
@@ -227,7 +213,6 @@ export function useExerciseStoreWithSetter(): ExerciseStateVal & {
       updateExerciseList,
       deleteExercise,
       updateExercise,
-      // removeTagFromExerciseState,
     },
   };
 }

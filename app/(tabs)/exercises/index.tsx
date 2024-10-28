@@ -67,22 +67,7 @@ function ExerciseList({
       async (selectedIndex?: number) => {
         switch (selectedIndex) {
           case destructiveButtonIndex:
-            // // Grab each tag from set and remove associated exercise from tag
-            // [...exercise.tags].forEach((tagId) => {
-            //   // console.log(tagMap[tagId]);
-            //   return tagSetter.deleteExerciseFromTagState(tagId, exercise.id);
-            // });
-
-            // Remove the exercise from exercise list
-            const tagIds = await exerciseSetter.deleteExercise(exercise.id);
-
-            // Remove exercise from associated tag
-            if (tagIds) {
-              tagIds.forEach((tagId) =>
-                // Remove associated exercise with tag
-                tagSetter.deleteExerciseFromTagState(tagId, exercise.id)
-              );
-            }
+            exerciseSetter.deleteExercise(exercise.id);
             break;
           case 1:
             openModal('upsertExercise', {
