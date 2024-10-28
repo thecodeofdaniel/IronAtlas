@@ -43,6 +43,11 @@ const tagTree = [
             label: 'Shoulders',
             children: [],
           },
+          {
+            id: 17,
+            label: 'Forearms',
+            children: [],
+          },
         ],
       },
       {
@@ -57,6 +62,11 @@ const tagTree = [
           {
             id: 16,
             label: 'Lats',
+            children: [],
+          },
+          {
+            id: 18,
+            label: 'Rhomboids',
             children: [],
           },
         ],
@@ -110,6 +120,81 @@ const transformTagTree = (
     ];
   });
 };
+
+const exercises = [
+  {
+    label: 'Bench Press',
+    tags: [2],
+  },
+  {
+    label: 'Squats',
+    tags: [6, 7, 8],
+  },
+  {
+    label: 'Pullup',
+    tags: [16],
+  },
+  {
+    label: 'Deadlift',
+    tags: [7, 8],
+  },
+  {
+    label: 'Pulldown',
+    tags: [16],
+  },
+  {
+    label: 'Bicep Curls',
+    tags: [12],
+  },
+  {
+    label: 'Bulgarian Split Squats',
+    tags: [6, 7, 8],
+  },
+  {
+    label: 'Leg Curl',
+    tags: [7],
+  },
+  {
+    label: 'Leg Extension',
+    tags: [6],
+  },
+  {
+    label: 'Leg Press',
+    tags: [6, 7, 8],
+  },
+  {
+    label: 'Calf Raises',
+    tags: [9],
+  },
+  {
+    label: 'Incline Dumbbell Bench Press',
+    tags: [3, 11],
+  },
+  {
+    label: 'Machine Incline Bench Press',
+    tags: [3, 11],
+  },
+  {
+    label: 'Shoulder Press',
+    tags: [13],
+  },
+  {
+    label: 'Tricep Extensions',
+    tags: [11],
+  },
+  {
+    label: 'Hammer Curls',
+    tags: [12, 17],
+  },
+  {
+    label: 'Reverse Curls',
+    tags: [17],
+  },
+  {
+    label: 'Close Grip Seated Row',
+    tags: [16, 18],
+  },
+];
 
 const startingExercises: schema.TInsertExercise[] = [
   {
