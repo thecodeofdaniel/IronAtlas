@@ -1,137 +1,115 @@
 import { db } from '@/db/instance';
 import * as schema from './schema';
+import { eq } from 'drizzle-orm';
+import { formatTagOrExercise } from '@/utils/utils';
 
-const startingTags: schema.TInsertTag[] = [
+const tagTree = [
   {
     id: 1,
     label: 'Upper Body',
-    value: 'upper_body',
-    parentId: null,
-    index: 0,
-    isOpen: true,
-  },
-  {
-    id: 2,
-    label: 'Chest',
-    value: 'chest',
-    parentId: 1,
-    index: 0,
-    isOpen: false,
-  },
-  {
-    id: 3,
-    label: 'Lower Body',
-    value: 'lower_body',
-    parentId: null,
-    index: 1,
-    isOpen: false,
-  },
-  {
-    id: 4,
-    label: 'Upper Chest',
-    value: 'upper_chest',
-    parentId: 2,
-    index: 0,
-    isOpen: false,
+    children: [
+      {
+        id: 2,
+        label: 'Chest',
+        children: [
+          {
+            id: 3,
+            label: 'Upper Chest',
+            children: [],
+          },
+          {
+            id: 4,
+            label: 'Middle Chest',
+            children: [],
+          },
+        ],
+      },
+      {
+        id: 10,
+        label: 'Arms',
+        children: [
+          {
+            id: 11,
+            label: 'Triceps',
+            children: [],
+          },
+          {
+            id: 12,
+            label: 'Biceps',
+            children: [],
+          },
+          {
+            id: 13,
+            label: 'Shoulders',
+            children: [],
+          },
+        ],
+      },
+      {
+        id: 14,
+        label: 'Back',
+        children: [
+          {
+            id: 15,
+            label: 'Traps',
+            children: [],
+          },
+          {
+            id: 16,
+            label: 'Lats',
+            children: [],
+          },
+        ],
+      },
+    ],
   },
   {
     id: 5,
-    label: 'Middle Chest',
-    value: 'middle_chest',
-    parentId: 2,
-    index: 1,
-    isOpen: false,
-  },
-  { id: 6, label: 'Arms', value: 'arms', parentId: 1, index: 1, isOpen: false },
-  {
-    id: 7,
-    label: 'Triceps',
-    value: 'triceps',
-    parentId: 6,
-    index: 0,
-    isOpen: false,
-  },
-  {
-    id: 8,
-    label: 'Biceps',
-    value: 'biceps',
-    parentId: 6,
-    index: 1,
-    isOpen: false,
-  },
-  {
-    id: 9,
-    label: 'Shoulders',
-    value: 'shoulders',
-    parentId: 6,
-    index: 2,
-    isOpen: false,
-  },
-  {
-    id: 10,
-    label: 'Abs',
-    value: 'abs',
-    parentId: 1,
-    index: 2,
-    isOpen: false,
-  },
-  {
-    id: 11,
-    label: 'Back',
-    value: 'back',
-    parentId: 1,
-    index: 3,
-    isOpen: false,
-  },
-  {
-    id: 12,
-    label: 'Traps',
-    value: 'traps',
-    parentId: 11,
-    index: 0,
-    isOpen: false,
-  },
-  {
-    id: 13,
-    label: 'Quads',
-    value: 'quads',
-    parentId: 3,
-    index: 0,
-    isOpen: false,
-  },
-  {
-    id: 14,
-    label: 'Hamstrings',
-    value: 'hamstrings',
-    parentId: 3,
-    index: 1,
-    isOpen: false,
-  },
-  {
-    id: 15,
-    label: 'Glutes',
-    value: 'glutes',
-    parentId: 3,
-    index: 2,
-    isOpen: false,
-  },
-  {
-    id: 16,
-    label: 'Calves',
-    value: 'calves',
-    parentId: 3,
-    index: 3,
-    isOpen: false,
-  },
-  {
-    id: 17,
-    label: 'Lats',
-    value: 'lats',
-    parentId: 11,
-    index: 1,
-    isOpen: false,
+    label: 'Lower Body',
+    children: [
+      {
+        id: 6,
+        label: 'Quads',
+        children: [],
+      },
+      {
+        id: 7,
+        label: 'Hamstrings',
+        children: [],
+      },
+      {
+        id: 8,
+        label: 'Glutes',
+        children: [],
+      },
+      {
+        id: 9,
+        label: 'Calves',
+        children: [],
+      },
+    ],
   },
 ];
+
+const transformTagTree = (
+  tree: any[],
+  parentId: number | null = null
+): schema.TInsertTag[] => {
+  return tree.flatMap((tag, index) => {
+    const children = transformTagTree(tag.children, tag.id);
+    return [
+      {
+        id: tag.id,
+        label: tag.label,
+        value: formatTagOrExercise(tag.label), // Use the utility function to format the value
+        parentId: parentId,
+        index: index,
+        isOpen: children.length > 0, // Set isOpen based on whether there are children
+      },
+      ...children, // Include the children in the returned array
+    ];
+  });
+};
 
 const startingExercises: schema.TInsertExercise[] = [
   {
@@ -170,6 +148,78 @@ const startingExercises: schema.TInsertExercise[] = [
     value: 'bicep_curls',
     index: 5,
   },
+  {
+    id: 7,
+    label: 'Bulgarian Split Squats',
+    value: 'bulgarian_split_squats',
+    index: 6,
+  },
+  {
+    id: 8,
+    label: 'Leg Curl',
+    value: 'leg_curl',
+    index: 7,
+  },
+  {
+    id: 9,
+    label: 'Leg Extension',
+    value: 'leg_extension',
+    index: 8,
+  },
+  {
+    id: 10,
+    label: 'Leg Press',
+    value: 'leg_press',
+    index: 9,
+  },
+  {
+    id: 11,
+    label: 'Calf Raises',
+    value: 'calf_raises',
+    index: 10,
+  },
+  {
+    id: 12,
+    label: 'Incline Dumbbell Bench Press',
+    value: 'incline_dumbbell_bench_press',
+    index: 11,
+  },
+  {
+    id: 13,
+    label: 'Machine Incline Bench Press',
+    value: 'machine_incline_bench_press',
+    index: 12,
+  },
+  {
+    id: 14,
+    label: 'Shoulder Press',
+    value: 'shoulder_press',
+    index: 13,
+  },
+  {
+    id: 15,
+    label: 'Tricep Extensions',
+    value: 'tricep_extensions',
+    index: 14,
+  },
+  {
+    id: 16,
+    label: 'Hammer Curls',
+    value: 'hammer_curls',
+    index: 15,
+  },
+  {
+    id: 17,
+    label: 'Reverse Curls',
+    value: 'reverse_curls',
+    index: 16,
+  },
+  {
+    id: 18,
+    label: 'Close grip Seated Row',
+    value: 'close_grip_seated_row',
+    index: 17,
+  },
 ];
 
 // "Bench Press" has "chest" and "triceps" tag
@@ -186,9 +236,51 @@ const startingRelationships = [
     exerciseId: 6,
     tagId: 8,
   },
+  {
+    exerciseId: 4,
+    tagId: 14,
+  },
+  {
+    exerciseId: 4,
+    tagId: 15,
+  },
+  {
+    exerciseId: 7,
+    tagId: 13,
+  },
+  {
+    exerciseId: 7,
+    tagId: 14,
+  },
+  {
+    exerciseId: 7,
+    tagId: 15,
+  },
+  {
+    exerciseId: 8, // leg curl
+    tagId: 14,
+  },
+  {
+    exerciseId: 9, // leg extension
+    tagId: 13,
+  },
+  {
+    exerciseId: 10,
+    tagId: 13,
+  },
+  {
+    exerciseId: 10,
+    tagId: 14,
+  },
+  {
+    exerciseId: 10,
+    tagId: 15,
+  },
 ];
 
 async function createTags() {
+  const startingTags = transformTagTree(tagTree);
+
   // Insert tags
   for (const tagData of startingTags) {
     db.insert(schema.tag).values(tagData).run();
@@ -207,8 +299,18 @@ async function createRelationships() {
   }
 }
 
+/** Return true if already seeded */
 export async function seed() {
+  const [exercise] = await db
+    .select()
+    .from(schema.exercise)
+    .where(eq(schema.exercise.id, 1));
+
+  // if (exercise !== undefined) return true;
+
   await createTags();
-  await createExercises();
-  await createRelationships();
+  // await createExercises();
+  // await createRelationships();
+
+  return false;
 }
