@@ -9,9 +9,7 @@ import * as FileSystem from 'expo-file-system';
 // Drizzle
 import { DB_NAME, expoDb } from '@/db/instance';
 import { seed } from '@/db/seed';
-import { useExerciseStore } from '@/store/exercise/exerciseStore';
-import { useTagStore } from '@/store/tag/tagStore';
-import { useInitializeStores } from '@/hooks/useInitializeStores';
+import { reset } from '@/db/reset';
 
 const getDbTables = async () => {
   try {
@@ -92,8 +90,9 @@ const deleteProxy = (title: string, func: () => any) =>
 
 const seedDb = async () => {
   try {
-    await seed();
-    Alert.alert('Seeded DB!', 'Reload the app to see changes');
+    const isAlreadySeeded = await seed();
+    if (isAlreadySeeded) Alert.alert('Already seeded db', '');
+    else Alert.alert('Seeded DB!', 'Reload the app to see changes');
   } catch (error) {
     console.error('Seeding went wrong:', error);
   }
@@ -120,8 +119,8 @@ export default function DatabaseTab() {
         <Button title="FIND TABLES" onPress={getDbTables} />
         <Button title="SEED DB" onPress={seedDb} />
         <Button
-          title="RESET DB"
-          onPress={() => deleteProxy('Delete products', () => {})}
+          title="RESET TABLES"
+          onPress={() => deleteProxy('Reset tables', () => reset())}
           color={'orange'}
         />
         <Button
