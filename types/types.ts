@@ -4,7 +4,7 @@ type Exercise = {
   value: string;
   index: number;
   // specific tag ids
-  tags: Set<number>;
+  // tags: Set<number>;
 };
 
 type ExerciseMap = {

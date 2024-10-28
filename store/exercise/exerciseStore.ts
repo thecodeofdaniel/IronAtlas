@@ -21,13 +21,17 @@ export type ExerciseStateFunctions = {
 
   createExercise: (
     newExercise: schema.TInsertExercise,
-    chosenTags: Set<number>
-  ) => Promise<number | null>;
+    tagIds: number[]
+  ) => void;
 
   /** Update exercise based on id */
-  updateExercise: (id: number, editedExercise: Exercise) => void;
+  updateExercise: (
+    id: number,
+    editedExercise: Exercise,
+    tagIds: number[]
+  ) => void;
 
-  removeTagFromExerciseState: (id: number, tagId: number) => void;
+  // removeTagFromExerciseState: (id: number, tagId: number) => void;
 };
 
 type ExerciseStore = ExerciseStateVal & ExerciseStateFunctions;
@@ -45,8 +49,7 @@ export const useExerciseStore = create<ExerciseStore>()((set, get) => ({
       exerciseSet: starting.exerciseSet,
     });
   },
-  createExercise: async (newExercise, chosenTags) => {
-    let newExerciseId = null;
+  createExercise: async (newExercise, tagIds) => {
     try {
       const [newExerciseFromDb] = await db.transaction(async (tx) => {
         // Insert exercise
@@ -55,28 +58,22 @@ export const useExerciseStore = create<ExerciseStore>()((set, get) => ({
           .values(newExercise)
           .returning();
 
-        // Insert tags related to exercise
-        await Promise.all(
-          Array.from(chosenTags).map((chosenTag) =>
-            tx.insert(schema.exerciseTags).values({
-              exerciseId: exercise.id,
-              tagId: chosenTag,
-            })
-          )
-        );
+        // Insert tags associated
+        for (const tagId of tagIds) {
+          await tx.insert(schema.exerciseTags).values({
+            exerciseId: exercise.id,
+            tagId: tagId,
+          });
+        }
 
         return [exercise];
       });
-
-      // return id from db
-      newExerciseId = newExerciseFromDb.id;
 
       set((state) => ({
         exerciseMap: {
           ...state.exerciseMap,
           [newExerciseFromDb.id]: {
             ...newExerciseFromDb,
-            tags: chosenTags,
           },
         },
         exercisesList: [...state.exercisesList, newExerciseFromDb.id],
@@ -85,8 +82,6 @@ export const useExerciseStore = create<ExerciseStore>()((set, get) => ({
     } catch (error) {
       console.error('Error: Not able to add exercise', error);
     }
-
-    return newExerciseId;
   },
   updateExerciseList: async (newExercisesList) => {
     try {
@@ -154,7 +149,7 @@ export const useExerciseStore = create<ExerciseStore>()((set, get) => ({
       return null;
     }
   },
-  updateExercise: async (id, editedExercise: Exercise) => {
+  updateExercise: async (id, editedExercise, tagIds) => {
     try {
       await db.transaction(async (tx) => {
         // Update exercise
@@ -172,7 +167,7 @@ export const useExerciseStore = create<ExerciseStore>()((set, get) => ({
           .where(eq(schema.exerciseTags.exerciseId, id));
 
         // Insert new tags (may be the same which is fine)
-        for (const tagId of editedExercise.tags) {
+        for (const tagId of tagIds) {
           await tx.insert(schema.exerciseTags).values({
             exerciseId: id,
             tagId: tagId,
@@ -199,12 +194,12 @@ export const useExerciseStore = create<ExerciseStore>()((set, get) => ({
       console.error('Error updating exercise in exerciseStore:', error);
     }
   },
-  removeTagFromExerciseState: (id, tagId) =>
-    set(
-      produce<ExerciseStore>((state) => {
-        state.exerciseMap[id].tags.delete(tagId);
-      })
-    ),
+  // removeTagFromExerciseState: (id, tagId) =>
+  //   set(
+  //     produce<ExerciseStore>((state) => {
+  //       state.exerciseMap[id].tags.delete(tagId);
+  //     })
+  //   ),
 }));
 
 export function useExerciseStoreWithSetter(): ExerciseStateVal & {
@@ -219,7 +214,7 @@ export function useExerciseStoreWithSetter(): ExerciseStateVal & {
     updateExerciseList,
     deleteExercise,
     updateExercise,
-    removeTagFromExerciseState,
+    // removeTagFromExerciseState,
   } = useExerciseStore((state) => state);
 
   return {
@@ -232,7 +227,7 @@ export function useExerciseStoreWithSetter(): ExerciseStateVal & {
       updateExerciseList,
       deleteExercise,
       updateExercise,
-      removeTagFromExerciseState,
+      // removeTagFromExerciseState,
     },
   };
 }

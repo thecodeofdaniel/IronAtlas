@@ -71,33 +71,25 @@ export default function UpsertExercise({
     if (!isValidTagOrExercise(trimmedLabel)) return;
 
     if (id) {
-      exerciseSetter.updateExercise(id, {
-        ...exerciseMap[id],
-        label: trimmedLabel,
-        value: formatTagOrExercise(trimmedLabel),
-        tags: new Set(selected.chosen),
-      });
-    } else {
-      const chosenTags = new Set(selected.chosen);
-
-      const newExercise: TInsertExercise = {
-        label: trimmedLabel,
-        value: formatTagOrExercise(trimmedLabel),
-        index: exercisesList.length,
-      };
-
-      // Add exercise to exercise pool
-      const newExerciseId = await exerciseSetter.createExercise(
-        newExercise,
-        chosenTags
+      exerciseSetter.updateExercise(
+        id,
+        {
+          ...exerciseMap[id],
+          label: trimmedLabel,
+          value: formatTagOrExercise(trimmedLabel),
+        },
+        selected.chosen
       );
-
-      // if (newExerciseId) {
-      //   // Add exercise to associated tags
-      //   selected.chosen.forEach((tagId) =>
-      //     tagSetter.addExerciseToTagState(tagId, newExerciseId)
-      //   );
-      // }
+    } else {
+      // Add exercise to exercise pool
+      exerciseSetter.createExercise(
+        {
+          label: trimmedLabel,
+          value: formatTagOrExercise(trimmedLabel),
+          index: exercisesList.length,
+        },
+        selected.chosen
+      );
     }
 
     closeModal();
