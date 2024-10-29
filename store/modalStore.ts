@@ -1,23 +1,6 @@
 import { create } from 'zustand';
 
 export type ModalData = {
-  // exercise: {
-  //   initialData?: Partial<Exercise>;
-  //   onSave?: (exercise: Exercise) => void;
-  // };
-  // muscleGroup: {
-  //   groupId?: number;
-  //   onSelect?: (groupId: number) => void;
-  // };
-  // settings: {
-  //   section?: 'account' | 'preferences';
-  // };
-  // confirmation: {
-  //   title: string;
-  //   message: string;
-  //   onConfirm: () => void;
-  // };
-  // CRUD: Create, Read, Update, Delete
   upsertExercise: {
     id?: number;
   };
