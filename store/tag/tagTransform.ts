@@ -12,23 +12,15 @@ export default function transformDbTagsToState(): TagStateVal {
       index: 0,
       isOpen: true,
       children: [],
-      exercises: new Set(),
     },
   };
   const tagSet: Set<string> = new Set();
 
   try {
     const dbTags = db.select().from(schema.tag).all();
-    const exerciseTags = db.select().from(schema.exerciseTags).all();
 
-    // First pass: create all tag objects and add associated exercises
-    dbTags.forEach((dbTag) => {
-      const exercises = new Set(
-        exerciseTags
-          .filter((et) => et.tagId === dbTag.id)
-          .map((et) => et.exerciseId)
-      );
-
+    // Insert tag objects into map
+    for (const dbTag of dbTags) {
       tagMap[dbTag.id] = {
         id: dbTag.id,
         label: dbTag.label,
@@ -37,13 +29,8 @@ export default function transformDbTagsToState(): TagStateVal {
         index: dbTag.index,
         isOpen: dbTag.isOpen,
         children: [],
-        // exercises: new Set(dbTag.exercises.map((exercise) => exercise.value)),
-        exercises: exercises,
       };
-
-      // TODO put all tag values into a set and return
-      tagSet.add(dbTag.value);
-    });
+    }
 
     // Second pass: populate children arrays for each tag object and sort by order
     Object.values(tagMap).forEach((tag) => {

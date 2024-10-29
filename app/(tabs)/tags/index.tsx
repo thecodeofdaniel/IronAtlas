@@ -54,17 +54,7 @@ const DraggableTree = ({
     const destructiveButtonIndex = options.indexOf('Delete');
 
     const actions = {
-      Delete: () => {
-        // grab the associated exercises with that tag
-        // go through each exercise and delete that tag from set
-        const exerciseIds = [...tagMap[pressedId].exercises];
-        exerciseIds.forEach((exerciseId) =>
-          exerciseSetter.removeTagFromExerciseState(exerciseId, pressedId)
-        );
-
-        // delete tag itself
-        setter.deleteTag(pressedId);
-      },
+      Delete: () => setter.deleteTag(pressedId),
       Create: () => openModal('createTag', { pressedId }),
       Edit: () => openModal('updateTag', { id: pressedId }),
       Move: () => openModal('moveTag', { pressedId }),

@@ -16,10 +16,14 @@ export type TagStateFunctions = {
   initTagStore: () => void;
   toggleTagOpen: (pressedId: number) => void;
   reorderTags: (dataList: Tag[]) => void;
-  createChildTag: (pressedId: number, title: string) => void;
-  deleteTag: (pressedId: number) => void;
-  editTagTitle: (pressedId: number, newLabel: string, newValue: string) => void;
-  moveTag: (pressedId: number, idToMove: number) => void;
+  createChildTag: (pressedId: number, title: string) => Promise<void>;
+  deleteTag: (pressedId: number) => Promise<void>;
+  editTagTitle: (
+    pressedId: number,
+    newLabel: string,
+    newValue: string
+  ) => Promise<void>;
+  moveTag: (pressedId: number, idToMove: number) => Promise<void>;
 };
 
 export type TagStore = TagStateVal & TagStateFunctions;
@@ -126,7 +130,6 @@ export const useTagStore = create<TagStore>()((set, get) => ({
         newTagMap[newTag.id] = {
           ...newTag,
           children: [],
-          exercises: new Set(),
         };
 
         return {

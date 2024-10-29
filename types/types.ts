@@ -3,8 +3,6 @@ type Exercise = {
   label: string;
   value: string;
   index: number;
-  // specific tag ids
-  // tags: Set<number>;
 };
 
 type ExerciseMap = {
@@ -19,12 +17,10 @@ type Tag = {
   index: number;
   isOpen: boolean;
   children: number[];
-  // exercises ids associated with tag
-  exercises: Set<number>;
 };
 
 type TagMap = {
-  [key: number]: Tag; // Create an ItemMap type
+  [key: number]: Tag;
 };
 
 // type Workout = {

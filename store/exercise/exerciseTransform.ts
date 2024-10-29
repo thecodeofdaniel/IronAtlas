@@ -8,29 +8,29 @@ export default function transformDbExercisesToState(): ExerciseStateVal {
   const exercisesList: number[] = [];
 
   try {
-    const exercisesData = db.select().from(schema.exercise).all();
+    const dbExercises = db.select().from(schema.exercise).all();
 
     // Create an array to hold exercise objects with id and index
     const exercisesWithIdAndIndex: { id: number; index: number }[] = [];
 
-    for (const exerciseData of exercisesData) {
-      const exerciseId = exerciseData.id;
+    for (const exercise of dbExercises) {
+      const exerciseId = exercise.id;
 
       // Add exercise to map
       exerciseMap[exerciseId] = {
         id: exerciseId,
-        label: exerciseData.label,
-        value: exerciseData.value,
-        index: exerciseData.index,
+        label: exercise.label,
+        value: exercise.value,
+        index: exercise.index,
       };
 
       // Add exercise to set
-      exerciseSet.add(exerciseData.value);
+      exerciseSet.add(exercise.value);
 
       // Add object to array
       exercisesWithIdAndIndex.push({
         id: exerciseId,
-        index: exerciseData.index,
+        index: exercise.index,
       });
     }
 
