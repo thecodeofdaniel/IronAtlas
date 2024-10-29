@@ -16,7 +16,7 @@ export default function TabLayout() {
           title: 'Exercises',
           tabBarIcon: ({ color, size, focused }) => (
             <Ionicons
-              name={focused ? 'barbell' : 'barbell-outline'}
+              name={focused ? 'list' : 'list-outline'}
               color={color}
               size={size}
             />
@@ -30,6 +30,19 @@ export default function TabLayout() {
           tabBarIcon: ({ color, size, focused }) => (
             <Ionicons
               name={focused ? 'pricetag' : 'pricetag-outline'}
+              color={color}
+              size={size}
+            />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="workout"
+        options={{
+          title: 'Workout',
+          tabBarIcon: ({ color, size, focused }) => (
+            <Ionicons
+              name={focused ? 'barbell' : 'barbell-outline'}
               color={color}
               size={size}
             />
