@@ -9,37 +9,34 @@ export default function transformDbExercisesToState(): ExerciseStateVal {
 
   try {
     const exercisesData = db.select().from(schema.exercise).all();
-    const exerciseTagsData = db.select().from(schema.exerciseTags).all();
 
-    // Create an array to hold exercises with their order
-    const exercisesWithOrder: { id: number; order: number }[] = [];
+    // Create an array to hold exercise objects with id and index
+    const exercisesWithIdAndIndex: { id: number; index: number }[] = [];
 
     for (const exerciseData of exercisesData) {
       const exerciseId = exerciseData.id;
-      const tags = new Set(
-        exerciseTagsData
-          .filter((et) => et.exerciseId === exerciseId)
-          .map((et) => et.tagId)
-      );
 
-      // Update the map with exercies
+      // Add exercise to map
       exerciseMap[exerciseId] = {
         id: exerciseId,
         label: exerciseData.label,
         value: exerciseData.value,
         index: exerciseData.index,
-        tags: tags,
       };
 
-      // Update the set
+      // Add exercise to set
       exerciseSet.add(exerciseData.value);
-      exercisesWithOrder.push({ id: exerciseId, order: exerciseData.index });
+
+      // Add object to array
+      exercisesWithIdAndIndex.push({
+        id: exerciseId,
+        index: exerciseData.index,
+      });
     }
 
     // Sort the exercises by their order and create exerciseList from that order
-    exercisesWithOrder.sort((a, b) => a.order - b.order);
-    // exercisesList = exercisesWithOrder.map((exercise) => exercise.id);
-    exercisesWithOrder.map((exercise) => exercisesList.push(exercise.id));
+    exercisesWithIdAndIndex.sort((a, b) => a.index - b.index);
+    exercisesWithIdAndIndex.map((exercise) => exercisesList.push(exercise.id));
   } catch (error) {
     console.error('Error fetching exercises from DB:', error);
   }
