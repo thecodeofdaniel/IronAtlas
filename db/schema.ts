@@ -124,18 +124,40 @@ export const templateExercise = sqliteTable(
   'template_exercises',
   {
     id: integer('id').primaryKey({ autoIncrement: true }),
-    templateId: integer('template_id').references(() => template.id),
-    exerciseId: integer('exercise_id').references(() => exercise.id),
+    templateId: integer('template_id').references(() => template.id, {
+      onDelete: 'cascade',
+    }),
+    exerciseId: integer('exercise_id').references(() => exercise.id, {
+      onDelete: 'cascade',
+    }),
     index: integer('index').notNull(), // Main order of exercises in the template
     subIndex: integer('sub_index').notNull(), // Order within a group
-    sets: integer('sets'),
-    reps: integer('reps'),
   },
   (table) => ({
     templateIdIndex: index('template_template_id_index').on(table.templateId),
     exerciseIdIndex: index('template_exercise_id_index').on(table.exerciseId),
     indexIndex: index('template_index_index').on(table.index),
     subIndexIndex: index('template_sub_index_index').on(table.subIndex),
+  })
+);
+
+export const templateExerciseSett = sqliteTable(
+  'template_exercise_sett',
+  {
+    id: integer('id').primaryKey({ autoIncrement: true }),
+    templateExerciseId: integer('template_exercise_id').references(
+      () => templateExercise.id,
+      { onDelete: 'cascade' }
+    ),
+    // the following can be null if the user only wants order of exercises and not details
+    set: integer('sets').default(0), // this also control the order of the sets
+    reps: integer('reps'),
+    type: text('type').default('normal'),
+  },
+  (table) => ({
+    templateExerciseIdIndex: index('template_exercise_sett_id_index').on(
+      table.templateExerciseId
+    ),
   })
 );
 
