@@ -51,3 +51,9 @@ export function getAllChildrenIds(tagMap: TagMap, tagId: number): number[] {
 
   return [...childrenIds, ...grandchildrenIds];
 }
+
+export function generateId() {
+  const timestamp = Date.now();
+  const randomNum = Math.random() * 1000000;
+  return `${timestamp}-${Math.floor(randomNum)}`;
+}

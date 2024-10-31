@@ -4,13 +4,22 @@ import { Stack } from 'expo-router';
 import DraggableFlatList, {
   RenderItemParams,
 } from 'react-native-draggable-flatlist';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import {
+  FlatList,
+  GestureHandlerRootView,
+  TextInput,
+} from 'react-native-gesture-handler';
 import clsx from 'clsx';
 import { Ionicons } from '@expo/vector-icons';
 
+type SettType = {
+  reps: number;
+  type: string;
+};
+
 type TemplateObj = {
   exerciseId: number;
-  sets: number[];
+  sets: SettType[];
   isOpen: boolean;
   children: number[];
   parentId: number | null;
@@ -30,14 +39,22 @@ const startingTemplateTree: TemplateMap = {
   },
   1: {
     exerciseId: 1,
-    sets: [12, 12, 12],
+    sets: [
+      { reps: 12, type: 'N' },
+      { reps: 12, type: 'N' },
+      { reps: 12, type: 'N' },
+    ],
     isOpen: false,
     children: [],
     parentId: 0, // Set parentId
   },
   3: {
     exerciseId: 3,
-    sets: [10, 8, 6],
+    sets: [
+      { reps: 12, type: '' },
+      { reps: 12, type: '' },
+      { reps: 12, type: '' },
+    ],
     isOpen: false,
     children: [],
     parentId: 0, // Set parentId
@@ -51,19 +68,71 @@ const startingTemplateTree: TemplateMap = {
   },
   2: {
     exerciseId: 2,
-    sets: [10, 10, 10],
+    sets: [
+      { reps: 12, type: '' },
+      { reps: 12, type: '' },
+      { reps: 12, type: '' },
+    ],
     isOpen: false,
     children: [],
     parentId: -1, // Set parentId
   },
   4: {
     exerciseId: 4,
-    sets: [6, 8],
+    sets: [
+      { reps: 12, type: '' },
+      { reps: 12, type: '' },
+    ],
     isOpen: false,
     children: [],
     parentId: -1, // Set parentId
   },
 };
+
+// const startingTemplateTree: TemplateMap = {
+//   '0': {
+//     exerciseId: 0,
+//     sets: [],
+//     isOpen: true,
+//     children: [1, 3, -1],
+//     parentId: null, // No parent for the root
+//   },
+//   1: {
+//     exerciseId: 1,
+//     sets: [12, 12, 12],
+//     isOpen: false,
+//     children: [],
+//     parentId: 0, // Set parentId
+//   },
+//   3: {
+//     exerciseId: 3,
+//     sets: [10, 8, 6],
+//     isOpen: false,
+//     children: [],
+//     parentId: 0, // Set parentId
+//   },
+//   '-1': {
+//     exerciseId: -1,
+//     sets: [],
+//     isOpen: true,
+//     children: [2, 4],
+//     parentId: 0, // Set parentId
+//   },
+//   2: {
+//     exerciseId: 2,
+//     sets: [10, 10, 10],
+//     isOpen: false,
+//     children: [],
+//     parentId: -1, // Set parentId
+//   },
+//   4: {
+//     exerciseId: 4,
+//     sets: [6, 8],
+//     isOpen: false,
+//     children: [],
+//     parentId: -1, // Set parentId
+//   },
+// };
 
 type TemplateProps = {
   templateMap: TemplateMap;
@@ -78,12 +147,24 @@ function TemplateTree({
   templateChildren,
   level,
 }: TemplateProps) {
-  const RenderItem = ({
-    item,
+  const RenderExerciseOrGroup = ({
+    item: group,
     drag,
     isActive,
     getIndex,
   }: RenderItemParams<TemplateObj>) => {
+    const RenderSet = ({ reps, type }: SettType) => {
+      const [text, setText] = useState(`${reps}${type}`);
+
+      return (
+        <View className="mr-1 my-1 flex flex-row gap-1">
+          {/* <Text>{reps}</Text>
+        <Text>{type}</Text> */}
+          <TextInput value={text} onChangeText={(text) => setText(text)} />
+        </View>
+      );
+    };
+
     return (
       <>
         <TouchableOpacity
@@ -95,32 +176,41 @@ function TemplateTree({
             'bg-blue-800': !isActive,
           })}
         >
-          {item.children.length > 0 && level > 0 && (
+          {group.children.length > 0 && level > 0 && (
             <Pressable
               onPress={() => {
                 setTemplateMap((prev) => ({
                   ...prev,
-                  [item.exerciseId]: {
-                    ...prev[item.exerciseId],
-                    isOpen: !prev[item.exerciseId].isOpen,
+                  [group.exerciseId]: {
+                    ...prev[group.exerciseId],
+                    isOpen: !prev[group.exerciseId].isOpen,
                   },
                 }));
               }}
               className="h-full flex flex-row items-center justify-center pl-[4]"
             >
               <Ionicons
-                name={item.isOpen ? 'chevron-down' : 'chevron-forward-outline'}
+                name={group.isOpen ? 'chevron-down' : 'chevron-forward-outline'}
                 size={18}
                 color={'white'}
               />
             </Pressable>
           )}
-          <Text className="text-white">{item.exerciseId}</Text>
+          <Text className="text-white">{group.exerciseId}</Text>
         </TouchableOpacity>
-        {item.exerciseId > 0 && (
+        {group.exerciseId > 0 && (
           <>
             <Text>Exercise Info</Text>
-            {/* Add sets along with the type of set */}
+            {/* <FlatList
+              horizontal
+              data={group.sets}
+              keyExtractor={(item, index) =>
+                `${group.exerciseId}-${index}-${item.reps}`
+              }
+              renderItem={({ item }) => (
+                <RenderSet reps={item.reps} type={item.type} />
+              )}
+            /> */}
             <Pressable className="bg-stone-400 border rounded-md">
               <Text className="text-white text-center">Add set</Text>
             </Pressable>
@@ -154,7 +244,7 @@ function TemplateTree({
         renderItem={({ item, drag, isActive, getIndex }) => {
           return (
             <View key={item.exerciseId} style={{ paddingLeft: 5 * level }}>
-              <RenderItem
+              <RenderExerciseOrGroup
                 item={item}
                 drag={drag}
                 isActive={isActive}
