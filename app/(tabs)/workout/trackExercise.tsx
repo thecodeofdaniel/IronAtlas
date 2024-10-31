@@ -6,6 +6,8 @@ import {
   TouchableOpacity,
   Keyboard,
   KeyboardAvoidingView,
+  Pressable,
+  Button,
 } from 'react-native';
 import Animated, {
   useAnimatedStyle,
@@ -38,24 +40,43 @@ const initialData: Item[] = [...Array(NUM_ITEMS)].fill(0).map(mapIndexToData);
 
 type Sett = {
   key: string;
-  weight: number;
-  reps: number;
-  rpe: number;
+  weight: string;
+  reps: string;
+  rpe: string;
   type: string;
 };
 
 const initialSetData = [
-  { key: generateId(), weight: 225, reps: 6, rpe: 8, type: 'normal' },
-  { key: generateId(), weight: 225, reps: 4, rpe: 8, type: 'normal' },
-  { key: generateId(), weight: 225, reps: 4, rpe: 9, type: 'normal' },
+  { key: generateId(), weight: '225', reps: '6', rpe: '8', type: 'N' },
+  { key: generateId(), weight: '225', reps: '4', rpe: '8', type: 'N' },
+  { key: generateId(), weight: '225', reps: '4', rpe: '8', type: 'N' },
 ];
 
 export default function TrackExercise() {
+  console.log('Render trackExercise');
   // const [data, setData] = useState(initialData);
-  const [data, setData] = useState(initialSetData);
+  const [data, setData] = useState<Sett[]>(initialSetData);
   const itemRefs = useRef(new Map());
 
-  const renderItem = useCallback((params: RenderItemParams<Sett>) => {
+  // const renderItem = useCallback((params: RenderItemParams<Sett>) => {
+  //   const onPressDelete = () => {
+  //     setData((prev) => {
+  //       return prev.filter((item) => item !== params.item);
+  //     });
+  //   };
+
+  //   return (
+  //     <RowItem
+  //       {...params}
+  //       index={params.getIndex()!}
+  //       setData={setData}
+  //       itemRefs={itemRefs}
+  //       onPressDelete={onPressDelete}
+  //     />
+  //   );
+  // }, []);
+
+  const renderItem = (params: RenderItemParams<Sett>) => {
     const onPressDelete = () => {
       setData((prev) => {
         return prev.filter((item) => item !== params.item);
@@ -63,32 +84,71 @@ export default function TrackExercise() {
     };
 
     return (
-      <RowItem {...params} itemRefs={itemRefs} onPressDelete={onPressDelete} />
+      <RowItem
+        {...params}
+        index={params.getIndex()!}
+        setData={setData}
+        itemRefs={itemRefs}
+        onPressDelete={onPressDelete}
+      />
     );
-  }, []);
+  };
+
+  const handleAddSet = () => {
+    console.log('pressed');
+    setData((prev) => {
+      return [
+        ...prev,
+        {
+          key: generateId(),
+          weight: '',
+          reps: '',
+          rpe: '',
+          type: 'normal',
+        },
+      ];
+    });
+  };
 
   return (
-    // <GestureHandlerRootView>
-    <DraggableFlatList
-      keyExtractor={(item) => item.key}
-      data={data}
-      renderItem={renderItem}
-      onDragEnd={({ data }) => setData(data)}
-      activationDistance={20}
-    />
-    //</GestureHandlerRootView>
+    <>
+      <DraggableFlatList
+        keyExtractor={(item) => item.key}
+        data={data}
+        renderItem={renderItem}
+        onDragEnd={({ data }) => setData(data)}
+        activationDistance={20}
+      />
+      <Pressable
+        className="border bg-orange-400 p-4 z-90"
+        onPress={handleAddSet}
+      >
+        <Text className="text-center text-white">Add set</Text>
+      </Pressable>
+    </>
   );
 }
 
 type RowItemProps = {
   item: Sett;
+  index: number;
+  setData: React.Dispatch<React.SetStateAction<Sett[]>>;
+  getIndex: () => number | undefined;
   drag: () => void;
   onPressDelete: () => void;
   itemRefs: React.MutableRefObject<Map<any, any>>;
 };
 
-function RowItem({ item, itemRefs, drag, onPressDelete }: RowItemProps) {
+function RowItem({
+  item,
+  setData,
+  itemRefs,
+  getIndex,
+  drag,
+  onPressDelete,
+}: RowItemProps) {
   // const [snapPointsLeft, setSnapPointsLeft] = useState([150]);
+  const index = getIndex()!;
 
   // useEffect(() => {
   //   if (item.key === 'key-0') {
@@ -123,7 +183,6 @@ function RowItem({ item, itemRefs, drag, onPressDelete }: RowItemProps) {
           <UnderlayLeft drag={drag} onPressDelete={onPressDelete} />
         )}
         // renderUnderlayRight={() => <UnderlayRight />}
-        // snapPointsLeft={snapPointsLeft}
         snapPointsLeft={[150]}
       >
         <TouchableOpacity
@@ -134,10 +193,37 @@ function RowItem({ item, itemRefs, drag, onPressDelete }: RowItemProps) {
         >
           {/* <Text style={styles.text}>{`${item.key}`}</Text> */}
           <View className="flex flex-row flex-1 gap-4 justify-between border  p-4">
-            <TextInput value={item.type} className="border p-4" />
-            <TextInput value={item.weight.toString()} keyboardType="numeric" />
-            <TextInput value={item.reps.toString()} />
-            <TextInput value={item.rpe.toString()} />
+            <Text>{index}</Text>
+            <TextInput
+              value={`${index + 1}`}
+              returnKeyType="done"
+              className="border p-4"
+            />
+            <TextInput
+              value={item.weight}
+              keyboardType="numeric"
+              returnKeyType="done"
+              onChangeText={(text) => {
+                setData((prev) => {
+                  return prev.map((i) =>
+                    i.key === item.key ? { ...item, weight: text } : i
+                  );
+                });
+              }}
+              className="border p-4"
+            />
+            <TextInput
+              value={item.reps}
+              keyboardType="numeric"
+              returnKeyType="done"
+              className="border p-4"
+            />
+            <TextInput
+              value={item.rpe}
+              keyboardType="numeric"
+              returnKeyType="done"
+              className="border p-4"
+            />
           </View>
         </TouchableOpacity>
       </SwipeableItem>
@@ -173,16 +259,16 @@ const UnderlayLeft = ({
   );
 };
 
-// function UnderlayRight() {
-//   const { close } = useSwipeableItemParams<Item>();
-//   return (
-//     <Animated.View style={[styles.row, styles.underlayRight]}>
-//       <TouchableOpacity onPressOut={close}>
-//         <Text style={styles.text}>CLOSE</Text>
-//       </TouchableOpacity>
-//     </Animated.View>
-//   );
-// }
+function UnderlayRight() {
+  const { close } = useSwipeableItemParams<Item>();
+  return (
+    <Animated.View style={[styles.row, styles.underlayRight]}>
+      <TouchableOpacity onPressOut={close}>
+        <Text style={styles.text}>CLOSE</Text>
+      </TouchableOpacity>
+    </Animated.View>
+  );
+}
 
 const styles = StyleSheet.create({
   row: {

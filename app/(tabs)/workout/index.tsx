@@ -5,6 +5,7 @@ import {
   TouchableOpacity,
   Pressable,
   Keyboard,
+  Button,
 } from 'react-native';
 import { Link, Stack } from 'expo-router';
 import TrackExercise from './trackExercise';
@@ -17,19 +18,21 @@ export default function WorkoutTab() {
   return (
     <>
       <Stack.Screen options={{ title: 'Workout', headerShown: true }} />
-      {/* <View className="border flex-1 justify-between m-2"> */}
-      <GestureHandlerRootView>
+      {/* <GestureHandlerRootView>
         <TouchableWithoutFeedback
           onPress={Keyboard.dismiss}
           accessible={false}
           style={{ backgroundColor: 'green', height: '100%' }}
-        >
-          <View className="flex flex-1 justify-between m-2">
-            <View>
-              <Text>Workout tab</Text>
-              <TrackExercise />
-            </View>
-            <View className="flex flex-row gap-2">
+        > */}
+      {/* <View className="flex flex-1 justify-between m-2"> */}
+      {/* <View> */}
+      {/* <Text>Workout tab</Text> */}
+      <GestureHandlerRootView style={{ margin: 4 }} >
+        <TrackExercise />
+        <Button title="yo" onPress={() => console.log('hello')} />
+      </GestureHandlerRootView>
+      {/* </View> */}
+      {/* <View className="flex flex-row gap-2">
               <Link
                 href={{
                   pathname: '/(tabs)/workout/template',
@@ -41,10 +44,10 @@ export default function WorkoutTab() {
               <Pressable className="border flex-1 bg-stone-300">
                 <Text className="text-center">Use template</Text>
               </Pressable>
-            </View>
-          </View>
-        </TouchableWithoutFeedback>
-      </GestureHandlerRootView>
+            </View> */}
+      {/* </View> */}
+      {/* </TouchableWithoutFeedback>
+      </GestureHandlerRootView> */}
     </>
   );
 }
