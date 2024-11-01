@@ -11,6 +11,7 @@ import { Link, Stack } from 'expo-router';
 import TrackExercise from './trackExercise';
 import {
   GestureHandlerRootView,
+  ScrollView,
   TouchableWithoutFeedback,
 } from 'react-native-gesture-handler';
 
@@ -27,9 +28,10 @@ export default function WorkoutTab() {
       {/* <View className="flex flex-1 justify-between m-2"> */}
       {/* <View> */}
       {/* <Text>Workout tab</Text> */}
-      <GestureHandlerRootView style={{ margin: 4 }} >
+      <GestureHandlerRootView
+        style={{ margin: 4, flex: 1 }}
+      >
         <TrackExercise />
-        <Button title="yo" onPress={() => console.log('hello')} />
       </GestureHandlerRootView>
       {/* </View> */}
       {/* <View className="flex flex-row gap-2">
