@@ -196,6 +196,8 @@ function RowItem({
                 value={item.weight}
                 keyboardType="numeric"
                 returnKeyType="done"
+                style={styles.weightWidth}
+                className="bg-stone-600 rounded text-white"
                 onChangeText={(text) => {
                   setData((prev) => {
                     return prev.map((i) =>
@@ -203,8 +205,6 @@ function RowItem({
                     );
                   });
                 }}
-                style={styles.weightWidth}
-                className="bg-stone-600 rounded text-white"
               />
               <TextInput
                 value={item.reps}
@@ -212,6 +212,13 @@ function RowItem({
                 returnKeyType="done"
                 style={styles.repsWidth}
                 className="bg-stone-600 rounded text-white"
+                onChangeText={(text) => {
+                  setData((prev) => {
+                    return prev.map((i) =>
+                      i.key === item.key ? { ...item, reps: text } : i
+                    );
+                  });
+                }}
               />
               <TextInput
                 value={item.rpe}
@@ -219,6 +226,13 @@ function RowItem({
                 returnKeyType="done"
                 style={styles.rpeWidth}
                 className="bg-stone-600 rounded text-white"
+                onChangeText={(text) => {
+                  setData((prev) => {
+                    return prev.map((i) =>
+                      i.key === item.key ? { ...item, rpe: text } : i
+                    );
+                  });
+                }}
               />
             </View>
           </TouchableOpacity>
