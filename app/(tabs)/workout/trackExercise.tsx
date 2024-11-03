@@ -34,12 +34,9 @@ import {
 } from 'react-native-gesture-handler';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import clsx from 'clsx';
-import Popover, { PopoverPlacement } from 'react-native-popover-view';
+import PopoverSetType from '@/components/PopoverSetType';
 
 const OVERSWIPE_DIST = 20;
-const NUM_ITEMS = 20;
-
-const initialData: Item[] = [...Array(NUM_ITEMS)].fill(0).map(mapIndexToData);
 
 type Sett = {
   key: string;
@@ -56,6 +53,7 @@ const initialSetData = [
 ];
 
 export default function TrackExercise() {
+  console.log('Render TrackExercise');
   const [data, setData] = useState<Sett[]>(initialSetData);
   const itemRefs = useRef(new Map());
 
@@ -159,8 +157,6 @@ function RowItem({
 }: RowItemProps) {
   const index = getIndex()!;
 
-  const [showPopover, setShowPopover] = useState(false);
-
   return (
     <>
       <ScaleDecorator>
@@ -193,89 +189,7 @@ function RowItem({
             )}
           >
             <View className="flex flex-row justify-between flex-1">
-              {/* <TextInput
-                value={`${index + 1}`}
-                returnKeyType="done"
-                style={styles.setWidth}
-                className="bg-stone-600 rounded text-white h-8"
-              /> */}
-              <Popover
-                placement={PopoverPlacement.BOTTOM}
-                isVisible={showPopover}
-                onRequestClose={() => setShowPopover(false)} // if the user clicks outside popover
-                from={
-                  <TouchableOpacity
-                    style={styles.setWidth}
-                    className="bg-stone-600"
-                    onPress={() => setShowPopover(true)}
-                  >
-                    <Text
-                      className={clsx('text-white text-center', {
-                        'text-yellow-500': item.type === 'W',
-                        'text-purple-500': item.type === 'D',
-                        'text-red-500': item.type === 'F',
-                      })}
-                    >
-                      {item.type.toUpperCase()}
-                    </Text>
-                  </TouchableOpacity>
-                }
-              >
-                <View className="p-2 flex flex-col gap-1">
-                  <Pressable
-                    className="bg-yellow-500 px-4 py-2"
-                    onPress={() => {
-                      setData((prev) => {
-                        return prev.map((i) =>
-                          i.key === item.key ? { ...item, type: 'W' } : i
-                        );
-                      });
-                      setShowPopover(false);
-                    }}
-                  >
-                    <Text className="text-yellow-900 text-center">Warmup</Text>
-                  </Pressable>
-                  <Pressable
-                    className="bg-stone-500 px-4 py-2"
-                    onPress={() => {
-                      setData((prev) => {
-                        return prev.map((i) =>
-                          i.key === item.key ? { ...item, type: 'N' } : i
-                        );
-                      });
-                      setShowPopover(false);
-                    }}
-                  >
-                    <Text className="text-white text-center">Normal</Text>
-                  </Pressable>
-                  <Pressable
-                    className="bg-purple-500 px-4 py-2"
-                    onPress={() => {
-                      setData((prev) => {
-                        return prev.map((i) =>
-                          i.key === item.key ? { ...item, type: 'D' } : i
-                        );
-                      });
-                      setShowPopover(false);
-                    }}
-                  >
-                    <Text className="text-purple-900 text-center">Dropset</Text>
-                  </Pressable>
-                  <Pressable
-                    className="bg-red-500 px-4 py-2"
-                    onPress={() => {
-                      setData((prev) => {
-                        return prev.map((i) =>
-                          i.key === item.key ? { ...item, type: 'F' } : i
-                        );
-                      });
-                      setShowPopover(false);
-                    }}
-                  >
-                    <Text className="text-red-900 text-center">Failure</Text>
-                  </Pressable>
-                </View>
-              </Popover>
+              <PopoverSetType item={item} setData={setData} />
               <TextInput
                 value={item.weight}
                 keyboardType="numeric"
@@ -355,33 +269,11 @@ const UnderlayLeft = ({
 };
 
 const styles = StyleSheet.create({
-  row: {
-    flexDirection: 'row',
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 5,
-  },
-  text: {
-    fontWeight: 'bold',
-    color: 'white',
-    fontSize: 32,
-  },
-  underlayRight: {
-    flex: 1,
-    backgroundColor: 'teal',
-    justifyContent: 'flex-start',
-  },
-  underlayLeft: {
-    flex: 1,
-    backgroundColor: 'tomato',
-    justifyContent: 'flex-end',
-  },
   shadow: {
-    shadowColor: '#000', // Shadow color
-    shadowOffset: { width: 0, height: 2 }, // Offset of the shadow
-    shadowOpacity: 0.25, // Opacity of the shadow
-    shadowRadius: 3.84, // Blur radius of the shadow
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    // shadowRadius: 3.84,
   },
   setWidth: {
     width: 42,
