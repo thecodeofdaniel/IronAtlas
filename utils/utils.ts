@@ -46,7 +46,7 @@ export function getAllChildrenIds(tagMap: TagMap, tagId: number): number[] {
 
   const childrenIds = tag.children;
   const grandchildrenIds = tag.children.flatMap((childId) =>
-    getAllChildrenIds(tagMap, childId)
+    getAllChildrenIds(tagMap, childId),
   );
 
   return [...childrenIds, ...grandchildrenIds];

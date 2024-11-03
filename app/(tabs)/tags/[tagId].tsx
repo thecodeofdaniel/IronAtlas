@@ -16,7 +16,7 @@ function getAllChildrenIds(tagMap: TagMap, tagId: number): number[] {
 
   const childrenIds = tag.children;
   const grandchildrenIds = tag.children.flatMap((childId) =>
-    getAllChildrenIds(tagMap, childId)
+    getAllChildrenIds(tagMap, childId),
   );
 
   return [...childrenIds, ...grandchildrenIds];
@@ -29,7 +29,7 @@ export default function TagId() {
   const currentTag = tagMap[+id];
   const allChildrenIds = useMemo(
     () => getAllChildrenIds(tagMap, +id),
-    [tagMap, id]
+    [tagMap, id],
   );
 
   const allTagIds = [+id, ...allChildrenIds];
@@ -46,7 +46,7 @@ export default function TagId() {
   }, [allTagIds]);
 
   const exerciseIds = Array.from(
-    new Set(exercises.map((exercise) => exercise.exerciseId))
+    new Set(exercises.map((exercise) => exercise.exerciseId)),
   );
 
   console.log(exerciseIds);
@@ -58,7 +58,7 @@ export default function TagId() {
         acc[tagId].push(exerciseId);
         return acc;
       },
-      {}
+      {},
     );
   }, [exercises]);
 

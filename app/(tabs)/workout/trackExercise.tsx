@@ -24,7 +24,6 @@ import DraggableFlatList, {
   ScaleDecorator,
 } from 'react-native-draggable-flatlist';
 // const { multiply, sub } = Animated;
-import { mapIndexToData, Item } from './utils';
 import { generateId } from '@/utils/utils';
 import {
   GestureHandlerRootView,
@@ -95,9 +94,9 @@ export default function TrackExercise() {
       <Pressable
         onPress={handleAddSet}
         style={styles.shadow}
-        className="p-4 bg-red-500 rounded-md mt-2 mb-10"
+        className="mb-10 mt-2 rounded-md bg-red-500 p-4"
       >
-        <Text className="text-white text-center font-medium text-xl shadow-lg">
+        <Text className="text-center text-xl font-medium text-white shadow-lg">
           Add set
         </Text>
       </Pressable>
@@ -107,17 +106,17 @@ export default function TrackExercise() {
   return (
     <>
       {/* <SafeAreaView style={{ borderWidth: 2, borderColor: 'black', flex: 1 }}> */}
-      <View className="flex flex-row justify-between bg-stone-600 p-2 rounded-t-lg">
-        <Text style={styles.setWidth} className="text-white font-medium">
+      <View className="flex flex-row justify-between rounded-t-lg bg-stone-600 p-2">
+        <Text style={styles.setWidth} className="font-medium text-white">
           Type
         </Text>
-        <Text style={styles.weightWidth} className="text-white font-medium">
+        <Text style={styles.weightWidth} className="font-medium text-white">
           Weight
         </Text>
-        <Text style={styles.repsWidth} className="text-white font-medium">
+        <Text style={styles.repsWidth} className="font-medium text-white">
           Reps
         </Text>
-        <Text style={styles.rpeWidth} className="text-white font-medium">
+        <Text style={styles.rpeWidth} className="font-medium text-white">
           RPE
         </Text>
       </View>
@@ -185,21 +184,21 @@ function RowItem({
             activeOpacity={1}
             onLongPress={drag}
             className={clsx(
-              'flex flex-row flex-1 items-center justify-center bg-stone-500 p-2'
+              'flex flex-1 flex-row items-center justify-center bg-stone-500 p-2',
             )}
           >
-            <View className="flex flex-row justify-between flex-1">
+            <View className="flex flex-1 flex-row justify-between">
               <PopoverSetType item={item} setData={setData} />
               <TextInput
                 value={item.weight}
                 keyboardType="numeric"
                 returnKeyType="done"
                 style={styles.weightWidth}
-                className="bg-stone-600 rounded text-white"
+                className="rounded bg-stone-600 text-white"
                 onChangeText={(text) => {
                   setData((prev) => {
                     return prev.map((i) =>
-                      i.key === item.key ? { ...item, weight: text } : i
+                      i.key === item.key ? { ...item, weight: text } : i,
                     );
                   });
                 }}
@@ -209,11 +208,11 @@ function RowItem({
                 keyboardType="numeric"
                 returnKeyType="done"
                 style={styles.repsWidth}
-                className="bg-stone-600 rounded text-white"
+                className="rounded bg-stone-600 text-white"
                 onChangeText={(text) => {
                   setData((prev) => {
                     return prev.map((i) =>
-                      i.key === item.key ? { ...item, reps: text } : i
+                      i.key === item.key ? { ...item, reps: text } : i,
                     );
                   });
                 }}
@@ -223,11 +222,11 @@ function RowItem({
                 keyboardType="numeric"
                 returnKeyType="done"
                 style={styles.rpeWidth}
-                className="bg-stone-600 rounded text-white"
+                className="rounded bg-stone-600 text-white"
                 onChangeText={(text) => {
                   setData((prev) => {
                     return prev.map((i) =>
-                      i.key === item.key ? { ...item, rpe: text } : i
+                      i.key === item.key ? { ...item, rpe: text } : i,
                     );
                   });
                 }}
@@ -247,22 +246,22 @@ const UnderlayLeft = ({
   drag: () => void;
   onPressDelete: () => void;
 }) => {
-  const { item, percentOpen } = useSwipeableItemParams<Item>();
+  const { item, percentOpen } = useSwipeableItemParams<Sett>();
   const animStyle = useAnimatedStyle(
     () => ({
       opacity: percentOpen.value,
     }),
-    [percentOpen]
+    [percentOpen],
   );
 
   return (
     <Animated.View
       // style={[styles.row, styles.underlayLeft, animStyle]} // Fade in on open
       style={[animStyle]}
-      className="bg-red-500 flex-1 justify-end flex-row items-center pr-4"
+      className="flex-1 flex-row items-center justify-end bg-red-500 pr-4"
     >
       <TouchableOpacity onPress={onPressDelete}>
-        <Text className="font-bold text-white text-2xl">Delete</Text>
+        <Text className="text-2xl font-bold text-white">Delete</Text>
       </TouchableOpacity>
     </Animated.View>
   );

@@ -34,7 +34,7 @@ const Tree = ({
       <TouchableOpacity
         activeOpacity={1}
         disabled={isDisabled}
-        className={clsx('p-2 my-[1]', {
+        className={clsx('my-[1] p-2', {
           'bg-blue-800': selected !== item.id,
           'bg-red-600': selected === item.id,
           'bg-gray-400': isDisabled,
@@ -42,7 +42,7 @@ const Tree = ({
         onPress={() => setSelected(item.id)}
       >
         {/* Tags and options */}
-        <View className="flex flex-row items-center justify-between flex-1">
+        <View className="flex flex-1 flex-row items-center justify-between">
           <Text className="text-white">
             {item.label} {idToBeMoved === item.id && ' <'}
           </Text>
@@ -103,7 +103,7 @@ export default function MoveTag({ modalData, closeModal }: Props) {
       <Stack.Screen
         options={{ headerTitle: 'Move Tag', headerBackTitle: 'Tags' }}
       />
-      <View className="p-2 flex flex-col gap-2">
+      <View className="flex flex-col gap-2 p-2">
         <Text className="text-xl font-medium">
           Select the tag you want to put this under
         </Text>

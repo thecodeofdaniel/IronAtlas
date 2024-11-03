@@ -22,7 +22,7 @@ export default function PopoverSetType({ item, setData }: PopoverSetTypeProps) {
   const updateType = (typeLetter: string) => {
     setData((prev) => {
       return prev.map((i) =>
-        i.key === item.key ? { ...item, type: typeLetter } : i
+        i.key === item.key ? { ...item, type: typeLetter } : i,
       );
     });
     setShowPopover(false);
@@ -42,7 +42,7 @@ export default function PopoverSetType({ item, setData }: PopoverSetTypeProps) {
           onPress={() => setShowPopover(true)}
         >
           <Text
-            className={clsx('text-white text-center', {
+            className={clsx('text-center text-white', {
               'text-yellow-500': item.type === 'W',
               'text-purple-500': item.type === 'D',
               'text-red-500': item.type === 'F',
@@ -53,14 +53,14 @@ export default function PopoverSetType({ item, setData }: PopoverSetTypeProps) {
         </Pressable>
       }
     >
-      <View className="p-2 flex flex-col gap-1">
+      <View className="flex flex-col gap-1 p-2">
         <Pressable
           className="bg-yellow-500 px-4 py-2"
           onPress={() => {
             updateType('W');
           }}
         >
-          <Text className="text-yellow-900 text-center">Warmup</Text>
+          <Text className="text-center text-yellow-900">Warmup</Text>
         </Pressable>
         <Pressable
           className="bg-stone-500 px-4 py-2"
@@ -68,7 +68,7 @@ export default function PopoverSetType({ item, setData }: PopoverSetTypeProps) {
             updateType('N');
           }}
         >
-          <Text className="text-white text-center">Normal</Text>
+          <Text className="text-center text-white">Normal</Text>
         </Pressable>
         <Pressable
           className="bg-purple-500 px-4 py-2"
@@ -76,7 +76,7 @@ export default function PopoverSetType({ item, setData }: PopoverSetTypeProps) {
             updateType('D');
           }}
         >
-          <Text className="text-purple-900 text-center">Dropset</Text>
+          <Text className="text-center text-purple-900">Dropset</Text>
         </Pressable>
         <Pressable
           className="bg-red-500 px-4 py-2"
@@ -84,7 +84,7 @@ export default function PopoverSetType({ item, setData }: PopoverSetTypeProps) {
             updateType('F');
           }}
         >
-          <Text className="text-red-900 text-center">Failure</Text>
+          <Text className="text-center text-red-900">Failure</Text>
         </Pressable>
       </View>
     </Popover>

@@ -50,7 +50,7 @@ function ExerciseList({
       exerciseList
         .map((id) => exerciseMap[id])
         .filter((exercise): exercise is Exercise => exercise !== undefined),
-    [exerciseList, exerciseMap]
+    [exerciseList, exerciseMap],
   );
 
   const handleOnPress = (exercise: Exercise) => {
@@ -78,7 +78,7 @@ function ExerciseList({
           case cancelButtonIndex:
             break;
         }
-      }
+      },
     );
   };
 
@@ -95,12 +95,12 @@ function ExerciseList({
         activeOpacity={1}
         onLongPress={isDraggable ? drag : undefined}
         disabled={isActive}
-        className={clsx('p-2 my-[1] flex flex-row', {
+        className={clsx('my-[1] flex flex-row p-2', {
           'bg-red-500': isActive,
           'bg-blue-800': !isActive,
         })}
       >
-        <View className="flex flex-row justify-between flex-1">
+        <View className="flex flex-1 flex-row justify-between">
           <Text className="text-white">
             {exercise.label} @{index}
           </Text>
@@ -162,7 +162,7 @@ export default function ExercisesTab() {
           case cancelButtonIndex:
             break;
         }
-      }
+      },
     );
   };
 
@@ -201,12 +201,12 @@ export default function ExercisesTab() {
           .from(schema.exerciseTags)
           .innerJoin(
             schema.exercise,
-            eq(schema.exerciseTags.exerciseId, schema.exercise.id)
+            eq(schema.exerciseTags.exerciseId, schema.exercise.id),
           )
           .where(inArray(schema.exerciseTags.tagId, allTagIds))
           .orderBy(asc(schema.exercise.index))
           .all()
-          .map((result) => result.exerciseId)
+          .map((result) => result.exerciseId),
       ),
     ];
   }
@@ -226,7 +226,7 @@ export default function ExercisesTab() {
           },
         }}
       />
-      <View className="flex flex-col gap-2 m-2 flex-1">
+      <View className="m-2 flex flex-1 flex-col gap-2">
         <MultiDropDown
           tags={tags}
           selected={selected}

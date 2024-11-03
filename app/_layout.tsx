@@ -14,11 +14,11 @@ import { ActionSheetProvider } from '@expo/react-native-action-sheet';
 // Import the database instance
 import { expoDb, db } from '@/db/instance';
 
+// Init stores
+import { useInitializeStores } from '@/hooks/useInitializeStores';
+
 // NativeWind
 import '../global.css';
-import { useExerciseStore } from '@/store/exercise/exerciseStore';
-import { useTagStore } from '@/store/tag/tagStore';
-import { useInitializeStores } from '@/hooks/useInitializeStores';
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();

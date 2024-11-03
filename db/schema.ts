@@ -21,7 +21,7 @@ export const tag = sqliteTable('tags', {
   label: text('label').notNull(),
   value: text('value').notNull(),
   parentId: integer('parent_id', { mode: 'number' }).references(
-    (): AnySQLiteColumn => tag.id
+    (): AnySQLiteColumn => tag.id,
   ),
   index: integer('index').notNull(),
   isOpen: integer('is_open', { mode: 'boolean' }).notNull(),
@@ -41,7 +41,7 @@ export const exerciseTags = sqliteTable(
   },
   (table) => ({
     pk: primaryKey({ columns: [table.exerciseId, table.tagId] }),
-  })
+  }),
 );
 
 export const workout = sqliteTable('workouts', {
@@ -65,7 +65,7 @@ export const volume = sqliteTable(
   (table) => ({
     workoutIdIndex: index('volume_workout_id_index').on(table.workoutId),
     indexIndex: index('volume_index_index').on(table.index),
-  })
+  }),
 );
 
 export const subvolume = sqliteTable(
@@ -84,7 +84,7 @@ export const subvolume = sqliteTable(
     volumeIdIndex: index('subvolume_volume_id_index').on(table.volumeId),
     exerciseIdIndex: index('subvolume_exercise_id_index').on(table.exerciseId),
     indexIndex: index('subvolume_index_index').on(table.index),
-  })
+  }),
 );
 
 export const sett = sqliteTable(
@@ -103,7 +103,7 @@ export const sett = sqliteTable(
   (table) => ({
     subvolumeIdIndex: index('sett_subvolume_id_index').on(table.subvolumeId),
     indexIndex: index('sett_index_index').on(table.index),
-  })
+  }),
 );
 
 // New templates table
@@ -116,7 +116,7 @@ export const template = sqliteTable(
   },
   (table) => ({
     nameIndex: index('template_name_index').on(table.name),
-  })
+  }),
 );
 
 // Updated template_exercises table to include subIndex
@@ -138,7 +138,7 @@ export const templateExercise = sqliteTable(
     exerciseIdIndex: index('template_exercise_id_index').on(table.exerciseId),
     indexIndex: index('template_index_index').on(table.index),
     subIndexIndex: index('template_sub_index_index').on(table.subIndex),
-  })
+  }),
 );
 
 export const templateExerciseSett = sqliteTable(
@@ -147,7 +147,7 @@ export const templateExerciseSett = sqliteTable(
     id: integer('id').primaryKey({ autoIncrement: true }),
     templateExerciseId: integer('template_exercise_id').references(
       () => templateExercise.id,
-      { onDelete: 'cascade' }
+      { onDelete: 'cascade' },
     ),
     // the following can be null if the user only wants order of exercises and not details
     set: integer('sets').default(0), // this also control the order of the sets
@@ -156,9 +156,9 @@ export const templateExerciseSett = sqliteTable(
   },
   (table) => ({
     templateExerciseIdIndex: index('template_exercise_sett_id_index').on(
-      table.templateExerciseId
+      table.templateExerciseId,
     ),
-  })
+  }),
 );
 
 export type TSelectExercise = typeof exercise.$inferSelect;

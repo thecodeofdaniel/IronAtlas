@@ -21,7 +21,7 @@ export type TagStateFunctions = {
   editTagTitle: (
     pressedId: number,
     newLabel: string,
-    newValue: string
+    newValue: string,
   ) => Promise<void>;
   moveTag: (pressedId: number, idToMove: number) => Promise<void>;
 };
@@ -176,7 +176,7 @@ export const useTagStore = create<TagStore>()((set, get) => ({
           };
 
           deleteItemAndChildren(pressedId);
-        })
+        }),
       );
     } catch (error) {
       console.error('Error: Deleting tag and associated exercises', error);
@@ -185,7 +185,7 @@ export const useTagStore = create<TagStore>()((set, get) => ({
   editTagTitle: async (
     pressedId: number,
     newTitle: string,
-    newValue: string
+    newValue: string,
   ) => {
     try {
       await db
@@ -200,7 +200,7 @@ export const useTagStore = create<TagStore>()((set, get) => ({
           state.tagMap[pressedId].label = newTitle;
           state.tagMap[pressedId].value = newValue;
           state.tagSet.add(newValue);
-        })
+        }),
       );
     } catch (error) {
       console.error('Error: Trying to edit tag', error);
@@ -233,7 +233,7 @@ export const useTagStore = create<TagStore>()((set, get) => ({
 
           // Add idToMove to the new parent's children array
           state.tagMap[idToBeUnder].children.push(idToMove);
-        })
+        }),
       );
     } catch (error) {
       console.error('Error: Unable to move tag', error);

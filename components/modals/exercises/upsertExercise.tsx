@@ -5,7 +5,7 @@ import { Stack, useRouter } from 'expo-router';
 import { useExerciseStoreWithSetter } from '@/store/exercise/exerciseStore';
 import { useTagStoreWithSetter } from '@/store/tag/tagStore';
 import { getAllParentIds } from '@/utils/utils';
-import TagTree from '../../selectFromTagTree';
+import TagTree from '@/components/SelectFromTagTree';
 import { formatTagOrExercise, isValidTagOrExercise } from '@/utils/utils';
 import { TInsertExercise } from '@/db/schema';
 import { db } from '@/db/instance';
@@ -48,7 +48,7 @@ export default function UpsertExercise({
 
       // Based on the tags returned we gather all parentIds
       const preSelected = new Set(
-        tagIds.flatMap((tag) => getAllParentIds(tagMap, tag))
+        tagIds.flatMap((tag) => getAllParentIds(tagMap, tag)),
       );
 
       return {
@@ -78,7 +78,7 @@ export default function UpsertExercise({
           label: trimmedLabel,
           value: formatTagOrExercise(trimmedLabel),
         },
-        selected.chosen
+        selected.chosen,
       );
     } else {
       // Add exercise to exercise pool
@@ -88,7 +88,7 @@ export default function UpsertExercise({
           value: formatTagOrExercise(trimmedLabel),
           index: exercisesList.length,
         },
-        selected.chosen
+        selected.chosen,
       );
     }
 
@@ -106,18 +106,18 @@ export default function UpsertExercise({
             <TouchableOpacity
               onPress={handleOnPress}
               disabled={label.trim() === ''}
-              className="px-4 py-2 rounded-md bg-blue-500"
+              className="rounded-md bg-blue-500 px-4 py-2"
             >
               <Text className="text-white">{id ? 'Update' : 'Add'}</Text>
             </TouchableOpacity>
           ),
         }}
       />
-      <View className="flex-1 p-2 gap-4">
+      <View className="flex-1 gap-4 p-2">
         <View>
           <Text className="text-xl">Exercise Name</Text>
           <TextInput
-            className="h-10 border px-2 border-gray-400"
+            className="h-10 border border-gray-400 px-2"
             value={label}
             onChangeText={setLabel}
             placeholder="Enter exercise name"

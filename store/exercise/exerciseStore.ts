@@ -21,14 +21,14 @@ export type ExerciseStateFunctions = {
 
   createExercise: (
     newExercise: schema.TInsertExercise,
-    tagIds: number[]
+    tagIds: number[],
   ) => Promise<void>;
 
   /** Update exercise based on id */
   updateExercise: (
     id: number,
     editedExercise: Exercise,
-    tagIds: number[]
+    tagIds: number[],
   ) => Promise<void>;
 };
 
@@ -103,7 +103,7 @@ export const useExerciseStore = create<ExerciseStore>()((set, get) => ({
           newExercisesList.forEach((exerciseId, index) => {
             state.exerciseMap[exerciseId].index = index;
           });
-        })
+        }),
       );
     } catch (error) {
       console.error('Error updating exercise list:', error);
@@ -123,7 +123,7 @@ export const useExerciseStore = create<ExerciseStore>()((set, get) => ({
 
       // Create new exerciseList
       const newExerciseList = get().exercisesList.filter(
-        (exerciseId) => exerciseId !== id
+        (exerciseId) => exerciseId !== id,
       );
 
       // Update list and map by updating order
@@ -136,7 +136,7 @@ export const useExerciseStore = create<ExerciseStore>()((set, get) => ({
 
           // Remove from map
           delete state.exerciseMap[id];
-        })
+        }),
       );
     } catch (error) {
       console.error('Error: from deleteExercise', error);
@@ -181,7 +181,7 @@ export const useExerciseStore = create<ExerciseStore>()((set, get) => ({
 
           // Add new value to set
           state.exerciseSet.add(editedExercise.value);
-        })
+        }),
       );
     } catch (error) {
       console.error('Error updating exercise in exerciseStore:', error);

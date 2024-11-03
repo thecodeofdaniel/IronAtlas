@@ -89,51 +89,6 @@ const startingTemplateTree: TemplateMap = {
   },
 };
 
-// const startingTemplateTree: TemplateMap = {
-//   '0': {
-//     exerciseId: 0,
-//     sets: [],
-//     isOpen: true,
-//     children: [1, 3, -1],
-//     parentId: null, // No parent for the root
-//   },
-//   1: {
-//     exerciseId: 1,
-//     sets: [12, 12, 12],
-//     isOpen: false,
-//     children: [],
-//     parentId: 0, // Set parentId
-//   },
-//   3: {
-//     exerciseId: 3,
-//     sets: [10, 8, 6],
-//     isOpen: false,
-//     children: [],
-//     parentId: 0, // Set parentId
-//   },
-//   '-1': {
-//     exerciseId: -1,
-//     sets: [],
-//     isOpen: true,
-//     children: [2, 4],
-//     parentId: 0, // Set parentId
-//   },
-//   2: {
-//     exerciseId: 2,
-//     sets: [10, 10, 10],
-//     isOpen: false,
-//     children: [],
-//     parentId: -1, // Set parentId
-//   },
-//   4: {
-//     exerciseId: 4,
-//     sets: [6, 8],
-//     isOpen: false,
-//     children: [],
-//     parentId: -1, // Set parentId
-//   },
-// };
-
 type TemplateProps = {
   templateMap: TemplateMap;
   setTemplateMap: React.Dispatch<React.SetStateAction<TemplateMap>>;
@@ -157,7 +112,7 @@ function TemplateTree({
       const [text, setText] = useState(`${reps}${type}`);
 
       return (
-        <View className="mr-1 my-1 flex flex-row gap-1">
+        <View className="my-1 mr-1 flex flex-row gap-1">
           {/* <Text>{reps}</Text>
         <Text>{type}</Text> */}
           <TextInput value={text} onChangeText={(text) => setText(text)} />
@@ -187,7 +142,7 @@ function TemplateTree({
                   },
                 }));
               }}
-              className="h-full flex flex-row items-center justify-center pl-[4]"
+              className="flex h-full flex-row items-center justify-center pl-[4]"
             >
               <Ionicons
                 name={group.isOpen ? 'chevron-down' : 'chevron-forward-outline'}
@@ -211,8 +166,8 @@ function TemplateTree({
                 <RenderSet reps={item.reps} type={item.type} />
               )}
             /> */}
-            <Pressable className="bg-stone-400 border rounded-md">
-              <Text className="text-white text-center">Add set</Text>
+            <Pressable className="rounded-md border bg-stone-400">
+              <Text className="text-center text-white">Add set</Text>
             </Pressable>
           </>
         )}
@@ -272,7 +227,7 @@ export default function TemplateScreen() {
   return (
     <>
       <Stack.Screen options={{ title: 'Template', headerShown: true }} />
-      <View className="justify-between border flex-1 m-2">
+      <View className="m-2 flex-1 justify-between border">
         <GestureHandlerRootView>
           <TemplateTree
             templateMap={templateMap}
@@ -282,10 +237,10 @@ export default function TemplateScreen() {
           />
         </GestureHandlerRootView>
         <View className="flex flex-row gap-2">
-          <Pressable className="border flex-1 bg-stone-300">
+          <Pressable className="flex-1 border bg-stone-300">
             <Text className="text-center">Add group</Text>
           </Pressable>
-          <Pressable className="border flex-1 bg-stone-300">
+          <Pressable className="flex-1 border bg-stone-300">
             <Text className="text-center">Add exercise</Text>
           </Pressable>
         </View>

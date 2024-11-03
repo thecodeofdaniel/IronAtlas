@@ -28,7 +28,7 @@ export default function SelectFromTagTree({
   const RenderItem = ({ item }: { item: Tag }) => {
     return (
       <TouchableOpacity
-        className={clsx('p-2 my-[1] bg-blue-800', {
+        className={clsx('my-[1] bg-blue-800 p-2', {
           'opacity-20': selected.preSelected.has(item.id),
           'bg-red-500':
             selected.chosen.includes(item.id) ||
@@ -58,7 +58,7 @@ export default function SelectFromTagTree({
         }
       >
         {/* Tags and options */}
-        <View className="flex flex-row items-center justify-between flex-1">
+        <View className="flex flex-1 flex-row items-center justify-between">
           <Text className="text-white">{item.label}</Text>
         </View>
       </TouchableOpacity>

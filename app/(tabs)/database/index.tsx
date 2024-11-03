@@ -14,7 +14,7 @@ import { reset } from '@/db/reset';
 const getDbTables = async () => {
   try {
     const result = await expoDb.getAllAsync(
-      "SELECT name FROM sqlite_master WHERE type='table';"
+      "SELECT name FROM sqlite_master WHERE type='table';",
     );
 
     if (result.length === 0) {
@@ -22,7 +22,7 @@ const getDbTables = async () => {
     } else {
       Alert.alert(
         'Database Tables',
-        JSON.stringify(result.map((r: any) => r.name))
+        JSON.stringify(result.map((r: any) => r.name)),
       );
     }
   } catch (error) {
@@ -35,7 +35,7 @@ const deleteDb = () => {
   SQLite.deleteDatabaseSync(DB_NAME);
   Alert.alert(
     `Deleted database: ${DB_NAME}`,
-    'Reload the app to start a new db'
+    'Reload the app to start a new db',
   );
 };
 

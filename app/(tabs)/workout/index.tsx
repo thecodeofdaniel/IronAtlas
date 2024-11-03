@@ -28,9 +28,7 @@ export default function WorkoutTab() {
       {/* <View className="flex flex-1 justify-between m-2"> */}
       {/* <View> */}
       {/* <Text>Workout tab</Text> */}
-      <GestureHandlerRootView
-        style={{ margin: 4, flex: 1 }}
-      >
+      <GestureHandlerRootView style={{ margin: 4, flex: 1 }}>
         <TrackExercise />
       </GestureHandlerRootView>
       {/* </View> */}

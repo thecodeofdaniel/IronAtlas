@@ -4,7 +4,7 @@ import { useTagStore } from '@/store/tag/tagStore';
 
 export function useInitializeStores() {
   const initExerciseStore = useExerciseStore(
-    (state) => state.initExerciseStore
+    (state) => state.initExerciseStore,
   );
   const initTagStore = useTagStore((state) => state.initTagStore);
 

@@ -49,14 +49,14 @@ export default function EditTag({ modalData, closeModal }: Props) {
     <>
       <Stack.Screen options={{ headerTitle: 'Edit' }} />
       <View className="flex-1 p-4">
-        <Text className="text-xl mb-2">Edit Tag Name</Text>
+        <Text className="mb-2 text-xl">Edit Tag Name</Text>
         <TextInput
-          className="h-10 border px-2 border-gray-400"
+          className="h-10 border border-gray-400 px-2"
           value={name}
           onChangeText={setName}
           placeholder="Enter exercise name"
         />
-        <View className="flex-row justify-between mt-4">
+        <View className="mt-4 flex-row justify-between">
           <Button title="Cancel" onPress={handleCancel} color="red" />
           <Button
             title="Update"

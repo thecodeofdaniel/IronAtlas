@@ -73,7 +73,7 @@ const DraggableTree = ({
         const action = actions[options[selectedIndex] as keyof typeof actions];
         action();
         if (options[selectedIndex] !== 'Delete') router.push('/modal');
-      }
+      },
     );
   };
 
@@ -105,7 +105,7 @@ const DraggableTree = ({
               onPress={() => {
                 setter.toggleTagOpen(item.id);
               }}
-              className="h-full flex flex-row items-center justify-center pl-[4]"
+              className="flex h-full flex-row items-center justify-center pl-[4]"
             >
               <Ionicons
                 name={item.isOpen ? 'chevron-down' : 'chevron-forward-outline'}
@@ -115,8 +115,8 @@ const DraggableTree = ({
             </Pressable>
           )}
           {/* Tags and options */}
-          <View className="flex flex-row items-center justify-between flex-1 px-1">
-            <Text className="text-white py-2 ">{item.label}</Text>
+          <View className="flex flex-1 flex-row items-center justify-between px-1">
+            <Text className="py-2 text-white">{item.label}</Text>
             <TouchableOpacity onPress={() => handleOnPress(item.id, level)}>
               <Ionicons name="ellipsis-horizontal" color="white" size={24} />
             </TouchableOpacity>
@@ -171,7 +171,7 @@ export default function TagTab() {
       <Stack.Screen
         options={{ title: 'Body Section Tags', headerShown: true }}
       />
-      <View className="flex flex-1 pt-2 px-2">
+      <View className="flex flex-1 px-2 pt-2">
         <GestureHandlerRootView>
           <ActionSheetProvider>
             <DraggableTree
