@@ -34,6 +34,7 @@ import {
 } from 'react-native-gesture-handler';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import clsx from 'clsx';
+import Popover, { PopoverPlacement } from 'react-native-popover-view';
 
 const OVERSWIPE_DIST = 20;
 const NUM_ITEMS = 20;
@@ -74,16 +75,20 @@ export default function TrackExercise() {
   };
 
   const handleAddSet = () => {
-    setData((prev) => [
-      ...prev,
-      {
-        key: generateId(),
-        weight: '',
-        reps: '',
-        rpe: '',
-        type: 'normal',
-      },
-    ]);
+    setData((prev) => {
+      const lastElemIdx = prev.length - 1;
+
+      return [
+        ...prev,
+        {
+          key: generateId(),
+          weight: prev[lastElemIdx].weight,
+          reps: '',
+          rpe: '',
+          type: 'N',
+        },
+      ];
+    });
   };
 
   // Footer component that includes the Add Set button
@@ -106,7 +111,7 @@ export default function TrackExercise() {
       {/* <SafeAreaView style={{ borderWidth: 2, borderColor: 'black', flex: 1 }}> */}
       <View className="flex flex-row justify-between bg-stone-600 p-2 rounded-t-lg">
         <Text style={styles.setWidth} className="text-white font-medium">
-          Set
+          Type
         </Text>
         <Text style={styles.weightWidth} className="text-white font-medium">
           Weight
@@ -154,6 +159,8 @@ function RowItem({
 }: RowItemProps) {
   const index = getIndex()!;
 
+  const [showPopover, setShowPopover] = useState(false);
+
   return (
     <>
       <ScaleDecorator>
@@ -176,7 +183,7 @@ function RowItem({
           renderUnderlayLeft={() => (
             <UnderlayLeft drag={drag} onPressDelete={onPressDelete} />
           )}
-          snapPointsLeft={[150]}
+          snapPointsLeft={[100]}
         >
           <TouchableOpacity
             activeOpacity={1}
@@ -186,12 +193,89 @@ function RowItem({
             )}
           >
             <View className="flex flex-row justify-between flex-1">
-              <TextInput
+              {/* <TextInput
                 value={`${index + 1}`}
                 returnKeyType="done"
                 style={styles.setWidth}
                 className="bg-stone-600 rounded text-white h-8"
-              />
+              /> */}
+              <Popover
+                placement={PopoverPlacement.BOTTOM}
+                isVisible={showPopover}
+                onRequestClose={() => setShowPopover(false)} // if the user clicks outside popover
+                from={
+                  <TouchableOpacity
+                    style={styles.setWidth}
+                    className="bg-stone-600"
+                    onPress={() => setShowPopover(true)}
+                  >
+                    <Text
+                      className={clsx('text-white text-center', {
+                        'text-yellow-500': item.type === 'W',
+                        'text-purple-500': item.type === 'D',
+                        'text-red-500': item.type === 'F',
+                      })}
+                    >
+                      {item.type.toUpperCase()}
+                    </Text>
+                  </TouchableOpacity>
+                }
+              >
+                <View className="p-2 flex flex-col gap-1">
+                  <Pressable
+                    className="bg-yellow-500 px-4 py-2"
+                    onPress={() => {
+                      setData((prev) => {
+                        return prev.map((i) =>
+                          i.key === item.key ? { ...item, type: 'W' } : i
+                        );
+                      });
+                      setShowPopover(false);
+                    }}
+                  >
+                    <Text className="text-yellow-900 text-center">Warmup</Text>
+                  </Pressable>
+                  <Pressable
+                    className="bg-stone-500 px-4 py-2"
+                    onPress={() => {
+                      setData((prev) => {
+                        return prev.map((i) =>
+                          i.key === item.key ? { ...item, type: 'N' } : i
+                        );
+                      });
+                      setShowPopover(false);
+                    }}
+                  >
+                    <Text className="text-white text-center">Normal</Text>
+                  </Pressable>
+                  <Pressable
+                    className="bg-purple-500 px-4 py-2"
+                    onPress={() => {
+                      setData((prev) => {
+                        return prev.map((i) =>
+                          i.key === item.key ? { ...item, type: 'D' } : i
+                        );
+                      });
+                      setShowPopover(false);
+                    }}
+                  >
+                    <Text className="text-purple-900 text-center">Dropset</Text>
+                  </Pressable>
+                  <Pressable
+                    className="bg-red-500 px-4 py-2"
+                    onPress={() => {
+                      setData((prev) => {
+                        return prev.map((i) =>
+                          i.key === item.key ? { ...item, type: 'F' } : i
+                        );
+                      });
+                      setShowPopover(false);
+                    }}
+                  >
+                    <Text className="text-red-900 text-center">Failure</Text>
+                  </Pressable>
+                </View>
+              </Popover>
               <TextInput
                 value={item.weight}
                 keyboardType="numeric"
@@ -264,7 +348,7 @@ const UnderlayLeft = ({
       className="bg-red-500 flex-1 justify-end flex-row items-center pr-4"
     >
       <TouchableOpacity onPress={onPressDelete}>
-        <Text className="font-bold text-white text-3xl">{`[delete]`}</Text>
+        <Text className="font-bold text-white text-2xl">Delete</Text>
       </TouchableOpacity>
     </Animated.View>
   );
@@ -300,7 +384,7 @@ const styles = StyleSheet.create({
     shadowRadius: 3.84, // Blur radius of the shadow
   },
   setWidth: {
-    width: 36,
+    width: 42,
     textAlign: 'center',
     // borderWidth: 2,
     // borderColor: 'blue',
