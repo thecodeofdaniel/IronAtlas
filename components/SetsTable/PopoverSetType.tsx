@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, Pressable } from 'react-native';
 import Popover, { PopoverPlacement } from 'react-native-popover-view';
+import { setsTableStyles as styles } from './setsTable';
 import clsx from 'clsx';
 
 type Sett = {
@@ -35,9 +36,7 @@ export default function PopoverSetType({ item, setData }: PopoverSetTypeProps) {
       onRequestClose={() => setShowPopover(false)} // if the user clicks outside popover
       from={
         <Pressable
-          style={{
-            width: 42,
-          }}
+          style={styles.setWidth}
           className="bg-stone-600"
           onPress={() => setShowPopover(true)}
         >

@@ -8,12 +8,12 @@ import {
   Button,
 } from 'react-native';
 import { Link, Stack } from 'expo-router';
-import TrackExercise from './trackExercise';
 import {
   GestureHandlerRootView,
   ScrollView,
   TouchableWithoutFeedback,
 } from 'react-native-gesture-handler';
+import TrackExercise from '@/components/SetsTable/SetsTable';
 
 export default function WorkoutTab() {
   return (

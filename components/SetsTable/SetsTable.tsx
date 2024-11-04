@@ -1,20 +1,6 @@
-import React, { useState, useRef, useCallback, useEffect } from 'react';
-import {
-  Text,
-  View,
-  StyleSheet,
-  TouchableOpacity,
-  Keyboard,
-  KeyboardAvoidingView,
-  Pressable,
-  Button,
-} from 'react-native';
-import Animated, {
-  useAnimatedStyle,
-  FadeIn,
-  Layout,
-  PinwheelOut,
-} from 'react-native-reanimated';
+import React, { useState, useRef } from 'react';
+import { Text, View, TouchableOpacity, Pressable } from 'react-native';
+import Animated, { useAnimatedStyle } from 'react-native-reanimated';
 import SwipeableItem, {
   useSwipeableItemParams,
   OpenDirection,
@@ -23,17 +9,11 @@ import DraggableFlatList, {
   RenderItemParams,
   ScaleDecorator,
 } from 'react-native-draggable-flatlist';
-// const { multiply, sub } = Animated;
 import { generateId } from '@/utils/utils';
-import {
-  GestureHandlerRootView,
-  ScrollView,
-  TextInput,
-  TouchableWithoutFeedback,
-} from 'react-native-gesture-handler';
-import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
+import { TextInput } from 'react-native-gesture-handler';
 import clsx from 'clsx';
-import PopoverSetType from '@/components/PopoverSetType';
+import PopoverSetType from '@/components/SetsTable/PopoverSetType';
+import { setsTableStyles as styles } from './setsTable';
 
 const OVERSWIPE_DIST = 20;
 
@@ -82,7 +62,7 @@ export default function TrackExercise() {
           weight: prev[lastElemIdx].weight,
           reps: '',
           rpe: '',
-          type: 'N',
+          type: prev[lastElemIdx].type,
         },
       ];
     });
@@ -132,9 +112,9 @@ export default function TrackExercise() {
         <Text style={styles.repsWidth} className="font-medium text-white">
           Reps
         </Text>
-        <Text style={styles.rpeWidth} className="font-medium text-white">
+        {/* <Text style={styles.rpeWidth} className="font-medium text-white">
           RPE
-        </Text>
+        </Text> */}
       </View>
       <DraggableFlatList
         keyExtractor={(item) => item.key}
@@ -235,7 +215,7 @@ function RowItem({
                   });
                 }}
               />
-              <TextInput
+              {/* <TextInput
                 value={item.rpe}
                 keyboardType="numeric"
                 returnKeyType="done"
@@ -248,7 +228,7 @@ function RowItem({
                     );
                   });
                 }}
-              />
+              /> */}
             </View>
           </TouchableOpacity>
         </SwipeableItem>
@@ -284,36 +264,3 @@ const UnderlayLeft = ({
     </Animated.View>
   );
 };
-
-const styles = StyleSheet.create({
-  shadow: {
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.3,
-    // shadowRadius: 3.84,
-  },
-  setWidth: {
-    width: 42,
-    textAlign: 'center',
-    // borderWidth: 2,
-    // borderColor: 'blue',
-  },
-  weightWidth: {
-    width: 52,
-    textAlign: 'center',
-    // borderWidth: 2,
-    // borderColor: 'blue',
-  },
-  repsWidth: {
-    width: 52,
-    textAlign: 'center',
-    // borderWidth: 2,
-    // borderColor: 'blue',
-  },
-  rpeWidth: {
-    width: 42,
-    textAlign: 'center',
-    // borderWidth: 2,
-    // borderColor: 'blue',
-  },
-});
