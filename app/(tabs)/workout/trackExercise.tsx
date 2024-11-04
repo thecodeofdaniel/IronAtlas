@@ -103,9 +103,25 @@ export default function TrackExercise() {
     );
   };
 
+  const handleSaveValues = () => {
+    setData((prev) =>
+      prev.map((set) => {
+        const weight = Number(set.weight);
+        const reps = Number(set.reps);
+        const rpe = Number(set.rpe);
+
+        return {
+          ...set,
+          weight: (isNaN(weight) ? 0 : weight).toFixed(1).replace(/\.0$/, ''),
+          reps: (isNaN(reps) ? 0 : reps).toFixed(1).replace(/\.0$/, ''),
+          rpe: (isNaN(rpe) ? 0 : rpe).toFixed(1).replace(/\.0$/, ''),
+        };
+      }),
+    );
+  };
+
   return (
     <>
-      {/* <SafeAreaView style={{ borderWidth: 2, borderColor: 'black', flex: 1 }}> */}
       <View className="flex flex-row justify-between rounded-t-lg bg-stone-600 p-2">
         <Text style={styles.setWidth} className="font-medium text-white">
           Type
@@ -129,10 +145,12 @@ export default function TrackExercise() {
         }}
         activationDistance={20}
         ListFooterComponent={renderFooter}
-        // contentContainerStyle={{ flexGrow: 1 }}
-        // style={{ flex: 1 }}
       />
-      {/* </SafeAreaView> */}
+      <Pressable className="bg-green-500 p-4" onPress={handleSaveValues}>
+        <Text className="text-center text-xl font-medium text-white">
+          Save values
+        </Text>
+      </Pressable>
     </>
   );
 }
@@ -293,7 +311,7 @@ const styles = StyleSheet.create({
     // borderColor: 'blue',
   },
   rpeWidth: {
-    width: 36,
+    width: 42,
     textAlign: 'center',
     // borderWidth: 2,
     // borderColor: 'blue',
