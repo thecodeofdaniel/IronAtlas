@@ -55,6 +55,20 @@ export default function TrackExercise() {
     setData((prev) => {
       const lastElemIdx = prev.length - 1;
 
+      // If this is the first set
+      if (lastElemIdx === -1) {
+        return [
+          ...prev,
+          {
+            key: generateId(),
+            weight: '',
+            reps: '',
+            rpe: '',
+            type: 'N',
+          },
+        ];
+      }
+
       return [
         ...prev,
         {
