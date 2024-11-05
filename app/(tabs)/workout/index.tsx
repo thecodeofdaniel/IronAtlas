@@ -7,7 +7,7 @@ import {
   Keyboard,
   Button,
 } from 'react-native';
-import { Link, Stack } from 'expo-router';
+import { Link, Stack, useRouter } from 'expo-router';
 import {
   GestureHandlerRootView,
   ScrollView,
@@ -17,11 +17,12 @@ import TrackExercise from '@/components/SetsTable/SetsTable';
 import Popover, { PopoverPlacement } from 'react-native-popover-view';
 import StartWorkout from '@/components/StartWorkout';
 import StartWorkout2 from '@/components/StartWorkout2';
+import { useModalStore } from '@/store/modalStore';
 
 export default function WorkoutTab() {
-  const popoverRef = useRef();
   const [inWorkout, setInWorkout] = useState(false);
-  const [showPopover, setShowPopover] = useState(false);
+  const openModal = useModalStore((state) => state.openModal);
+  const router = useRouter();
 
   return (
     <>
@@ -30,13 +31,6 @@ export default function WorkoutTab() {
           title: 'Workout',
           headerShown: true,
           headerRight: () => (
-            // <StartWorkout
-            //   ref={popoverRef}
-            //   inWorkout={inWorkout}
-            //   setInWorkout={setInWorkout}
-            //   showPopover={showPopover}
-            //   setShowPopover={setShowPopover}
-            // />
             <StartWorkout2 inWorkout={inWorkout} setInWorkout={setInWorkout} />
           ),
         }}
@@ -52,16 +46,15 @@ export default function WorkoutTab() {
           <Text>Workout tab</Text>
         </View>
         <View className="flex flex-row gap-2">
-          <Link
-            href={{
-              pathname: '/(tabs)/workout/template',
+          <Pressable
+            disabled={!inWorkout}
+            onPress={() => {
+              openModal('selectExercises', {});
+              router.push('/modal');
             }}
-            className="flex-1 border bg-stone-300"
+            className="flex-1 border bg-stone-300 py-2"
           >
-            <Text className="text-center">Add template</Text>
-          </Link>
-          <Pressable className="flex-1 border bg-stone-300">
-            <Text className="text-center">Use template</Text>
+            <Text className="text-center">Add exercises</Text>
           </Pressable>
         </View>
       </View>

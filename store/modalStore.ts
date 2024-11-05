@@ -13,6 +13,7 @@ export type ModalData = {
   moveTag: {
     pressedId: number;
   };
+  selectExercises: {};
 };
 
 interface ModalState {
