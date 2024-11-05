@@ -13,7 +13,10 @@ export type ModalData = {
   moveTag: {
     pressedId: number;
   };
-  selectExercises: {};
+  selectExercises: {
+    selectedTags: string[];
+    setSelectedTags: React.Dispatch<React.SetStateAction<string[]>>;
+  };
 };
 
 interface ModalState {

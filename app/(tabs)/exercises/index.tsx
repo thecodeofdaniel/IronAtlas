@@ -22,6 +22,7 @@ import * as schema from '@/db/schema';
 import { asc, eq, inArray } from 'drizzle-orm';
 import { getAllChildrenIds } from '@/utils/utils';
 import MultiDropDown from '@/components/MultiDropDown';
+import { useFilterExerciseStore } from '@/store/filterExercises/filterExercisesStore';
 
 type ExerciseListProps = {
   exerciseMap: ExerciseMap;
@@ -42,6 +43,7 @@ function ExerciseList({
 }: ExerciseListProps) {
   const { showActionSheetWithOptions } = useActionSheet();
   const openModal = useModalStore((state) => state.openModal);
+
   const router = useRouter();
 
   // Transform IDs into Exercise objects
@@ -180,13 +182,14 @@ export default function ExercisesTab() {
       }));
   }, [tagMap]);
 
-  const [selected, setSelected] = useState<string[]>([]);
+  // const [selectedTags, setSelected] = useState<string[]>([]);
+  const selectedTags = useFilterExerciseStore((state) => state.selectedTags);
 
   let filteredExercises = exercisesList;
 
   // If the number of selected tags is greater than one then filter
-  if (selected.length > 0) {
-    const allTagIds = selected.flatMap((tagId) => [
+  if (selectedTags.length > 0) {
+    const allTagIds = selectedTags.flatMap((tagId) => [
       +tagId,
       ...getAllChildrenIds(tagMap, +tagId),
     ]);
@@ -229,8 +232,8 @@ export default function ExercisesTab() {
       <View className="m-2 flex flex-1 flex-col gap-2">
         <MultiDropDown
           tags={tags}
-          selected={selected}
-          setSelected={setSelected}
+          selected={selectedTags}
+          // setSelected={setSelected}
         />
         {filteredExercises.length === 0 ? (
           <View>

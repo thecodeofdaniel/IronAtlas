@@ -37,7 +37,12 @@ export default function Modal() {
           closeModal={closeModal}
         />
       )}
-      {activeModal === 'selectExercises' && <SelectExercises />}
+      {activeModal === 'selectExercises' && (
+        <SelectExercises
+          modalData={modalData as ModalData['selectExercises']}
+          closeModal={closeModal}
+        />
+      )}
     </>
   );
 }

@@ -2,6 +2,7 @@ import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { MultiSelect } from 'react-native-element-dropdown';
 import { Ionicons } from '@expo/vector-icons';
+import { useFilterExerciseStore } from '@/store/filterExercises/filterExercisesStore';
 
 type MultiSelectProps = {
   tags: { label: string; value: string }[];
@@ -9,11 +10,11 @@ type MultiSelectProps = {
   setSelected: React.Dispatch<React.SetStateAction<string[]>>;
 };
 
-export default function MultiSelectComponent({
-  tags,
-  selected,
-  setSelected,
-}: MultiSelectProps) {
+export default function MultiSelectComponent({ tags }: MultiSelectProps) {
+  const { selectedTags, setSelectedTags } = useFilterExerciseStore(
+    (state) => state,
+  );
+
   return (
     <View className="p-1">
       <MultiSelect
@@ -29,9 +30,9 @@ export default function MultiSelectComponent({
         valueField="value"
         placeholder="Select tags to filter"
         searchPlaceholder="Search..."
-        value={selected}
-        onChange={(item) => {
-          setSelected(item);
+        value={selectedTags}
+        onChange={(newTags) => {
+          setSelectedTags(newTags);
         }}
         renderRightIcon={(visible) => (
           <Ionicons name={visible ? 'chevron-up' : 'chevron-down'} size={18} />

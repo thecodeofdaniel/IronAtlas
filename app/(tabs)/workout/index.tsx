@@ -21,6 +21,7 @@ import { useModalStore } from '@/store/modalStore';
 
 export default function WorkoutTab() {
   const [inWorkout, setInWorkout] = useState(false);
+  const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const openModal = useModalStore((state) => state.openModal);
   const router = useRouter();
 
@@ -47,9 +48,11 @@ export default function WorkoutTab() {
         </View>
         <View className="flex flex-row gap-2">
           <Pressable
-            disabled={!inWorkout}
             onPress={() => {
-              openModal('selectExercises', {});
+              openModal('selectExercises', {
+                selectedTags,
+                setSelectedTags,
+              });
               router.push('/modal');
             }}
             className="flex-1 border bg-stone-300 py-2"
