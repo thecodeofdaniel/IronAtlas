@@ -13,7 +13,7 @@ import { Ionicons } from '@expo/vector-icons';
 import clsx from 'clsx';
 import { Stack, useRouter } from 'expo-router';
 import React, { useMemo, useState } from 'react';
-import { View, Text, TouchableOpacity } from 'react-native';
+import { View, Text, TouchableOpacity, Pressable } from 'react-native';
 import DraggableFlatList, {
   RenderItemParams,
 } from 'react-native-draggable-flatlist';
@@ -23,13 +23,12 @@ import { asc, eq, inArray } from 'drizzle-orm';
 import { getAllChildrenIds } from '@/utils/utils';
 import MultiDropDown from '@/components/MultiDropDown';
 import { useFilterExerciseStore } from '@/store/filterExercises/filterExercisesStore';
+import { useGeneralStore } from '@/store/general/generalStore';
 
 type ExerciseListProps = {
   exerciseMap: ExerciseMap;
   exerciseList: number[];
   exerciseSetter: ExerciseStateFunctions;
-  tagMap: TagMap;
-  tagSetter: TagStateFunctions;
   isDraggable: boolean;
 };
 
@@ -37,13 +36,14 @@ function ExerciseList({
   exerciseMap,
   exerciseList,
   exerciseSetter,
-  tagMap,
-  tagSetter,
   isDraggable,
 }: ExerciseListProps) {
   const { showActionSheetWithOptions } = useActionSheet();
   const openModal = useModalStore((state) => state.openModal);
   const router = useRouter();
+  const { pickedExercises, pushExerciseId, popExerciseId } = useGeneralStore(
+    (state) => state,
+  );
 
   // Transform IDs into Exercise objects
   const exercises = useMemo(
@@ -92,18 +92,29 @@ function ExerciseList({
     const index = getIndex()!;
 
     return (
-      <TouchableOpacity
-        activeOpacity={1}
-        onLongPress={isDraggable ? drag : undefined}
-        disabled={isActive}
-        className={clsx('my-[1] flex flex-row p-2', {
-          'bg-red-500': isActive,
-          'bg-blue-800': !isActive,
+      <Pressable
+        onPress={() => {
+          if (!pickedExercises.includes(exercise.id)) {
+            pushExerciseId(exercise.id);
+          }
+
+          if (pickedExercises.at(-1) === exercise.id) {
+            popExerciseId();
+          }
+        }}
+        // activeOpacity={1}
+        // onLongPress={isDraggable ? drag : undefined}
+
+        // disabled={isActive}
+        className={clsx('my-[1] flex flex-row bg-blue-500 p-2', {
+          // 'bg-blue-500': true,
+          'bg-red-200': pickedExercises.includes(exercise.id),
+          'bg-red-500': pickedExercises.at(-1) === exercise.id,
         })}
       >
         <View className="flex flex-1 flex-row justify-between">
           <Text className="text-white">
-            {exercise.label} @{index}
+            {exercise.label} {pickedExercises.indexOf(exercise.id) + 1}
           </Text>
           {/* <TouchableOpacity onPress={() => handleOnPress(exercise)}>
             <Ionicons
@@ -113,7 +124,7 @@ function ExerciseList({
             />
           </TouchableOpacity> */}
         </View>
-      </TouchableOpacity>
+      </Pressable>
     );
   };
 
@@ -144,9 +155,8 @@ export default function SelectExercisesModal({
   modalData,
 }: SelectExercisesModalProps) {
   console.log('Render SelectExercisesModal');
-  const { exerciseMap, exercisesList, exerciseSet, setter } =
-    useExerciseStoreWithSetter();
-  const { tagMap, setter: tagSetter } = useTagStoreWithSetter();
+  const { exerciseMap, exercisesList, setter } = useExerciseStoreWithSetter();
+  const { tagMap } = useTagStoreWithSetter();
 
   const selectedTags = useFilterExerciseStore((state) => state.selectedTags);
 
@@ -179,6 +189,8 @@ export default function SelectExercisesModal({
     ];
   }
 
+  const { pickedExercises, clearExercises } = useGeneralStore((state) => state);
+
   return (
     <>
       <Stack.Screen
@@ -187,6 +199,12 @@ export default function SelectExercisesModal({
         }}
       />
       <View className="m-2 flex flex-1 flex-col gap-2">
+        <Pressable onPress={clearExercises}>
+          <Text>Clear stack</Text>
+        </Pressable>
+        <View>
+          <Text>{JSON.stringify(pickedExercises)}</Text>
+        </View>
         <MultiDropDown />
         {filteredExercises.length === 0 ? (
           <View>
@@ -197,8 +215,6 @@ export default function SelectExercisesModal({
             exerciseMap={exerciseMap}
             exerciseList={filteredExercises}
             exerciseSetter={setter}
-            tagMap={tagMap}
-            tagSetter={tagSetter}
             isDraggable={exercisesList.length === filteredExercises.length}
           />
         )}

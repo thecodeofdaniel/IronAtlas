@@ -18,6 +18,7 @@ import Popover, { PopoverPlacement } from 'react-native-popover-view';
 import StartWorkout from '@/components/StartWorkout';
 import StartWorkout2 from '@/components/StartWorkout';
 import { useModalStore } from '@/store/modalStore';
+import TemplateScreen from './template';
 
 export default function WorkoutTab() {
   const [inWorkout, setInWorkout] = useState(false);
@@ -36,12 +37,6 @@ export default function WorkoutTab() {
           ),
         }}
       />
-      {/* <GestureHandlerRootView>
-        <TouchableWithoutFeedback
-          onPress={Keyboard.dismiss}
-          accessible={false}
-          style={{ backgroundColor: 'green', height: '100%' }}
-        > */}
       <View className="m-2 flex flex-1 justify-between">
         <View>
           <Text>Workout tab</Text>
@@ -61,13 +56,7 @@ export default function WorkoutTab() {
           </Pressable>
         </View>
       </View>
-      {/* </TouchableWithoutFeedback>
-      </GestureHandlerRootView> */}
-
-      {/* sets table */}
-      {/* <GestureHandlerRootView style={{ margin: 4, flex: 1 }}>
-        <TrackExercise />
-      </GestureHandlerRootView> */}
+      {/* <TemplateScreen/> */}
     </>
   );
 }

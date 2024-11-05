@@ -226,7 +226,6 @@ export default function TemplateScreen() {
 
   return (
     <>
-      <Stack.Screen options={{ title: 'Template', headerShown: true }} />
       <View className="m-2 flex-1 justify-between border">
         <GestureHandlerRootView>
           <TemplateTree
