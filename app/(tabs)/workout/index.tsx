@@ -16,6 +16,7 @@ import {
 import TrackExercise from '@/components/SetsTable/SetsTable';
 import Popover, { PopoverPlacement } from 'react-native-popover-view';
 import StartWorkout from '@/components/StartWorkout';
+import StartWorkout2 from '@/components/StartWorkout2';
 
 export default function WorkoutTab() {
   const popoverRef = useRef();
@@ -29,13 +30,14 @@ export default function WorkoutTab() {
           title: 'Workout',
           headerShown: true,
           headerRight: () => (
-            <StartWorkout
-              ref={popoverRef}
-              inWorkout={inWorkout}
-              setInWorkout={setInWorkout}
-              showPopover={showPopover}
-              setShowPopover={setShowPopover}
-            />
+            // <StartWorkout
+            //   ref={popoverRef}
+            //   inWorkout={inWorkout}
+            //   setInWorkout={setInWorkout}
+            //   showPopover={showPopover}
+            //   setShowPopover={setShowPopover}
+            // />
+            <StartWorkout2 inWorkout={inWorkout} setInWorkout={setInWorkout} />
           ),
         }}
       />
