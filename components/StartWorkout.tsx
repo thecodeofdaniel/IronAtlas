@@ -1,80 +1,74 @@
-import React, { forwardRef } from 'react';
-import { View, Text, Pressable } from 'react-native';
-import Popover, { PopoverPlacement } from 'react-native-popover-view';
+import React from 'react';
+import { Text, Pressable } from 'react-native';
+import { useActionSheet } from '@expo/react-native-action-sheet';
 
-type StartWorkoutProps = {
-  inWorkout: boolean;
-  setInWorkout: React.Dispatch<React.SetStateAction<boolean>>;
-  showPopover: boolean;
-  setShowPopover: React.Dispatch<React.SetStateAction<boolean>>;
-};
+export default function StartWorkout({ inWorkout, setInWorkout }: any) {
+  const { showActionSheetWithOptions } = useActionSheet();
 
-export default forwardRef<any, StartWorkoutProps>(function StartWorkout(
-  { inWorkout, setInWorkout, showPopover, setShowPopover },
-  ref,
-) {
-  return (
-    <Popover
-      ref={ref}
-      isVisible={showPopover}
-      onRequestClose={() => setShowPopover(false)}
-      from={
-        !inWorkout ? (
-          <Pressable
-            className="rounded-sm bg-green-500 px-4 py-2"
-            onPress={() => setShowPopover(true)}
-          >
-            <Text className="text-center font-medium text-white">Start</Text>
-          </Pressable>
-        ) : (
-          <Pressable
-            className="rounded-sm bg-red-500 px-4 py-2"
-            onPress={() => setShowPopover(true)}
-          >
-            <Text className="text-center font-medium text-white">End</Text>
-          </Pressable>
-        )
-      }
-    >
-      {!inWorkout ? (
-        <View className="flex flex-col gap-2 p-2">
-          <Pressable
-            className="bg-stone-600 px-4 py-2"
-            onPress={() => {
-              // ref.current?.requestClose();
-              setShowPopover(false);
-              setInWorkout(true);
-            }}
-          >
-            <Text className="text-center font-medium text-white">
-              Use template
-            </Text>
-          </Pressable>
-          <Pressable
-            className="bg-stone-600 px-4 py-2"
-            onPress={() => {
-              ref.current?.requestClose();
-              setShowPopover(false);
-              setInWorkout(true);
-            }}
-          >
-            <Text className="text-center font-medium text-white">
-              No template
-            </Text>
-          </Pressable>
-        </View>
-      ) : (
-        <Pressable
-          className="bg-red-200 px-4 py-2"
-          onPress={() => {
-            ref.current?.requestClose();
-            setShowPopover(false);
+  const handleStartWorkout = () => {
+    const options = ['Use template', 'No template', 'Cancel'];
+    const cancelButtonIndex = options.length - 1;
+
+    showActionSheetWithOptions(
+      {
+        options,
+        cancelButtonIndex,
+      },
+      async (selectedIndex?: number) => {
+        switch (selectedIndex) {
+          case 0:
+            setInWorkout(true);
+            break;
+          case 1:
+            setInWorkout(true);
+            break;
+          case cancelButtonIndex:
+            break;
+        }
+      },
+    );
+  };
+
+  const handleStopWorkout = () => {
+    const options = ['End Workout', 'Cancel'];
+    const cancelButtonIndex = options.length - 1;
+
+    showActionSheetWithOptions(
+      {
+        options,
+        cancelButtonIndex,
+      },
+      async (selectedIndex?: number) => {
+        switch (selectedIndex) {
+          case 0:
             setInWorkout(false);
-          }}
-        >
-          <Text className="text-center font-medium text-white">End</Text>
-        </Pressable>
-      )}
-    </Popover>
-  );
-});
+            break;
+          case cancelButtonIndex:
+            break;
+        }
+      },
+    );
+  };
+
+  if (!inWorkout) {
+    return (
+      <Pressable
+        className="rounded-sm bg-green-500 px-4 py-2"
+        onPress={handleStartWorkout}
+      >
+        <Text className="text-center font-medium text-white">Start</Text>
+      </Pressable>
+    );
+  }
+
+  if (inWorkout) {
+    return (
+      <Pressable
+        className="rounded-sm bg-red-500 px-4 py-2"
+        onPress={handleStopWorkout}
+      >
+        <Text className="text-center font-medium text-white">End</Text>
+      </Pressable>
+    );
+  }
+}

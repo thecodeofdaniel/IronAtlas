@@ -16,7 +16,7 @@ import {
 import TrackExercise from '@/components/SetsTable/SetsTable';
 import Popover, { PopoverPlacement } from 'react-native-popover-view';
 import StartWorkout from '@/components/StartWorkout';
-import StartWorkout2 from '@/components/StartWorkout2';
+import StartWorkout2 from '@/components/StartWorkout';
 import { useModalStore } from '@/store/modalStore';
 
 export default function WorkoutTab() {
@@ -32,7 +32,7 @@ export default function WorkoutTab() {
           title: 'Workout',
           headerShown: true,
           headerRight: () => (
-            <StartWorkout2 inWorkout={inWorkout} setInWorkout={setInWorkout} />
+            <StartWorkout inWorkout={inWorkout} setInWorkout={setInWorkout} />
           ),
         }}
       />

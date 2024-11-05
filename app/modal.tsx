@@ -5,7 +5,7 @@ import EditExerciseOrMuscleModal from '../components/modals/tags/editTag';
 import AddExerciseOrMuscleModal from '../components/modals/tags/createTag';
 import MoveTag from '@/components/modals/tags/moveTag';
 import UpsertExercise from '@/components/modals/exercises/upsertExercise';
-import SelectExercises from '@/components/modals/workout/SelectExercises';
+import SelectExercises from '@/components/modals/workout/SelectExercisesModal';
 import { Stack } from 'expo-router';
 
 export default function Modal() {
