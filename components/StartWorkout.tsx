@@ -16,53 +16,65 @@ export default forwardRef<any, StartWorkoutProps>(function StartWorkout(
   return (
     <Popover
       ref={ref}
+      isVisible={showPopover}
+      onRequestClose={() => setShowPopover(false)}
       from={
         !inWorkout ? (
-          <Pressable className="bg-green-500">
-            <Text>Start</Text>
+          <Pressable
+            className="rounded-sm bg-green-500 px-4 py-2"
+            onPress={() => setShowPopover(true)}
+          >
+            <Text className="text-center font-medium text-white">Start</Text>
           </Pressable>
         ) : (
-          <Pressable className="bg-red-500">
-            <Text>End</Text>
+          <Pressable
+            className="rounded-sm bg-red-500 px-4 py-2"
+            onPress={() => setShowPopover(true)}
+          >
+            <Text className="text-center font-medium text-white">End</Text>
           </Pressable>
         )
       }
     >
       {!inWorkout ? (
-        <Pressable
-          className="bg-green-200"
-          onPress={() => {
-            setInWorkout(true);
-            ref.current?.requestClose();
-          }}
-        >
-          <Text>Start</Text>
-        </Pressable>
+        <View className="flex flex-col gap-2 p-2">
+          <Pressable
+            className="bg-stone-600 px-4 py-2"
+            onPress={() => {
+              // ref.current?.requestClose();
+              setShowPopover(false);
+              setInWorkout(true);
+            }}
+          >
+            <Text className="text-center font-medium text-white">
+              Use template
+            </Text>
+          </Pressable>
+          <Pressable
+            className="bg-stone-600 px-4 py-2"
+            onPress={() => {
+              ref.current?.requestClose();
+              setShowPopover(false);
+              setInWorkout(true);
+            }}
+          >
+            <Text className="text-center font-medium text-white">
+              No template
+            </Text>
+          </Pressable>
+        </View>
       ) : (
         <Pressable
-          className="bg-red-200"
+          className="bg-red-200 px-4 py-2"
           onPress={() => {
-            setInWorkout(false);
             ref.current?.requestClose();
+            setShowPopover(false);
+            setInWorkout(false);
           }}
         >
-          <Text>End</Text>
+          <Text className="text-center font-medium text-white">End</Text>
         </Pressable>
       )}
     </Popover>
   );
-
-  // if (inWorkout) {
-  //   return (
-  //     <Pressable
-  //       className="bg-red-500"
-  //       onPress={() => {
-  //         ref.current?.requestClose();
-  //         setInWorkout(false);
-  //       }}
-  //     >
-  //       <Text>End</Text>
-  //     </Pressable>
-  //   );
-  // }
 });
