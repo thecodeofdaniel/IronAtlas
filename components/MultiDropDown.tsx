@@ -1,19 +1,34 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { MultiSelect } from 'react-native-element-dropdown';
 import { Ionicons } from '@expo/vector-icons';
 import { useFilterExerciseStore } from '@/store/filterExercises/filterExercisesStore';
+import { useExerciseStore } from '@/store/exercise/exerciseStore';
+import { useTagStore } from '@/store/tag/tagStore';
 
-type MultiSelectProps = {
-  tags: { label: string; value: string }[];
-  selected: string[];
-  setSelected: React.Dispatch<React.SetStateAction<string[]>>;
-};
+// db stuff
+import { db } from '@/db/instance';
+import * as schema from '@/db/schema';
+import { asc } from 'drizzle-orm';
 
-export default function MultiSelectComponent({ tags }: MultiSelectProps) {
+export default function MultiSelectComponent() {
+  const tagSet = useTagStore((state) => state.tagSet);
   const { selectedTags, setSelectedTags } = useFilterExerciseStore(
     (state) => state,
   );
+
+  const tags = useMemo(() => {
+    console.log('Run db function to get all tags');
+    return db
+      .select({ label: schema.tag.label, value: schema.tag.id })
+      .from(schema.tag)
+      .orderBy(asc(schema.tag.label))
+      .all()
+      .map((tag) => ({
+        ...tag,
+        value: String(tag.value),
+      }));
+  }, [tagSet]);
 
   return (
     <View className="p-1">

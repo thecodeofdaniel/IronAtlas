@@ -139,8 +139,7 @@ function ExerciseList({
 export default function ExercisesTab() {
   console.log('Render Exercises Tab');
   const router = useRouter();
-  const { exerciseMap, exercisesList, exerciseSet, setter } =
-    useExerciseStoreWithSetter();
+  const { exerciseMap, exercisesList, setter } = useExerciseStoreWithSetter();
   const { tagMap, setter: tagSetter } = useTagStoreWithSetter();
   const { showActionSheetWithOptions } = useActionSheet();
   const openModal = useModalStore((state) => state.openModal);
@@ -167,20 +166,6 @@ export default function ExercisesTab() {
       },
     );
   };
-
-  // Fetch tags initially until tagMap updates
-  const tags = useMemo(() => {
-    console.log('Run this function');
-    return db
-      .select({ label: schema.tag.label, value: schema.tag.id })
-      .from(schema.tag)
-      .orderBy(asc(schema.tag.label))
-      .all()
-      .map((tag) => ({
-        ...tag,
-        value: String(tag.value),
-      }));
-  }, [tagMap]);
 
   // const [selectedTags, setSelected] = useState<string[]>([]);
   const selectedTags = useFilterExerciseStore((state) => state.selectedTags);
@@ -230,11 +215,7 @@ export default function ExercisesTab() {
         }}
       />
       <View className="m-2 flex flex-1 flex-col gap-2">
-        <MultiDropDown
-          tags={tags}
-          selected={selectedTags}
-          // setSelected={setSelected}
-        />
+        <MultiDropDown />
         {filteredExercises.length === 0 ? (
           <View>
             <Text>No exercises found :(</Text>

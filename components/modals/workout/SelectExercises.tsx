@@ -143,53 +143,10 @@ type SelectExercisesModalProps = {
 export default function SelectExercisesModal({
   modalData,
 }: SelectExercisesModalProps) {
-  console.log('Render Exercises Tab');
-  const router = useRouter();
+  console.log('Render SelectExercisesModal');
   const { exerciseMap, exercisesList, exerciseSet, setter } =
     useExerciseStoreWithSetter();
   const { tagMap, setter: tagSetter } = useTagStoreWithSetter();
-  const { showActionSheetWithOptions } = useActionSheet();
-  const openModal = useModalStore((state) => state.openModal);
-
-  const handlePress = () => {
-    const options = ['Add Exercise', 'Cancel'];
-    const cancelButtonIndex = options.length - 1;
-
-    showActionSheetWithOptions(
-      {
-        options,
-        cancelButtonIndex,
-      },
-      (selectedIndex?: number) => {
-        switch (selectedIndex) {
-          case 0:
-            // openModal('createExercise');
-            openModal('upsertExercise', {});
-            router.push('/modal');
-            break;
-          case cancelButtonIndex:
-            break;
-        }
-      },
-    );
-  };
-
-  // Fetch tags initially until tagMap updates
-  const tags = useMemo(() => {
-    console.log('Run this function');
-    return db
-      .select({ label: schema.tag.label, value: schema.tag.id })
-      .from(schema.tag)
-      .orderBy(asc(schema.tag.label))
-      .all()
-      .map((tag) => ({
-        ...tag,
-        value: String(tag.value),
-      }));
-  }, [tagMap]);
-
-  // const [selected, setSelected] = useState<string[]>(modalData.tags);
-  // const setSelected = modalData.setTags;
 
   const selectedTags = useFilterExerciseStore((state) => state.selectedTags);
 
@@ -230,11 +187,7 @@ export default function SelectExercisesModal({
         }}
       />
       <View className="m-2 flex flex-1 flex-col gap-2">
-        <MultiDropDown
-          tags={tags}
-          selected={modalData.selectedTags}
-          // setSelected={modalData.setSelectedTags}
-        />
+        <MultiDropDown />
         {filteredExercises.length === 0 ? (
           <View>
             <Text>No exercises found :(</Text>
