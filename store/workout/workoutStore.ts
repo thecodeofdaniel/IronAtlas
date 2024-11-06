@@ -56,7 +56,7 @@ export const useWorkoutStore = create<WorkoutStore>((set) => ({
             uuid: newUUID,
             sets: [],
             children: [],
-            parentId: 0,
+            parentId: '0',
           });
         });
 
