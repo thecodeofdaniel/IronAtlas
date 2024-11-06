@@ -213,7 +213,17 @@ export default function SelectExercisesModal({
     <>
       <Stack.Screen
         options={{
-          title: 'Choose Exercises',
+          title: 'Select',
+          headerLeft: () => (
+            <Pressable className="border">
+              <Text>Add superset</Text>
+            </Pressable>
+          ),
+          headerRight: () => (
+            <Pressable className="border">
+              <Text>Add exercise(s)</Text>
+            </Pressable>
+          ),
         }}
       />
       <View className="m-2 flex flex-1 flex-col gap-2">
