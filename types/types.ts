@@ -30,7 +30,7 @@ type SettType = {
 };
 
 type TemplateObj = {
-  exerciseId: number; // if exerciseId is null then it's a superset
+  exerciseId: number | null; // if exerciseId is null then it's a superset
   uuid: string;
   sets: SettType[];
   children: string[];

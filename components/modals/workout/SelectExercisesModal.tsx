@@ -212,8 +212,13 @@ export default function SelectExercisesModal({
     ];
   }
 
-  const { pickedExercises, template, clearExercises, addExercises } =
-    useWorkoutStore((state) => state);
+  const {
+    pickedExercises,
+    template,
+    clearExercises,
+    addExercises,
+    addSuperset,
+  } = useWorkoutStore((state) => state);
 
   console.log(template);
 
@@ -223,7 +228,14 @@ export default function SelectExercisesModal({
         options={{
           title: 'Select',
           headerLeft: () => (
-            <Pressable className="border">
+            <Pressable
+              className="border"
+              onPress={() => {
+                addSuperset(pickedExercises);
+                clearExercises();
+                router.back();
+              }}
+            >
               <Text>Add superset</Text>
             </Pressable>
           ),

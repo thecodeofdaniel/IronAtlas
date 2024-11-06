@@ -37,6 +37,8 @@ type RowItemProps = {
 };
 
 function RowItem({ drag, getIndex, isActive, item, itemRefs }: RowItemProps) {
+  const exerciseMap = useExerciseStore((state) => state.exerciseMap);
+
   return (
     <>
       <ScaleDecorator>
@@ -72,8 +74,9 @@ function RowItem({ drag, getIndex, isActive, item, itemRefs }: RowItemProps) {
             })}
           >
             <Text className="text-white">
-              {/* {exerciseMap[item.exerciseId].label} */}
-              Yo
+              {item.exerciseId === null
+                ? 'Superset'
+                : exerciseMap[item.exerciseId].label}
             </Text>
           </TouchableOpacity>
         </SwipeableItem>
@@ -224,6 +227,8 @@ function TemplateTree({
   };
 
   const templateExercises = templateChildren.map((id) => templateMap[id]);
+
+  console.log(`${level}: ${JSON.stringify(templateExercises)}`);
 
   return (
     <>

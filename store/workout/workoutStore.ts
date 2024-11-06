@@ -12,6 +12,7 @@ export type WorkoutStateFunctions = {
   popExerciseId: () => void;
   clearExercises: () => void;
   addExercises: (exerciseIds: number[]) => void;
+  addSuperset: (exerciseIds: number[]) => void;
   reorderTemplate: (templateObjs: TemplateObj[]) => void;
 };
 
@@ -64,6 +65,44 @@ export const useWorkoutStore = create<WorkoutStore>((set) => ({
         state.template[0].children = [
           ...state.template[0].children,
           ...newUUIDs,
+        ];
+      }),
+    ),
+  addSuperset: (exerciseIds) =>
+    set(
+      produce<WorkoutStore>((state) => {
+        // Create parent UUID
+        const parentUUID = Crypto.randomUUID();
+
+        // Create exercises for superset
+        const newUUIDs: string[] = [];
+
+        exerciseIds.map((exerciseId) => {
+          const newUUID = Crypto.randomUUID();
+          newUUIDs.push(newUUID);
+
+          return (state.template[newUUID] = {
+            exerciseId: exerciseId,
+            uuid: newUUID,
+            sets: [],
+            children: [],
+            parentId: parentUUID,
+          });
+        });
+
+        // Create superset object with uuids of children
+        state.template[parentUUID] = {
+          exerciseId: null,
+          uuid: parentUUID,
+          sets: [],
+          children: newUUIDs,
+          parentId: '0',
+        };
+
+        // Add superset to root
+        state.template[0].children = [
+          ...state.template[0].children,
+          parentUUID,
         ];
       }),
     ),
