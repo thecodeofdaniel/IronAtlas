@@ -91,31 +91,49 @@ function ExerciseList({
   }: RenderItemParams<Exercise>) => {
     const index = getIndex()!;
 
+    const pickedExercisePlace = pickedExercises.indexOf(exercise.id) + 1;
+    const pickedExercisesLen = pickedExercises.length;
+
+    let indicator = 'th';
+
+    if (pickedExercisePlace === 1) {
+      indicator = 'st';
+    } else if (pickedExercisePlace === 2) {
+      indicator = 'nd';
+    } else if (pickedExercisePlace === 3) {
+      indicator = 'rd';
+    }
+
+    // const isIncluded = pickedExercises.includes(exercise.id);
+    // const isTopOfStack = pickedExercises.at(-1) === exercise.id;
+
+    const isIncluded = pickedExercisePlace !== 0;
+    const isTopOfStack =
+      pickedExercisesLen > 0 && pickedExercisePlace === pickedExercisesLen;
+
     return (
       <Pressable
         onPress={() => {
-          if (!pickedExercises.includes(exercise.id)) {
-            pushExerciseId(exercise.id);
-          }
-
-          if (pickedExercises.at(-1) === exercise.id) {
-            popExerciseId();
-          }
+          if (!isIncluded) pushExerciseId(exercise.id);
+          if (isTopOfStack) popExerciseId();
         }}
         // activeOpacity={1}
         // onLongPress={isDraggable ? drag : undefined}
-
         // disabled={isActive}
         className={clsx('my-[1] flex flex-row bg-blue-500 p-2', {
-          // 'bg-blue-500': true,
-          'bg-red-200': pickedExercises.includes(exercise.id),
-          'bg-red-500': pickedExercises.at(-1) === exercise.id,
+          'bg-red-200': isIncluded,
+          'bg-red-500': isTopOfStack,
         })}
       >
         <View className="flex flex-1 flex-row justify-between">
-          <Text className="text-white">
-            {exercise.label} {pickedExercises.indexOf(exercise.id) + 1}
-          </Text>
+          <Text className="text-white">{exercise.label}</Text>
+          {pickedExercisePlace > 0 && (
+            <Text className="text-white">
+              {pickedExercisePlace}
+              {indicator}
+            </Text>
+          )}
+
           {/* <TouchableOpacity onPress={() => handleOnPress(exercise)}>
             <Ionicons
               name="ellipsis-horizontal-outline"
