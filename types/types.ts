@@ -23,6 +23,24 @@ type TagMap = {
   [key: number]: Tag;
 };
 
+type SettType = {
+  type: string;
+  weight: string;
+  reps: string;
+};
+
+type TemplateObj = {
+  exerciseId: number;
+  uuid: string;
+  sets: SettType[];
+  children: string[];
+  parentId: number | null;
+};
+
+type TemplateMap = {
+  [key: string]: TemplateObj;
+};
+
 // type Workout = {
 //   id: number;
 //   title: string;

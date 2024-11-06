@@ -38,9 +38,7 @@ export default function WorkoutTab() {
         }}
       />
       <View className="m-2 flex flex-1 justify-between">
-        <View>
-          <Text>Workout tab</Text>
-        </View>
+          <TemplateScreen />
         <View className="flex flex-row gap-2">
           <Pressable
             onPress={() => {
@@ -56,7 +54,6 @@ export default function WorkoutTab() {
           </Pressable>
         </View>
       </View>
-      {/* <TemplateScreen/> */}
     </>
   );
 }

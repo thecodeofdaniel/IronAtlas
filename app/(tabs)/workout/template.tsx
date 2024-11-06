@@ -1,6 +1,5 @@
 import { View, Text, Pressable, TouchableOpacity } from 'react-native';
 import React, { Children, useState } from 'react';
-import { Stack } from 'expo-router';
 import DraggableFlatList, {
   RenderItemParams,
 } from 'react-native-draggable-flatlist';
@@ -11,94 +10,21 @@ import {
 } from 'react-native-gesture-handler';
 import clsx from 'clsx';
 import { Ionicons } from '@expo/vector-icons';
-
-type SettType = {
-  reps: number;
-  type: string;
-};
-
-type TemplateObj = {
-  exerciseId: number;
-  sets: SettType[];
-  isOpen: boolean;
-  children: number[];
-  parentId: number | null;
-};
-
-type TemplateMap = {
-  [key: string]: TemplateObj;
-};
-
-const startingTemplateTree: TemplateMap = {
-  '0': {
-    exerciseId: 0,
-    sets: [],
-    isOpen: true,
-    children: [1, 3, -1],
-    parentId: null, // No parent for the root
-  },
-  1: {
-    exerciseId: 1,
-    sets: [
-      { reps: 12, type: 'N' },
-      { reps: 12, type: 'N' },
-      { reps: 12, type: 'N' },
-    ],
-    isOpen: false,
-    children: [],
-    parentId: 0, // Set parentId
-  },
-  3: {
-    exerciseId: 3,
-    sets: [
-      { reps: 12, type: '' },
-      { reps: 12, type: '' },
-      { reps: 12, type: '' },
-    ],
-    isOpen: false,
-    children: [],
-    parentId: 0, // Set parentId
-  },
-  '-1': {
-    exerciseId: -1,
-    sets: [],
-    isOpen: true,
-    children: [2, 4],
-    parentId: 0, // Set parentId
-  },
-  2: {
-    exerciseId: 2,
-    sets: [
-      { reps: 12, type: '' },
-      { reps: 12, type: '' },
-      { reps: 12, type: '' },
-    ],
-    isOpen: false,
-    children: [],
-    parentId: -1, // Set parentId
-  },
-  4: {
-    exerciseId: 4,
-    sets: [
-      { reps: 12, type: '' },
-      { reps: 12, type: '' },
-    ],
-    isOpen: false,
-    children: [],
-    parentId: -1, // Set parentId
-  },
-};
+import { useWorkoutStore } from '@/store/workout/workoutStore';
+import { useExerciseStore } from '@/store/exercise/exerciseStore';
 
 type TemplateProps = {
   templateMap: TemplateMap;
-  setTemplateMap: React.Dispatch<React.SetStateAction<TemplateMap>>;
-  templateChildren: number[];
+  exerciseMap: ExerciseMap;
+  reorderTemplate: (templateObjs: TemplateObj[]) => void;
+  templateChildren: string[];
   level: number;
 };
 
 function TemplateTree({
   templateMap,
-  setTemplateMap,
+  exerciseMap,
+  reorderTemplate,
   templateChildren,
   level,
 }: TemplateProps) {
@@ -120,43 +46,29 @@ function TemplateTree({
       );
     };
 
+    if (group.parentId === null) {
+      return null;
+    }
+
     return (
       <>
         <TouchableOpacity
           onLongPress={level > 0 ? drag : undefined}
           disabled={isActive}
           activeOpacity={1}
-          className={clsx('my-[1] flex flex-row items-center', {
+          className={clsx('my-[1] flex flex-row items-center p-2', {
             'bg-red-500': isActive,
             'bg-blue-800': !isActive,
           })}
         >
-          {group.children.length > 0 && level > 0 && (
-            <Pressable
-              onPress={() => {
-                setTemplateMap((prev) => ({
-                  ...prev,
-                  [group.exerciseId]: {
-                    ...prev[group.exerciseId],
-                    isOpen: !prev[group.exerciseId].isOpen,
-                  },
-                }));
-              }}
-              className="flex h-full flex-row items-center justify-center pl-[4]"
-            >
-              <Ionicons
-                name={group.isOpen ? 'chevron-down' : 'chevron-forward-outline'}
-                size={18}
-                color={'white'}
-              />
-            </Pressable>
-          )}
-          <Text className="text-white">{group.exerciseId}</Text>
+          <Text className="text-white">
+            {exerciseMap[group.exerciseId].label}
+          </Text>
         </TouchableOpacity>
-        {group.exerciseId > 0 && (
+        {/* {group.exerciseId > 0 && (
           <>
             <Text>Exercise Info</Text>
-            {/* <FlatList
+            <FlatList
               horizontal
               data={group.sets}
               keyExtractor={(item, index) =>
@@ -165,12 +77,12 @@ function TemplateTree({
               renderItem={({ item }) => (
                 <RenderSet reps={item.reps} type={item.type} />
               )}
-            /> */}
+            />
             <Pressable className="rounded-md border bg-stone-400">
               <Text className="text-center text-white">Add set</Text>
             </Pressable>
           </>
-        )}
+        )} */}
       </>
     );
   };
@@ -181,21 +93,8 @@ function TemplateTree({
     <>
       <DraggableFlatList
         data={templateExercises}
-        onDragEnd={({ data }) => {
-          const parentId = data[0].parentId; // Get the parentId from the first item
-          setTemplateMap((prev) => {
-            const updatedChildren = data.map((item) => item.exerciseId); // Get the new order of children
-            return {
-              ...prev,
-              [parentId!]: {
-                // Use parentId to update the correct parent
-                ...prev[parentId!],
-                children: updatedChildren, // Update the children array
-              },
-            };
-          });
-        }}
-        keyExtractor={(item) => item.exerciseId.toString()}
+        onDragEnd={({ data }) => reorderTemplate(data)}
+        keyExtractor={(item) => item.uuid}
         renderItem={({ item, drag, isActive, getIndex }) => {
           return (
             <View key={item.exerciseId} style={{ paddingLeft: 5 * level }}>
@@ -205,10 +104,11 @@ function TemplateTree({
                 isActive={isActive}
                 getIndex={getIndex}
               />
-              {item.children.length > 0 && item.isOpen && (
+              {item.children.length > 0 && (
                 <TemplateTree
                   templateMap={templateMap}
-                  setTemplateMap={setTemplateMap}
+                  exerciseMap={exerciseMap}
+                  reorderTemplate={reorderTemplate}
                   templateChildren={item.children}
                   level={level + 1}
                 />
@@ -222,16 +122,21 @@ function TemplateTree({
 }
 
 export default function TemplateScreen() {
-  const [templateMap, setTemplateMap] = useState(startingTemplateTree);
+  const [templateMap, setTemplateMap] = useState({});
+  const { template, reorderTemplate } = useWorkoutStore((state) => state);
+  const { exerciseMap } = useExerciseStore((state) => state);
+
+  console.log('Template:', template);
 
   return (
     <>
-      <View className="m-2 flex-1 justify-between border">
+      <View className="flex-1 justify-between border">
         <GestureHandlerRootView>
           <TemplateTree
-            templateMap={templateMap}
-            setTemplateMap={setTemplateMap}
-            templateChildren={[0]}
+            templateMap={template}
+            exerciseMap={exerciseMap}
+            reorderTemplate={reorderTemplate}
+            templateChildren={['0']}
             level={0}
           />
         </GestureHandlerRootView>

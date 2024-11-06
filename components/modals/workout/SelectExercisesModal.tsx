@@ -24,6 +24,7 @@ import { getAllChildrenIds } from '@/utils/utils';
 import MultiDropDown from '@/components/MultiDropDown';
 import { useFilterExerciseStore } from '@/store/filterExercises/filterExercisesStore';
 import { useGeneralStore } from '@/store/general/generalStore';
+import { useWorkoutStore } from '@/store/workout/workoutStore';
 
 type ExerciseListProps = {
   exerciseMap: ExerciseMap;
@@ -41,7 +42,10 @@ function ExerciseList({
   const { showActionSheetWithOptions } = useActionSheet();
   const openModal = useModalStore((state) => state.openModal);
   const router = useRouter();
-  const { pickedExercises, pushExerciseId, popExerciseId } = useGeneralStore(
+  // const { pickedExercises, pushExerciseId, popExerciseId } = useGeneralStore(
+  //   (state) => state,
+  // );
+  const { pickedExercises, pushExerciseId, popExerciseId } = useWorkoutStore(
     (state) => state,
   );
 
@@ -173,6 +177,7 @@ export default function SelectExercisesModal({
   modalData,
 }: SelectExercisesModalProps) {
   console.log('Render SelectExercisesModal');
+  const router = useRouter();
   const { exerciseMap, exercisesList, setter } = useExerciseStoreWithSetter();
   const { tagMap } = useTagStoreWithSetter();
 
@@ -207,7 +212,10 @@ export default function SelectExercisesModal({
     ];
   }
 
-  const { pickedExercises, clearExercises } = useGeneralStore((state) => state);
+  const { pickedExercises, template, clearExercises, addExercises } =
+    useWorkoutStore((state) => state);
+
+  console.log(template);
 
   return (
     <>
@@ -220,7 +228,14 @@ export default function SelectExercisesModal({
             </Pressable>
           ),
           headerRight: () => (
-            <Pressable className="border">
+            <Pressable
+              className="border"
+              onPress={() => {
+                addExercises(pickedExercises);
+                clearExercises();
+                router.back();
+              }}
+            >
               <Text>Add exercise(s)</Text>
             </Pressable>
           ),
