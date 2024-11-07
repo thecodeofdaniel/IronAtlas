@@ -42,7 +42,7 @@ function RowItem({ drag, getIndex, isActive, item, itemRefs }: RowItemProps) {
 
   return (
     <>
-      <ScaleDecorator>
+      <ScaleDecorator activeScale={1}>
         <SwipeableItem
           key={item.uuid}
           item={item}
