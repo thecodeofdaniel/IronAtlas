@@ -21,7 +21,7 @@ import SwipeableItem, {
 import Animated, { useAnimatedStyle } from 'react-native-reanimated';
 import { useActionSheet } from '@expo/react-native-action-sheet';
 import { useModalStore } from '@/store/modalStore';
-import { useRouter } from 'expo-router';
+import { Link, useRouter } from 'expo-router';
 
 type TemplateProps = {
   templateMap: TemplateMap;
@@ -99,35 +99,43 @@ function RowItem({ drag, getIndex, isActive, item, itemRefs }: RowItemProps) {
             />
           )}
         >
-          <TouchableOpacity
-            // onLongPress={level > 0 ? drag : undefined}
-            onLongPress={drag}
-            disabled={isActive}
-            activeOpacity={1}
-            className={clsx('my-[1] flex flex-row items-center', {
-              'bg-red-500': isActive,
-              'bg-blue-800': !isActive,
-            })}
+          <Link
+            href={{
+              pathname: '/(tabs)/workout/[uuid]',
+              params: { uuid: item.uuid },
+            }}
+            asChild
           >
-            <View className="flex flex-1 flex-row items-center justify-between">
-              <Text className="pl-2 text-white">
-                {item.exerciseId === null
-                  ? 'Superset'
-                  : exerciseMap[item.exerciseId].label}
-              </Text>
-              <Ionicons
-                name="ellipsis-horizontal"
-                size={24}
-                color={'white'}
-                style={{
-                  // borderColor: 'white', borderWidth: 2,
-                  padding: 4,
-                  opacity: isSuperset ? 1 : 0,
-                }}
-                onPress={isSuperset ? handleOnPress : () => {}}
-              />
-            </View>
-          </TouchableOpacity>
+            <TouchableOpacity
+              // onLongPress={level > 0 ? drag : undefined}
+              onLongPress={drag}
+              disabled={isActive}
+              activeOpacity={1}
+              className={clsx('my-[1] flex flex-row items-center', {
+                'bg-red-500': isActive,
+                'bg-blue-800': !isActive,
+              })}
+            >
+              <View className="flex flex-1 flex-row items-center justify-between">
+                <Text className="pl-2 text-white">
+                  {item.exerciseId === null
+                    ? 'Superset'
+                    : exerciseMap[item.exerciseId].label}
+                </Text>
+                <Ionicons
+                  name="ellipsis-horizontal"
+                  size={24}
+                  color={'white'}
+                  style={{
+                    // borderColor: 'white', borderWidth: 2,
+                    padding: 4,
+                    opacity: isSuperset ? 1 : 0,
+                  }}
+                  onPress={isSuperset ? handleOnPress : () => {}}
+                />
+              </View>
+            </TouchableOpacity>
+          </Link>
         </SwipeableItem>
       </ScaleDecorator>
     </>

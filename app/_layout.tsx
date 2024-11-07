@@ -64,7 +64,7 @@ function MigrateDB() {
 }
 
 function Init() {
-  console.log('Init function');
+  // console.log('Init function');
   useDrizzleStudio(expoDb);
   useInitializeStores();
 
@@ -72,7 +72,7 @@ function Init() {
     <ActionSheetProvider>
       <Stack>
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="modal" options={{presentation: 'modal'}} />
+        <Stack.Screen name="modal" options={{ presentation: 'modal' }} />
       </Stack>
     </ActionSheetProvider>
   );
