@@ -44,6 +44,7 @@ export default function WorkoutTab() {
             onPress={() => {
               openModal('selectExercises', {
                 isSuperset: false,
+                uuid: '0',
               });
               router.push('/modal');
             }}

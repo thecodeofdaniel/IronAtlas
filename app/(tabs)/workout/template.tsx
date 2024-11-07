@@ -59,7 +59,10 @@ function RowItem({ drag, getIndex, isActive, item, itemRefs }: RowItemProps) {
       async (selectedIndex?: number) => {
         switch (selectedIndex) {
           case 0:
-            openModal('selectExercises', { isSuperset: isSuperset });
+            openModal('selectExercises', {
+              isSuperset: isSuperset,
+              uuid: item.uuid,
+            });
             router.push('/modal');
             break;
           case cancelButtonIndex:

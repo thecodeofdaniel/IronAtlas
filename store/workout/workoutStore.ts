@@ -11,7 +11,7 @@ export type WorkoutStateFunctions = {
   pushExerciseId: (newPickedExercise: number) => void;
   popExerciseId: () => void;
   clearExercises: () => void;
-  addExercises: (exerciseIds: number[]) => void;
+  addExercises: (exerciseIds: number[], uuid?: string) => void;
   addSuperset: (exerciseIds: number[]) => void;
   reorderTemplate: (templateObjs: TemplateObj[]) => void;
   deleteExercise: (uuid: string) => void;
@@ -43,7 +43,7 @@ export const useWorkoutStore = create<WorkoutStore>((set) => ({
       }),
     ),
   clearExercises: () => set({ pickedExercises: [] }),
-  addExercises: (exerciseIds) =>
+  addExercises: (exerciseIds, uuid = '0') =>
     set(
       produce<WorkoutStore>((state) => {
         const newUUIDs: string[] = [];
@@ -58,13 +58,13 @@ export const useWorkoutStore = create<WorkoutStore>((set) => ({
             uuid: newUUID,
             sets: [],
             children: [],
-            parentId: '0',
+            parentId: uuid,
           });
         });
 
         // Add exerciseIds to root
-        state.template[0].children = [
-          ...state.template[0].children,
+        state.template[uuid].children = [
+          ...state.template[uuid].children,
           ...newUUIDs,
         ];
       }),

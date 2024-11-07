@@ -220,7 +220,6 @@ export default function SelectExercisesModal({
     addSuperset,
   } = useWorkoutStore((state) => state);
 
-  console.log(template);
   const isSuperset = modalData.isSuperset;
 
   return (
@@ -233,7 +232,7 @@ export default function SelectExercisesModal({
             else {
               return (
                 <Pressable
-                  disabled={isSuperset || pickedExercises.length < 2}
+                  disabled={pickedExercises.length < 2}
                   style={{
                     borderColor: 'black',
                     borderTopWidth: 1,
@@ -242,7 +241,7 @@ export default function SelectExercisesModal({
                     borderBottomWidth: 2,
                   }}
                   className={clsx('bg-blue-500 p-2 transition-opacity', {
-                    'opacity-45': isSuperset || pickedExercises.length < 2,
+                    'opacity-45': pickedExercises.length < 2,
                   })}
                   onPress={() => {
                     addSuperset(pickedExercises);
@@ -269,7 +268,8 @@ export default function SelectExercisesModal({
                 'opacity-45': pickedExercises.length < 1,
               })}
               onPress={() => {
-                addExercises(pickedExercises);
+                if (!isSuperset) addExercises(pickedExercises);
+                else addExercises(pickedExercises, modalData.uuid);
                 clearExercises();
                 router.back();
               }}
