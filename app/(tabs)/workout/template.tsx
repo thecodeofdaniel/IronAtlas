@@ -19,6 +19,7 @@ import SwipeableItem, {
   OpenDirection,
 } from 'react-native-swipeable-item';
 import Animated, { useAnimatedStyle } from 'react-native-reanimated';
+import { useActionSheet } from '@expo/react-native-action-sheet';
 
 type TemplateProps = {
   templateMap: TemplateMap;
@@ -39,6 +40,28 @@ type RowItemProps = {
 function RowItem({ drag, getIndex, isActive, item, itemRefs }: RowItemProps) {
   const exerciseMap = useExerciseStore((state) => state.exerciseMap);
   const deleteFromTemplate = useWorkoutStore((state) => state.deleteExercise);
+  const { showActionSheetWithOptions } = useActionSheet();
+  const isSuperset = item.children.length > 0;
+
+  const handleOnPress = () => {
+    const options = ['Add exercise to superset', 'Cancel'];
+    const cancelButtonIndex = options.length - 1;
+
+    showActionSheetWithOptions(
+      {
+        options,
+        cancelButtonIndex,
+      },
+      async (selectedIndex?: number) => {
+        switch (selectedIndex) {
+          case 0:
+            break;
+          case cancelButtonIndex:
+            break;
+        }
+      },
+    );
+  };
 
   return (
     <>
@@ -72,16 +95,29 @@ function RowItem({ drag, getIndex, isActive, item, itemRefs }: RowItemProps) {
             onLongPress={drag}
             disabled={isActive}
             activeOpacity={1}
-            className={clsx('my-[1] flex flex-row items-center p-2', {
+            className={clsx('my-[1] flex flex-row items-center', {
               'bg-red-500': isActive,
               'bg-blue-800': !isActive,
             })}
           >
-            <Text className="text-white">
-              {item.exerciseId === null
-                ? 'Superset'
-                : exerciseMap[item.exerciseId].label}
-            </Text>
+            <View className="flex flex-1 flex-row items-center justify-between">
+              <Text className="pl-2 text-white">
+                {item.exerciseId === null
+                  ? 'Superset'
+                  : exerciseMap[item.exerciseId].label}
+              </Text>
+              <Ionicons
+                name="ellipsis-horizontal"
+                size={24}
+                color={'white'}
+                style={{
+                  // borderColor: 'white', borderWidth: 2,
+                  padding: 4,
+                  opacity: isSuperset ? 1 : 0,
+                }}
+                onPress={isSuperset ? handleOnPress : () => {}}
+              />
+            </View>
           </TouchableOpacity>
         </SwipeableItem>
       </ScaleDecorator>
