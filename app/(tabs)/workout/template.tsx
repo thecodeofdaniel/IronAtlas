@@ -38,6 +38,7 @@ type RowItemProps = {
 
 function RowItem({ drag, getIndex, isActive, item, itemRefs }: RowItemProps) {
   const exerciseMap = useExerciseStore((state) => state.exerciseMap);
+  const deleteFromTemplate = useWorkoutStore((state) => state.deleteExercise);
 
   return (
     <>
@@ -60,7 +61,10 @@ function RowItem({ drag, getIndex, isActive, item, itemRefs }: RowItemProps) {
           overSwipe={20}
           snapPointsLeft={[100]}
           renderUnderlayLeft={() => (
-            <UnderlayLeft drag={drag} onPressDelete={() => {}} />
+            <UnderlayLeft
+              drag={drag}
+              onPressDelete={() => deleteFromTemplate(item.uuid)}
+            />
           )}
         >
           <TouchableOpacity

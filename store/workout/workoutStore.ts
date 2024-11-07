@@ -14,6 +14,7 @@ export type WorkoutStateFunctions = {
   addExercises: (exerciseIds: number[]) => void;
   addSuperset: (exerciseIds: number[]) => void;
   reorderTemplate: (templateObjs: TemplateObj[]) => void;
+  deleteExercise: (uuid: string) => void;
 };
 
 type WorkoutStore = WorkoutStateVal & WorkoutStateFunctions;
@@ -114,6 +115,33 @@ export const useWorkoutStore = create<WorkoutStore>((set) => ({
 
         // Parent id will never be null
         state.template[parentId!].children = updatedChildren;
+      }),
+    ),
+  deleteExercise: (uuid) =>
+    set(
+      produce<WorkoutStore>((state) => {
+        const parentUUID = state.template[uuid].parentId;
+        if (!parentUUID) return;
+
+        // Get the new order of exercises
+        const newExerciseOrder = state.template[parentUUID].children.filter(
+          (_uuid) => _uuid !== uuid,
+        );
+
+        state.template[parentUUID] = {
+          ...state.template[parentUUID],
+          children: newExerciseOrder,
+        };
+
+        // Check if superset
+        if (state.template[uuid].children.length > 0) {
+          // Delete the children
+          state.template[uuid].children.map(
+            (childUUID) => delete state.template[childUUID],
+          );
+        }
+
+        delete state.template[uuid];
       }),
     ),
 }));
