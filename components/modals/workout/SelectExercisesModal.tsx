@@ -221,35 +221,43 @@ export default function SelectExercisesModal({
   } = useWorkoutStore((state) => state);
 
   console.log(template);
+  const isSuperset = modalData.isSuperset;
 
   return (
     <>
       <Stack.Screen
         options={{
           title: 'Select',
-          headerLeft: () => (
-            <Pressable
-              style={{
-                borderColor: 'black',
-                borderTopWidth: 1,
-                borderLeftWidth: 1,
-                borderRightWidth: 2,
-                borderBottomWidth: 2,
-              }}
-              className={clsx('bg-blue-500 p-2 transition-opacity', {
-                'opacity-45': pickedExercises.length < 2,
-              })}
-              onPress={() => {
-                addSuperset(pickedExercises);
-                clearExercises();
-                router.back();
-              }}
-            >
-              <Text className="font-medium text-white">Add superset</Text>
-            </Pressable>
-          ),
+          headerLeft: () => {
+            if (isSuperset) return null;
+            else {
+              return (
+                <Pressable
+                  disabled={isSuperset || pickedExercises.length < 2}
+                  style={{
+                    borderColor: 'black',
+                    borderTopWidth: 1,
+                    borderLeftWidth: 1,
+                    borderRightWidth: 2,
+                    borderBottomWidth: 2,
+                  }}
+                  className={clsx('bg-blue-500 p-2 transition-opacity', {
+                    'opacity-45': isSuperset || pickedExercises.length < 2,
+                  })}
+                  onPress={() => {
+                    addSuperset(pickedExercises);
+                    clearExercises();
+                    router.back();
+                  }}
+                >
+                  <Text className="font-medium text-white">Add superset</Text>
+                </Pressable>
+              );
+            }
+          },
           headerRight: () => (
             <Pressable
+              disabled={pickedExercises.length < 1}
               style={{
                 borderColor: 'black',
                 borderTopWidth: 1,

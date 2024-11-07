@@ -20,6 +20,8 @@ import SwipeableItem, {
 } from 'react-native-swipeable-item';
 import Animated, { useAnimatedStyle } from 'react-native-reanimated';
 import { useActionSheet } from '@expo/react-native-action-sheet';
+import { useModalStore } from '@/store/modalStore';
+import { useRouter } from 'expo-router';
 
 type TemplateProps = {
   templateMap: TemplateMap;
@@ -42,6 +44,8 @@ function RowItem({ drag, getIndex, isActive, item, itemRefs }: RowItemProps) {
   const deleteFromTemplate = useWorkoutStore((state) => state.deleteExercise);
   const { showActionSheetWithOptions } = useActionSheet();
   const isSuperset = item.children.length > 0;
+  const openModal = useModalStore((state) => state.openModal);
+  const router = useRouter();
 
   const handleOnPress = () => {
     const options = ['Add exercise to superset', 'Cancel'];
@@ -55,6 +59,8 @@ function RowItem({ drag, getIndex, isActive, item, itemRefs }: RowItemProps) {
       async (selectedIndex?: number) => {
         switch (selectedIndex) {
           case 0:
+            openModal('selectExercises', { isSuperset: isSuperset });
+            router.push('/modal');
             break;
           case cancelButtonIndex:
             break;

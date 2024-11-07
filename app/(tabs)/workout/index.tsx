@@ -38,13 +38,12 @@ export default function WorkoutTab() {
         }}
       />
       <View className="m-2 flex flex-1 justify-between">
-          <TemplateScreen />
+        <TemplateScreen />
         <View className="flex flex-row gap-2">
           <Pressable
             onPress={() => {
               openModal('selectExercises', {
-                selectedTags,
-                setSelectedTags,
+                isSuperset: false,
               });
               router.push('/modal');
             }}

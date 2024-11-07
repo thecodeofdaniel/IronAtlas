@@ -14,8 +14,7 @@ export type ModalData = {
     pressedId: number;
   };
   selectExercises: {
-    selectedTags: string[];
-    setSelectedTags: React.Dispatch<React.SetStateAction<string[]>>;
+    isSuperset: boolean;
   };
 };
 
