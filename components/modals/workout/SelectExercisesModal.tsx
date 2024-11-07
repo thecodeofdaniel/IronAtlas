@@ -229,26 +229,44 @@ export default function SelectExercisesModal({
           title: 'Select',
           headerLeft: () => (
             <Pressable
-              className="border"
+              style={{
+                borderColor: 'black',
+                borderTopWidth: 1,
+                borderLeftWidth: 1,
+                borderRightWidth: 2,
+                borderBottomWidth: 2,
+              }}
+              className={clsx('bg-blue-500 p-2 transition-opacity', {
+                'opacity-45': pickedExercises.length < 2,
+              })}
               onPress={() => {
                 addSuperset(pickedExercises);
                 clearExercises();
                 router.back();
               }}
             >
-              <Text>Add superset</Text>
+              <Text className="font-medium text-white">Add superset</Text>
             </Pressable>
           ),
           headerRight: () => (
             <Pressable
-              className="border"
+              style={{
+                borderColor: 'black',
+                borderTopWidth: 1,
+                borderLeftWidth: 1,
+                borderRightWidth: 2,
+                borderBottomWidth: 2,
+              }}
+              className={clsx('bg-blue-500 p-2 transition-opacity', {
+                'opacity-45': pickedExercises.length < 1,
+              })}
               onPress={() => {
                 addExercises(pickedExercises);
                 clearExercises();
                 router.back();
               }}
             >
-              <Text>Add exercise(s)</Text>
+              <Text className="font-medium text-white">Add exercise(s)</Text>
             </Pressable>
           ),
         }}
