@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, Pressable } from 'react-native';
 import Popover, { PopoverPlacement } from 'react-native-popover-view';
-import { setsTableStyles as styles } from './setsTable';
+import { setsTableStyles as styles } from './setsTableStyles';
 import clsx from 'clsx';
 
 type Sett = {

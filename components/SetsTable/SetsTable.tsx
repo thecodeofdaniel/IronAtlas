@@ -13,7 +13,7 @@ import { generateId } from '@/utils/utils';
 import { TextInput } from 'react-native-gesture-handler';
 import clsx from 'clsx';
 import PopoverSetType from '@/components/SetsTable/PopoverSetType';
-import { setsTableStyles as styles } from './setsTable';
+import { setsTableStyles as styles } from './setsTableStyles';
 
 const OVERSWIPE_DIST = 20;
 

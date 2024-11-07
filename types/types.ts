@@ -24,6 +24,7 @@ type TagMap = {
 };
 
 type SettType = {
+  key: string;
   type: string;
   weight: string;
   reps: string;
