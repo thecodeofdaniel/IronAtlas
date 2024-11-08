@@ -60,7 +60,7 @@ export const useWorkoutStore = create<WorkoutStore>((set) => ({
           return (state.template[newUUID] = {
             exerciseId: exerciseId,
             uuid: newUUID,
-            sets: [],
+            sets: [{ key: Date.now(), type: 'N', weight: '', reps: '' }],
             children: [],
             parentId: uuid,
           });

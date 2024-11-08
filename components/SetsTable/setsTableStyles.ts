@@ -11,6 +11,7 @@ export const setsTableStyles = StyleSheet.create({
     width: 62,
     textAlign: 'center',
     borderRadius: 6,
+    // alignContent: 'center',
     // borderWidth: 2,
     // borderColor: 'blue',
   },
@@ -28,11 +29,10 @@ export const setsTableStyles = StyleSheet.create({
     // borderWidth: 2,
     // borderColor: 'blue',
   },
-  rpeWidth: {
-    width: 42,
-    textAlign: 'center',
-    borderRadius: 6,
-    // borderWidth: 2,
-    // borderColor: 'blue',
+  infoFontSize: {
+    fontSize: 16,
+  },
+  headerFontSize: {
+    fontSize: 16,
   },
 });

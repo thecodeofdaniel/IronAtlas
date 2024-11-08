@@ -39,12 +39,13 @@ export default function PopoverSetType({
       onRequestClose={() => setShowPopover(false)} // if the user clicks outside popover
       from={
         <Pressable
-          style={styles.setWidth}
+          style={[styles.weightWidth]}
           className="bg-stone-600"
           onPress={() => setShowPopover(true)}
         >
           <Text
-            className={clsx('text-center text-white', {
+            style={styles.infoFontSize}
+            className={clsx('text-center text-white p-1', {
               'text-yellow-500': item.type === 'W',
               'text-purple-500': item.type === 'D',
               'text-red-500': item.type === 'F',

@@ -10,15 +10,23 @@ import DraggableFlatList, {
   ScaleDecorator,
 } from 'react-native-draggable-flatlist';
 import { generateId } from '@/utils/utils';
-import { TextInput } from 'react-native-gesture-handler';
+import { ScrollView, TextInput } from 'react-native-gesture-handler';
 import clsx from 'clsx';
 import PopoverSetType from '@/components/SetsTable/PopoverSetType';
 import { setsTableStyles as styles } from './setsTableStyles';
 import { useWorkoutStore } from '@/store/workout/workoutStore';
+import { Link, Stack } from 'expo-router';
+import { Ionicons } from '@expo/vector-icons';
 
 const OVERSWIPE_DIST = 20;
 
-export default function TrackExercise({ uuid }: { uuid: string }) {
+export default function TrackExercise({
+  title,
+  uuid,
+}: {
+  title: string;
+  uuid: string;
+}) {
   const itemRefs = useRef(new Map());
   const { template, addSet, reorderSets, editSet } = useWorkoutStore(
     (state) => state,
@@ -58,34 +66,52 @@ export default function TrackExercise({ uuid }: { uuid: string }) {
     );
   };
 
-  // const handleSaveValues = () => {
-  //   setData((prev) =>
-  //     prev.map((set) => {
-  //       const weight = Number(set.weight);
-  //       const reps = Number(set.reps);
-
-  //       return {
-  //         ...set,
-  //         weight: (isNaN(weight) ? 0 : weight).toFixed(1).replace(/\.0$/, ''),
-  //         reps: (isNaN(reps) ? 0 : reps).toFixed(1).replace(/\.0$/, ''),
-  //       };
-  //     }),
-  //   );
-  // };
+  const renderHeader = () => {
+    return (
+      <View>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator
+          style={{ maxWidth: '100%' }}
+        >
+          <View className="mb-2 flex flex-row items-center">
+            {/* <Link
+              href={'../'}
+              asChild
+              // style={{ borderWidth: 2, borderColor: 'black' }}
+            >
+              <Ionicons name="chevron-back" size={32} style={{padding: 0}} />
+            </Link> */}
+            <Text className="text-4xl font-bold text-stone-700">{title}</Text>
+          </View>
+        </ScrollView>
+        <View className="flex flex-row justify-between rounded-t-lg bg-stone-600 p-2">
+          <Text
+            style={[styles.setWidth, styles.headerFontSize]}
+            className="font-medium text-white"
+          >
+            Type
+          </Text>
+          <Text
+            style={[styles.setWidth, styles.headerFontSize]}
+            className="font-medium text-white"
+          >
+            Weight
+          </Text>
+          <Text
+            style={[styles.setWidth, styles.headerFontSize]}
+            className="font-medium text-white"
+          >
+            Reps
+          </Text>
+        </View>
+      </View>
+    );
+  };
 
   return (
     <>
-      <View className="flex flex-row justify-between rounded-t-lg bg-stone-600 p-2">
-        <Text style={styles.setWidth} className="font-medium text-white">
-          Type
-        </Text>
-        <Text style={styles.weightWidth} className="font-medium text-white">
-          Weight
-        </Text>
-        <Text style={styles.repsWidth} className="font-medium text-white">
-          Reps
-        </Text>
-      </View>
+      <Stack.Screen options={{ headerBackTitle: 'Back' }} />
       <DraggableFlatList
         keyExtractor={(item) => item.key.toString()}
         data={template[uuid].sets}
@@ -94,7 +120,9 @@ export default function TrackExercise({ uuid }: { uuid: string }) {
           reorderSets(uuid, data);
         }}
         activationDistance={20}
+        ListHeaderComponent={renderHeader}
         ListFooterComponent={renderFooter}
+        // style={{ borderColor: 'red', borderWidth: 2 }}
       />
     </>
   );
@@ -163,8 +191,8 @@ function RowItem({
                 value={item.weight}
                 keyboardType="numeric"
                 returnKeyType="done"
-                style={styles.weightWidth}
-                className="rounded bg-stone-600 text-white"
+                style={[styles.weightWidth, styles.infoFontSize]}
+                className="rounded bg-stone-600 p-1 text-white"
                 onChangeText={(text) =>
                   editSet(uuid, index, { ...item, weight: text })
                 }
@@ -173,8 +201,8 @@ function RowItem({
                 value={item.reps}
                 keyboardType="numeric"
                 returnKeyType="done"
-                style={styles.repsWidth}
-                className="rounded bg-stone-600 text-white"
+                style={[styles.weightWidth, styles.infoFontSize]}
+                className="rounded bg-stone-600 p-1 text-white"
                 onChangeText={(text) =>
                   editSet(uuid, index, { ...item, reps: text })
                 }

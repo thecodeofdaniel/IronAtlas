@@ -4,7 +4,10 @@ import { Stack, useLocalSearchParams } from 'expo-router';
 import { useWorkoutStore } from '@/store/workout/workoutStore';
 import { useExerciseStore } from '@/store/exercise/exerciseStore';
 import SetsTable from '@/components/SetsTable/SetsTable';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import {
+  GestureHandlerRootView,
+  ScrollView,
+} from 'react-native-gesture-handler';
 
 export default function Exercise() {
   const { uuid } = useLocalSearchParams<{ uuid: string }>();
@@ -21,8 +24,16 @@ export default function Exercise() {
           title: title,
         }}
       />
-      <GestureHandlerRootView>
-        <SetsTable uuid={uuid} />
+      <GestureHandlerRootView
+        style={{
+          flex: 1,
+          // borderColor: 'black',
+          // borderWidth: 2,
+          justifyContent: 'center',
+          margin: 8,
+        }}
+      >
+        <SetsTable title={title} uuid={uuid} />
       </GestureHandlerRootView>
     </>
   );
