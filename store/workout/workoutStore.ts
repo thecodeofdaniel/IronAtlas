@@ -1,6 +1,7 @@
 import { produce } from 'immer';
 import { create } from 'zustand';
 import * as Crypto from 'expo-crypto';
+import { template } from '@babel/core';
 
 export type WorkoutStateVal = {
   template: TemplateMap;
@@ -15,6 +16,9 @@ export type WorkoutStateFunctions = {
   addSuperset: (exerciseIds: number[]) => void;
   reorderTemplate: (templateObjs: TemplateObj[]) => void;
   deleteExercise: (uuid: string) => void;
+  addSet: (uuid: string) => void;
+  editSet: (uuid: string, index: number, newSet: SettType) => void;
+  reorderSets: (uuid: string, sets: SettType[]) => void;
 };
 
 type WorkoutStore = WorkoutStateVal & WorkoutStateFunctions;
@@ -142,6 +146,40 @@ export const useWorkoutStore = create<WorkoutStore>((set) => ({
         }
 
         delete state.template[uuid];
+      }),
+    ),
+  addSet: (uuid) =>
+    set(
+      produce<WorkoutStore>((state) => {
+        const lastElementIdx = state.template[uuid].sets.length - 1;
+
+        if (lastElementIdx === -1) {
+          state.template[uuid].sets.push({
+            key: Date.now(),
+            type: 'N',
+            weight: '',
+            reps: '',
+          });
+        } else {
+          state.template[uuid].sets.push({
+            key: Date.now(),
+            type: state.template[uuid].sets[lastElementIdx].type,
+            weight: state.template[uuid].sets[lastElementIdx].weight,
+            reps: '',
+          });
+        }
+      }),
+    ),
+  reorderSets: (uuid, sets) =>
+    set(
+      produce<WorkoutStore>((state) => {
+        state.template[uuid].sets = sets;
+      }),
+    ),
+  editSet: (uuid, index, newSet) =>
+    set(
+      produce<WorkoutStore>((state) => {
+        state.template[uuid].sets[index] = newSet;
       }),
     ),
 }));

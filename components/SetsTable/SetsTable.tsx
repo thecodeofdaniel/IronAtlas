@@ -14,79 +14,40 @@ import { TextInput } from 'react-native-gesture-handler';
 import clsx from 'clsx';
 import PopoverSetType from '@/components/SetsTable/PopoverSetType';
 import { setsTableStyles as styles } from './setsTableStyles';
+import { useWorkoutStore } from '@/store/workout/workoutStore';
 
 const OVERSWIPE_DIST = 20;
 
-type Sett = {
-  key: string;
-  weight: string;
-  reps: string;
-  rpe: string;
-  type: string;
-};
-
-const initialSetData = [
-  { key: generateId(), weight: '225', reps: '6', rpe: '8', type: 'N' },
-  { key: generateId(), weight: '225', reps: '4', rpe: '8', type: 'N' },
-  { key: generateId(), weight: '225', reps: '4', rpe: '8', type: 'N' },
-];
-
-export default function TrackExercise() {
-  console.log('Render TrackExercise');
-  const [data, setData] = useState<Sett[]>(initialSetData);
+export default function TrackExercise({ uuid }: { uuid: string }) {
   const itemRefs = useRef(new Map());
+  const { template, addSet, reorderSets, editSet } = useWorkoutStore(
+    (state) => state,
+  );
 
-  const renderItem = (params: RenderItemParams<Sett>) => {
+  const renderItem = (params: RenderItemParams<SettType>) => {
     const onPressDelete = () => {
-      setData((prev) => prev.filter((item) => item !== params.item));
+      const newSets = template[uuid].sets.filter(
+        (set) => set.key !== params.item.key,
+      );
+      reorderSets(uuid, newSets);
     };
 
     return (
       <RowItem
         {...params}
-        setData={setData}
         itemRefs={itemRefs}
+        uuid={uuid}
+        editSet={editSet}
         onPressDelete={onPressDelete}
       />
     );
-  };
-
-  const handleAddSet = () => {
-    setData((prev) => {
-      const lastElemIdx = prev.length - 1;
-
-      // If this is the first set
-      if (lastElemIdx === -1) {
-        return [
-          ...prev,
-          {
-            key: generateId(),
-            weight: '',
-            reps: '',
-            rpe: '',
-            type: 'N',
-          },
-        ];
-      }
-
-      return [
-        ...prev,
-        {
-          key: generateId(),
-          weight: prev[lastElemIdx].weight,
-          reps: '',
-          rpe: '',
-          type: prev[lastElemIdx].type,
-        },
-      ];
-    });
   };
 
   // Footer component that includes the Add Set button
   const renderFooter = () => {
     return (
       <Pressable
-        onPress={handleAddSet}
+        onPress={() => addSet(uuid)}
         style={styles.shadow}
         className="mb-10 mt-2 rounded-md bg-red-500 p-4"
       >
@@ -97,22 +58,20 @@ export default function TrackExercise() {
     );
   };
 
-  const handleSaveValues = () => {
-    setData((prev) =>
-      prev.map((set) => {
-        const weight = Number(set.weight);
-        const reps = Number(set.reps);
-        const rpe = Number(set.rpe);
+  // const handleSaveValues = () => {
+  //   setData((prev) =>
+  //     prev.map((set) => {
+  //       const weight = Number(set.weight);
+  //       const reps = Number(set.reps);
 
-        return {
-          ...set,
-          weight: (isNaN(weight) ? 0 : weight).toFixed(1).replace(/\.0$/, ''),
-          reps: (isNaN(reps) ? 0 : reps).toFixed(1).replace(/\.0$/, ''),
-          rpe: (isNaN(rpe) ? 0 : rpe).toFixed(1).replace(/\.0$/, ''),
-        };
-      }),
-    );
-  };
+  //       return {
+  //         ...set,
+  //         weight: (isNaN(weight) ? 0 : weight).toFixed(1).replace(/\.0$/, ''),
+  //         reps: (isNaN(reps) ? 0 : reps).toFixed(1).replace(/\.0$/, ''),
+  //       };
+  //     }),
+  //   );
+  // };
 
   return (
     <>
@@ -126,25 +85,17 @@ export default function TrackExercise() {
         <Text style={styles.repsWidth} className="font-medium text-white">
           Reps
         </Text>
-        {/* <Text style={styles.rpeWidth} className="font-medium text-white">
-          RPE
-        </Text> */}
       </View>
       <DraggableFlatList
-        keyExtractor={(item) => item.key}
-        data={data}
+        keyExtractor={(item) => item.key.toString()}
+        data={template[uuid].sets}
         renderItem={renderItem}
         onDragEnd={({ data }) => {
-          setData(data);
+          reorderSets(uuid, data);
         }}
         activationDistance={20}
         ListFooterComponent={renderFooter}
       />
-      <Pressable className="bg-green-500 p-4" onPress={handleSaveValues}>
-        <Text className="text-center text-xl font-medium text-white">
-          Save values
-        </Text>
-      </Pressable>
     </>
   );
 }
@@ -152,9 +103,10 @@ export default function TrackExercise() {
 type RowItemProps = {
   drag: () => void;
   getIndex: () => number | undefined;
-  item: Sett;
-  setData: React.Dispatch<React.SetStateAction<Sett[]>>;
+  item: SettType;
   itemRefs: React.MutableRefObject<Map<any, any>>;
+  uuid: string;
+  editSet: (uuid: string, index: number, newSet: SettType) => void;
   onPressDelete: () => void;
 };
 
@@ -162,8 +114,9 @@ function RowItem({
   drag,
   getIndex,
   item,
-  setData,
   itemRefs,
+  uuid,
+  editSet,
   onPressDelete,
 }: RowItemProps) {
   const index = getIndex()!;
@@ -200,20 +153,21 @@ function RowItem({
             )}
           >
             <View className="flex flex-1 flex-row justify-between">
-              <PopoverSetType item={item} setData={setData} />
+              <PopoverSetType
+                uuid={uuid}
+                item={item}
+                index={index}
+                editSet={editSet}
+              />
               <TextInput
                 value={item.weight}
                 keyboardType="numeric"
                 returnKeyType="done"
                 style={styles.weightWidth}
                 className="rounded bg-stone-600 text-white"
-                onChangeText={(text) => {
-                  setData((prev) => {
-                    return prev.map((i) =>
-                      i.key === item.key ? { ...item, weight: text } : i,
-                    );
-                  });
-                }}
+                onChangeText={(text) =>
+                  editSet(uuid, index, { ...item, weight: text })
+                }
               />
               <TextInput
                 value={item.reps}
@@ -221,28 +175,10 @@ function RowItem({
                 returnKeyType="done"
                 style={styles.repsWidth}
                 className="rounded bg-stone-600 text-white"
-                onChangeText={(text) => {
-                  setData((prev) => {
-                    return prev.map((i) =>
-                      i.key === item.key ? { ...item, reps: text } : i,
-                    );
-                  });
-                }}
+                onChangeText={(text) =>
+                  editSet(uuid, index, { ...item, reps: text })
+                }
               />
-              {/* <TextInput
-                value={item.rpe}
-                keyboardType="numeric"
-                returnKeyType="done"
-                style={styles.rpeWidth}
-                className="rounded bg-stone-600 text-white"
-                onChangeText={(text) => {
-                  setData((prev) => {
-                    return prev.map((i) =>
-                      i.key === item.key ? { ...item, rpe: text } : i,
-                    );
-                  });
-                }}
-              /> */}
             </View>
           </TouchableOpacity>
         </SwipeableItem>
@@ -258,7 +194,7 @@ const UnderlayLeft = ({
   drag: () => void;
   onPressDelete: () => void;
 }) => {
-  const { item, percentOpen } = useSwipeableItemParams<Sett>();
+  const { item, percentOpen } = useSwipeableItemParams<SettType>();
   const animStyle = useAnimatedStyle(
     () => ({
       opacity: percentOpen.value,
@@ -268,7 +204,6 @@ const UnderlayLeft = ({
 
   return (
     <Animated.View
-      // style={[styles.row, styles.underlayLeft, animStyle]} // Fade in on open
       style={[animStyle]}
       className="flex-1 flex-row items-center justify-end bg-red-500 pr-4"
     >

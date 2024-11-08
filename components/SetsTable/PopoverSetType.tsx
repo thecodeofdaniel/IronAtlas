@@ -13,19 +13,22 @@ type Sett = {
 };
 
 type PopoverSetTypeProps = {
-  item: Sett;
-  setData: React.Dispatch<React.SetStateAction<Sett[]>>;
+  uuid: string;
+  item: SettType;
+  index: number;
+  editSet: (uuid: string, index: number, newSet: SettType) => void;
 };
 
-export default function PopoverSetType({ item, setData }: PopoverSetTypeProps) {
+export default function PopoverSetType({
+  uuid,
+  item,
+  index,
+  editSet,
+}: PopoverSetTypeProps) {
   const [showPopover, setShowPopover] = useState(false);
 
   const updateType = (typeLetter: string) => {
-    setData((prev) => {
-      return prev.map((i) =>
-        i.key === item.key ? { ...item, type: typeLetter } : i,
-      );
-    });
+    editSet(uuid, index, { ...item, type: typeLetter });
     setShowPopover(false);
   };
 

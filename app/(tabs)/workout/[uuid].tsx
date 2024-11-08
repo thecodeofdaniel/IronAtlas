@@ -22,7 +22,7 @@ export default function Exercise() {
         }}
       />
       <GestureHandlerRootView>
-        <SetsTable />
+        <SetsTable uuid={uuid} />
       </GestureHandlerRootView>
     </>
   );
