@@ -1,16 +1,15 @@
 import { produce } from 'immer';
 import { create } from 'zustand';
 import * as Crypto from 'expo-crypto';
-import { template } from '@babel/core';
 
 export type WorkoutStateVal = {
   template: TemplateMap;
   pickedExercises: number[];
+  pickedExercisesSet: Set<number>;
 };
 
 export type WorkoutStateFunctions = {
-  pushExerciseId: (newPickedExercise: number) => void;
-  popExerciseId: () => void;
+  pickExercise: (id: number) => void;
   clearExercises: () => void;
   addExercises: (exerciseIds: number[], uuid?: string) => void;
   addSuperset: (exerciseIds: number[]) => void;
@@ -34,19 +33,21 @@ export const useWorkoutStore = create<WorkoutStore>((set) => ({
     },
   },
   pickedExercises: [],
-  pushExerciseId: (newPickedExercise) =>
-    set(
-      produce<WorkoutStore>((state) => {
-        state.pickedExercises.push(newPickedExercise);
-      }),
-    ),
-  popExerciseId: () =>
-    set(
-      produce<WorkoutStore>((state) => {
-        state.pickedExercises.pop();
-      }),
-    ),
-  clearExercises: () => set({ pickedExercises: [] }),
+  pickedExercisesSet: new Set(),
+  // pushExerciseId: (newPickedExercise) =>
+  //   set(
+  //     produce<WorkoutStore>((state) => {
+  //       state.pickedExercises.push(newPickedExercise);
+  //     }),
+  //   ),
+  // popExerciseId: () =>
+  //   set(
+  //     produce<WorkoutStore>((state) => {
+  //       state.pickedExercises.pop();
+  //     }),
+  //   ),
+  clearExercises: () =>
+    set({ pickedExercises: [], pickedExercisesSet: new Set() }),
   addExercises: (exerciseIds, uuid = '0') =>
     set(
       produce<WorkoutStore>((state) => {
@@ -180,6 +181,25 @@ export const useWorkoutStore = create<WorkoutStore>((set) => ({
     set(
       produce<WorkoutStore>((state) => {
         state.template[uuid].sets[index] = newSet;
+      }),
+    ),
+  pickExercise: (id) =>
+    set(
+      produce<WorkoutStore>((state) => {
+        // If exercise exists in set then remove from array
+        if (state.pickedExercisesSet.has(id)) {
+          const newPickedOrder = state.pickedExercises.filter(
+            (_id) => _id !== id,
+          );
+
+          state.pickedExercises = newPickedOrder;
+          state.pickedExercisesSet.delete(id);
+        }
+        // Otherwise append id onto array
+        else {
+          state.pickedExercises.push(id);
+          state.pickedExercisesSet.add(id);
+        }
       }),
     ),
 }));

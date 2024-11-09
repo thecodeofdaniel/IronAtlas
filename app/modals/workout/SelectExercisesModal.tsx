@@ -1,51 +1,26 @@
 import { db } from '@/db/instance';
-import {
-  ExerciseStateFunctions,
-  useExerciseStoreWithSetter,
-} from '@/store/exercise/exerciseStore';
-import { ModalData, useModalStore } from '@/store/modalStore';
-import {
-  useTagStoreWithSetter,
-  type TagStateFunctions,
-} from '@/store/tag/tagStore';
-import { useActionSheet } from '@expo/react-native-action-sheet';
-import { Ionicons } from '@expo/vector-icons';
+import { useExerciseStoreWithSetter } from '@/store/exercise/exerciseStore';
+import { ModalData } from '@/store/modalStore';
+import { useTagStoreWithSetter } from '@/store/tag/tagStore';
+
 import clsx from 'clsx';
 import { Stack, useRouter } from 'expo-router';
-import React, { useMemo, useState } from 'react';
-import { View, Text, TouchableOpacity, Pressable } from 'react-native';
-import DraggableFlatList, {
-  RenderItemParams,
-} from 'react-native-draggable-flatlist';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import React, { useMemo } from 'react';
+import { View, Text, Pressable, FlatList } from 'react-native';
 import * as schema from '@/db/schema';
 import { asc, eq, inArray } from 'drizzle-orm';
 import { getAllChildrenIds } from '@/utils/utils';
 import MultiDropDown from '@/components/MultiDropDown';
 import { useFilterExerciseStore } from '@/store/filterExercises/filterExercisesStore';
-import { useGeneralStore } from '@/store/general/generalStore';
 import { useWorkoutStore } from '@/store/workout/workoutStore';
 
 type ExerciseListProps = {
   exerciseMap: ExerciseMap;
   exerciseList: number[];
-  exerciseSetter: ExerciseStateFunctions;
-  isDraggable: boolean;
 };
 
-function ExerciseList({
-  exerciseMap,
-  exerciseList,
-  exerciseSetter,
-  isDraggable,
-}: ExerciseListProps) {
-  const { showActionSheetWithOptions } = useActionSheet();
-  const openModal = useModalStore((state) => state.openModal);
-  const router = useRouter();
-  // const { pickedExercises, pushExerciseId, popExerciseId } = useGeneralStore(
-  //   (state) => state,
-  // );
-  const { pickedExercises, pushExerciseId, popExerciseId } = useWorkoutStore(
+function ExerciseList({ exerciseMap, exerciseList }: ExerciseListProps) {
+  const { pickedExercises, pickedExercisesSet, pickExercise } = useWorkoutStore(
     (state) => state,
   );
 
@@ -58,45 +33,12 @@ function ExerciseList({
     [exerciseList, exerciseMap],
   );
 
-  const handleOnPress = (exercise: Exercise) => {
-    const options = ['Delete', 'Edit', 'Cancel'];
-    const destructiveButtonIndex = 0;
-    const cancelButtonIndex = options.length - 1;
+  const renderItem = ({ item: exercise }: { item: Exercise }) => {
+    const isInArray = pickedExercisesSet.has(exercise.id);
+    let pickedExercisePlace;
 
-    showActionSheetWithOptions(
-      {
-        options,
-        cancelButtonIndex,
-        destructiveButtonIndex,
-      },
-      async (selectedIndex?: number) => {
-        switch (selectedIndex) {
-          case destructiveButtonIndex:
-            exerciseSetter.deleteExercise(exercise.id);
-            break;
-          case 1:
-            openModal('upsertExercise', {
-              id: exercise.id,
-            });
-            router.push('/modal');
-            break;
-          case cancelButtonIndex:
-            break;
-        }
-      },
-    );
-  };
-
-  const renderItem = ({
-    item: exercise,
-    drag,
-    isActive,
-    getIndex,
-  }: RenderItemParams<Exercise>) => {
-    const index = getIndex()!;
-
-    const pickedExercisePlace = pickedExercises.indexOf(exercise.id) + 1;
-    const pickedExercisesLen = pickedExercises.length;
+    if (isInArray)
+      pickedExercisePlace = pickedExercises.indexOf(exercise.id) + 1;
 
     let indicator = 'th';
 
@@ -108,43 +50,23 @@ function ExerciseList({
       indicator = 'rd';
     }
 
-    // const isIncluded = pickedExercises.includes(exercise.id);
-    // const isTopOfStack = pickedExercises.at(-1) === exercise.id;
-
-    const isIncluded = pickedExercisePlace !== 0;
-    const isTopOfStack =
-      pickedExercisesLen > 0 && pickedExercisePlace === pickedExercisesLen;
-
     return (
       <Pressable
         onPress={() => {
-          if (!isIncluded) pushExerciseId(exercise.id);
-          if (isTopOfStack) popExerciseId();
+          pickExercise(exercise.id);
         }}
-        // activeOpacity={1}
-        // onLongPress={isDraggable ? drag : undefined}
-        // disabled={isActive}
         className={clsx('my-[1] flex flex-row bg-blue-500 p-2', {
-          'bg-red-200': isIncluded,
-          'bg-red-500': isTopOfStack,
+          'bg-red-500': isInArray,
         })}
       >
         <View className="flex flex-1 flex-row justify-between">
           <Text className="text-white">{exercise.label}</Text>
-          {pickedExercisePlace > 0 && (
+          {pickedExercisePlace && (
             <Text className="text-white">
               {pickedExercisePlace}
               {indicator}
             </Text>
           )}
-
-          {/* <TouchableOpacity onPress={() => handleOnPress(exercise)}>
-            <Ionicons
-              name="ellipsis-horizontal-outline"
-              color="white"
-              size={24}
-            />
-          </TouchableOpacity> */}
         </View>
       </Pressable>
     );
@@ -152,18 +74,11 @@ function ExerciseList({
 
   return (
     <View className="flex-1">
-      <GestureHandlerRootView>
-        <DraggableFlatList
-          data={exercises}
-          onDragEnd={({ data }) => {
-            // Convert Exercise objects back to ID array when updating store
-            const newOrder = data.map((exercise) => exercise.id);
-            exerciseSetter.updateExerciseList(newOrder);
-          }}
-          keyExtractor={(exercise) => exercise.id.toString()}
-          renderItem={renderItem}
-        />
-      </GestureHandlerRootView>
+      <FlatList
+        data={exercises}
+        keyExtractor={(exercise) => exercise.id.toString()}
+        renderItem={renderItem}
+      />
     </View>
   );
 }
@@ -176,11 +91,11 @@ type SelectExercisesModalProps = {
 export default function SelectExercisesModal({
   modalData,
 }: SelectExercisesModalProps) {
-  console.log('Render SelectExercisesModal');
-  const router = useRouter();
-  const { exerciseMap, exercisesList, setter } = useExerciseStoreWithSetter();
-  const { tagMap } = useTagStoreWithSetter();
+  const isSuperset = modalData.isSuperset;
 
+  const router = useRouter();
+  const { exerciseMap, exercisesList } = useExerciseStoreWithSetter();
+  const { tagMap } = useTagStoreWithSetter();
   const selectedTags = useFilterExerciseStore((state) => state.selectedTags);
 
   let filteredExercises = exercisesList;
@@ -212,15 +127,8 @@ export default function SelectExercisesModal({
     ];
   }
 
-  const {
-    pickedExercises,
-    template,
-    clearExercises,
-    addExercises,
-    addSuperset,
-  } = useWorkoutStore((state) => state);
-
-  const isSuperset = modalData.isSuperset;
+  const { pickedExercises, clearExercises, addExercises, addSuperset } =
+    useWorkoutStore((state) => state);
 
   return (
     <>
@@ -280,12 +188,6 @@ export default function SelectExercisesModal({
         }}
       />
       <View className="m-2 flex flex-1 flex-col gap-2">
-        <Pressable onPress={clearExercises}>
-          <Text>Clear stack</Text>
-        </Pressable>
-        <View>
-          <Text>{JSON.stringify(pickedExercises)}</Text>
-        </View>
         <MultiDropDown />
         {filteredExercises.length === 0 ? (
           <View>
@@ -295,8 +197,6 @@ export default function SelectExercisesModal({
           <ExerciseList
             exerciseMap={exerciseMap}
             exerciseList={filteredExercises}
-            exerciseSetter={setter}
-            isDraggable={exercisesList.length === filteredExercises.length}
           />
         )}
       </View>
