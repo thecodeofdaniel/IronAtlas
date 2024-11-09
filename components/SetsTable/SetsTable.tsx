@@ -20,17 +20,19 @@ import { Ionicons } from '@expo/vector-icons';
 
 const OVERSWIPE_DIST = 20;
 
-export default function TrackExercise({
-  title,
-  uuid,
-}: {
+type Props = {
   title: string;
   uuid: string;
-}) {
+};
+
+export default function SetsTable({ title, uuid }: Props) {
   const itemRefs = useRef(new Map());
   const { template, addSet, reorderSets, editSet } = useWorkoutStore(
     (state) => state,
   );
+
+  const parentUUID = template[uuid].parentId!;
+  const isSuperset = parentUUID !== '0';
 
   const renderItem = (params: RenderItemParams<SettType>) => {
     const onPressDelete = () => {
@@ -51,18 +53,111 @@ export default function TrackExercise({
     );
   };
 
+  if (template[uuid].children.length > 0) {
+    console.log('There are siblings');
+    const parentUUID = template[uuid].parentId;
+    console.log(template[parentUUID!].children.indexOf(uuid));
+  } else {
+    console.log('Single exercise');
+  }
+
   // Footer component that includes the Add Set button
   const renderFooter = () => {
+    const superSetLength = template[parentUUID].children.length;
+    const index = template[parentUUID].children.indexOf(uuid);
+
     return (
-      <Pressable
-        onPress={() => addSet(uuid)}
-        style={styles.shadow}
-        className="mb-10 mt-2 rounded-md bg-red-500 p-4"
-      >
-        <Text className="text-center text-xl font-medium text-white shadow-lg">
-          Add set
-        </Text>
-      </Pressable>
+      <>
+        {/* <Pressable
+            onPress={() => addSet(uuid)}
+            style={styles.shadow}
+            className="mb-10 mt-2 rounded-md bg-red-500 p-4"
+          >
+            <Text className="text-center text-xl font-medium text-white shadow-lg">
+              Add set
+            </Text>
+          </Pressable> */}
+        <View
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            // paddingHorizontal: 16,
+            paddingVertical: 8,
+            borderWidth: 2,
+            borderColor: 'black',
+            // gap: 8,
+          }}
+        >
+          {isSuperset && index !== 0 && (
+            <>
+              {/* <Stack.Screen
+                options={{
+                  // animation: 'slide_from_left',
+                  animation: 'fade_from_bottom',
+                  presentation: 'card',
+                }}
+              /> */}
+              <Link
+                href={{
+                  // pathname: '../',
+                  pathname: '/(tabs)/workout/[uuid]',
+                  params: { uuid: template[parentUUID].children[index - 1] },
+                }}
+                asChild
+              >
+                <Pressable>
+                  <Ionicons
+                    name="chevron-back"
+                    color="black"
+                    size={24}
+                    style={{
+                      paddingHorizontal: 16,
+                      // borderColor: 'black',
+                      // borderWidth: 2,
+                    }}
+                  />
+                </Pressable>
+              </Link>
+            </>
+          )}
+          <Pressable
+            onPress={() => addSet(uuid)}
+            style={styles.shadow}
+            className="flex-1 rounded-md bg-red-500 p-4"
+          >
+            <Text className="text-center text-xl font-medium text-white shadow-lg">
+              Add set
+            </Text>
+          </Pressable>
+          {isSuperset && index !== superSetLength - 1 && (
+            <>
+              {/* <Stack.Screen
+                options={{
+                  animation: 'slide_from_right',
+                  presentation: 'card',
+                }}
+              /> */}
+              <Link
+                href={{
+                  pathname: '/(tabs)/workout/[uuid]',
+                  params: { uuid: template[parentUUID].children[index + 1] },
+                }}
+                asChild
+              >
+                <Pressable>
+                  <Ionicons
+                    name="chevron-forward"
+                    size={24}
+                    color="black"
+                    style={{ paddingHorizontal: 16 }}
+                  />
+                </Pressable>
+              </Link>
+            </>
+          )}
+        </View>
+      </>
     );
   };
 
@@ -72,7 +167,7 @@ export default function TrackExercise({
         <ScrollView
           horizontal
           showsHorizontalScrollIndicator
-          style={{ maxWidth: '100%' }}
+          // style={{ maxWidth: '100%' }}
         >
           <View className="mb-2 flex flex-row items-center">
             {/* <Link
@@ -111,7 +206,14 @@ export default function TrackExercise({
 
   return (
     <>
-      <Stack.Screen options={{ headerBackTitle: 'Back' }} />
+      <Stack.Screen
+        options={{
+          // animation: 'fade',
+          // animation: 'simple_push',
+          animation: isSuperset ? 'fade' : 'default',
+          // presentation: 'card',
+        }}
+      />
       <DraggableFlatList
         keyExtractor={(item) => item.key.toString()}
         data={template[uuid].sets}
@@ -122,7 +224,7 @@ export default function TrackExercise({
         activationDistance={20}
         ListHeaderComponent={renderHeader}
         ListFooterComponent={renderFooter}
-        // style={{ borderColor: 'red', borderWidth: 2 }}
+        style={{ borderColor: 'red', borderWidth: 2 }}
       />
     </>
   );
