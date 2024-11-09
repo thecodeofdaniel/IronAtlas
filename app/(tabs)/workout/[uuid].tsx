@@ -8,13 +8,14 @@ import {
   GestureHandlerRootView,
   ScrollView,
 } from 'react-native-gesture-handler';
+import CarouselComp from '@/components/Carousel';
 
 export default function Exercise() {
   const { uuid } = useLocalSearchParams<{ uuid: string }>();
   const { template } = useWorkoutStore((state) => state);
   const { exerciseMap } = useExerciseStore((state) => state);
 
-  const exerciseId = template[uuid].exerciseId;
+  const exerciseId = template[uuid].exerciseId; // if null, then superset
   const title = exerciseId ? exerciseMap[exerciseId].label : 'Superset';
 
   return (
@@ -33,7 +34,12 @@ export default function Exercise() {
           margin: 8,
         }}
       >
-        <SetsTable title={title} uuid={uuid} />
+        {/* {exerciseId ? (
+          <SetsTable title={title} uuid={uuid} />
+        ) : (
+          <CarouselComp uuids={template[uuid].children} />
+        )} */}
+        <SetsTable uuid={uuid} title={title} />
       </GestureHandlerRootView>
     </>
   );
