@@ -34,18 +34,25 @@ export const useWorkoutStore = create<WorkoutStore>((set) => ({
   },
   pickedExercises: [],
   pickedExercisesSet: new Set(),
-  // pushExerciseId: (newPickedExercise) =>
-  //   set(
-  //     produce<WorkoutStore>((state) => {
-  //       state.pickedExercises.push(newPickedExercise);
-  //     }),
-  //   ),
-  // popExerciseId: () =>
-  //   set(
-  //     produce<WorkoutStore>((state) => {
-  //       state.pickedExercises.pop();
-  //     }),
-  //   ),
+  pickExercise: (id) =>
+    set(
+      produce<WorkoutStore>((state) => {
+        // If exercise exists in set then remove from array
+        if (state.pickedExercisesSet.has(id)) {
+          const newPickedOrder = state.pickedExercises.filter(
+            (_id) => _id !== id,
+          );
+
+          state.pickedExercises = newPickedOrder;
+          state.pickedExercisesSet.delete(id);
+        }
+        // Otherwise append id onto array
+        else {
+          state.pickedExercises.push(id);
+          state.pickedExercisesSet.add(id);
+        }
+      }),
+    ),
   clearExercises: () =>
     set({ pickedExercises: [], pickedExercisesSet: new Set() }),
   addExercises: (exerciseIds, uuid = '0') =>
@@ -67,7 +74,7 @@ export const useWorkoutStore = create<WorkoutStore>((set) => ({
           });
         });
 
-        // Add exerciseIds to root
+        // Add exerciseIds to parent
         state.template[uuid].children = [
           ...state.template[uuid].children,
           ...newUUIDs,
@@ -90,7 +97,7 @@ export const useWorkoutStore = create<WorkoutStore>((set) => ({
           return (state.template[newUUID] = {
             exerciseId: exerciseId,
             uuid: newUUID,
-            sets: [],
+            sets: [{ key: Date.now(), type: 'N', weight: '', reps: '' }],
             children: [],
             parentId: parentUUID,
           });
@@ -181,25 +188,6 @@ export const useWorkoutStore = create<WorkoutStore>((set) => ({
     set(
       produce<WorkoutStore>((state) => {
         state.template[uuid].sets[index] = newSet;
-      }),
-    ),
-  pickExercise: (id) =>
-    set(
-      produce<WorkoutStore>((state) => {
-        // If exercise exists in set then remove from array
-        if (state.pickedExercisesSet.has(id)) {
-          const newPickedOrder = state.pickedExercises.filter(
-            (_id) => _id !== id,
-          );
-
-          state.pickedExercises = newPickedOrder;
-          state.pickedExercisesSet.delete(id);
-        }
-        // Otherwise append id onto array
-        else {
-          state.pickedExercises.push(id);
-          state.pickedExercisesSet.add(id);
-        }
       }),
     ),
 }));
