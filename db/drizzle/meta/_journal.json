@@ -8,6 +8,13 @@
       "when": 1729737760556,
       "tag": "0000_overrated_captain_cross",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1731243319531,
+      "tag": "0001_wandering_tinkerer",
+      "breakpoints": true
     }
   ]
 }
