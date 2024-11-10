@@ -1,20 +1,14 @@
-import { View, Text, Pressable } from 'react-native';
+import { Text } from 'react-native';
 import React, { useEffect, useState } from 'react';
-import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
+import { Stack, useLocalSearchParams } from 'expo-router';
 import { useWorkoutStore } from '@/store/workout/workoutStore';
 import { useExerciseStore } from '@/store/exercise/exerciseStore';
 import SetsTable from '@/components/SetsTable/SetsTable';
-import {
-  GestureHandlerRootView,
-  ScrollView,
-} from 'react-native-gesture-handler';
-import CarouselComp from '@/components/Carousel';
-import { Ionicons } from '@expo/vector-icons';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import Animated, {
   useAnimatedStyle,
   withTiming,
   useSharedValue,
-  withSpring,
 } from 'react-native-reanimated';
 
 export default function Exercise() {
