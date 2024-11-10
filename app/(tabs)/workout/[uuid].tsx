@@ -18,46 +18,31 @@ import Animated, {
 } from 'react-native-reanimated';
 
 export default function Exercise() {
+  console.log('Render Exercise');
   const { uuid: uuid_param } = useLocalSearchParams<{ uuid: string }>();
-  const router = useRouter();
   const { template } = useWorkoutStore((state) => state);
   const { exerciseMap } = useExerciseStore((state) => state);
-  const parentUUID = template[uuid_param].parentId!;
-  const superSetLength = template[parentUUID].children.length;
 
+  const parentUUID = template[uuid_param].parentId!;
   const isSuperset = template[uuid_param].children.length > 0;
   const isPartOfSuperset = parentUUID !== '0';
 
   const [index, setIndex] = useState(() => {
-    let rtn = null;
+    if (isSuperset) return 0;
 
-    if (isSuperset) {
-      rtn = 0;
-    }
+    if (isPartOfSuperset)
+      return template[parentUUID].children.indexOf(uuid_param);
 
-    if (isPartOfSuperset) {
-      const superSetIndex = template[parentUUID].children.indexOf(uuid_param);
-      rtn = superSetIndex;
-    }
-
-    console.log('Rtn value', rtn);
-
-    return rtn;
+    return null;
   });
 
   // Create shared values for the animation
-  const translateX = useSharedValue(0);
   const opacity = useSharedValue(1);
 
   // Watch for index changes
   useEffect(() => {
     if (index !== null) {
-      // Reset position for new content
-      // translateX.value = 100; // Start off-screen
       opacity.value = 0;
-
-      // Animate in
-      // translateX.value = withSpring(0);
       opacity.value = withTiming(1, { duration: 200 });
     }
   }, [index]);
@@ -65,30 +50,12 @@ export default function Exercise() {
   // Create animated style
   const animatedStyle = useAnimatedStyle(() => {
     return {
-      // transform: [{ translateX: translateX.value }],
       opacity: opacity.value,
     };
   });
 
   return (
     <>
-      {/* <Stack.Screen
-        options={{
-          headerLeft: () => (
-            <Pressable onPress={() => router.dismissAll()}>
-              <Ionicons
-                name="chevron-back"
-                color="black"
-                size={24}
-                style={{
-                  borderColor: 'black',
-                  borderWidth: 2,
-                }}
-              />
-            </Pressable>
-          ),
-        }}
-      /> */}
       <Stack.Screen
         options={{
           title:
@@ -131,7 +98,7 @@ export default function Exercise() {
               <SetsTable
                 uuid={template[parentUUID].children[index]}
                 title=""
-                superSetLength={superSetLength}
+                superSetLength={template[parentUUID].children.length}
                 index={index}
                 setIndex={setIndex}
               />

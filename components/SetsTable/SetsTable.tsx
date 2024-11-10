@@ -41,7 +41,7 @@ export default function SetsTable({
   index,
   setIndex,
 }: Props) {
-  console.log('Render SetsTable with uuid', uuid);
+  console.log('Render SetsTable');
   const itemRefs = useRef(new Map());
   const { template, addSet, reorderSets, editSet } = useWorkoutStore(
     (state) => state,
@@ -73,16 +73,10 @@ export default function SetsTable({
 
     return (
       <View>
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator
-          // style={{ maxWidth: '100%' }}
-        >
-          <View className="mb-2 flex flex-row items-center">
-            <Text className="text-4xl font-bold text-stone-700">
-              {exerciseMap[exerciseId!].label}
-            </Text>
-          </View>
+        <ScrollView horizontal showsHorizontalScrollIndicator>
+          <Text className="text-4xl font-bold text-stone-700">
+            {exerciseMap[exerciseId!].label}
+          </Text>
         </ScrollView>
         <View className="flex flex-row justify-between rounded-t-lg bg-stone-600 p-2">
           <Text
@@ -110,19 +104,8 @@ export default function SetsTable({
 
   // Footer component that includes the Add Set button
   const renderFooter = () => {
-    console.log(`${index}/${superSetLength}`);
-
     return (
       <>
-        {/* <Pressable
-          onPress={() => addSet(uuid)}
-          style={styles.shadow}
-          className="mb-10 mt-2 rounded-md bg-red-500 p-4"
-        >
-          <Text className="text-center text-xl font-medium text-white shadow-lg">
-            Add set
-          </Text>
-        </Pressable> */}
         <View>
           <View
             // style={{
@@ -131,7 +114,7 @@ export default function SetsTable({
             // }}
             className="flex flex-row items-center justify-center py-2"
           >
-            {index !== null && index !== 0 && (
+            {index !== null && (
               <Pressable>
                 <Ionicons
                   name="chevron-back"
@@ -140,7 +123,13 @@ export default function SetsTable({
                   style={{
                     paddingHorizontal: 16,
                   }}
-                  onPress={() => setIndex((prev) => prev! - 1)}
+                  onPress={() =>
+                    setIndex((prev) => {
+                      const prevIndex = prev! - 1;
+                      if (prevIndex < 0) return superSetLength - 1;
+                      return prevIndex;
+                    })
+                  }
                 />
               </Pressable>
             )}
@@ -153,14 +142,20 @@ export default function SetsTable({
                 Add set
               </Text>
             </Pressable>
-            {index !== null && index !== superSetLength - 1 && (
+            {index !== null && (
               <Pressable>
                 <Ionicons
                   name="chevron-forward"
                   size={24}
                   color="black"
                   style={{ paddingHorizontal: 16 }}
-                  onPress={() => setIndex((prev) => prev! + 1)}
+                  onPress={() =>
+                    setIndex((prev) => {
+                      const nextIndex = prev! + 1;
+                      if (nextIndex >= superSetLength) return 0;
+                      return nextIndex;
+                    })
+                  }
                 />
               </Pressable>
             )}
