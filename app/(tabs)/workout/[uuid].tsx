@@ -89,6 +89,14 @@ export default function Exercise() {
           ),
         }}
       /> */}
+      <Stack.Screen
+        options={{
+          title:
+            isSuperset || isPartOfSuperset
+              ? 'Superset'
+              : exerciseMap[template[uuid_param].exerciseId!].label,
+        }}
+      />
       <GestureHandlerRootView
         style={{
           flex: 1,

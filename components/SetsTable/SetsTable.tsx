@@ -1,6 +1,11 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Text, View, TouchableOpacity, Pressable } from 'react-native';
-import Animated, { useAnimatedStyle, withTiming, useSharedValue, withSpring } from 'react-native-reanimated';
+import Animated, {
+  useAnimatedStyle,
+  withTiming,
+  useSharedValue,
+  withSpring,
+} from 'react-native-reanimated';
 import SwipeableItem, {
   useSwipeableItemParams,
   OpenDirection,
@@ -42,31 +47,6 @@ export default function SetsTable({
     (state) => state,
   );
   const { exerciseMap } = useExerciseStore((state) => state);
-
-  // Create shared values for the animation
-  const translateX = useSharedValue(0);
-  const opacity = useSharedValue(1);
-
-  // Watch for index changes
-  useEffect(() => {
-    if (index !== null) {
-      // Reset position for new content
-      // translateX.value = 100; // Start off-screen
-      opacity.value = 0;
-
-      // Animate in
-      // translateX.value = withSpring(0);
-      opacity.value = withTiming(1, { duration: 300 });
-    }
-  }, [index]);
-
-  // Create animated style
-  const animatedStyle = useAnimatedStyle(() => {
-    return {
-      transform: [{ translateX: translateX.value }],
-      opacity: opacity.value,
-    };
-  });
 
   const renderItem = (params: RenderItemParams<SettType>) => {
     const onPressDelete = () => {
@@ -143,18 +123,15 @@ export default function SetsTable({
             Add set
           </Text>
         </Pressable> */}
-        <View
-          style={{
-            flexDirection: 'row',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            paddingVertical: 8,
-            borderWidth: 2,
-            borderColor: 'black',
-          }}
-        >
-          {index !== null && index !== 0 && (
-            <>
+        <View>
+          <View
+            // style={{
+            //   borderWidth: 2,
+            //   borderColor: 'black',
+            // }}
+            className="flex flex-row items-center justify-center py-2"
+          >
+            {index !== null && index !== 0 && (
               <Pressable>
                 <Ionicons
                   name="chevron-back"
@@ -166,19 +143,17 @@ export default function SetsTable({
                   onPress={() => setIndex((prev) => prev! - 1)}
                 />
               </Pressable>
-            </>
-          )}
-          <Pressable
-            onPress={() => addSet(uuid)}
-            style={styles.shadow}
-            className="flex-1 rounded-md bg-red-500 p-4"
-          >
-            <Text className="text-center text-xl font-medium text-white shadow-lg">
-              Add set
-            </Text>
-          </Pressable>
-          {index !== null && index !== superSetLength - 1 && (
-            <>
+            )}
+            <Pressable
+              onPress={() => addSet(uuid)}
+              style={styles.shadow}
+              className="flex-1 rounded-md bg-red-500 p-4"
+            >
+              <Text className="text-center text-xl font-medium text-white shadow-lg">
+                Add set
+              </Text>
+            </Pressable>
+            {index !== null && index !== superSetLength - 1 && (
               <Pressable>
                 <Ionicons
                   name="chevron-forward"
@@ -188,7 +163,12 @@ export default function SetsTable({
                   onPress={() => setIndex((prev) => prev! + 1)}
                 />
               </Pressable>
-            </>
+            )}
+          </View>
+          {index !== null && (
+            <Text className="text-center">
+              {index + 1} of {superSetLength}
+            </Text>
           )}
         </View>
       </>
@@ -196,20 +176,18 @@ export default function SetsTable({
   };
 
   return (
-    <View >
-      <DraggableFlatList
-        keyExtractor={(item) => item.key.toString()}
-        data={template[uuid].sets}
-        renderItem={renderItem}
-        onDragEnd={({ data }) => {
-          reorderSets(uuid, data);
-        }}
-        activationDistance={20}
-        ListHeaderComponent={renderHeader}
-        ListFooterComponent={renderFooter}
-        style={{ borderColor: 'red', borderWidth: 2 }}
-      />
-    </View>
+    <DraggableFlatList
+      keyExtractor={(item) => item.key.toString()}
+      data={template[uuid].sets}
+      renderItem={renderItem}
+      onDragEnd={({ data }) => {
+        reorderSets(uuid, data);
+      }}
+      activationDistance={20}
+      ListHeaderComponent={renderHeader}
+      ListFooterComponent={renderFooter}
+      style={{ borderColor: 'red', borderWidth: 2 }}
+    />
   );
 }
 
