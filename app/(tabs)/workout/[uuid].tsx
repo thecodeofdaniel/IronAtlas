@@ -10,6 +10,12 @@ import {
 } from 'react-native-gesture-handler';
 import CarouselComp from '@/components/Carousel';
 import { Ionicons } from '@expo/vector-icons';
+import Animated, {
+  useAnimatedStyle,
+  withTiming,
+  useSharedValue,
+  withSpring,
+} from 'react-native-reanimated';
 
 export default function Exercise() {
   const { uuid: uuid_param } = useLocalSearchParams<{ uuid: string }>();
@@ -39,6 +45,31 @@ export default function Exercise() {
     return rtn;
   });
 
+  // Create shared values for the animation
+  const translateX = useSharedValue(0);
+  const opacity = useSharedValue(1);
+
+  // Watch for index changes
+  useEffect(() => {
+    if (index !== null) {
+      // Reset position for new content
+      // translateX.value = 100; // Start off-screen
+      opacity.value = 0;
+
+      // Animate in
+      // translateX.value = withSpring(0);
+      opacity.value = withTiming(1, { duration: 200 });
+    }
+  }, [index]);
+
+  // Create animated style
+  const animatedStyle = useAnimatedStyle(() => {
+    return {
+      // transform: [{ translateX: translateX.value }],
+      opacity: opacity.value,
+    };
+  });
+
   return (
     <>
       {/* <Stack.Screen
@@ -61,40 +92,44 @@ export default function Exercise() {
       <GestureHandlerRootView
         style={{
           flex: 1,
-
           justifyContent: 'center',
           margin: 8,
         }}
       >
-        {index === null && (
-          <SetsTable
-            uuid={uuid_param}
-            title={''}
-            superSetLength={0}
-            index={null}
-            setIndex={setIndex}
-          />
-        )}
-        {/* Pressing the superset itself */}
-        {index !== null && isSuperset && (
-          <SetsTable
-            uuid={template[uuid_param].children[index]}
-            title=""
-            superSetLength={template[uuid_param].children.length}
-            index={index}
-            setIndex={setIndex}
-          />
-        )}
-        {/* Pressing part of the superset */}
-        {index !== null && isPartOfSuperset && (
-          <SetsTable
-            uuid={template[parentUUID].children[index]}
-            title=""
-            superSetLength={superSetLength}
-            index={index}
-            setIndex={setIndex}
-          />
-        )}
+        <Animated.View style={animatedStyle}>
+          {index === null && (
+            <SetsTable
+              uuid={uuid_param}
+              title={''}
+              superSetLength={0}
+              index={null}
+              setIndex={setIndex}
+            />
+          )}
+          {/* Pressing the superset itself */}
+          {index !== null && isSuperset && (
+            <SetsTable
+              uuid={template[uuid_param].children[index]}
+              title=""
+              superSetLength={template[uuid_param].children.length}
+              index={index}
+              setIndex={setIndex}
+            />
+          )}
+          {/* Pressing part of the superset */}
+          {index !== null && isPartOfSuperset && (
+            <>
+              <Text>Yo</Text>
+              <SetsTable
+                uuid={template[parentUUID].children[index]}
+                title=""
+                superSetLength={superSetLength}
+                index={index}
+                setIndex={setIndex}
+              />
+            </>
+          )}
+        </Animated.View>
       </GestureHandlerRootView>
     </>
   );

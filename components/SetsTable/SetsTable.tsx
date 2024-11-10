@@ -1,6 +1,6 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Text, View, TouchableOpacity, Pressable } from 'react-native';
-import Animated, { useAnimatedStyle } from 'react-native-reanimated';
+import Animated, { useAnimatedStyle, withTiming, useSharedValue, withSpring } from 'react-native-reanimated';
 import SwipeableItem, {
   useSwipeableItemParams,
   OpenDirection,
@@ -42,6 +42,31 @@ export default function SetsTable({
     (state) => state,
   );
   const { exerciseMap } = useExerciseStore((state) => state);
+
+  // Create shared values for the animation
+  const translateX = useSharedValue(0);
+  const opacity = useSharedValue(1);
+
+  // Watch for index changes
+  useEffect(() => {
+    if (index !== null) {
+      // Reset position for new content
+      // translateX.value = 100; // Start off-screen
+      opacity.value = 0;
+
+      // Animate in
+      // translateX.value = withSpring(0);
+      opacity.value = withTiming(1, { duration: 300 });
+    }
+  }, [index]);
+
+  // Create animated style
+  const animatedStyle = useAnimatedStyle(() => {
+    return {
+      transform: [{ translateX: translateX.value }],
+      opacity: opacity.value,
+    };
+  });
 
   const renderItem = (params: RenderItemParams<SettType>) => {
     const onPressDelete = () => {
@@ -171,7 +196,7 @@ export default function SetsTable({
   };
 
   return (
-    <>
+    <View >
       <DraggableFlatList
         keyExtractor={(item) => item.key.toString()}
         data={template[uuid].sets}
@@ -184,7 +209,7 @@ export default function SetsTable({
         ListFooterComponent={renderFooter}
         style={{ borderColor: 'red', borderWidth: 2 }}
       />
-    </>
+    </View>
   );
 }
 
