@@ -1,5 +1,5 @@
 import { View, Text, Pressable } from 'react-native';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import { useWorkoutStore } from '@/store/workout/workoutStore';
 import { useExerciseStore } from '@/store/exercise/exerciseStore';
@@ -16,37 +16,33 @@ export default function Exercise() {
   const router = useRouter();
   const { template } = useWorkoutStore((state) => state);
   const { exerciseMap } = useExerciseStore((state) => state);
+  const parentUUID = template[uuid_param].parentId!;
+  const superSetLength = template[parentUUID].children.length;
 
-  let title;
-  let uuid;
+  const isSuperset = template[uuid_param].children.length > 0;
+  const isPartOfSuperset = parentUUID !== '0';
 
-  const exerciseId = template[uuid_param].exerciseId; // if null, then superset
-  title = exerciseId ? exerciseMap[exerciseId].label : '';
+  const [index, setIndex] = useState(() => {
+    let rtn = null;
 
-  // useEffect(() => {
-  //   if (!exerciseId)
-  //     router.push({
-  //       pathname: '/(tabs)/workout/[uuid]',
-  //       params: { uuid: template[uuid].children[0] },
-  //     });
-  // }, []);
+    if (isSuperset) {
+      rtn = 0;
+    }
 
-  // let title;
-  // let childUUID;
+    if (isPartOfSuperset) {
+      const superSetIndex = template[parentUUID].children.indexOf(uuid_param);
+      rtn = superSetIndex;
+    }
 
-  if (!exerciseId) {
-    uuid = template[uuid_param].children[0];
-    title = exerciseMap[template[uuid].exerciseId!].label;
-  }
+    console.log('Rtn value', rtn);
+
+    return rtn;
+  });
 
   return (
     <>
-      <Stack.Screen
-        // options={{
-        //   title: title,
-        // }}
+      {/* <Stack.Screen
         options={{
-          // animation: !exerciseId ? 'fade' : 'default',
           headerLeft: () => (
             <Pressable onPress={() => router.dismissAll()}>
               <Ionicons
@@ -61,33 +57,42 @@ export default function Exercise() {
             </Pressable>
           ),
         }}
-      />
+      /> */}
       <GestureHandlerRootView
         style={{
           flex: 1,
-          // borderColor: 'black',
-          // borderWidth: 2,
+
           justifyContent: 'center',
           margin: 8,
         }}
       >
-        {/* {exerciseId ? (
-          <SetsTable title={title} uuid={uuid} />
-        ) : (
-          <CarouselComp uuids={template[uuid].children} />
-        )} */}
-        {/* <SetsTable uuid={uuid_param} title={title} /> */}
-        {/* TODO: Pass in the index,  */}
-        {exerciseId ? (
-          <SetsTable uuid={uuid_param} title={title} />
-        ) : (
+        {index === null && (
           <SetsTable
-            uuid={template[uuid_param].children[0]}
-            title={
-              exerciseMap[
-                template[template[uuid_param].children[0]].exerciseId!
-              ].label
-            }
+            uuid={uuid_param}
+            title={''}
+            superSetLength={0}
+            index={null}
+            setIndex={setIndex}
+          />
+        )}
+        {/* Pressing the superset itself */}
+        {index !== null && isSuperset && (
+          <SetsTable
+            uuid={template[uuid_param].children[index]}
+            title=""
+            superSetLength={template[uuid_param].children.length}
+            index={index}
+            setIndex={setIndex}
+          />
+        )}
+        {/* Pressing part of the superset */}
+        {index !== null && isPartOfSuperset && (
+          <SetsTable
+            uuid={template[parentUUID].children[index]}
+            title=""
+            superSetLength={superSetLength}
+            index={index}
+            setIndex={setIndex}
           />
         )}
       </GestureHandlerRootView>

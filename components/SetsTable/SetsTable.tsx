@@ -17,22 +17,31 @@ import { setsTableStyles as styles } from './setsTableStyles';
 import { useWorkoutStore } from '@/store/workout/workoutStore';
 import { Link, Stack } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
+import { useExerciseStore } from '@/store/exercise/exerciseStore';
 
 const OVERSWIPE_DIST = 20;
 
 type Props = {
   title: string;
   uuid: string;
+  superSetLength: number;
+  index: number | null;
+  setIndex: React.Dispatch<React.SetStateAction<number | null>>;
 };
 
-export default function SetsTable({ title, uuid }: Props) {
+export default function SetsTable({
+  title,
+  uuid,
+  superSetLength,
+  index,
+  setIndex,
+}: Props) {
+  console.log('Render SetsTable with uuid', uuid);
   const itemRefs = useRef(new Map());
   const { template, addSet, reorderSets, editSet } = useWorkoutStore(
     (state) => state,
   );
-
-  const parentUUID = template[uuid].parentId!;
-  const isSuperset = parentUUID !== '0';
+  const { exerciseMap } = useExerciseStore((state) => state);
 
   const renderItem = (params: RenderItemParams<SettType>) => {
     const onPressDelete = () => {
@@ -53,115 +62,10 @@ export default function SetsTable({ title, uuid }: Props) {
     );
   };
 
-  if (template[uuid].children.length > 0) {
-    console.log('There are siblings');
-    const parentUUID = template[uuid].parentId;
-    console.log(template[parentUUID!].children.indexOf(uuid));
-  } else {
-    console.log('Single exercise');
-  }
-
-  // Footer component that includes the Add Set button
-  const renderFooter = () => {
-    const superSetLength = template[parentUUID].children.length;
-    const index = template[parentUUID].children.indexOf(uuid);
-
-    return (
-      <>
-        {/* <Pressable
-            onPress={() => addSet(uuid)}
-            style={styles.shadow}
-            className="mb-10 mt-2 rounded-md bg-red-500 p-4"
-          >
-            <Text className="text-center text-xl font-medium text-white shadow-lg">
-              Add set
-            </Text>
-          </Pressable> */}
-        <View
-          style={{
-            flexDirection: 'row',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            // paddingHorizontal: 16,
-            paddingVertical: 8,
-            borderWidth: 2,
-            borderColor: 'black',
-            // gap: 8,
-          }}
-        >
-          {isSuperset && index !== 0 && (
-            <>
-              {/* <Stack.Screen
-                options={{
-                  // animation: 'slide_from_left',
-                  animation: 'fade_from_bottom',
-                  presentation: 'card',
-                }}
-              /> */}
-              <Link
-                href={{
-                  // pathname: '../',
-                  pathname: '/(tabs)/workout/[uuid]',
-                  params: { uuid: template[parentUUID].children[index - 1] },
-                }}
-                asChild
-              >
-                <Pressable>
-                  <Ionicons
-                    name="chevron-back"
-                    color="black"
-                    size={24}
-                    style={{
-                      paddingHorizontal: 16,
-                      // borderColor: 'black',
-                      // borderWidth: 2,
-                    }}
-                  />
-                </Pressable>
-              </Link>
-            </>
-          )}
-          <Pressable
-            onPress={() => addSet(uuid)}
-            style={styles.shadow}
-            className="flex-1 rounded-md bg-red-500 p-4"
-          >
-            <Text className="text-center text-xl font-medium text-white shadow-lg">
-              Add set
-            </Text>
-          </Pressable>
-          {isSuperset && index !== superSetLength - 1 && (
-            <>
-              {/* <Stack.Screen
-                options={{
-                  animation: 'slide_from_right',
-                  presentation: 'card',
-                }}
-              /> */}
-              <Link
-                href={{
-                  pathname: '/(tabs)/workout/[uuid]',
-                  params: { uuid: template[parentUUID].children[index + 1] },
-                }}
-                asChild
-              >
-                <Pressable>
-                  <Ionicons
-                    name="chevron-forward"
-                    size={24}
-                    color="black"
-                    style={{ paddingHorizontal: 16 }}
-                  />
-                </Pressable>
-              </Link>
-            </>
-          )}
-        </View>
-      </>
-    );
-  };
-
   const renderHeader = () => {
+    const exerciseId = template[uuid].exerciseId;
+    console.log('Current exerciseId:', exerciseId);
+
     return (
       <View>
         <ScrollView
@@ -170,14 +74,9 @@ export default function SetsTable({ title, uuid }: Props) {
           // style={{ maxWidth: '100%' }}
         >
           <View className="mb-2 flex flex-row items-center">
-            {/* <Link
-              href={'../'}
-              asChild
-              // style={{ borderWidth: 2, borderColor: 'black' }}
-            >
-              <Ionicons name="chevron-back" size={32} style={{padding: 0}} />
-            </Link> */}
-            <Text className="text-4xl font-bold text-stone-700">{title}</Text>
+            <Text className="text-4xl font-bold text-stone-700">
+              {exerciseMap[exerciseId!].label}
+            </Text>
           </View>
         </ScrollView>
         <View className="flex flex-row justify-between rounded-t-lg bg-stone-600 p-2">
@@ -204,16 +103,75 @@ export default function SetsTable({ title, uuid }: Props) {
     );
   };
 
+  // Footer component that includes the Add Set button
+  const renderFooter = () => {
+    console.log(`${index}/${superSetLength}`);
+
+    return (
+      <>
+        {/* <Pressable
+          onPress={() => addSet(uuid)}
+          style={styles.shadow}
+          className="mb-10 mt-2 rounded-md bg-red-500 p-4"
+        >
+          <Text className="text-center text-xl font-medium text-white shadow-lg">
+            Add set
+          </Text>
+        </Pressable> */}
+        <View
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            paddingVertical: 8,
+            borderWidth: 2,
+            borderColor: 'black',
+          }}
+        >
+          {index !== null && index !== 0 && (
+            <>
+              <Pressable>
+                <Ionicons
+                  name="chevron-back"
+                  color="black"
+                  size={24}
+                  style={{
+                    paddingHorizontal: 16,
+                  }}
+                  onPress={() => setIndex((prev) => prev! - 1)}
+                />
+              </Pressable>
+            </>
+          )}
+          <Pressable
+            onPress={() => addSet(uuid)}
+            style={styles.shadow}
+            className="flex-1 rounded-md bg-red-500 p-4"
+          >
+            <Text className="text-center text-xl font-medium text-white shadow-lg">
+              Add set
+            </Text>
+          </Pressable>
+          {index !== null && index !== superSetLength - 1 && (
+            <>
+              <Pressable>
+                <Ionicons
+                  name="chevron-forward"
+                  size={24}
+                  color="black"
+                  style={{ paddingHorizontal: 16 }}
+                  onPress={() => setIndex((prev) => prev! + 1)}
+                />
+              </Pressable>
+            </>
+          )}
+        </View>
+      </>
+    );
+  };
+
   return (
     <>
-      <Stack.Screen
-        options={{
-          // animation: 'fade',
-          // animation: 'simple_push',
-          animation: isSuperset ? 'fade' : 'default',
-          // presentation: 'card',
-        }}
-      />
       <DraggableFlatList
         keyExtractor={(item) => item.key.toString()}
         data={template[uuid].sets}
