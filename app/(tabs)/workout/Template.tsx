@@ -123,7 +123,7 @@ function RowItem({ drag, getIndex, isActive, item, itemRefs }: RowItemProps) {
                     : exerciseMap[item.exerciseId].label}
                 </Text>
                 <Ionicons
-                  name="ellipsis-horizontal"
+                  name="add"
                   size={24}
                   color={'white'}
                   style={{
@@ -177,12 +177,7 @@ function TemplateTree({
   level,
 }: TemplateProps) {
   const RenderItem = (params: RenderItemParams<TemplateObj>) => {
-    if (params.item.parentId === null) {
-      return null; // This is for the root node
-    }
-
     const itemRefs = useRef(new Map());
-
     return <RowItem {...params} itemRefs={itemRefs} />;
   };
 
@@ -196,7 +191,7 @@ function TemplateTree({
         keyExtractor={(item) => item.uuid}
         renderItem={(params) => {
           return (
-            <View style={{ paddingLeft: 10 * (level - 1) }}>
+            <View style={{ paddingLeft: 10 * level }}>
               <RenderItem {...params} />
               {params.item.children.length > 0 && (
                 <TemplateTree
@@ -228,7 +223,7 @@ export default function TemplateScreen() {
           templateMap={template}
           exerciseMap={exerciseMap}
           reorderTemplate={reorderTemplate}
-          templateChildren={['0']}
+          templateChildren={template[0].children}
           level={0}
         />
       </GestureHandlerRootView>
