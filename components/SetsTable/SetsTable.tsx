@@ -1,6 +1,11 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Text, View, TouchableOpacity, Pressable } from 'react-native';
-import Animated, { useAnimatedStyle } from 'react-native-reanimated';
+import Animated, {
+  useAnimatedStyle,
+  withTiming,
+  useSharedValue,
+  withSpring,
+} from 'react-native-reanimated';
 import SwipeableItem, {
   useSwipeableItemParams,
   OpenDirection,
@@ -17,19 +22,31 @@ import { setsTableStyles as styles } from './setsTableStyles';
 import { useWorkoutStore } from '@/store/workout/workoutStore';
 import { Link, Stack } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
+import { useExerciseStore } from '@/store/exercise/exerciseStore';
 
 const OVERSWIPE_DIST = 20;
 
 type Props = {
   title: string;
   uuid: string;
+  superSetLength: number;
+  index: number | null;
+  setIndex: React.Dispatch<React.SetStateAction<number | null>>;
 };
 
-export default function SetsTable({ title, uuid }: Props) {
+export default function SetsTable({
+  title,
+  uuid,
+  superSetLength,
+  index,
+  setIndex,
+}: Props) {
+  console.log('Render SetsTable');
   const itemRefs = useRef(new Map());
   const { template, addSet, reorderSets, editSet } = useWorkoutStore(
     (state) => state,
   );
+  const { exerciseMap } = useExerciseStore((state) => state);
 
   const renderItem = (params: RenderItemParams<SettType>) => {
     const onPressDelete = () => {
@@ -50,91 +67,16 @@ export default function SetsTable({ title, uuid }: Props) {
     );
   };
 
-  if (template[uuid].children.length > 0) {
-    console.log('There are siblings');
-    const parentUUID = template[uuid].parentId;
-    console.log(template[parentUUID!].children.indexOf(uuid));
-  } else {
-    console.log('Single exercise');
-  }
-
-  // Footer component that includes the Add Set button
-  const renderFooter = () => {
-    return (
-      <>
-        {/* <Pressable
-            onPress={() => addSet(uuid)}
-            style={styles.shadow}
-            className="mb-10 mt-2 rounded-md bg-red-500 p-4"
-          >
-            <Text className="text-center text-xl font-medium text-white shadow-lg">
-              Add set
-            </Text>
-          </Pressable> */}
-        <View
-          style={{
-            flexDirection: 'row',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            // paddingHorizontal: 16,
-            paddingVertical: 8,
-            borderWidth: 2,
-            borderColor: 'black',
-            // gap: 8,
-          }}
-        >
-          <Pressable>
-            <Ionicons
-              name="chevron-back"
-              color="black"
-              size={24}
-              style={{
-                paddingHorizontal: 16,
-                // borderColor: 'black',
-                // borderWidth: 2,
-              }}
-            />
-          </Pressable>
-          <Pressable
-            onPress={() => addSet(uuid)}
-            style={styles.shadow}
-            className="flex-1 rounded-md bg-red-500 p-4"
-          >
-            <Text className="text-center text-xl font-medium text-white shadow-lg">
-              Add set
-            </Text>
-          </Pressable>
-          <Pressable>
-            <Ionicons
-              name="chevron-forward"
-              size={24}
-              color="black"
-              style={{ paddingHorizontal: 16 }}
-            />
-          </Pressable>
-        </View>
-      </>
-    );
-  };
-
   const renderHeader = () => {
+    const exerciseId = template[uuid].exerciseId;
+    console.log('Current exerciseId:', exerciseId);
+
     return (
       <View>
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator
-          // style={{ maxWidth: '100%' }}
-        >
-          <View className="mb-2 flex flex-row items-center">
-            {/* <Link
-              href={'../'}
-              asChild
-              // style={{ borderWidth: 2, borderColor: 'black' }}
-            >
-              <Ionicons name="chevron-back" size={32} style={{padding: 0}} />
-            </Link> */}
-            <Text className="text-4xl font-bold text-stone-700">{title}</Text>
-          </View>
+        <ScrollView horizontal showsHorizontalScrollIndicator>
+          <Text className="text-4xl font-bold text-stone-700">
+            {exerciseMap[exerciseId!].label}
+          </Text>
         </ScrollView>
         <View className="flex flex-row justify-between rounded-t-lg bg-stone-600 p-2">
           <Text
@@ -160,22 +102,87 @@ export default function SetsTable({ title, uuid }: Props) {
     );
   };
 
+  // Footer component that includes the Add Set button
+  const renderFooter = () => {
+    return (
+      <>
+        <View>
+          <View
+            // style={{
+            //   borderWidth: 2,
+            //   borderColor: 'black',
+            // }}
+            className="flex flex-row items-center justify-center py-2"
+          >
+            {index !== null && (
+              <Pressable>
+                <Ionicons
+                  name="chevron-back"
+                  color="black"
+                  size={24}
+                  style={{
+                    paddingHorizontal: 16,
+                  }}
+                  onPress={() =>
+                    setIndex((prev) => {
+                      const prevIndex = prev! - 1;
+                      if (prevIndex < 0) return superSetLength - 1;
+                      return prevIndex;
+                    })
+                  }
+                />
+              </Pressable>
+            )}
+            <Pressable
+              onPress={() => addSet(uuid)}
+              style={styles.shadow}
+              className="flex-1 rounded-md bg-red-500 p-4"
+            >
+              <Text className="text-center text-xl font-medium text-white shadow-lg">
+                Add set
+              </Text>
+            </Pressable>
+            {index !== null && (
+              <Pressable>
+                <Ionicons
+                  name="chevron-forward"
+                  size={24}
+                  color="black"
+                  style={{ paddingHorizontal: 16 }}
+                  onPress={() =>
+                    setIndex((prev) => {
+                      const nextIndex = prev! + 1;
+                      if (nextIndex >= superSetLength) return 0;
+                      return nextIndex;
+                    })
+                  }
+                />
+              </Pressable>
+            )}
+          </View>
+          {index !== null && (
+            <Text className="text-center">
+              {index + 1} of {superSetLength}
+            </Text>
+          )}
+        </View>
+      </>
+    );
+  };
+
   return (
-    <>
-      {/* <Stack.Screen options={{ headerBackTitle: 'Back' }} /> */}
-      <DraggableFlatList
-        keyExtractor={(item) => item.key.toString()}
-        data={template[uuid].sets}
-        renderItem={renderItem}
-        onDragEnd={({ data }) => {
-          reorderSets(uuid, data);
-        }}
-        activationDistance={20}
-        ListHeaderComponent={renderHeader}
-        ListFooterComponent={renderFooter}
-        style={{ borderColor: 'red', borderWidth: 2 }}
-      />
-    </>
+    <DraggableFlatList
+      keyExtractor={(item) => item.key.toString()}
+      data={template[uuid].sets}
+      renderItem={renderItem}
+      onDragEnd={({ data }) => {
+        reorderSets(uuid, data);
+      }}
+      activationDistance={20}
+      ListHeaderComponent={renderHeader}
+      ListFooterComponent={renderFooter}
+      style={{ borderColor: 'red', borderWidth: 2 }}
+    />
   );
 }
 

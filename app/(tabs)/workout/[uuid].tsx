@@ -1,45 +1,104 @@
-import { View, Text } from 'react-native';
-import React from 'react';
+import { Text } from 'react-native';
+import React, { useEffect, useState } from 'react';
 import { Stack, useLocalSearchParams } from 'expo-router';
 import { useWorkoutStore } from '@/store/workout/workoutStore';
 import { useExerciseStore } from '@/store/exercise/exerciseStore';
 import SetsTable from '@/components/SetsTable/SetsTable';
-import {
-  GestureHandlerRootView,
-  ScrollView,
-} from 'react-native-gesture-handler';
-import CarouselComp from '@/components/Carousel';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import Animated, {
+  useAnimatedStyle,
+  withTiming,
+  useSharedValue,
+} from 'react-native-reanimated';
 
 export default function Exercise() {
-  const { uuid } = useLocalSearchParams<{ uuid: string }>();
+  console.log('Render Exercise');
+  const { uuid: uuid_param } = useLocalSearchParams<{ uuid: string }>();
   const { template } = useWorkoutStore((state) => state);
   const { exerciseMap } = useExerciseStore((state) => state);
 
-  const exerciseId = template[uuid].exerciseId; // if null, then superset
-  const title = exerciseId ? exerciseMap[exerciseId].label : 'Superset';
+  const parentUUID = template[uuid_param].parentId!;
+  const isSuperset = template[uuid_param].children.length > 0;
+  const isPartOfSuperset = parentUUID !== '0';
+
+  const [index, setIndex] = useState(() => {
+    if (isSuperset) return 0;
+
+    if (isPartOfSuperset)
+      return template[parentUUID].children.indexOf(uuid_param);
+
+    return null;
+  });
+
+  // Create shared values for the animation
+  const opacity = useSharedValue(1);
+
+  // Watch for index changes
+  useEffect(() => {
+    if (index !== null) {
+      opacity.value = 0;
+      opacity.value = withTiming(1, { duration: 200 });
+    }
+  }, [index]);
+
+  // Create animated style
+  const animatedStyle = useAnimatedStyle(() => {
+    return {
+      opacity: opacity.value,
+    };
+  });
 
   return (
     <>
       <Stack.Screen
         options={{
-          title: title,
+          title:
+            isSuperset || isPartOfSuperset
+              ? 'Superset'
+              : exerciseMap[template[uuid_param].exerciseId!].label,
         }}
       />
       <GestureHandlerRootView
         style={{
           flex: 1,
-          // borderColor: 'black',
-          // borderWidth: 2,
           justifyContent: 'center',
           margin: 8,
         }}
       >
-        {/* {exerciseId ? (
-          <SetsTable title={title} uuid={uuid} />
-        ) : (
-          <CarouselComp uuids={template[uuid].children} />
-        )} */}
-        <SetsTable uuid={uuid} title={title} />
+        <Animated.View style={animatedStyle}>
+          {index === null && (
+            <SetsTable
+              uuid={uuid_param}
+              title={''}
+              superSetLength={0}
+              index={null}
+              setIndex={setIndex}
+            />
+          )}
+          {/* Pressing the superset itself */}
+          {index !== null && isSuperset && (
+            <SetsTable
+              uuid={template[uuid_param].children[index]}
+              title=""
+              superSetLength={template[uuid_param].children.length}
+              index={index}
+              setIndex={setIndex}
+            />
+          )}
+          {/* Pressing part of the superset */}
+          {index !== null && isPartOfSuperset && (
+            <>
+              <Text>Yo</Text>
+              <SetsTable
+                uuid={template[parentUUID].children[index]}
+                title=""
+                superSetLength={template[parentUUID].children.length}
+                index={index}
+                setIndex={setIndex}
+              />
+            </>
+          )}
+        </Animated.View>
       </GestureHandlerRootView>
     </>
   );

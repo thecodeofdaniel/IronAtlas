@@ -18,7 +18,7 @@ import Popover, { PopoverPlacement } from 'react-native-popover-view';
 import StartWorkout from '@/components/StartWorkout';
 import StartWorkout2 from '@/components/StartWorkout';
 import { useModalStore } from '@/store/modalStore';
-import TemplateScreen from './template';
+import TemplateScreen from './Template';
 
 export default function WorkoutTab() {
   const [inWorkout, setInWorkout] = useState(false);
