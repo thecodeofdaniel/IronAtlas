@@ -1,7 +1,10 @@
 import { db } from '@/db/instance';
-import { useExerciseStoreWithSetter } from '@/store/exercise/exerciseStore';
+import {
+  useExerciseStore,
+  useExerciseStoreWithSetter,
+} from '@/store/exercise/exerciseStore';
 import { ModalData } from '@/store/modalStore';
-import { useTagStoreWithSetter } from '@/store/tag/tagStore';
+import { useTagStore, useTagStoreWithSetter } from '@/store/tag/tagStore';
 
 import clsx from 'clsx';
 import { Stack, useRouter } from 'expo-router';
@@ -12,18 +15,30 @@ import { asc, eq, inArray } from 'drizzle-orm';
 import { getAllChildrenIds } from '@/utils/utils';
 import MultiDropDown from '@/components/MultiDropDown';
 import { useFilterExerciseStore } from '@/store/filterExercises/filterExercisesStore';
-import { useWorkoutStore } from '@/store/workout/workoutStore';
+import {
+  useWorkoutStore,
+  WorkoutStateFunctions,
+  WorkoutStateVal,
+} from '@/store/workout/workoutStore';
+import CreateSuperset from './components/CreateSuperset';
+import { useExerciseSelectionHook } from '@/store/exerciseSelection/exerciseSelectionHook';
+import AddExercises from './components/AddExercises';
 
 type ExerciseListProps = {
   exerciseMap: ExerciseMap;
   exerciseList: number[];
+  pickedExercises: WorkoutStateVal['pickedExercises'];
+  pickedExercisesSet: WorkoutStateVal['pickedExercisesSet'];
+  actions: WorkoutStateFunctions;
 };
 
-function ExerciseList({ exerciseMap, exerciseList }: ExerciseListProps) {
-  const { pickedExercises, pickedExercisesSet, pickExercise } = useWorkoutStore(
-    (state) => state,
-  );
-
+function ExerciseList({
+  exerciseMap,
+  exerciseList,
+  pickedExercises,
+  pickedExercisesSet,
+  actions,
+}: ExerciseListProps) {
   // Transform IDs into Exercise objects
   const exercises = useMemo(
     () =>
@@ -53,7 +68,7 @@ function ExerciseList({ exerciseMap, exerciseList }: ExerciseListProps) {
     return (
       <Pressable
         onPress={() => {
-          pickExercise(exercise.id);
+          actions.pickExercise(exercise.id);
         }}
         className={clsx('my-[1] flex flex-row bg-blue-500 p-2', {
           'bg-red-500': isInArray,
@@ -92,11 +107,14 @@ export default function SelectExercisesModal({
   modalData,
 }: SelectExercisesModalProps) {
   const isSuperset = modalData.isSuperset;
+  const storeType = modalData.storeType; // This determines if we're in a workout or creating a template
 
   const router = useRouter();
-  const { exerciseMap, exercisesList } = useExerciseStoreWithSetter();
-  const { tagMap } = useTagStoreWithSetter();
+  const { exerciseMap, exercisesList } = useExerciseStore((state) => state);
+  const tagMap = useTagStore((state) => state.tagMap);
   const selectedTags = useFilterExerciseStore((state) => state.selectedTags);
+  const { pickedExercises, pickedExercisesSet, actions } =
+    useExerciseSelectionHook(storeType);
 
   let filteredExercises = exercisesList;
 
@@ -127,63 +145,27 @@ export default function SelectExercisesModal({
     ];
   }
 
-  const { pickedExercises, clearExercises, addExercises, addSuperset } =
-    useWorkoutStore((state) => state);
-
   return (
     <>
       <Stack.Screen
         options={{
           title: 'Select',
-          headerLeft: () => {
-            if (isSuperset) return null;
-            else {
-              return (
-                <Pressable
-                  disabled={pickedExercises.length < 2}
-                  style={{
-                    borderColor: 'black',
-                    borderTopWidth: 1,
-                    borderLeftWidth: 1,
-                    borderRightWidth: 2,
-                    borderBottomWidth: 2,
-                  }}
-                  className={clsx('bg-blue-500 p-2 transition-opacity', {
-                    'opacity-45': pickedExercises.length < 2,
-                  })}
-                  onPress={() => {
-                    addSuperset(pickedExercises);
-                    clearExercises();
-                    router.back();
-                  }}
-                >
-                  <Text className="font-medium text-white">Add superset</Text>
-                </Pressable>
-              );
-            }
-          },
+          headerLeft: () =>
+            isSuperset ? null : (
+              <CreateSuperset
+                pickedExercises={pickedExercises}
+                actions={actions}
+                router={router}
+              />
+            ),
           headerRight: () => (
-            <Pressable
-              disabled={pickedExercises.length < 1}
-              style={{
-                borderColor: 'black',
-                borderTopWidth: 1,
-                borderLeftWidth: 1,
-                borderRightWidth: 2,
-                borderBottomWidth: 2,
-              }}
-              className={clsx('bg-blue-500 p-2 transition-opacity', {
-                'opacity-45': pickedExercises.length < 1,
-              })}
-              onPress={() => {
-                if (!isSuperset) addExercises(pickedExercises);
-                else addExercises(pickedExercises, modalData.uuid);
-                clearExercises();
-                router.back();
-              }}
-            >
-              <Text className="font-medium text-white">Add exercise(s)</Text>
-            </Pressable>
+            <AddExercises
+              pickedExercises={pickedExercises}
+              actions={actions}
+              router={router}
+              isSuperset={isSuperset}
+              toExerciseUUID={modalData.uuid}
+            />
           ),
         }}
       />
@@ -197,6 +179,9 @@ export default function SelectExercisesModal({
           <ExerciseList
             exerciseMap={exerciseMap}
             exerciseList={filteredExercises}
+            pickedExercises={pickedExercises}
+            pickedExercisesSet={pickedExercisesSet}
+            actions={actions}
           />
         )}
       </View>

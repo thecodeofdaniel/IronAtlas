@@ -16,6 +16,7 @@ export type ModalData = {
   selectExercises: {
     isSuperset: boolean;
     uuid: string;
+    storeType: 'template' | 'workout';
   };
 };
 

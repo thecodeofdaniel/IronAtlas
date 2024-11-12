@@ -22,172 +22,426 @@ export type WorkoutStateFunctions = {
 
 type WorkoutStore = WorkoutStateVal & WorkoutStateFunctions;
 
-export const useWorkoutStore = create<WorkoutStore>((set) => ({
-  template: {
-    '0': {
-      exerciseId: 0,
-      uuid: '0',
-      sets: [],
-      children: [],
-      parentId: null, // No parent for the root
+export function createWorkoutStore() {
+  return create<WorkoutStore>((set) => ({
+    template: {
+      '0': {
+        exerciseId: 0,
+        uuid: '0',
+        sets: [],
+        children: [],
+        parentId: null, // No parent for the root
+      },
     },
-  },
-  pickedExercises: [],
-  pickedExercisesSet: new Set(),
-  pickExercise: (id) =>
-    set(
-      produce<WorkoutStore>((state) => {
-        // If exercise exists in set then remove from array
-        if (state.pickedExercisesSet.has(id)) {
-          const newPickedOrder = state.pickedExercises.filter(
-            (_id) => _id !== id,
+    pickedExercises: [],
+    pickedExercisesSet: new Set(),
+    pickExercise: (id) =>
+      set(
+        produce<WorkoutStore>((state) => {
+          // If exercise exists in set then remove from array
+          if (state.pickedExercisesSet.has(id)) {
+            const newPickedOrder = state.pickedExercises.filter(
+              (_id) => _id !== id,
+            );
+
+            state.pickedExercises = newPickedOrder;
+            state.pickedExercisesSet.delete(id);
+          }
+          // Otherwise append id onto array
+          else {
+            state.pickedExercises.push(id);
+            state.pickedExercisesSet.add(id);
+          }
+        }),
+      ),
+    clearExercises: () =>
+      set({ pickedExercises: [], pickedExercisesSet: new Set() }),
+    addExercises: (exerciseIds, uuid = '0') =>
+      set(
+        produce<WorkoutStore>((state) => {
+          const newUUIDs: string[] = [];
+
+          // Create object with generated UUID
+          exerciseIds.map((exerciseId) => {
+            const newUUID = Crypto.randomUUID();
+            newUUIDs.push(newUUID);
+
+            return (state.template[newUUID] = {
+              exerciseId: exerciseId,
+              uuid: newUUID,
+              sets: [{ key: Date.now(), type: 'N', weight: '', reps: '' }],
+              children: [],
+              parentId: uuid,
+            });
+          });
+
+          // Add exerciseIds to parent
+          state.template[uuid].children = [
+            ...state.template[uuid].children,
+            ...newUUIDs,
+          ];
+        }),
+      ),
+    addSuperset: (exerciseIds) =>
+      set(
+        produce<WorkoutStore>((state) => {
+          // Create parent UUID
+          const parentUUID = Crypto.randomUUID();
+
+          // Create exercises for superset
+          const newUUIDs: string[] = [];
+
+          exerciseIds.map((exerciseId) => {
+            const newUUID = Crypto.randomUUID();
+            newUUIDs.push(newUUID);
+
+            return (state.template[newUUID] = {
+              exerciseId: exerciseId,
+              uuid: newUUID,
+              sets: [{ key: Date.now(), type: 'N', weight: '', reps: '' }],
+              children: [],
+              parentId: parentUUID,
+            });
+          });
+
+          // Create superset object with uuids of children
+          state.template[parentUUID] = {
+            exerciseId: null,
+            uuid: parentUUID,
+            sets: [],
+            children: newUUIDs,
+            parentId: '0',
+          };
+
+          // Add superset to root
+          state.template[0].children = [
+            ...state.template[0].children,
+            parentUUID,
+          ];
+        }),
+      ),
+    reorderTemplate: (templateObjs) =>
+      set(
+        produce<WorkoutStore>((state) => {
+          const parentId = templateObjs[0].parentId; // Get the parentId from the first item
+          const updatedChildren = templateObjs.map((obj) => obj.uuid);
+
+          // Parent id will never be null
+          state.template[parentId!].children = updatedChildren;
+        }),
+      ),
+    deleteExercise: (uuid) =>
+      set(
+        produce<WorkoutStore>((state) => {
+          const parentUUID = state.template[uuid].parentId;
+          if (!parentUUID) return;
+
+          // Get the new order of exercises
+          const newExerciseOrder = state.template[parentUUID].children.filter(
+            (_uuid) => _uuid !== uuid,
           );
 
-          state.pickedExercises = newPickedOrder;
-          state.pickedExercisesSet.delete(id);
-        }
-        // Otherwise append id onto array
-        else {
-          state.pickedExercises.push(id);
-          state.pickedExercisesSet.add(id);
-        }
-      }),
-    ),
-  clearExercises: () =>
-    set({ pickedExercises: [], pickedExercisesSet: new Set() }),
-  addExercises: (exerciseIds, uuid = '0') =>
-    set(
-      produce<WorkoutStore>((state) => {
-        const newUUIDs: string[] = [];
+          state.template[parentUUID] = {
+            ...state.template[parentUUID],
+            children: newExerciseOrder,
+          };
 
-        // Create object with generated UUID
-        exerciseIds.map((exerciseId) => {
-          const newUUID = Crypto.randomUUID();
-          newUUIDs.push(newUUID);
+          // Check if superset
+          if (state.template[uuid].children.length > 0) {
+            // Delete the children
+            state.template[uuid].children.map(
+              (childUUID) => delete state.template[childUUID],
+            );
+          }
 
-          return (state.template[newUUID] = {
-            exerciseId: exerciseId,
-            uuid: newUUID,
-            sets: [{ key: Date.now(), type: 'N', weight: '', reps: '' }],
-            children: [],
-            parentId: uuid,
-          });
-        });
+          delete state.template[uuid];
+        }),
+      ),
+    addSet: (uuid) =>
+      set(
+        produce<WorkoutStore>((state) => {
+          const lastElementIdx = state.template[uuid].sets.length - 1;
 
-        // Add exerciseIds to parent
-        state.template[uuid].children = [
-          ...state.template[uuid].children,
-          ...newUUIDs,
-        ];
-      }),
-    ),
-  addSuperset: (exerciseIds) =>
-    set(
-      produce<WorkoutStore>((state) => {
-        // Create parent UUID
-        const parentUUID = Crypto.randomUUID();
+          if (lastElementIdx === -1) {
+            state.template[uuid].sets.push({
+              key: Date.now(),
+              type: 'N',
+              weight: '',
+              reps: '',
+            });
+          } else {
+            state.template[uuid].sets.push({
+              key: Date.now(),
+              type: state.template[uuid].sets[lastElementIdx].type,
+              weight: state.template[uuid].sets[lastElementIdx].weight,
+              reps: '',
+            });
+          }
+        }),
+      ),
+    reorderSets: (uuid, sets) =>
+      set(
+        produce<WorkoutStore>((state) => {
+          state.template[uuid].sets = sets;
+        }),
+      ),
+    editSet: (uuid, index, newSet) =>
+      set(
+        produce<WorkoutStore>((state) => {
+          state.template[uuid].sets[index] = newSet;
+        }),
+      ),
+  }));
+}
 
-        // Create exercises for superset
-        const newUUIDs: string[] = [];
+export const useWorkoutStore = createWorkoutStore();
 
-        exerciseIds.map((exerciseId) => {
-          const newUUID = Crypto.randomUUID();
-          newUUIDs.push(newUUID);
+export function createWorkoutStoreHook() {
+  const { template, pickedExercises, pickedExercisesSet, ...actions } =
+    useWorkoutStore((state) => state);
 
-          return (state.template[newUUID] = {
-            exerciseId: exerciseId,
-            uuid: newUUID,
-            sets: [{ key: Date.now(), type: 'N', weight: '', reps: '' }],
-            children: [],
-            parentId: parentUUID,
-          });
-        });
+  return {
+    template,
+    pickedExercises,
+    pickedExercisesSet,
+    actions,
+  };
+}
 
-        // Create superset object with uuids of children
-        state.template[parentUUID] = {
-          exerciseId: null,
-          uuid: parentUUID,
-          sets: [],
-          children: newUUIDs,
-          parentId: '0',
-        };
+// export function createWorkoutStoreHook() {
+//   return () => {
+//     const { template, pickedExercises, pickedExercisesSet, ...actions } =
+//       useWorkoutStore((state) => state);
 
-        // Add superset to root
-        state.template[0].children = [
-          ...state.template[0].children,
-          parentUUID,
-        ];
-      }),
-    ),
-  reorderTemplate: (templateObjs) =>
-    set(
-      produce<WorkoutStore>((state) => {
-        const parentId = templateObjs[0].parentId; // Get the parentId from the first item
-        const updatedChildren = templateObjs.map((obj) => obj.uuid);
+//     return {
+//       template,
+//       pickedExercises,
+//       pickedExercisesSet,
+//       actions,
+//     };
+//   };
+// }
 
-        // Parent id will never be null
-        state.template[parentId!].children = updatedChildren;
-      }),
-    ),
-  deleteExercise: (uuid) =>
-    set(
-      produce<WorkoutStore>((state) => {
-        const parentUUID = state.template[uuid].parentId;
-        if (!parentUUID) return;
+// export function createWorkoutStoreHook<
+//   T extends WorkoutStateVal & WorkoutStateFunctions,
+// >(store: T) {
+//   return () => {
+//     const { template, pickedExercises, pickedExercisesSet, ...actions } =
+//       useWorkoutStore((state) => state);
 
-        // Get the new order of exercises
-        const newExerciseOrder = state.template[parentUUID].children.filter(
-          (_uuid) => _uuid !== uuid,
-        );
+//     return {
+//       // State values
+//       template,
+//       pickedExercises,
+//       pickedExercisesSet,
+//       // All actions grouped under 'actions'
+//       actions,
+//     };
+//   };
+// }
 
-        state.template[parentUUID] = {
-          ...state.template[parentUUID],
-          children: newExerciseOrder,
-        };
+// export function useWorkoutStoreWithSetter(): WorkoutStateVal & {
+//   setter: WorkoutStateFunctions;
+// } {
+//   const {
+//     template,
+//     pickedExercises,
+//     pickedExercisesSet,
+//     pickExercise,
+//     clearExercises,
+//     addExercises,
+//     addSuperset,
+//     reorderTemplate,
+//     deleteExercise,
+//     addSet,
+//     editSet,
+//     reorderSets,
+//   } = useWorkoutStore((state) => state);
 
-        // Check if superset
-        if (state.template[uuid].children.length > 0) {
-          // Delete the children
-          state.template[uuid].children.map(
-            (childUUID) => delete state.template[childUUID],
-          );
-        }
+//   return {
+//     template,
+//     pickedExercises,
+//     pickedExercisesSet,
+//     setter: {
+//       pickExercise,
+//       clearExercises,
+//       addExercises,
+//       addSuperset,
+//       reorderTemplate,
+//       deleteExercise,
+//       addSet,
+//       editSet,
+//       reorderSets,
+//     },
+//   };
+// }
 
-        delete state.template[uuid];
-      }),
-    ),
-  addSet: (uuid) =>
-    set(
-      produce<WorkoutStore>((state) => {
-        const lastElementIdx = state.template[uuid].sets.length - 1;
+// export const useWorkoutStore = create<WorkoutStore>((set) => ({
+//   template: {
+//     '0': {
+//       exerciseId: 0,
+//       uuid: '0',
+//       sets: [],
+//       children: [],
+//       parentId: null, // No parent for the root
+//     },
+//   },
+//   pickedExercises: [],
+//   pickedExercisesSet: new Set(),
+//   pickExercise: (id) =>
+//     set(
+//       produce<WorkoutStore>((state) => {
+//         // If exercise exists in set then remove from array
+//         if (state.pickedExercisesSet.has(id)) {
+//           const newPickedOrder = state.pickedExercises.filter(
+//             (_id) => _id !== id,
+//           );
 
-        if (lastElementIdx === -1) {
-          state.template[uuid].sets.push({
-            key: Date.now(),
-            type: 'N',
-            weight: '',
-            reps: '',
-          });
-        } else {
-          state.template[uuid].sets.push({
-            key: Date.now(),
-            type: state.template[uuid].sets[lastElementIdx].type,
-            weight: state.template[uuid].sets[lastElementIdx].weight,
-            reps: '',
-          });
-        }
-      }),
-    ),
-  reorderSets: (uuid, sets) =>
-    set(
-      produce<WorkoutStore>((state) => {
-        state.template[uuid].sets = sets;
-      }),
-    ),
-  editSet: (uuid, index, newSet) =>
-    set(
-      produce<WorkoutStore>((state) => {
-        state.template[uuid].sets[index] = newSet;
-      }),
-    ),
-}));
+//           state.pickedExercises = newPickedOrder;
+//           state.pickedExercisesSet.delete(id);
+//         }
+//         // Otherwise append id onto array
+//         else {
+//           state.pickedExercises.push(id);
+//           state.pickedExercisesSet.add(id);
+//         }
+//       }),
+//     ),
+//   clearExercises: () =>
+//     set({ pickedExercises: [], pickedExercisesSet: new Set() }),
+//   addExercises: (exerciseIds, uuid = '0') =>
+//     set(
+//       produce<WorkoutStore>((state) => {
+//         const newUUIDs: string[] = [];
+
+//         // Create object with generated UUID
+//         exerciseIds.map((exerciseId) => {
+//           const newUUID = Crypto.randomUUID();
+//           newUUIDs.push(newUUID);
+
+//           return (state.template[newUUID] = {
+//             exerciseId: exerciseId,
+//             uuid: newUUID,
+//             sets: [{ key: Date.now(), type: 'N', weight: '', reps: '' }],
+//             children: [],
+//             parentId: uuid,
+//           });
+//         });
+
+//         // Add exerciseIds to parent
+//         state.template[uuid].children = [
+//           ...state.template[uuid].children,
+//           ...newUUIDs,
+//         ];
+//       }),
+//     ),
+//   addSuperset: (exerciseIds) =>
+//     set(
+//       produce<WorkoutStore>((state) => {
+//         // Create parent UUID
+//         const parentUUID = Crypto.randomUUID();
+
+//         // Create exercises for superset
+//         const newUUIDs: string[] = [];
+
+//         exerciseIds.map((exerciseId) => {
+//           const newUUID = Crypto.randomUUID();
+//           newUUIDs.push(newUUID);
+
+//           return (state.template[newUUID] = {
+//             exerciseId: exerciseId,
+//             uuid: newUUID,
+//             sets: [{ key: Date.now(), type: 'N', weight: '', reps: '' }],
+//             children: [],
+//             parentId: parentUUID,
+//           });
+//         });
+
+//         // Create superset object with uuids of children
+//         state.template[parentUUID] = {
+//           exerciseId: null,
+//           uuid: parentUUID,
+//           sets: [],
+//           children: newUUIDs,
+//           parentId: '0',
+//         };
+
+//         // Add superset to root
+//         state.template[0].children = [
+//           ...state.template[0].children,
+//           parentUUID,
+//         ];
+//       }),
+//     ),
+//   reorderTemplate: (templateObjs) =>
+//     set(
+//       produce<WorkoutStore>((state) => {
+//         const parentId = templateObjs[0].parentId; // Get the parentId from the first item
+//         const updatedChildren = templateObjs.map((obj) => obj.uuid);
+
+//         // Parent id will never be null
+//         state.template[parentId!].children = updatedChildren;
+//       }),
+//     ),
+//   deleteExercise: (uuid) =>
+//     set(
+//       produce<WorkoutStore>((state) => {
+//         const parentUUID = state.template[uuid].parentId;
+//         if (!parentUUID) return;
+
+//         // Get the new order of exercises
+//         const newExerciseOrder = state.template[parentUUID].children.filter(
+//           (_uuid) => _uuid !== uuid,
+//         );
+
+//         state.template[parentUUID] = {
+//           ...state.template[parentUUID],
+//           children: newExerciseOrder,
+//         };
+
+//         // Check if superset
+//         if (state.template[uuid].children.length > 0) {
+//           // Delete the children
+//           state.template[uuid].children.map(
+//             (childUUID) => delete state.template[childUUID],
+//           );
+//         }
+
+//         delete state.template[uuid];
+//       }),
+//     ),
+//   addSet: (uuid) =>
+//     set(
+//       produce<WorkoutStore>((state) => {
+//         const lastElementIdx = state.template[uuid].sets.length - 1;
+
+//         if (lastElementIdx === -1) {
+//           state.template[uuid].sets.push({
+//             key: Date.now(),
+//             type: 'N',
+//             weight: '',
+//             reps: '',
+//           });
+//         } else {
+//           state.template[uuid].sets.push({
+//             key: Date.now(),
+//             type: state.template[uuid].sets[lastElementIdx].type,
+//             weight: state.template[uuid].sets[lastElementIdx].weight,
+//             reps: '',
+//           });
+//         }
+//       }),
+//     ),
+//   reorderSets: (uuid, sets) =>
+//     set(
+//       produce<WorkoutStore>((state) => {
+//         state.template[uuid].sets = sets;
+//       }),
+//     ),
+//   editSet: (uuid, index, newSet) =>
+//     set(
+//       produce<WorkoutStore>((state) => {
+//         state.template[uuid].sets[index] = newSet;
+//       }),
+//     ),
+// }));

@@ -1,8 +1,10 @@
 import React from 'react';
 import { Text, Pressable } from 'react-native';
 import { useActionSheet } from '@expo/react-native-action-sheet';
+import { useRouter } from 'expo-router';
 
 export default function StartWorkout({ inWorkout, setInWorkout }: any) {
+  const router = useRouter();
   const { showActionSheetWithOptions } = useActionSheet();
 
   const handleStartWorkout = () => {
@@ -16,8 +18,9 @@ export default function StartWorkout({ inWorkout, setInWorkout }: any) {
       },
       async (selectedIndex?: number) => {
         switch (selectedIndex) {
-          case 0:
-            setInWorkout(true);
+          case 0: // use template
+            router.push('/(tabs)/workout/selectTemplate');
+            // setInWorkout(true);
             break;
           case 1:
             setInWorkout(true);

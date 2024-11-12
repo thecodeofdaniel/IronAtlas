@@ -45,6 +45,7 @@ export default function WorkoutTab() {
               openModal('selectExercises', {
                 isSuperset: false,
                 uuid: '0',
+                storeType: 'workout',
               });
               router.push('/modal');
             }}
