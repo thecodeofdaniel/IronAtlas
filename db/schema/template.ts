@@ -17,15 +17,16 @@ export const volumeTemplate = sqliteTable(
   'volume_templates',
   {
     id: integer('id').primaryKey({ autoIncrement: true }),
-    workoutTemplateId: integer('workout_template_id').references(
-      () => workoutTemplate.id,
-      {
+    workoutTemplateId: integer('workout_template_id')
+      .references(() => workoutTemplate.id, {
         onDelete: 'cascade',
-      },
-    ),
-    exerciseId: integer('exercise_id').references(() => exercise.id, {
-      onDelete: 'cascade',
-    }),
+      })
+      .notNull(),
+    exerciseId: integer('exercise_id')
+      .references(() => exercise.id, {
+        onDelete: 'cascade',
+      })
+      .notNull(),
     notes: text('notes'),
     index: integer('index').notNull(),
     subIndex: integer('sub_index').default(0).notNull(),
