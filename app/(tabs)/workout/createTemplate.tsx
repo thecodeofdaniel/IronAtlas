@@ -7,10 +7,12 @@ import React from 'react';
 import { View, Text, Pressable } from 'react-native';
 import TemplateScreen2 from './Template2';
 import { useModalStore } from '@/store/modalStore';
+import { useExerciseSelectionHook } from '@/store/exerciseSelection/exerciseSelectionHook';
 
 export default function CreateTemplate() {
   const router = useRouter();
-  const { template: template, actions } = useTemplateStoreHook();
+  // const { template, actions } = useTemplateStoreHook();
+  const { template, actions } = useExerciseSelectionHook('template');
   const openModal = useModalStore((state) => state.openModal);
 
   return (
@@ -29,7 +31,10 @@ export default function CreateTemplate() {
       {/* <View className="flex-1 items-center justify-center">
         <Text>createTemplate</Text>
       </View> */}
-      <TemplateScreen2 template={template} actions={actions} />
+      <TemplateScreen2
+        template={template}
+        actions={actions}
+      />
       <Pressable
         className="bg-blue-500 p-4"
         onPress={() => {

@@ -23,32 +23,31 @@ import SwipeableItem, {
 } from 'react-native-swipeable-item';
 import Animated, { useAnimatedStyle } from 'react-native-reanimated';
 import { useActionSheet } from '@expo/react-native-action-sheet';
-import { useModalStore } from '@/store/modalStore';
+import { ModalData, useModalStore } from '@/store/modalStore';
 import { Link, useRouter } from 'expo-router';
-
-type TemplateProps = {
-  templateMap: TemplateMap;
-  exerciseMap: ExerciseMap;
-  reorderTemplate: (templateObjs: TemplateObj[]) => void;
-  templateChildren: string[];
-  level: number;
-};
 
 type RowItemProps = {
   drag: () => void;
   getIndex: () => number | undefined;
   isActive: boolean;
   item: TemplateObj;
+  exerciseMap: ExerciseMap;
   itemRefs: React.MutableRefObject<Map<any, any>>;
 };
 
-function RowItem({ drag, getIndex, isActive, item, itemRefs }: RowItemProps) {
-  const exerciseMap = useExerciseStore((state) => state.exerciseMap);
-  const deleteFromTemplate = useWorkoutStore((state) => state.deleteExercise);
-  const { showActionSheetWithOptions } = useActionSheet();
+function RowItem({
+  drag,
+  getIndex,
+  isActive,
+  item,
+  exerciseMap,
+  itemRefs,
+}: RowItemProps) {
   const isSuperset = item.children.length > 0;
-  const openModal = useModalStore((state) => state.openModal);
+  const deleteFromTemplate = useWorkoutStore((state) => state.deleteExercise);
   const router = useRouter();
+  const openModal = useModalStore((state) => state.openModal);
+  const { showActionSheetWithOptions } = useActionSheet();
 
   const handleOnPress = () => {
     const options = ['Add exercise to superset', 'Cancel'];
@@ -173,16 +172,26 @@ const UnderlayLeft = ({
   );
 };
 
+type TemplateTreeProps = {
+  templateMap: TemplateMap;
+  exerciseMap: ExerciseMap;
+  reorderTemplate: (templateObjs: TemplateObj[]) => void;
+  templateChildren: string[];
+  level: number;
+};
+
 function TemplateTree({
   templateMap,
   exerciseMap,
   reorderTemplate,
   templateChildren,
   level,
-}: TemplateProps) {
+}: TemplateTreeProps) {
   const RenderItem = (params: RenderItemParams<TemplateObj>) => {
     const itemRefs = useRef(new Map());
-    return <RowItem {...params} itemRefs={itemRefs} />;
+    return (
+      <RowItem {...params} exerciseMap={exerciseMap} itemRefs={itemRefs} />
+    );
   };
 
   const templateExercises = templateChildren.map((id) => templateMap[id]);
