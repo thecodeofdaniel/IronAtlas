@@ -1,6 +1,6 @@
-import { Text } from 'react-native';
+import { Pressable, Text } from 'react-native';
 import React, { useEffect, useState } from 'react';
-import { Stack, useLocalSearchParams } from 'expo-router';
+import { Link, Stack, useLocalSearchParams } from 'expo-router';
 import { useWorkoutStore } from '@/store/workout/workoutStore';
 import { useExerciseStore } from '@/store/exercise/exerciseStore';
 import SetsTable from '@/components/SetsTable/SetsTable';
@@ -10,12 +10,16 @@ import Animated, {
   withTiming,
   useSharedValue,
 } from 'react-native-reanimated';
+import { useRouter } from 'expo-router';
+import { Ionicons } from '@expo/vector-icons';
 
 export default function Exercise() {
   console.log('Render Exercise');
   const { uuid: uuid_param } = useLocalSearchParams<{ uuid: string }>();
   const { template } = useWorkoutStore((state) => state);
   const { exerciseMap } = useExerciseStore((state) => state);
+
+  const router = useRouter();
 
   const parentUUID = template[uuid_param].parentId!;
   const isSuperset = template[uuid_param].children.length > 0;
@@ -56,6 +60,12 @@ export default function Exercise() {
             isSuperset || isPartOfSuperset
               ? 'Superset'
               : exerciseMap[template[uuid_param].exerciseId!].label,
+          headerBackVisible: true,
+          headerBackTitle: 'Back',
+          headerLeft: (props) =>
+            props.canGoBack && (
+              <Pressable onPress={() => router.push('../')}></Pressable>
+            ),
         }}
       />
       <GestureHandlerRootView

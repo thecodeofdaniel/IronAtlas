@@ -5,15 +5,20 @@ import {
 import { Stack, useRouter } from 'expo-router';
 import React from 'react';
 import { View, Text, Pressable } from 'react-native';
-import TemplateScreen2 from './Template2';
+import TemplateScreen2 from '../Template2';
 import { useModalStore } from '@/store/modalStore';
 import { useExerciseSelectionHook } from '@/store/exerciseSelection/exerciseSelectionHook';
+import { useWorkoutStoreHook } from '@/store/workout/workoutStore';
+import TemplateScreen from '../Template';
 
 export default function CreateTemplate() {
   const router = useRouter();
   // const { template, actions } = useTemplateStoreHook();
-  const { template, actions } = useExerciseSelectionHook('template');
+  // const { template, actions } = useExerciseSelectionHook('workout');
+  const { template, actions } = useWorkoutStoreHook();
   const openModal = useModalStore((state) => state.openModal);
+
+  console.log('Template', template);
 
   return (
     <>
@@ -31,17 +36,15 @@ export default function CreateTemplate() {
       {/* <View className="flex-1 items-center justify-center">
         <Text>createTemplate</Text>
       </View> */}
-      <TemplateScreen2
-        template={template}
-        actions={actions}
-      />
+      <TemplateScreen2 template={template} actions={actions} />
+      {/* <TemplateScreen /> */}
       <Pressable
         className="bg-blue-500 p-4"
         onPress={() => {
           openModal('selectExercises', {
             isSuperset: false,
             uuid: '0',
-            storeType: 'template',
+            storeType: 'workout',
           });
           router.push('/modal');
         }}

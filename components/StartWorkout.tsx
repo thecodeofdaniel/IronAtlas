@@ -19,7 +19,7 @@ export default function StartWorkout({ inWorkout, setInWorkout }: any) {
       async (selectedIndex?: number) => {
         switch (selectedIndex) {
           case 0: // use template
-            router.push('/(tabs)/workout/selectTemplate');
+            router.push('/(tabs)/workout/template/selectTemplate');
             // setInWorkout(true);
             break;
           case 1:

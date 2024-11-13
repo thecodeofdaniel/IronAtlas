@@ -196,7 +196,7 @@ export function createWorkoutStore() {
 
 export const useWorkoutStore = createWorkoutStore();
 
-export function createWorkoutStoreHook() {
+export function useWorkoutStoreHook() {
   const { template, pickedExercises, pickedExercisesSet, ...actions } =
     useWorkoutStore((state) => state);
 

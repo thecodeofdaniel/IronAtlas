@@ -39,21 +39,23 @@ export default function WorkoutTab() {
       />
       <View className="m-2 flex flex-1 justify-between">
         <TemplateScreen />
-        <View className="flex flex-row gap-2">
-          <Pressable
-            onPress={() => {
-              openModal('selectExercises', {
-                isSuperset: false,
-                uuid: '0',
-                storeType: 'workout',
-              });
-              router.push('/modal');
-            }}
-            className="flex-1 border bg-stone-300 py-2"
-          >
-            <Text className="text-center">Add exercises</Text>
-          </Pressable>
-        </View>
+        {inWorkout && (
+          <View className="flex flex-row gap-2">
+            <Pressable
+              onPress={() => {
+                openModal('selectExercises', {
+                  isSuperset: false,
+                  uuid: '0',
+                  storeType: 'workout',
+                });
+                router.push('/modal');
+              }}
+              className="flex-1 border bg-stone-300 py-2"
+            >
+              <Text className="text-center">Add exercises</Text>
+            </Pressable>
+          </View>
+        )}
       </View>
     </>
   );

@@ -20,7 +20,7 @@ export default function SelectTemplate() {
         </Pressable>
         <Pressable
           className="flex-1 bg-blue-500 p-4"
-          onPress={() => router.push('/workout/createTemplate')}
+          onPress={() => router.push('/workout/template/createTemplate')}
         >
           <Text className="text-center">Create Template</Text>
         </Pressable>
