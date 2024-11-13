@@ -40,7 +40,7 @@ export default function RowItem({
   exerciseMap,
   itemRefs,
 }: RowItemProps) {
-  const isSuperset = item.children.length > 0;
+  const isSuperset = item.exerciseId === null;
 
   return (
     <>
@@ -93,9 +93,9 @@ export default function RowItem({
                     : exerciseMap[item.exerciseId].label}
                 </Text>
                 {isSuperset ? (
-                  <SupersetOptions uuid={item.uuid} isSuperset={true} />
+                  <SupersetOptions uuid={item.uuid} isSuperset={isSuperset} />
                 ) : (
-                  <SupersetAddIcon isSuperset={false} />
+                  <SupersetAddIcon isSuperset={isSuperset} />
                 )}
               </View>
             </TouchableOpacity>
