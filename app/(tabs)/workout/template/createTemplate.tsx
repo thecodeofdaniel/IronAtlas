@@ -5,7 +5,7 @@ import {
 import { Stack, useRouter } from 'expo-router';
 import React from 'react';
 import { View, Text, Pressable } from 'react-native';
-import TemplateScreen2 from '../Template2';
+import TemplateScreen2 from '../../../../components/Template/Template2';
 import { useModalStore } from '@/store/modalStore';
 import { useExerciseSelectionHook } from '@/store/exerciseSelection/exerciseSelectionHook';
 import { useWorkoutStoreHook } from '@/store/workout/workoutStore';
@@ -13,8 +13,6 @@ import TemplateScreen from '../Template';
 
 export default function CreateTemplate() {
   const router = useRouter();
-  // const { template, actions } = useTemplateStoreHook();
-  // const { template, actions } = useExerciseSelectionHook('workout');
   const { template, actions } = useWorkoutStoreHook();
   const openModal = useModalStore((state) => state.openModal);
 
