@@ -18,7 +18,6 @@ import {
 
 const emptyErrorMsgs = {
   templateName: '',
-  templateInfo: '',
   exercises: '',
 };
 
@@ -89,7 +88,7 @@ export default function CreateTemplate2() {
               className="rounded-md bg-green-500 px-4 py-2"
               onPress={onSubmit}
             >
-              <Text className="font-semibold text-white">Savee</Text>
+              <Text className="font-semibold text-white">Save</Text>
             </Pressable>
           ),
         }}
@@ -101,6 +100,7 @@ export default function CreateTemplate2() {
         >
           <GestureHandlerRootView style={{ flex: 1, gap: 4 }}>
             <View className="flex flex-col">
+              {/* Template Name */}
               <View>
                 <Text className="text-lg font-medium">Template Name</Text>
                 <TextInput
@@ -108,12 +108,13 @@ export default function CreateTemplate2() {
                   value={templateName}
                   className="border px-1 py-2"
                 />
+                {errorMsgs.templateName && (
+                  <Text className="text-red-500">
+                    Add a name to this template
+                  </Text>
+                )}
               </View>
-              {errorMsgs.templateName && (
-                <Text className="text-red-500">
-                  Add a name to this template
-                </Text>
-              )}
+              {/* Template Info */}
               <View>
                 <Text className="text-lg font-medium">Template Details</Text>
                 <TextInput
@@ -128,18 +129,19 @@ export default function CreateTemplate2() {
                   value={templateInfo}
                 />
               </View>
-
-              {errorMsgs.templateInfo && (
-                <Text className="text-red-500">This is required.</Text>
+            </View>
+            {/* Exercises */}
+            <View className="flex-1">
+              <Text className="text-lg font-medium">Exercises</Text>
+              <TemplateScreen2
+                template={template}
+                actions={actions}
+                className="flex-1 border"
+              />
+              {errorMsgs.exercises && (
+                <Text className="text-red-500">{errorMsgs.exercises}</Text>
               )}
             </View>
-            <Text className="text-lg font-medium">Exercises</Text>
-            <View className="flex-1 border">
-              <TemplateScreen2 template={template} actions={actions} />
-            </View>
-            {errorMsgs.exercises && (
-              <Text className="text-red-500">{errorMsgs.exercises}</Text>
-            )}
           </GestureHandlerRootView>
         </TouchableWithoutFeedback>
         <Pressable

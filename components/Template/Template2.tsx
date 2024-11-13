@@ -9,6 +9,7 @@ import { WorkoutStateFunctions } from '@/store/workout/workoutStore';
 import { useExerciseStore } from '@/store/exercise/exerciseStore';
 
 import RowItem from './RowItem';
+import clsx from 'clsx';
 
 type TemplateTreeProps = {
   templateMap: TemplateMap;
@@ -69,11 +70,13 @@ function TemplateTree({
 type TemplateScreenProps = {
   template: TemplateMap;
   actions: WorkoutStateFunctions;
+  className: string;
 };
 
 export default function TemplateScreen2({
   template,
   actions,
+  className,
 }: TemplateScreenProps) {
   const { exerciseMap } = useExerciseStore((state) => state);
 
@@ -82,6 +85,7 @@ export default function TemplateScreen2({
       {/* <GestureHandlerRootView
         style={{ borderColor: 'black', borderWidth: 1, flex: 1 }}
       > */}
+      <View className={clsx(className)}>
         <TemplateTree
           templateMap={template}
           actions={actions}
@@ -89,6 +93,7 @@ export default function TemplateScreen2({
           templateChildren={template[0].children}
           level={0}
         />
+      </View>
       {/* </GestureHandlerRootView> */}
     </>
   );
