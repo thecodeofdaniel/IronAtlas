@@ -7,6 +7,7 @@ import MoveTag from '@/app/modals/tags/moveTag';
 import UpsertExercise from '@/app/modals/exercises/upsertExercise';
 import SelectExercises from '@/app/modals/workout/SelectExercisesModal';
 import { Stack } from 'expo-router';
+import SaveTemplate from './modals/workout/SaveTemplate';
 
 export default function Modal() {
   const { activeModal, modalData, closeModal } = useModalStore();
@@ -43,6 +44,7 @@ export default function Modal() {
           closeModal={closeModal}
         />
       )}
+      {activeModal === 'saveTemplate' && <SaveTemplate />}
     </>
   );
 }

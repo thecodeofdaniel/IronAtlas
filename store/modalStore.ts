@@ -18,6 +18,7 @@ export type ModalData = {
     uuid: string;
     storeType: 'template' | 'workout';
   };
+  saveTemplate: {};
 };
 
 interface ModalState {

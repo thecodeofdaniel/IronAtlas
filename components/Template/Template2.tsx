@@ -79,9 +79,9 @@ export default function TemplateScreen2({
 
   return (
     <>
-      <GestureHandlerRootView
+      {/* <GestureHandlerRootView
         style={{ borderColor: 'black', borderWidth: 1, flex: 1 }}
-      >
+      > */}
         <TemplateTree
           templateMap={template}
           actions={actions}
@@ -89,7 +89,7 @@ export default function TemplateScreen2({
           templateChildren={template[0].children}
           level={0}
         />
-      </GestureHandlerRootView>
+      {/* </GestureHandlerRootView> */}
     </>
   );
 }
