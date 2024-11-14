@@ -3,6 +3,7 @@ import { create } from 'zustand';
 import * as Crypto from 'expo-crypto';
 import { db } from '@/db/instance';
 import * as templateSchema from '@/db/schema/template';
+import { saveExerciseToTemplate } from './utils';
 
 export type WorkoutStateVal = {
   template: TemplateMap;
@@ -196,38 +197,51 @@ export function createWorkoutStore() {
       ),
     saveAsTemplate: async (name) => {
       try {
-        const [workoutTemplate] = await db
-          .insert(templateSchema.workoutTemplate)
-          .values({ name: name })
-          .returning({ id: templateSchema.workoutTemplate.id });
-
         const template = get().template;
-        const exerciseUUIDs = template[0].children;
+        const rootChildren = template[0].children;
 
-        exerciseUUIDs.forEach((uuid, index) => {
-          // If this item is a superset go into them
-          if (template[uuid].exerciseId === null) {
-            template[uuid].children.forEach((childUUID, subIndex) => {
-              db.insert(templateSchema.volumeTemplate).values({
-                workoutTemplateId: workoutTemplate.id,
-                exerciseId: template[childUUID].exerciseId!,
-                index: index,
-                subIndex: subIndex,
-              });
-            });
-          }
-          // If this item is a regular exercise
-          else {
-            db.insert(templateSchema.volumeTemplate).values({
-              workoutTemplateId: workoutTemplate.id, // cannot be null
-              exerciseId: template[uuid].exerciseId, // cannot be null
-              index: index, // cannot be null
-              subIndex: 0, // can be undefined it will be zero if not a super set
-            });
-          }
+        // Start a transaction to ensure all operations succeed or none do
+        await db.transaction(async (tx) => {
+          // Create the workout template
+          const [workoutTemplate] = await tx
+            .insert(templateSchema.workoutTemplate)
+            .values({ name })
+            .returning({ id: templateSchema.workoutTemplate.id });
+
+          // Process all exercises/supersets
+          await Promise.all(
+            rootChildren.map(async (uuid, index) => {
+              const templateItem = template[uuid];
+
+              // Handle superset
+              if (templateItem.exerciseId === null) {
+                await Promise.all(
+                  templateItem.children.map(async (childUUID, subIndex) => {
+                    await saveExerciseToTemplate(tx, {
+                      template,
+                      exerciseUUID: childUUID,
+                      workoutTemplateId: workoutTemplate.id,
+                      index,
+                      subIndex,
+                    });
+                  }),
+                );
+              }
+              // Handle regular exercise
+              else {
+                await saveExerciseToTemplate(tx, {
+                  template,
+                  exerciseUUID: uuid,
+                  workoutTemplateId: workoutTemplate.id,
+                  index,
+                });
+              }
+            }),
+          );
         });
       } catch (error) {
         console.error('Error: When saving template -', error);
+        throw error; // Re-throw to handle in UI
       }
     },
   }));
