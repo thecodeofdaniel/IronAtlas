@@ -30,7 +30,7 @@ export default function CreateTemplate2() {
   const [templateInfo, setTemplateInfo] = useState('');
   const [errorMsgs, setErrorMsgs] = useState(emptyErrorMsgs);
 
-  const onSubmit = () => {
+  const onSubmit = async () => {
     // Reset messages
     setErrorMsgs(emptyErrorMsgs);
 
@@ -64,16 +64,18 @@ export default function CreateTemplate2() {
           ...prev,
           exercises: 'A superset cannot be empty',
         }));
+        hasError = true;
       }
-      hasError = true;
     });
 
     if (hasError) {
-      console.log('Has an error');
+      console.log('Form for creating template, has an error');
       return;
     }
 
     console.log('Success');
+    await actions.saveAsTemplate(templateName);
+    router.back();
     return;
   };
 
@@ -106,7 +108,7 @@ export default function CreateTemplate2() {
                 <TextInput
                   onChangeText={(text) => setTemplateName(text)}
                   value={templateName}
-                  className="border px-1 py-2"
+                  className="border px-2 py-1"
                 />
                 {errorMsgs.templateName && (
                   <Text className="text-red-500">
@@ -118,7 +120,7 @@ export default function CreateTemplate2() {
               <View>
                 <Text className="text-lg font-medium">Template Details</Text>
                 <TextInput
-                  className="border px-1 py-2"
+                  className="border px-2 py-2"
                   style={{ minHeight: 50 }} // Optional: ensures minimum height
                   multiline={true}
                   numberOfLines={2}
