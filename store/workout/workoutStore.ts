@@ -234,6 +234,7 @@ export function createWorkoutStore() {
                   exerciseUUID: uuid,
                   workoutTemplateId: workoutTemplate.id,
                   index,
+                  subIndex: null,
                 });
               }
             }),

@@ -1,3 +1,4 @@
+import { sql } from 'drizzle-orm';
 import {
   sqliteTable,
   integer,
@@ -11,6 +12,9 @@ export const workoutTemplate = sqliteTable('workout_templates', {
   id: integer('id').primaryKey({ autoIncrement: true }),
   name: text('name').notNull(),
   notes: text('notes'),
+  createdAt: integer('created_at', { mode: 'number' })
+    .notNull()
+    .default(sql`(unixepoch())`),
 });
 
 export const volumeTemplate = sqliteTable(
@@ -29,7 +33,7 @@ export const volumeTemplate = sqliteTable(
       .notNull(),
     notes: text('notes'),
     index: integer('index').notNull(),
-    subIndex: integer('sub_index').default(0).notNull(),
+    subIndex: integer('sub_index'), // can be null
   },
   (table) => ({
     workoutTemplateIdIndex: index('workout_template_id_index').on(

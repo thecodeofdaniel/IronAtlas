@@ -14,7 +14,7 @@ export async function saveExerciseToTemplate(
     exerciseUUID: string;
     workoutTemplateId: number;
     index: number;
-    subIndex?: number;
+    subIndex: number | null;
   },
 ) {
   const exercise = template[exerciseUUID];

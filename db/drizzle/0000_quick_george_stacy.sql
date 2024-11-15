@@ -1,3 +1,28 @@
+CREATE TABLE `exercises` (
+	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
+	`label` text NOT NULL,
+	`value` text NOT NULL,
+	`index` integer NOT NULL
+);
+--> statement-breakpoint
+CREATE TABLE `exercise_tags` (
+	`exercise_id` integer NOT NULL,
+	`tag_id` integer NOT NULL,
+	PRIMARY KEY(`exercise_id`, `tag_id`),
+	FOREIGN KEY (`exercise_id`) REFERENCES `exercises`(`id`) ON UPDATE no action ON DELETE cascade,
+	FOREIGN KEY (`tag_id`) REFERENCES `tags`(`id`) ON UPDATE no action ON DELETE cascade
+);
+--> statement-breakpoint
+CREATE TABLE `tags` (
+	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
+	`label` text NOT NULL,
+	`value` text NOT NULL,
+	`parent_id` integer,
+	`index` integer NOT NULL,
+	`is_open` integer NOT NULL,
+	FOREIGN KEY (`parent_id`) REFERENCES `tags`(`id`) ON UPDATE no action ON DELETE no action
+);
+--> statement-breakpoint
 CREATE TABLE `sett_templates` (
 	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
 	`volume_template_id` integer,
@@ -13,11 +38,11 @@ CREATE INDEX `volume_template_id_index` ON `sett_templates` (`volume_template_id
 CREATE INDEX `sett_template_index_index` ON `sett_templates` (`index`);--> statement-breakpoint
 CREATE TABLE `volume_templates` (
 	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
-	`workout_template_id` integer,
-	`exercise_id` integer,
+	`workout_template_id` integer NOT NULL,
+	`exercise_id` integer NOT NULL,
 	`notes` text,
 	`index` integer NOT NULL,
-	`sub_index` integer DEFAULT 0 NOT NULL,
+	`sub_index` integer,
 	FOREIGN KEY (`workout_template_id`) REFERENCES `workout_templates`(`id`) ON UPDATE no action ON DELETE cascade,
 	FOREIGN KEY (`exercise_id`) REFERENCES `exercises`(`id`) ON UPDATE no action ON DELETE cascade
 );
@@ -27,7 +52,8 @@ CREATE INDEX `volume_template_index_index` ON `volume_templates` (`index`);--> s
 CREATE TABLE `workout_templates` (
 	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
 	`name` text NOT NULL,
-	`notes` text
+	`notes` text,
+	`created_at` integer DEFAULT (unixepoch()) NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE `setts` (
