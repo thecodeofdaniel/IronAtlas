@@ -17,6 +17,9 @@ export const workoutTemplate = sqliteTable('workout_templates', {
     .default(sql`(unixepoch())`),
 });
 
+export type TSelectWorkoutTemplate = typeof workoutTemplate.$inferSelect;
+export type TInsertWorkoutTemplate = typeof workoutTemplate.$inferInsert;
+
 export const volumeTemplate = sqliteTable(
   'volume_templates',
   {
