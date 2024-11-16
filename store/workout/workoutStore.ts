@@ -26,17 +26,19 @@ export type WorkoutStateFunctions = {
 
 type WorkoutStore = WorkoutStateVal & WorkoutStateFunctions;
 
+const TEMPLATE_ROOT = {
+  '0': {
+    exerciseId: 0,
+    uuid: '0',
+    sets: [],
+    children: [],
+    parentId: null, // No parent for the root
+  },
+};
+
 export function createWorkoutStore() {
   return create<WorkoutStore>((set, get) => ({
-    template: {
-      '0': {
-        exerciseId: 0,
-        uuid: '0',
-        sets: [],
-        children: [],
-        parentId: null, // No parent for the root
-      },
-    },
+    template: TEMPLATE_ROOT,
     pickedExercises: [],
     pickedExercisesSet: new Set(),
     pickExercise: (id) =>
@@ -240,6 +242,8 @@ export function createWorkoutStore() {
             }),
           );
         });
+
+        set({ template: TEMPLATE_ROOT });
       } catch (error) {
         console.error('Error: When saving template -', error);
         throw error; // Re-throw to handle in UI

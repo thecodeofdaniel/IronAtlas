@@ -73,10 +73,8 @@ export default function CreateTemplate2() {
       return;
     }
 
-    console.log('Success');
     await actions.saveAsTemplate(templateName);
     router.back();
-    return;
   };
 
   return (

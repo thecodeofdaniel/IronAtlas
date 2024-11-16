@@ -10,13 +10,49 @@ import { useExerciseStore } from '@/store/exercise/exerciseStore';
 import { volume } from '@/db/schema/workout';
 
 interface TransformedTemplate {
-  id: number;
+  workoutId: number;
   name: string;
   volumes: Array<{
+    volumeId: number;
     exerciseId: number; // null if volume is a superset
     index: number;
     subIndex: number | null;
   }>;
+}
+
+type RenderItemProps = {
+  item: TransformedTemplate;
+  exerciseMap: ExerciseMap;
+};
+
+function RenderItem({ item, exerciseMap }: RenderItemProps) {
+  const ssIndexHolder = new Set();
+
+  return (
+    <View className="border">
+      <Text className="text-lg font-semibold underline">{item.name}</Text>
+      {item.volumes.map(({ volumeId, exerciseId, index, subIndex }) => {
+        const exerciseName = ` - ${exerciseMap[exerciseId].label}`;
+
+        if (subIndex !== null) {
+          return (
+            <View key={volumeId}>
+              {!ssIndexHolder.has(index) && ssIndexHolder.add(index) && (
+                <Text className="pl-1 underline">Superset</Text>
+              )}
+              <Text className="pl-2">{exerciseName}</Text>
+            </View>
+          );
+        }
+
+        return (
+          <View key={volumeId}>
+            <Text>{exerciseName}</Text>
+          </View>
+        );
+      })}
+    </View>
+  );
 }
 
 export default function SelectTemplate() {
@@ -27,15 +63,15 @@ export default function SelectTemplate() {
   const { data: rawWorkoutTemplates } = useLiveQuery(
     db
       .select({
-        id: sch.workoutTemplate.id,
+        workoutId: sch.workoutTemplate.id,
         name: sch.workoutTemplate.name,
+        volumeId: sch.volumeTemplate.id,
         exerciseId: sch.volumeTemplate.exerciseId,
         index: sch.volumeTemplate.index,
         subIndex: sch.volumeTemplate.subIndex,
       })
       .from(sch.workoutTemplate)
       .innerJoin(
-        // changed from leftJoin
         sch.volumeTemplate,
         eq(sch.volumeTemplate.workoutTemplateId, sch.workoutTemplate.id),
       ),
@@ -48,16 +84,17 @@ export default function SelectTemplate() {
     const templatesMap = new Map<number, TransformedTemplate>();
 
     rawWorkoutTemplates.forEach((row) => {
-      if (!templatesMap.has(row.id)) {
-        templatesMap.set(row.id, {
-          id: row.id,
+      if (!templatesMap.has(row.workoutId)) {
+        templatesMap.set(row.workoutId, {
+          workoutId: row.workoutId,
           name: row.name,
           volumes: [],
         });
       }
 
-      const template = templatesMap.get(row.id)!;
+      const template = templatesMap.get(row.workoutId)!;
       template.volumes.push({
+        volumeId: row.volumeId,
         exerciseId: row.exerciseId,
         index: row.index,
         subIndex: row.subIndex,
@@ -67,32 +104,32 @@ export default function SelectTemplate() {
     return Array.from(templatesMap.values());
   }, [rawWorkoutTemplates]);
 
-  const renderItem = ({ item }: { item: TransformedTemplate }) => {
-    const ssIndexHolder = new Set();
+  // const renderItem = ({ item }: { item: TransformedTemplate }) => {
+  //   const ssIndexHolder = new Set();
 
-    return (
-      <View className="border">
-        <Text className="text-lg font-semibold underline">{item.name}</Text>
-        {item.volumes.map(({ exerciseId, index, subIndex }) => {
-          const exerciseName = ` - ${exerciseMap[exerciseId].label}`;
+  //   return (
+  //     <View className="border">
+  //       <Text className="text-lg font-semibold underline">{item.name}</Text>
+  //       {item.volumes.map(({ exerciseId, index, subIndex }) => {
+  //         const exerciseName = ` - ${exerciseMap[exerciseId].label}`;
 
-          if (subIndex !== null) {
-            return (
-              <View>
-                {!ssIndexHolder.has(index) && ssIndexHolder.add(index) && (
-                  <Text className="pl-1 underline">Superset</Text>
-                )}
-                <Text key={`${index}-${subIndex}`} className="pl-2">
-                  {exerciseName}
-                </Text>
-              </View>
-            );
-          }
-          return <Text key={index}>{exerciseName}</Text>;
-        })}
-      </View>
-    );
-  };
+  //         if (subIndex !== null) {
+  //           return (
+  //             <View>
+  //               {!ssIndexHolder.has(index) && ssIndexHolder.add(index) && (
+  //                 <Text className="pl-1 underline">Superset</Text>
+  //               )}
+  //               <Text key={`${index}-${subIndex}`} className="pl-2">
+  //                 {exerciseName}
+  //               </Text>
+  //             </View>
+  //           );
+  //         }
+  //         return <Text key={index}>{exerciseName}</Text>;
+  //       })}
+  //     </View>
+  //   );
+  // };
 
   return (
     <>
@@ -101,8 +138,10 @@ export default function SelectTemplate() {
         <GestureHandlerRootView>
           <FlatList
             data={workoutTemplates}
-            renderItem={renderItem}
-            keyExtractor={(item) => item.id.toString()}
+            renderItem={({ item }) => (
+              <RenderItem item={item} exerciseMap={exerciseMap} />
+            )}
+            keyExtractor={(item) => item.workoutId.toString()}
           />
         </GestureHandlerRootView>
       </View>
