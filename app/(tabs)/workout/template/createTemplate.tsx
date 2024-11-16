@@ -1,4 +1,4 @@
-import { Stack, useRouter } from 'expo-router';
+import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import {
   View,
@@ -15,6 +15,9 @@ import {
   GestureHandlerRootView,
   TextInput,
 } from 'react-native-gesture-handler';
+import { eq } from 'drizzle-orm';
+import { db } from '@/db/instance';
+import * as templateSchema from '@/db/schema/template';
 
 const emptyErrorMsgs = {
   templateName: '',
@@ -22,11 +25,37 @@ const emptyErrorMsgs = {
 };
 
 export default function CreateTemplate2() {
+  const { templateWorkoutId } = useLocalSearchParams<{
+    templateWorkoutId?: string;
+  }>();
+
+  console.log('TemplateWorkoutId:', templateWorkoutId);
+
   const router = useRouter();
   const { template, actions } = useWorkoutStoreHook();
   const openModal = useModalStore((state) => state.openModal);
 
-  const [templateName, setTemplateName] = useState('');
+  // Move the template loading to useEffect
+  React.useEffect(() => {
+    if (templateWorkoutId !== undefined) {
+      actions.loadTemplate(+templateWorkoutId);
+    }
+  }, [templateWorkoutId]); // Only run when templateWorkoutId changes
+
+  const [templateName, setTemplateName] = useState(() => {
+    if (!templateWorkoutId) {
+      return '';
+    } else {
+      const [workout] = db
+        .select({ name: templateSchema.workoutTemplate.name })
+        .from(templateSchema.workoutTemplate)
+        .where(eq(templateSchema.workoutTemplate.id, +templateWorkoutId))
+        .all();
+
+      return workout.name;
+    }
+  });
+
   const [templateInfo, setTemplateInfo] = useState('');
   const [errorMsgs, setErrorMsgs] = useState(emptyErrorMsgs);
 
@@ -81,7 +110,7 @@ export default function CreateTemplate2() {
     <>
       <Stack.Screen
         options={{
-          title: 'Create Template',
+          title: templateWorkoutId ? 'Edit Template' : 'Create Template',
           headerBackTitle: 'Back',
           headerRight: () => (
             <Pressable

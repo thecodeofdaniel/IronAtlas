@@ -2,8 +2,14 @@ import { produce } from 'immer';
 import { create } from 'zustand';
 import * as Crypto from 'expo-crypto';
 import { db } from '@/db/instance';
-import * as templateSchema from '@/db/schema/template';
+import * as sch from '@/db/schema/template';
+import {
+  TSelectWorkoutTemplate,
+  TSelectVolumeTemplate,
+  TSelectSettTemplate,
+} from '@/db/schema/template';
 import { saveExerciseToTemplate } from './utils';
+import { eq } from 'drizzle-orm';
 
 export type WorkoutStateVal = {
   template: TemplateMap;
@@ -22,6 +28,7 @@ export type WorkoutStateFunctions = {
   editSet: (uuid: string, index: number, newSet: SettType) => void;
   reorderSets: (uuid: string, sets: SettType[]) => void;
   saveAsTemplate: (name: string) => Promise<void>;
+  loadTemplate: (id: number) => void;
 };
 
 type WorkoutStore = WorkoutStateVal & WorkoutStateFunctions;
@@ -206,9 +213,9 @@ export function createWorkoutStore() {
         await db.transaction(async (tx) => {
           // Create the workout template
           const [workoutTemplate] = await tx
-            .insert(templateSchema.workoutTemplate)
+            .insert(sch.workoutTemplate)
             .values({ name })
-            .returning({ id: templateSchema.workoutTemplate.id });
+            .returning({ id: sch.workoutTemplate.id });
 
           // Process all exercises/supersets
           await Promise.all(
@@ -247,6 +254,118 @@ export function createWorkoutStore() {
       } catch (error) {
         console.error('Error: When saving template -', error);
         throw error; // Re-throw to handle in UI
+      }
+    },
+    loadTemplate: async (id) => {
+      try {
+        set({ template: TEMPLATE_ROOT });
+
+        // Get volumes with their sets in a single query
+        const volumes = await db
+          .select({
+            volume: sch.volumeTemplate,
+            sett: sch.settTemplate,
+          })
+          .from(sch.volumeTemplate)
+          .leftJoin(
+            sch.settTemplate,
+            eq(sch.volumeTemplate.id, sch.settTemplate.volumeTemplateId),
+          )
+          .where(eq(sch.volumeTemplate.workoutTemplateId, id))
+          .orderBy(
+            sch.volumeTemplate.index,
+            sch.volumeTemplate.subIndex,
+            sch.settTemplate.index,
+          );
+
+        // Group volumes with their sets more directly
+        const volumesByIndex = volumes.reduce(
+          (acc, { volume, sett }) => {
+            const index = volume.index;
+            if (!acc[index]) acc[index] = new Map();
+
+            if (!acc[index].has(volume.id)) {
+              acc[index].set(volume.id, {
+                ...volume,
+                setts: [],
+              });
+            }
+
+            const volumeEntry = acc[index].get(volume.id);
+            if (sett && volumeEntry) {
+              volumeEntry.setts.push(sett);
+            }
+
+            return acc;
+          },
+          {} as Record<
+            number,
+            Map<
+              number,
+              TSelectVolumeTemplate & { setts: TSelectSettTemplate[] }
+            >
+          >,
+        );
+
+        // Update state with grouped data
+        set(
+          produce<WorkoutStore>((state) => {
+            Object.values(volumesByIndex).forEach((volumeGroup) => {
+              const volumes = Array.from(volumeGroup.values());
+
+              if (volumes.length > 1) {
+                // Handle superset
+                const parentUUID = Crypto.randomUUID();
+                const childUUIDs = volumes.map((volume) => {
+                  const childUUID = Crypto.randomUUID();
+                  state.template[childUUID] = {
+                    exerciseId: volume.exerciseId,
+                    uuid: childUUID,
+                    sets: volume.setts.map((set) => ({
+                      key: Date.now(),
+                      type: set.type,
+                      weight: set.weight?.toString() ?? '',
+                      reps: set.reps?.toString() ?? '',
+                    })),
+                    children: [],
+                    parentId: parentUUID,
+                  };
+                  return childUUID;
+                });
+
+                state.template[parentUUID] = {
+                  exerciseId: null,
+                  uuid: parentUUID,
+                  sets: [],
+                  children: childUUIDs,
+                  parentId: '0',
+                };
+                state.template['0'].children.push(parentUUID);
+              } else {
+                // Handle single exercise
+                const volume = volumes[0];
+                const uuid = Crypto.randomUUID();
+
+                state.template[uuid] = {
+                  exerciseId: volume.exerciseId,
+                  uuid,
+                  sets: volume.setts.map((set) => ({
+                    key: Date.now(),
+                    type: set.type,
+                    weight: set.weight?.toString() ?? '',
+                    reps: set.reps?.toString() ?? '',
+                  })),
+                  children: [],
+                  parentId: '0',
+                };
+                state.template['0'].children.push(uuid);
+              }
+            });
+          }),
+        );
+      } catch (error) {
+        console.error('Error: When loading template -', error);
+        throw error;
       }
     },
   }));

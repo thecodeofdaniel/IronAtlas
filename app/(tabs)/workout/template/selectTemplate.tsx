@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, Pressable } from 'react-native';
-import { Stack, useRouter } from 'expo-router';
+import { Router, Stack, useRouter } from 'expo-router';
 import { useLiveQuery } from 'drizzle-orm/expo-sqlite';
 import { db } from '@/db/instance';
 import * as sch from '@/db/schema/template';
@@ -25,9 +25,10 @@ interface TransformedTemplate {
 type RenderItemProps = {
   item: TransformedTemplate;
   exerciseMap: ExerciseMap;
+  router: Router;
 };
 
-function RenderItem({ item, exerciseMap }: RenderItemProps) {
+function RenderItem({ item, exerciseMap, router }: RenderItemProps) {
   const ssIndexHolder = new Set();
   const { showActionSheetWithOptions } = useActionSheet();
 
@@ -56,6 +57,10 @@ function RenderItem({ item, exerciseMap }: RenderItemProps) {
             console.log('Delete workoutId', item.workoutId);
             break;
           case 1:
+            router.push({
+              pathname: '/(tabs)/workout/template/createTemplate',
+              params: { templateWorkoutId: item.workoutId },
+            });
             break;
           case cancelButtonIndex:
             break;
@@ -155,7 +160,11 @@ export default function SelectTemplate() {
           <FlatList
             data={workoutTemplates}
             renderItem={({ item }) => (
-              <RenderItem item={item} exerciseMap={exerciseMap} />
+              <RenderItem
+                item={item}
+                exerciseMap={exerciseMap}
+                router={router}
+              />
             )}
             keyExtractor={(item) => item.workoutId.toString()}
           />

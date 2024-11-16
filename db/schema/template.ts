@@ -46,6 +46,9 @@ export const volumeTemplate = sqliteTable(
   }),
 );
 
+export type TSelectVolumeTemplate = typeof volumeTemplate.$inferSelect;
+export type TInsertVolumeTemplate = typeof volumeTemplate.$inferInsert;
+
 export const settTemplate = sqliteTable(
   'sett_templates',
   {
@@ -70,3 +73,6 @@ export const settTemplate = sqliteTable(
     indexIndex: index('sett_template_index_index').on(table.index),
   }),
 );
+
+export type TSelectSettTemplate = typeof settTemplate.$inferSelect;
+export type TInsertSettTemplate = typeof settTemplate.$inferInsert;
