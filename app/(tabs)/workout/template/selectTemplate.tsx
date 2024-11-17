@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, Pressable } from 'react-native';
 import { Router, Stack, useRouter } from 'expo-router';
 import { useLiveQuery } from 'drizzle-orm/expo-sqlite';
@@ -11,6 +11,7 @@ import { volume } from '@/db/schema/workout';
 import { Ionicons } from '@expo/vector-icons';
 import { useActionSheet } from '@expo/react-native-action-sheet';
 import { useWorkoutStore } from '@/store/workout/workoutStore';
+import clsx from 'clsx';
 
 interface TransformedTemplate {
   workoutId: number;
@@ -25,11 +26,21 @@ interface TransformedTemplate {
 
 type RenderItemProps = {
   item: TransformedTemplate;
+  index: number;
   exerciseMap: ExerciseMap;
   router: Router;
+  selected: number | undefined;
+  setSelected: React.Dispatch<React.SetStateAction<number | undefined>>;
 };
 
-function RenderItem({ item, exerciseMap, router }: RenderItemProps) {
+function RenderItem({
+  item,
+  index,
+  exerciseMap,
+  router,
+  selected,
+  setSelected,
+}: RenderItemProps) {
   const ssIndexHolder = new Set();
   const { showActionSheetWithOptions } = useActionSheet();
   const loadTemplate = useWorkoutStore((state) => state.loadTemplate);
@@ -73,7 +84,12 @@ function RenderItem({ item, exerciseMap, router }: RenderItemProps) {
   };
 
   return (
-    <View className="my-1 border px-2">
+    <Pressable
+      className={clsx('my-1 border px-2', {
+        'bg-green-500': selected === index,
+      })}
+      onPress={() => setSelected(index)}
+    >
       <View className="flex flex-row items-center justify-between">
         <Text className="text-lg font-semibold underline">{item.name}</Text>
         <Ionicons
@@ -102,15 +118,17 @@ function RenderItem({ item, exerciseMap, router }: RenderItemProps) {
           </View>
         );
       })}
-    </View>
+    </Pressable>
   );
 }
 
 export default function SelectTemplate() {
   console.log('Render SelectTemplate');
+  const [selected, setSelected] = useState<number>();
+
   const router = useRouter();
   const exerciseMap = useExerciseStore((state) => state.exerciseMap);
-  const clearTemplate = useWorkoutStore((state) => state.clearTemplate);
+  const { clearTemplate, loadTemplate } = useWorkoutStore((state) => state);
 
   // Fetch the workout templates
   const { data: rawWorkoutTemplates } = useLiveQuery(
@@ -164,11 +182,14 @@ export default function SelectTemplate() {
         <GestureHandlerRootView>
           <FlatList
             data={workoutTemplates}
-            renderItem={({ item }) => (
+            renderItem={({ item, index }) => (
               <RenderItem
                 item={item}
+                index={index}
                 exerciseMap={exerciseMap}
                 router={router}
+                selected={selected}
+                setSelected={setSelected}
               />
             )}
             keyExtractor={(item) => item.workoutId.toString()}
@@ -177,8 +198,15 @@ export default function SelectTemplate() {
       </View>
       <View className="flex flex-row justify-between gap-2 p-2">
         <Pressable
+          disabled={selected === undefined}
           className="flex-1 bg-green-500 p-4"
-          onPress={() => router.back()}
+          onPress={() => {
+            if (selected === undefined) return;
+
+            loadTemplate(workoutTemplates[selected].workoutId);
+            router.back();
+          }}
+          style={{ opacity: selected === undefined ? 0.3 : 1 }}
         >
           <Text className="text-center">Pick Template</Text>
         </Pressable>
