@@ -30,7 +30,7 @@ export default function CreateSuperset({
       })}
       onPress={() => {
         actions.addSuperset(pickedExercises);
-        actions.clearExercises();
+        actions.clearPickedExercises();
         router.back();
       }}
     >

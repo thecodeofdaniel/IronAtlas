@@ -112,8 +112,10 @@ function RenderItem({ item, exerciseMap, router }: RenderItemProps) {
 }
 
 export default function SelectTemplate() {
+  console.log('Render SelectTemplate');
   const router = useRouter();
-  const { exerciseMap } = useExerciseStore((state) => state);
+  const exerciseMap = useExerciseStore((state) => state.exerciseMap);
+  const clearTemplate = useWorkoutStore((state) => state.clearTemplate);
 
   // Fetch the workout templates
   const { data: rawWorkoutTemplates } = useLiveQuery(
@@ -187,7 +189,10 @@ export default function SelectTemplate() {
         </Pressable>
         <Pressable
           className="flex-1 bg-blue-500 p-4"
-          onPress={() => router.push('/workout/template/upsertTemplate')}
+          onPress={() => {
+            clearTemplate();
+            router.push('/workout/template/upsertTemplate');
+          }}
         >
           <Text className="text-center">Create Template</Text>
         </Pressable>

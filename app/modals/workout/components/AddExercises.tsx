@@ -35,7 +35,7 @@ export default function AddExercises({
       onPress={() => {
         if (!isSuperset) actions.addExercises(pickedExercises);
         else actions.addExercises(pickedExercises, toExerciseUUID);
-        actions.clearExercises();
+        actions.clearPickedExercises();
         router.back();
       }}
     >

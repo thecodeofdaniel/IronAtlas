@@ -18,8 +18,9 @@ export type WorkoutStateVal = {
 };
 
 export type WorkoutStateFunctions = {
+  clearPickedExercises: () => void;
+  clearTemplate: () => void;
   pickExercise: (id: number) => void;
-  clearExercises: () => void;
   addExercises: (exerciseIds: number[], uuid?: string) => void;
   addSuperset: (exerciseIds: number[]) => void;
   reorderTemplate: (templateObjs: TemplateObj[]) => void;
@@ -49,6 +50,9 @@ export function createWorkoutStore() {
     template: TEMPLATE_ROOT,
     pickedExercises: [],
     pickedExercisesSet: new Set(),
+    clearPickedExercises: () =>
+      set({ pickedExercises: [], pickedExercisesSet: new Set() }),
+    clearTemplate: () => set({ template: TEMPLATE_ROOT }),
     pickExercise: (id) =>
       set(
         produce<WorkoutStore>((state) => {
@@ -68,8 +72,7 @@ export function createWorkoutStore() {
           }
         }),
       ),
-    clearExercises: () =>
-      set({ pickedExercises: [], pickedExercisesSet: new Set() }),
+
     addExercises: (exerciseIds, uuid = '0') =>
       set(
         produce<WorkoutStore>((state) => {
