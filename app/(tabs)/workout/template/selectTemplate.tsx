@@ -10,6 +10,7 @@ import { useExerciseStore } from '@/store/exercise/exerciseStore';
 import { volume } from '@/db/schema/workout';
 import { Ionicons } from '@expo/vector-icons';
 import { useActionSheet } from '@expo/react-native-action-sheet';
+import { useWorkoutStore } from '@/store/workout/workoutStore';
 
 interface TransformedTemplate {
   workoutId: number;
@@ -31,6 +32,7 @@ type RenderItemProps = {
 function RenderItem({ item, exerciseMap, router }: RenderItemProps) {
   const ssIndexHolder = new Set();
   const { showActionSheetWithOptions } = useActionSheet();
+  const loadTemplate = useWorkoutStore((state) => state.loadTemplate);
 
   const handleOptionsPress = async () => {
     const options = ['Delete', 'Edit', 'Cancel'];
@@ -57,9 +59,15 @@ function RenderItem({ item, exerciseMap, router }: RenderItemProps) {
             console.log('Delete workoutId', item.workoutId);
             break;
           case 1:
+            // TODO: Create the template here
+            // TODO: Pass the name of the workout here
+            loadTemplate(item.workoutId);
             router.push({
-              pathname: '/(tabs)/workout/template/createTemplate',
-              params: { templateWorkoutId: item.workoutId },
+              pathname: '/(tabs)/workout/template/upsertTemplate',
+              params: {
+                templateWorkoutId: item.workoutId,
+                templateWorkoutName: item.name,
+              },
             });
             break;
           case cancelButtonIndex:
@@ -179,7 +187,7 @@ export default function SelectTemplate() {
         </Pressable>
         <Pressable
           className="flex-1 bg-blue-500 p-4"
-          onPress={() => router.push('/workout/template/createTemplate')}
+          onPress={() => router.push('/workout/template/upsertTemplate')}
         >
           <Text className="text-center">Create Template</Text>
         </Pressable>

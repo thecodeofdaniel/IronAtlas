@@ -15,47 +15,28 @@ import {
   GestureHandlerRootView,
   TextInput,
 } from 'react-native-gesture-handler';
-import { eq } from 'drizzle-orm';
-import { db } from '@/db/instance';
-import * as templateSchema from '@/db/schema/template';
+// import { eq } from 'drizzle-orm';
+// import { db } from '@/db/instance';
+// import * as templateSchema from '@/db/schema/template';
 
 const emptyErrorMsgs = {
   templateName: '',
   exercises: '',
 };
 
-export default function CreateTemplate2() {
-  const { templateWorkoutId } = useLocalSearchParams<{
-    templateWorkoutId?: string;
-  }>();
+export default function UpsertTemplate() {
+  console.log('Render upsertTemplate');
 
-  console.log('TemplateWorkoutId:', templateWorkoutId);
+  const { templateWorkoutId, templateWorkoutName } = useLocalSearchParams<{
+    templateWorkoutId?: string;
+    templateWorkoutName?: string;
+  }>();
 
   const router = useRouter();
   const { template, actions } = useWorkoutStoreHook();
   const openModal = useModalStore((state) => state.openModal);
 
-  // Move the template loading to useEffect
-  React.useEffect(() => {
-    if (templateWorkoutId !== undefined) {
-      actions.loadTemplate(+templateWorkoutId);
-    }
-  }, [templateWorkoutId]); // Only run when templateWorkoutId changes
-
-  const [templateName, setTemplateName] = useState(() => {
-    if (!templateWorkoutId) {
-      return '';
-    } else {
-      const [workout] = db
-        .select({ name: templateSchema.workoutTemplate.name })
-        .from(templateSchema.workoutTemplate)
-        .where(eq(templateSchema.workoutTemplate.id, +templateWorkoutId))
-        .all();
-
-      return workout.name;
-    }
-  });
-
+  const [templateName, setTemplateName] = useState(templateWorkoutName ?? '');
   const [templateInfo, setTemplateInfo] = useState('');
   const [errorMsgs, setErrorMsgs] = useState(emptyErrorMsgs);
 
@@ -110,7 +91,7 @@ export default function CreateTemplate2() {
     <>
       <Stack.Screen
         options={{
-          title: templateWorkoutId ? 'Edit Template' : 'Create Template',
+          title: templateWorkoutName ? 'Edit Template' : 'Create Template',
           headerBackTitle: 'Back',
           headerRight: () => (
             <Pressable
