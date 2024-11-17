@@ -28,6 +28,7 @@ export type WorkoutStateFunctions = {
   editSet: (uuid: string, index: number, newSet: SettType) => void;
   reorderSets: (uuid: string, sets: SettType[]) => void;
   saveAsTemplate: (name: string) => Promise<void>;
+  upsertTemplate: (name: string, id?: number) => void;
   loadTemplate: (id: number) => void;
 };
 
@@ -254,6 +255,66 @@ export function createWorkoutStore() {
       } catch (error) {
         console.error('Error: When saving template -', error);
         throw error; // Re-throw to handle in UI
+      }
+    },
+    upsertTemplate: async (name, workoutTemplateId) => {
+      try {
+        const template = get().template;
+        const rootChildren = template[0].children;
+
+        await db.transaction(async (tx) => {
+          let createdAt: number | undefined;
+
+          if (workoutTemplateId) {
+            const [existingWorkout] = await tx
+              .delete(sch.workoutTemplate)
+              .where(eq(sch.workoutTemplate.id, workoutTemplateId))
+              .returning();
+
+            if (existingWorkout) createdAt = existingWorkout.createdAt;
+          }
+
+          const [workoutTemplate] = await tx
+            .insert(sch.workoutTemplate)
+            .values({ name, createdAt })
+            .returning();
+
+          // Process exercises and supersets
+          await Promise.all(
+            rootChildren.map(async (uuid, index) => {
+              const templateItem = template[uuid];
+
+              if (templateItem.exerciseId === null) {
+                // Handle superset
+                await Promise.all(
+                  templateItem.children.map((childUUID, subIndex) =>
+                    saveExerciseToTemplate(tx, {
+                      template,
+                      exerciseUUID: childUUID,
+                      workoutTemplateId: workoutTemplate.id,
+                      index,
+                      subIndex,
+                    }),
+                  ),
+                );
+              } else {
+                // Handle single exercise
+                await saveExerciseToTemplate(tx, {
+                  template,
+                  exerciseUUID: uuid,
+                  workoutTemplateId: workoutTemplate.id,
+                  index,
+                  subIndex: null,
+                });
+              }
+            }),
+          );
+        });
+
+        set({ template: TEMPLATE_ROOT });
+      } catch (error) {
+        console.error('Error updating template in db:', error);
+        throw error;
       }
     },
     loadTemplate: async (id) => {

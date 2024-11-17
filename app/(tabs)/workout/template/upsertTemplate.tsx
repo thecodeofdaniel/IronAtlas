@@ -83,7 +83,11 @@ export default function UpsertTemplate() {
       return;
     }
 
-    await actions.saveAsTemplate(templateName);
+    actions.upsertTemplate(
+      templateName,
+      templateWorkoutId ? +templateWorkoutId : undefined,
+    );
+
     router.back();
   };
 
@@ -91,7 +95,7 @@ export default function UpsertTemplate() {
     <>
       <Stack.Screen
         options={{
-          title: templateWorkoutName ? 'Edit Template' : 'Create Template',
+          title: templateWorkoutId ? 'Edit Template' : 'Create Template',
           headerBackTitle: 'Back',
           headerRight: () => (
             <Pressable
