@@ -10,8 +10,7 @@ import { exercise } from '.';
 
 export const workoutTemplate = sqliteTable('workout_templates', {
   id: integer('id').primaryKey({ autoIncrement: true }),
-  name: text('name').notNull(),
-  notes: text('notes'),
+  name: text('name').notNull().unique(),
   createdAt: integer('created_at', { mode: 'number' })
     .notNull()
     .default(sql`(unixepoch())`),
@@ -31,7 +30,6 @@ export const volumeTemplate = sqliteTable(
         onDelete: 'cascade',
       })
       .notNull(),
-    notes: text('notes'),
     index: integer('index').notNull(),
     subIndex: integer('sub_index'), // can be null
   },
@@ -40,6 +38,7 @@ export const volumeTemplate = sqliteTable(
       table.workoutTemplateId,
     ),
     indexIndex: index('volume_template_index_index').on(table.index),
+    subIndexIndex: index('volume_template_sub_index_index').on(table.subIndex),
   }),
 );
 
@@ -54,11 +53,10 @@ export const settTemplate = sqliteTable(
       },
     ),
     // For templates, weight and reps could be optional or have default values
+    type: text('type').notNull(),
     weight: real('weight'),
     reps: integer('reps'),
-    rpe: real('rpe'),
     index: integer('index').notNull(),
-    type: text('type').notNull(),
   },
   (table) => ({
     volumeTemplateIdIndex: index('volume_template_id_index').on(

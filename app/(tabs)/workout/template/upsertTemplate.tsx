@@ -15,9 +15,9 @@ import {
   GestureHandlerRootView,
   TextInput,
 } from 'react-native-gesture-handler';
-// import { eq } from 'drizzle-orm';
-// import { db } from '@/db/instance';
-// import * as templateSchema from '@/db/schema/template';
+import { db } from '@/db/instance';
+import { eq } from 'drizzle-orm';
+import * as sch from '@/db/schema/template';
 
 const emptyErrorMsgs = {
   templateName: '',
@@ -37,7 +37,6 @@ export default function UpsertTemplate() {
   const openModal = useModalStore((state) => state.openModal);
 
   const [templateName, setTemplateName] = useState(templateWorkoutName ?? '');
-  const [templateInfo, setTemplateInfo] = useState('');
   const [errorMsgs, setErrorMsgs] = useState(emptyErrorMsgs);
 
   const onSubmit = async () => {
@@ -50,7 +49,7 @@ export default function UpsertTemplate() {
     if (templateName === '') {
       setErrorMsgs((prev) => ({
         ...prev,
-        templateName: 'Must include a name',
+        templateName: 'Add a name to this template :)',
       }));
       hasError = true;
     }
@@ -78,13 +77,26 @@ export default function UpsertTemplate() {
       }
     });
 
-    if (hasError) {
-      console.log('Form for creating template, has an error');
-      return;
+    // Check if template name already exists
+    const nameExists = db
+      .select({ id: sch.workoutTemplate.id })
+      .from(sch.workoutTemplate)
+      .where(eq(sch.workoutTemplate.name, templateName))
+      .get();
+
+    if (nameExists) {
+      setErrorMsgs((prev) => ({
+        ...prev,
+        templateName: `A template with the \"${templateName}\" already exists`,
+      }));
+      hasError = true;
     }
 
+    // Stop if form has errors
+    if (hasError) return;
+
     actions.upsertTemplate(
-      templateName,
+      templateName.trim(),
       templateWorkoutId ? +templateWorkoutId : undefined,
     );
 
@@ -113,36 +125,17 @@ export default function UpsertTemplate() {
           accessible={false}
         >
           <GestureHandlerRootView style={{ flex: 1, gap: 4 }}>
-            <View className="flex flex-col">
-              {/* Template Name */}
-              <View>
-                <Text className="text-lg font-medium">Template Name</Text>
-                <TextInput
-                  onChangeText={(text) => setTemplateName(text)}
-                  value={templateName}
-                  className="border px-2 py-1"
-                />
-                {errorMsgs.templateName && (
-                  <Text className="text-red-500">
-                    Add a name to this template
-                  </Text>
-                )}
-              </View>
-              {/* Template Info */}
-              <View>
-                <Text className="text-lg font-medium">Template Details</Text>
-                <TextInput
-                  className="border px-2 py-2"
-                  style={{ minHeight: 50 }} // Optional: ensures minimum height
-                  multiline={true}
-                  numberOfLines={2}
-                  textAlignVertical="top" // This helps on Android
-                  maxLength={100}
-                  onSubmitEditing={() => Keyboard.dismiss()}
-                  onChangeText={(text) => setTemplateInfo(text)}
-                  value={templateInfo}
-                />
-              </View>
+            {/* Template Name */}
+            <View>
+              <Text className="text-lg font-medium">Template Name</Text>
+              <TextInput
+                onChangeText={(text) => setTemplateName(text)}
+                value={templateName}
+                className="border px-2 py-1"
+              />
+              {errorMsgs.templateName && (
+                <Text className="text-red-500">{errorMsgs.templateName}</Text>
+              )}
             </View>
             {/* Exercises */}
             <View className="flex-1">

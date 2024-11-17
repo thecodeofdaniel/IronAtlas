@@ -8,6 +8,13 @@
       "when": 1731732327361,
       "tag": "0000_broken_nekra",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1731866338703,
+      "tag": "0001_past_blindfold",
+      "breakpoints": true
     }
   ]
 }
