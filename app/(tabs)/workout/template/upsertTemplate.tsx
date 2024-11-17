@@ -77,19 +77,21 @@ export default function UpsertTemplate() {
       }
     });
 
-    // Check if template name already exists
-    const nameExists = db
-      .select({ id: sch.workoutTemplate.id })
-      .from(sch.workoutTemplate)
-      .where(eq(sch.workoutTemplate.name, templateName))
-      .get();
+    // If inserting or updating template with a different name
+    if (templateName === undefined || templateWorkoutName !== templateName) {
+      const nameExists = db
+        .select({ id: sch.workoutTemplate.id })
+        .from(sch.workoutTemplate)
+        .where(eq(sch.workoutTemplate.name, templateName))
+        .get();
 
-    if (nameExists) {
-      setErrorMsgs((prev) => ({
-        ...prev,
-        templateName: `A template with the \"${templateName}\" already exists`,
-      }));
-      hasError = true;
+      if (nameExists) {
+        setErrorMsgs((prev) => ({
+          ...prev,
+          templateName: `A template with the \"${templateName}\" already exists`,
+        }));
+        hasError = true;
+      }
     }
 
     // Stop if form has errors

@@ -48,9 +48,6 @@ function RenderItem({ item, exerciseMap, router }: RenderItemProps) {
       async (selectedIndex?: number) => {
         switch (selectedIndex) {
           case destructiveButtonIndex:
-            // await db
-            //   .delete(sch.workoutTemplate)
-            //   .where(eq(sch.workoutTemplate.id, item.workoutId));
             await db.transaction(async (tx) => {
               await tx
                 .delete(sch.workoutTemplate)
@@ -59,8 +56,6 @@ function RenderItem({ item, exerciseMap, router }: RenderItemProps) {
             console.log('Delete workoutId', item.workoutId);
             break;
           case 1:
-            // TODO: Create the template here
-            // TODO: Pass the name of the workout here
             loadTemplate(item.workoutId);
             router.push({
               pathname: '/(tabs)/workout/template/upsertTemplate',
@@ -78,7 +73,7 @@ function RenderItem({ item, exerciseMap, router }: RenderItemProps) {
   };
 
   return (
-    <View className="border">
+    <View className="my-1 border px-2">
       <View className="flex flex-row items-center justify-between">
         <Text className="text-lg font-semibold underline">{item.name}</Text>
         <Ionicons
