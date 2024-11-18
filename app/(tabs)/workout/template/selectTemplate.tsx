@@ -21,7 +21,7 @@ interface TransformedTemplate {
     exerciseId: number;
     index: number;
     subIndex: number | null;
-    sets: Array<{
+    setts: Array<{
       type: string;
       weight: number | null;
       reps: number | null;
@@ -103,10 +103,10 @@ function RenderItem({
           onPress={handleOptionsPress}
         />
       </View>
-      {item.volumes.map(({ volumeId, exerciseId, index, subIndex, sets }) => {
+      {item.volumes.map(({ volumeId, exerciseId, index, subIndex, setts }) => {
         const exerciseName = ` - ${exerciseMap[exerciseId].label}`;
 
-        const setsDisplay = sets.map((set, idx) => {
+        const setsDisplay = setts.map((set, idx) => {
           if (!set.weight && !set.reps) return null;
 
           const weightStr = set.weight ? ` ${set.weight}` : '';
@@ -169,12 +169,14 @@ export default function SelectTemplate() {
         sch.volumeTemplate,
         eq(sch.volumeTemplate.workoutTemplateId, sch.workoutTemplate.id),
       )
-      .leftJoin(
+      .innerJoin(
         sch.settTemplate,
         eq(sch.settTemplate.volumeTemplateId, sch.volumeTemplate.id),
       )
       .orderBy(asc(sch.workoutTemplate.createdAt)),
   );
+
+  console.log(rawWorkoutTemplates);
 
   // Transform the flat data into nested structure
   const workoutTemplates: TransformedTemplate[] = React.useMemo(() => {
@@ -200,18 +202,16 @@ export default function SelectTemplate() {
           exerciseId: row.exerciseId,
           index: row.index,
           subIndex: row.subIndex,
-          sets: [],
+          setts: [],
         };
         template.volumes.push(volume);
       }
 
-      if (row.setType) {
-        volume.sets.push({
-          type: row.setType,
-          weight: row.weight,
-          reps: row.reps,
-        });
-      }
+      volume.setts.push({
+        type: row.setType,
+        weight: row.weight,
+        reps: row.reps,
+      });
     });
 
     return Array.from(templatesMap.values());
