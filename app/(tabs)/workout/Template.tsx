@@ -62,6 +62,7 @@ function RowItem({ drag, getIndex, isActive, item, itemRefs }: RowItemProps) {
             openModal('selectExercises', {
               isSuperset: isSuperset,
               uuid: item.uuid,
+              storeType: 'workout',
             });
             router.push('/modal');
             break;

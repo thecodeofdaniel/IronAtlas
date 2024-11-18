@@ -5,7 +5,7 @@ import { useLiveQuery } from 'drizzle-orm/expo-sqlite';
 import { db } from '@/db/instance';
 import * as sch from '@/db/schema/template';
 import { FlatList, GestureHandlerRootView } from 'react-native-gesture-handler';
-import { eq } from 'drizzle-orm';
+import { asc, eq } from 'drizzle-orm';
 import { useExerciseStore } from '@/store/exercise/exerciseStore';
 import { volume } from '@/db/schema/workout';
 import { Ionicons } from '@expo/vector-icons';
@@ -18,9 +18,14 @@ interface TransformedTemplate {
   name: string;
   volumes: Array<{
     volumeId: number;
-    exerciseId: number; // null if volume is a superset
+    exerciseId: number;
     index: number;
     subIndex: number | null;
+    sets: Array<{
+      type: string;
+      weight: number | null;
+      reps: number | null;
+    }>;
   }>;
 }
 
@@ -98,8 +103,21 @@ function RenderItem({
           onPress={handleOptionsPress}
         />
       </View>
-      {item.volumes.map(({ volumeId, exerciseId, index, subIndex }) => {
+      {item.volumes.map(({ volumeId, exerciseId, index, subIndex, sets }) => {
         const exerciseName = ` - ${exerciseMap[exerciseId].label}`;
+
+        const setsDisplay = sets.map((set, idx) => {
+          if (!set.weight && !set.reps) return null;
+
+          const weightStr = set.weight ? ` ${set.weight}` : '';
+          const repsStr = set.reps ? ` x ${set.reps}` : '';
+
+          return (
+            <Text key={idx} className="pl-4 text-sm">
+              {`${set.type}${weightStr}${repsStr}`}
+            </Text>
+          );
+        });
 
         if (subIndex !== null) {
           return (
@@ -108,6 +126,7 @@ function RenderItem({
                 <Text className="pl-1 underline">Superset</Text>
               )}
               <Text className="pl-2">{exerciseName}</Text>
+              {setsDisplay}
             </View>
           );
         }
@@ -115,6 +134,7 @@ function RenderItem({
         return (
           <View key={volumeId}>
             <Text>{exerciseName}</Text>
+            {setsDisplay}
           </View>
         );
       })}
@@ -140,12 +160,20 @@ export default function SelectTemplate() {
         exerciseId: sch.volumeTemplate.exerciseId,
         index: sch.volumeTemplate.index,
         subIndex: sch.volumeTemplate.subIndex,
+        setType: sch.settTemplate.type,
+        weight: sch.settTemplate.weight,
+        reps: sch.settTemplate.reps,
       })
       .from(sch.workoutTemplate)
       .innerJoin(
         sch.volumeTemplate,
         eq(sch.volumeTemplate.workoutTemplateId, sch.workoutTemplate.id),
-      ),
+      )
+      .leftJoin(
+        sch.settTemplate,
+        eq(sch.settTemplate.volumeTemplateId, sch.volumeTemplate.id),
+      )
+      .orderBy(asc(sch.workoutTemplate.createdAt)),
   );
 
   // Transform the flat data into nested structure
@@ -164,12 +192,26 @@ export default function SelectTemplate() {
       }
 
       const template = templatesMap.get(row.workoutId)!;
-      template.volumes.push({
-        volumeId: row.volumeId,
-        exerciseId: row.exerciseId,
-        index: row.index,
-        subIndex: row.subIndex,
-      });
+      let volume = template.volumes.find((v) => v.volumeId === row.volumeId);
+
+      if (!volume) {
+        volume = {
+          volumeId: row.volumeId,
+          exerciseId: row.exerciseId,
+          index: row.index,
+          subIndex: row.subIndex,
+          sets: [],
+        };
+        template.volumes.push(volume);
+      }
+
+      if (row.setType) {
+        volume.sets.push({
+          type: row.setType,
+          weight: row.weight,
+          reps: row.reps,
+        });
+      }
     });
 
     return Array.from(templatesMap.values());
