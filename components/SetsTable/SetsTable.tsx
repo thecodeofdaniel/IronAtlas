@@ -207,6 +207,8 @@ function RowItem({
 }: RowItemProps) {
   const index = getIndex()!;
 
+  // console.log(item);
+
   return (
     <>
       <ScaleDecorator>

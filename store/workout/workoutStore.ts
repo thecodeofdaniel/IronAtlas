@@ -388,6 +388,7 @@ export function createWorkoutStore() {
                     sets: volume.setts.map((set) => ({
                       key: Date.now(),
                       type: set.type,
+                      // TODO: Values are being set as 0 when being saved
                       weight: set.weight?.toString() ?? '',
                       reps: set.reps?.toString() ?? '',
                     })),
@@ -416,8 +417,12 @@ export function createWorkoutStore() {
                   sets: volume.setts.map((set) => ({
                     key: Date.now(),
                     type: set.type,
-                    weight: set.weight?.toString() ?? '',
-                    reps: set.reps?.toString() ?? '',
+                    // weight: set.weight?.toString() ?? '',
+                    // reps: set.reps?.toString() ?? '',
+                    // weight: set.we,
+                    // reps: set.reps,
+                    weight: set.weight === null ? '' : set.weight.toString(),
+                    reps: set.reps === null ? '' : set.reps.toString(),
                   })),
                   children: [],
                   parentId: '0',

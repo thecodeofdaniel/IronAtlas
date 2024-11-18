@@ -36,8 +36,8 @@ export async function saveExerciseToTemplate(
       volumeTemplateId: volumeTemplate.id,
       index: idx,
       type: sett.type,
-      weight: +sett.weight || 0,
-      reps: +sett.reps || 0,
+      weight: sett.weight || null, // '' is falsy
+      reps: sett.reps || null,
     })),
   );
 }
