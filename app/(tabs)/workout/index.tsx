@@ -18,11 +18,15 @@ import Popover, { PopoverPlacement } from 'react-native-popover-view';
 import StartWorkout from '@/components/StartWorkout';
 import StartWorkout2 from '@/components/StartWorkout';
 import { useModalStore } from '@/store/modalStore';
-import TemplateScreen from './Template';
+import TemplateScreen from '../../../components/TemplateOG/Template';
 import OpenModalButton from '@/components/OpenModalButton';
+import {
+  useWorkoutStore,
+  useWorkoutStoreHook,
+} from '@/store/workout/workoutStore';
 
 export default function WorkoutTab() {
-  const [inWorkout, setInWorkout] = useState(false);
+  const inWorkout = useWorkoutStore((state) => state.inWorkout);
 
   return (
     <>
@@ -30,28 +34,13 @@ export default function WorkoutTab() {
         options={{
           title: 'Workout',
           headerShown: true,
-          headerRight: () => (
-            <StartWorkout inWorkout={inWorkout} setInWorkout={setInWorkout} />
-          ),
+          headerRight: () => <StartWorkout />,
         }}
       />
-      <View className="m-2 flex flex-1 justify-between">
-        <TemplateScreen />
+      <View className="m-2 flex-1">
         {inWorkout && (
-          <View className="flex flex-row gap-2">
-            {/* <Pressable
-              onPress={() => {
-                openModal('selectExercises', {
-                  isSuperset: false,
-                  uuid: '0',
-                  storeType: 'workout',
-                });
-                router.push('/modal');
-              }}
-              className="flex-1 border bg-stone-300 py-2"
-            >
-              <Text className="text-center">Add exercises</Text>
-            </Pressable> */}
+          <View className="flex-1">
+            <TemplateScreen />
             <OpenModalButton
               activeModal="selectExercises"
               modalData={{
@@ -59,7 +48,7 @@ export default function WorkoutTab() {
                 uuid: '0',
                 storeType: 'workout',
               }}
-              className="flex-1 border bg-stone-300 py-2"
+              className="border bg-stone-300 py-2"
             >
               <Text className="text-center">Add Exercises</Text>
             </OpenModalButton>

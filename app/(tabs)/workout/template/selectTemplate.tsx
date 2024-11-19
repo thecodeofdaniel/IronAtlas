@@ -148,7 +148,9 @@ export default function SelectTemplate() {
 
   const router = useRouter();
   const exerciseMap = useExerciseStore((state) => state.exerciseMap);
-  const { clearTemplate, loadTemplate } = useWorkoutStore((state) => state);
+  const { clearTemplate, loadTemplate, toggleWorkout } = useWorkoutStore(
+    (state) => state,
+  );
 
   // Fetch the workout templates
   const { data: rawWorkoutTemplates } = useLiveQuery(
@@ -247,6 +249,7 @@ export default function SelectTemplate() {
 
             loadTemplate(workoutTemplates[selected].workoutId);
             router.back();
+            toggleWorkout();
           }}
           style={{ opacity: selected === undefined ? 0.3 : 1 }}
         >

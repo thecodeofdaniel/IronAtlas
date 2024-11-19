@@ -13,6 +13,7 @@ import { eq } from 'drizzle-orm';
 
 export type WorkoutStateVal = {
   template: TemplateMap;
+  inWorkout: boolean;
   pickedExercises: number[];
   pickedExercisesSet: Set<number>;
 };
@@ -31,6 +32,7 @@ export type WorkoutStateFunctions = {
   saveAsTemplate: (name: string) => Promise<void>;
   upsertTemplate: (name: string, id?: number) => void;
   loadTemplate: (id: number) => void;
+  toggleWorkout: () => void;
 };
 
 type WorkoutStore = WorkoutStateVal & WorkoutStateFunctions;
@@ -48,8 +50,10 @@ const TEMPLATE_ROOT = {
 export function createWorkoutStore() {
   return create<WorkoutStore>((set, get) => ({
     template: TEMPLATE_ROOT,
+    inWorkout: false,
     pickedExercises: [],
     pickedExercisesSet: new Set(),
+    toggleWorkout: () => set((state) => ({ inWorkout: !state.inWorkout })),
     clearPickedExercises: () =>
       set({ pickedExercises: [], pickedExercisesSet: new Set() }),
     clearTemplate: () => set({ template: TEMPLATE_ROOT }),
@@ -437,12 +441,20 @@ export function createWorkoutStore() {
 
 export const useWorkoutStore = createWorkoutStore();
 
-export function useWorkoutStoreHook() {
-  const { template, pickedExercises, pickedExercisesSet, ...actions } =
-    useWorkoutStore((state) => state);
+export function useWorkoutStoreHook(): WorkoutStateVal & {
+  actions: WorkoutStateFunctions;
+} {
+  const {
+    template,
+    inWorkout,
+    pickedExercises,
+    pickedExercisesSet,
+    ...actions
+  } = useWorkoutStore((state) => state);
 
   return {
     template,
+    inWorkout,
     pickedExercises,
     pickedExercisesSet,
     actions,
