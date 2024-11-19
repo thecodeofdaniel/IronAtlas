@@ -18,6 +18,7 @@ import {
 import { db } from '@/db/instance';
 import { eq } from 'drizzle-orm';
 import * as sch from '@/db/schema/template';
+import OpenModalButton from '@/components/OpenModalButton';
 
 const emptyErrorMsgs = {
   templateName: '',
@@ -34,7 +35,6 @@ export default function UpsertTemplate() {
 
   const router = useRouter();
   const { template, actions } = useWorkoutStoreHook();
-  const openModal = useModalStore((state) => state.openModal);
 
   const [templateName, setTemplateName] = useState(templateWorkoutName ?? '');
   const [errorMsgs, setErrorMsgs] = useState(emptyErrorMsgs);
@@ -153,19 +153,17 @@ export default function UpsertTemplate() {
             </View>
           </GestureHandlerRootView>
         </TouchableWithoutFeedback>
-        <Pressable
-          className="mt-2 bg-blue-500 p-4"
-          onPress={() => {
-            openModal('selectExercises', {
-              isSuperset: false,
-              uuid: '0',
-              storeType: 'workout',
-            });
-            router.push('/modal');
+        <OpenModalButton
+          activeModal="selectExercises"
+          modalData={{
+            isSuperset: false,
+            uuid: '0',
+            storeType: 'workout',
           }}
+          className="mt-2 bg-blue-500 p-4"
         >
           <Text className="text-center text-white">Pick Exercise</Text>
-        </Pressable>
+        </OpenModalButton>
       </View>
     </>
   );

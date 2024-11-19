@@ -19,12 +19,10 @@ import StartWorkout from '@/components/StartWorkout';
 import StartWorkout2 from '@/components/StartWorkout';
 import { useModalStore } from '@/store/modalStore';
 import TemplateScreen from './Template';
+import OpenModalButton from '@/components/OpenModalButton';
 
 export default function WorkoutTab() {
   const [inWorkout, setInWorkout] = useState(false);
-  const [selectedTags, setSelectedTags] = useState<string[]>([]);
-  const openModal = useModalStore((state) => state.openModal);
-  const router = useRouter();
 
   return (
     <>
@@ -41,7 +39,7 @@ export default function WorkoutTab() {
         <TemplateScreen />
         {inWorkout && (
           <View className="flex flex-row gap-2">
-            <Pressable
+            {/* <Pressable
               onPress={() => {
                 openModal('selectExercises', {
                   isSuperset: false,
@@ -53,7 +51,18 @@ export default function WorkoutTab() {
               className="flex-1 border bg-stone-300 py-2"
             >
               <Text className="text-center">Add exercises</Text>
-            </Pressable>
+            </Pressable> */}
+            <OpenModalButton
+              activeModal="selectExercises"
+              modalData={{
+                isSuperset: false,
+                uuid: '0',
+                storeType: 'workout',
+              }}
+              className="flex-1 border bg-stone-300 py-2"
+            >
+              <Text className="text-center">Add Exercises</Text>
+            </OpenModalButton>
           </View>
         )}
       </View>
