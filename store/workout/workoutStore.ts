@@ -14,6 +14,7 @@ import { eq } from 'drizzle-orm';
 export type WorkoutStateVal = {
   template: TemplateMap;
   inWorkout: boolean;
+  startTime: number | null;
   pickedExercises: number[];
   pickedExercisesSet: Set<number>;
 };
@@ -51,9 +52,21 @@ export function createWorkoutStore() {
   return create<WorkoutStore>((set, get) => ({
     template: TEMPLATE_ROOT,
     inWorkout: false,
+    startTime: null,
     pickedExercises: [],
     pickedExercisesSet: new Set(),
-    toggleWorkout: () => set((state) => ({ inWorkout: !state.inWorkout })),
+    toggleWorkout: () =>
+      set(
+        produce<WorkoutStore>((state) => {
+          if (state.inWorkout) {
+            state.startTime = null; // stop
+            state.inWorkout = false;
+          } else {
+            state.startTime = Date.now(); // start
+            state.inWorkout = true;
+          }
+        }),
+      ),
     clearPickedExercises: () =>
       set({ pickedExercises: [], pickedExercisesSet: new Set() }),
     clearTemplate: () => set({ template: TEMPLATE_ROOT }),
@@ -447,6 +460,7 @@ export function useWorkoutStoreHook(): WorkoutStateVal & {
   const {
     template,
     inWorkout,
+    startTime,
     pickedExercises,
     pickedExercisesSet,
     ...actions
@@ -455,6 +469,7 @@ export function useWorkoutStoreHook(): WorkoutStateVal & {
   return {
     template,
     inWorkout,
+    startTime,
     pickedExercises,
     pickedExercisesSet,
     actions,
