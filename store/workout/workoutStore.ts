@@ -8,7 +8,7 @@ import {
   TSelectVolumeTemplate,
   TSelectSettTemplate,
 } from '@/db/schema/template';
-import { saveExerciseToTemplate } from './utils';
+import { generateSettId, saveExerciseToTemplate } from './utils';
 import { eq } from 'drizzle-orm';
 
 export type WorkoutStateVal = {
@@ -386,9 +386,8 @@ export function createWorkoutStore() {
                     exerciseId: volume.exerciseId,
                     uuid: childUUID,
                     sets: volume.setts.map((set) => ({
-                      key: Date.now(),
+                      key: generateSettId(),
                       type: set.type,
-                      // TODO: Values are being set as 0 when being saved
                       weight: set.weight?.toString() ?? '',
                       reps: set.reps?.toString() ?? '',
                     })),
@@ -415,14 +414,10 @@ export function createWorkoutStore() {
                   exerciseId: volume.exerciseId,
                   uuid,
                   sets: volume.setts.map((set) => ({
-                    key: Date.now(),
+                    key: generateSettId(),
                     type: set.type,
-                    // weight: set.weight?.toString() ?? '',
-                    // reps: set.reps?.toString() ?? '',
-                    // weight: set.we,
-                    // reps: set.reps,
-                    weight: set.weight === null ? '' : set.weight.toString(),
-                    reps: set.reps === null ? '' : set.reps.toString(),
+                    weight: set.weight?.toString() ?? '',
+                    reps: set.reps?.toString() ?? '',
                   })),
                   children: [],
                   parentId: '0',

@@ -98,7 +98,6 @@ export default function Exercise() {
           {/* Pressing part of the superset */}
           {index !== null && isPartOfSuperset && (
             <>
-              <Text>Yo</Text>
               <SetsTable
                 uuid={template[parentUUID].children[index]}
                 title=""
