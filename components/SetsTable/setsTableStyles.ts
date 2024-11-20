@@ -30,7 +30,7 @@ export const setsTableStyles = StyleSheet.create({
     // borderColor: 'blue',
   },
   infoFontSize: {
-    fontSize: 16,
+    fontSize: 18,
   },
   headerFontSize: {
     fontSize: 16,
