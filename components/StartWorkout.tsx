@@ -12,8 +12,14 @@ import { useWorkoutStore } from '@/store/workout/workoutStore';
 export default function StartWorkout() {
   const router = useRouter();
   const { showActionSheetWithOptions } = useActionSheet();
-  const { inWorkout, toggleWorkout, clearTemplate, upsertWorkout } =
-    useWorkoutStore((state) => state);
+  const {
+    template,
+    inWorkout,
+    toggleWorkout,
+    clearTemplate,
+    upsertWorkout,
+    validateWorkout,
+  } = useWorkoutStore((state) => state);
 
   const startWorkout = () => {
     const options = ['Use template', 'No template', 'Cancel'];
@@ -52,8 +58,11 @@ export default function StartWorkout() {
         switch (selectedIndex) {
           case 0:
             toggleWorkout();
-            await upsertWorkout();
-            clearTemplate();
+            // await upsertWorkout();
+            // clearTemplate();
+            const isValid = await validateWorkout();
+            console.log('Workout is valid?:', isValid);
+            console.log('Final template', template);
             break;
           case cancelButtonIndex:
             break;

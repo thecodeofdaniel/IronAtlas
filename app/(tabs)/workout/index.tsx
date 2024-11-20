@@ -26,7 +26,10 @@ import {
 } from '@/store/workout/workoutStore';
 
 export default function WorkoutTab() {
-  const inWorkout = useWorkoutStore((state) => state.inWorkout);
+  // const inWorkout = useWorkoutStore((state) => state.inWorkout);
+  const { template, inWorkout, validateWorkout } = useWorkoutStore(
+    (state) => state,
+  );
 
   return (
     <>
@@ -52,6 +55,14 @@ export default function WorkoutTab() {
             >
               <Text className="text-center">Add Exercises</Text>
             </OpenModalButton>
+            <Pressable
+              onPress={() => {
+                validateWorkout();
+              }}
+              className="border bg-stone-300 py-2"
+            >
+              <Text>Validate</Text>
+            </Pressable>
           </View>
         )}
       </View>

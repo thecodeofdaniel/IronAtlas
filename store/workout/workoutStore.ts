@@ -34,7 +34,7 @@ export type WorkoutStateFunctions = {
   saveAsTemplate: (name: string) => Promise<void>;
   upsertTemplate: (name: string, id?: number) => void;
   upsertWorkout: (id?: number) => Promise<void>;
-  validateWorkout: (workoutId?: number) => Promise<void>;
+  validateWorkout: (workoutId?: number) => Promise<boolean>;
   loadTemplate: (id: number) => void;
   toggleWorkout: () => void;
 };
@@ -432,6 +432,65 @@ export function createWorkoutStore() {
       } catch (error) {
         console.error('Error upserting workout into db:', error);
       }
+    },
+    validateWorkout: async (workoutId) => {
+      let hasValidWorkout = false;
+
+      set(
+        produce<WorkoutStore>((state) => {
+          const rootChildren = [...state.template[0].children];
+
+          // Process each root level item
+          state.template[0].children = rootChildren.filter((uuid) => {
+            const item = state.template[uuid];
+
+            // Handle superset
+            if (item.exerciseId === null) {
+              item.children = item.children.filter((childUUID) => {
+                const exercise = state.template[childUUID];
+                // Keep sets that have either weight or reps
+                exercise.sets = exercise.sets.filter(
+                  (set) => set.weight !== '' && set.reps !== '',
+                );
+
+                // Keep exercise if it has any sets
+                if (exercise.sets.length > 0) {
+                  hasValidWorkout = true;
+                  return true;
+                }
+                delete state.template[childUUID];
+                return false;
+              });
+
+              // Keep superset if it has any children
+              if (item.children.length > 0) {
+                return true;
+              }
+              delete state.template[uuid];
+              return false;
+            }
+            // Handle single exercise
+            else {
+              // Keep sets that have either weight or reps
+              item.sets = item.sets.filter(
+                (set) => set.weight !== '' && set.reps !== '',
+              );
+
+              // Keep exercise if it has any sets
+              if (item.sets.length > 0) {
+                hasValidWorkout = true;
+                return true;
+              }
+              delete state.template[uuid];
+              return false;
+            }
+          });
+
+          // hasValidWorkout = state.template[0].children.length > 0;
+        }),
+      );
+
+      return hasValidWorkout;
     },
     loadTemplate: async (id) => {
       try {
