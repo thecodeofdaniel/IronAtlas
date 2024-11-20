@@ -58,11 +58,7 @@ export default function StartWorkout() {
         switch (selectedIndex) {
           case 0:
             toggleWorkout();
-            // await upsertWorkout();
-            // clearTemplate();
-            const isValid = await validateWorkout();
-            console.log('Workout is valid?:', isValid);
-            console.log('Final template', template);
+            await upsertWorkout();
             break;
           case cancelButtonIndex:
             break;

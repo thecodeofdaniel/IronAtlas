@@ -32,10 +32,10 @@ export type WorkoutStateFunctions = {
   editSet: (uuid: string, index: number, newSet: SettType) => void;
   reorderSets: (uuid: string, sets: SettType[]) => void;
   saveAsTemplate: (name: string) => Promise<void>;
-  upsertTemplate: (name: string, id?: number) => void;
+  upsertTemplate: (name: string, id?: number) => Promise<void>;
   upsertWorkout: (id?: number) => Promise<void>;
   validateWorkout: (workoutId?: number) => Promise<boolean>;
-  loadTemplate: (id: number) => void;
+  loadTemplate: (id: number) => Promise<void>;
   toggleWorkout: () => void;
 };
 
@@ -342,7 +342,15 @@ export function createWorkoutStore() {
     },
     upsertWorkout: async (workoutId) => {
       try {
+        const isValid = await get().validateWorkout(workoutId);
+
+        if (!isValid) {
+          console.error('Invalid workout, cannot upsert.');
+          return;
+        }
+
         const template = get().template;
+        console.log('Current template:', template);
         const startTime = get().startTime!;
         const rootChildren = template[0].children;
 
