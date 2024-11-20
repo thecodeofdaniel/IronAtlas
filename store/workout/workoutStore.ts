@@ -3,6 +3,7 @@ import { create } from 'zustand';
 import * as Crypto from 'expo-crypto';
 import { db } from '@/db/instance';
 import * as sch from '@/db/schema/template';
+import * as schema from '@/db/schema/workout';
 import {
   TSelectWorkoutTemplate,
   TSelectVolumeTemplate,
@@ -32,6 +33,8 @@ export type WorkoutStateFunctions = {
   reorderSets: (uuid: string, sets: SettType[]) => void;
   saveAsTemplate: (name: string) => Promise<void>;
   upsertTemplate: (name: string, id?: number) => void;
+  upsertWorkout: (id?: number) => Promise<void>;
+  validateWorkout: (workoutId?: number) => Promise<void>;
   loadTemplate: (id: number) => void;
   toggleWorkout: () => void;
 };
@@ -335,6 +338,99 @@ export function createWorkoutStore() {
       } catch (error) {
         console.error('Error updating template in db:', error);
         throw error;
+      }
+    },
+    upsertWorkout: async (workoutId) => {
+      try {
+        const template = get().template;
+        const startTime = get().startTime!;
+        const rootChildren = template[0].children;
+
+        await db.transaction(async (tx) => {
+          // If we're inserting
+          let date = new Date(startTime);
+          let duration = Date.now() - startTime;
+
+          if (workoutId) {
+            const [existingWorkout] = await tx
+              .delete(schema.workout)
+              .where(eq(schema.workout, workoutId))
+              .returning();
+
+            // If updating, change the date and duration to original values
+            if (existingWorkout) {
+              date = existingWorkout.date;
+              duration = existingWorkout.duration;
+            }
+          }
+
+          const [workout] = await tx
+            .insert(schema.workout)
+            .values({
+              date: date,
+              duration: duration,
+            })
+            .returning();
+
+          await Promise.all(
+            rootChildren.map(async (uuid, index) => {
+              const item = template[uuid];
+
+              if (item.exerciseId === null) {
+                // Handle superset
+                await Promise.all(
+                  item.children.map(async (childUUID, subIndex) => {
+                    const exercise = template[childUUID];
+
+                    const [volume] = await tx
+                      .insert(schema.volume)
+                      .values({
+                        exerciseId: exercise.exerciseId!,
+                        workoutId: workout.id,
+                        index: index,
+                        subIndex: subIndex,
+                      })
+                      .returning({ id: schema.volume.id });
+
+                    await tx.insert(schema.sett).values(
+                      exercise.sets.map((sett, idx) => ({
+                        volumeId: volume.id,
+                        index: idx,
+                        type: sett.type,
+                        weight: Number(sett.weight),
+                        reps: Number(sett.reps),
+                      })),
+                    );
+                  }),
+                );
+              } else {
+                const exercise = item;
+
+                const [volume] = await tx
+                  .insert(schema.volume)
+                  .values({
+                    exerciseId: exercise.exerciseId!,
+                    workoutId: workout.id,
+                    index: index,
+                    subIndex: null,
+                  })
+                  .returning({ id: schema.volume.id });
+
+                await tx.insert(schema.sett).values(
+                  exercise.sets.map((sett, idx) => ({
+                    volumeId: volume.id,
+                    index: idx,
+                    type: sett.type,
+                    weight: Number(sett.weight),
+                    reps: Number(sett.reps),
+                  })),
+                );
+              }
+            }),
+          );
+        });
+      } catch (error) {
+        console.error('Error upserting workout into db:', error);
       }
     },
     loadTemplate: async (id) => {

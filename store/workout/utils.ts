@@ -1,4 +1,5 @@
 import * as templateSchema from '@/db/schema/template';
+import * as workoutSchema from '@/db/schema/workout';
 
 // Helper function to save individual exercises
 export async function saveExerciseToTemplate(
@@ -41,6 +42,47 @@ export async function saveExerciseToTemplate(
     })),
   );
 }
+
+// export async function saveExercisesFromWorkout(
+//   tx: any,
+//   {
+//     template,
+//     exerciseUUID,
+//     workoutId,
+//     index,
+//     subIndex,
+//   }: {
+//     template: TemplateMap;
+//     exerciseUUID: string;
+//     workoutId: number;
+//     index: number;
+//     subIndex: number | null;
+//   },
+// ) {
+//   const exercise = template[exerciseUUID];
+//   if (!exercise.exerciseId) return;
+
+//   const [volume] = await tx
+//     .insert(workoutSchema.volume)
+//     .values({
+//       // workoutTemplateId: workoutId,
+//       // exerciseId: exercise.exerciseId,
+//       // index,
+//       // subIndex,
+//     })
+//     .returning({ id: workoutSchema.volume.id });
+
+//   // Batch insert all sets
+//   await tx.insert(workoutSchema.sett).values(
+//     exercise.sets.map((sett, idx) => ({
+//       volumeTemplateId: volume.id,
+//       index: idx,
+//       type: sett.type,
+//       weight: sett.weight || null, // '' is falsy
+//       reps: sett.reps || null,
+//     })),
+//   );
+// }
 
 export function generateSettId() {
   const timestamp = Date.now(); // Current timestamp in milliseconds
