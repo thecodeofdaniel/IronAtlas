@@ -23,6 +23,7 @@ import { useWorkoutStore } from '@/store/workout/workoutStore';
 import { Link, Stack } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useExerciseStore } from '@/store/exercise/exerciseStore';
+import SettTypeButton from './SettTypeButton';
 
 const OVERSWIPE_DIST = 20;
 
@@ -196,8 +197,6 @@ type RowItemProps = {
   onPressDelete: () => void;
 };
 
-const TYPES = ['N', 'D', 'F'];
-
 function RowItem({
   drag,
   getIndex,
@@ -208,12 +207,6 @@ function RowItem({
   onPressDelete,
 }: RowItemProps) {
   const index = getIndex()!;
-
-  const rotateType = () => {
-    const currentIndex = TYPES.indexOf(item.type);
-    const nextIndex = (currentIndex + 1) % TYPES.length;
-    editSet(uuid, index, { ...item, type: TYPES[nextIndex] });
-  };
 
   return (
     <>
@@ -247,30 +240,12 @@ function RowItem({
             )}
           >
             <View className="flex flex-1 flex-row justify-between">
-              {/* <PopoverSetType
+              <SettTypeButton
                 uuid={uuid}
-                item={item}
                 index={index}
+                item={item}
                 editSet={editSet}
-              /> */}
-              <Pressable
-                onPress={rotateType}
-                className="rounded bg-stone-600"
-                style={[styles.weightWidth, { height: 40 }]}
-                // style={[styles.weightWidth]}
-              >
-                <Text
-                  className={clsx('rounded-md text-center text-xl', {
-                    'bg-black text-white': item.type === 'N',
-                    'bg-purple-900 text-purple-400': item.type === 'D',
-                    'bg-red-900 text-red-400': item.type === 'F',
-                  })}
-                  style={[styles.infoFontSize, { lineHeight: 40 }]}
-                  // style={{ lineHeight: 40 }}
-                >
-                  {item.type}
-                </Text>
-              </Pressable>
+              />
               <TextInput
                 value={item.weight}
                 keyboardType="numeric"
