@@ -58,3 +58,10 @@ export const sett = sqliteTable(
     indexIndex: index('sett_index_index').on(table.index),
   }),
 );
+
+export type TSelectWorkout = typeof workout.$inferSelect;
+export type TInsertWorkout = typeof workout.$inferInsert;
+export type TSelectVolume = typeof volume.$inferSelect;
+export type TInsertVolume = typeof volume.$inferInsert;
+export type TSelectSett = typeof sett.$inferSelect;
+export type TInsertSett = typeof sett.$inferInsert;
