@@ -22,6 +22,7 @@ export type WorkoutStateVal = {
 };
 
 export type WorkoutStateFunctions = {
+  toggleWorkout: () => void;
   clearPickedExercises: () => void;
   clearTemplate: () => void;
   pickExercise: (id: number) => void;
@@ -37,7 +38,7 @@ export type WorkoutStateFunctions = {
   upsertWorkout: (id?: number) => Promise<void>;
   validateWorkout: (workoutId?: number) => Promise<boolean>;
   loadTemplate: (id: number) => Promise<void>;
-  toggleWorkout: () => void;
+  loadWorkout: (id: number) => Promise<void>;
 };
 
 type WorkoutStore = WorkoutStateVal & WorkoutStateFunctions;
@@ -614,6 +615,99 @@ export function createWorkoutStore() {
       } catch (error) {
         console.error('Error: When loading template -', error);
         throw error;
+      }
+    },
+    loadWorkout: async (id) => {
+      try {
+        set({ template: TEMPLATE_ROOT });
+
+        // Get volumes with their sets in a single query
+        const volumes = await db
+          .select({
+            volume: sch.volume,
+            sett: sch.sett,
+          })
+          .from(sch.volume)
+          .innerJoin(sch.sett, eq(sch.volume.id, sch.sett.volumeId))
+          .where(eq(sch.volume.workoutId, id))
+          .orderBy(sch.volume.index, sch.volume.subIndex, sch.sett.index);
+
+        // Group by index for easier processing
+        const volumesByIndex = volumes.reduce(
+          (acc, { volume, sett }) => {
+            const index = volume.index;
+            if (!acc[index]) acc[index] = new Map();
+
+            if (!acc[index].has(volume.id)) {
+              acc[index].set(volume.id, { ...volume, setts: [] });
+            }
+
+            if (sett) acc[index].get(volume.id)?.setts.push(sett);
+            return acc;
+          },
+          {} as Record<
+            number,
+            Map<number, sch.TSelectVolume & { setts: sch.TSelectSett[] }>
+          >,
+        );
+
+        set(
+          produce<WorkoutStore>((state) => {
+            Object.values(volumesByIndex).forEach((volumeGroup) => {
+              const volumes = Array.from(volumeGroup.values());
+
+              if (volumes.length > 1) {
+                // Handle superset
+                const parentUUID = Crypto.randomUUID();
+                const childUUIDs = volumes.map((volume) => {
+                  const childUUID = Crypto.randomUUID();
+                  state.template[childUUID] = {
+                    exerciseId: volume.exerciseId,
+                    uuid: childUUID,
+                    sets: volume.setts.map((set) => ({
+                      key: generateSettId(),
+                      type: set.type,
+                      weight: set.weight?.toString() ?? '',
+                      reps: set.reps?.toString() ?? '',
+                    })),
+                    children: [],
+                    parentId: parentUUID,
+                  };
+                  return childUUID;
+                });
+
+                state.template[parentUUID] = {
+                  exerciseId: null,
+                  uuid: parentUUID,
+                  sets: [],
+                  children: childUUIDs,
+                  parentId: '0',
+                };
+                state.template['0'].children.push(parentUUID);
+              } else {
+                // Handle single exercise
+                const volume = volumes[0];
+                const uuid = Crypto.randomUUID();
+
+                state.template[uuid] = {
+                  exerciseId: volume.exerciseId,
+                  uuid,
+                  sets: volume.setts.map((set) => ({
+                    key: generateSettId(),
+                    type: set.type,
+                    weight: set.weight?.toString() ?? '',
+                    reps: set.reps?.toString() ?? '',
+                  })),
+                  children: [],
+                  parentId: '0',
+                };
+                state.template['0'].children.push(uuid);
+              }
+            });
+          }),
+        );
+      } catch (error) {
+        console.error('Error loading workout from workoutStore:', error);
       }
     },
   }));

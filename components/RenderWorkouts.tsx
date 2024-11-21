@@ -48,10 +48,11 @@ function RenderWorkout({
 }: RenderWorkoutProps) {
   const ssIndexHolder = new Set();
   const { showActionSheetWithOptions } = useActionSheet();
-  const loadTemplate = useWorkoutStore((state) => state.loadTemplate);
+  // const loadTemplate = useWorkoutStore((state) => state.loadTemplate);
+  // const loadWorkout = useWorkoutStore((state) => state.loadWorkout);
 
   const handleOptionsPress = async () => {
-    const options = ['Delete', 'Edit', 'Cancel'];
+    const options = ['Delete', 'Cancel'];
     const destructiveButtonIndex = 0;
     const cancelButtonIndex = options.length - 1;
 
@@ -64,23 +65,18 @@ function RenderWorkout({
       async (selectedIndex?: number) => {
         switch (selectedIndex) {
           case destructiveButtonIndex:
-            await db.transaction(async (tx) => {
-              await tx
-                .delete(s.workout)
-                .where(eq(s.workout.id, item.workoutId));
-            });
-            console.log('Delete workoutId', item.workoutId);
+            await db.delete(s.workout).where(eq(s.workout.id, item.workoutId));
             break;
-          case 1:
-            // loadTemplate(item.workoutId);
-            // router.push({
-            //   pathname: '/(tabs)/workout/template/upsertTemplate',
-            //   params: {
-            //     templateWorkoutId: item.workoutId,
-            //     templateWorkoutName: item.name,
-            //   },
-            // });
-            break;
+          // case 1:
+          //   loadWorkout(item.workoutId);
+          //   router.push({
+          //     pathname: '/(tabs)/workout/template/upsertTemplate',
+          //     params: {
+          //       templateWorkoutId: item.workoutId,
+          //       templateWorkoutName: 'Workout',
+          //     },
+          //   });
+          //   break;
           case cancelButtonIndex:
             break;
         }
@@ -93,10 +89,8 @@ function RenderWorkout({
       <View className="flex flex-row items-center justify-between">
         <View className="flex flex-row items-center gap-1">
           <Text className="text-lg font-semibold underline">
-            Workout {item.workoutId}
+            {item.workoutDate.toLocaleDateString()}
           </Text>
-          <Text>{item.workoutDate.toLocaleDateString()}</Text>
-          <Text>for {item.workoutDuration}</Text>
         </View>
         <Ionicons
           name="ellipsis-horizontal"
