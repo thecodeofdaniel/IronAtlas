@@ -24,6 +24,7 @@ import {
   useWorkoutStore,
   useWorkoutStoreHook,
 } from '@/store/workout/workoutStore';
+import PushOntoStackButton from '@/components/PushOntoStackButton';
 
 export default function WorkoutTab() {
   // const inWorkout = useWorkoutStore((state) => state.inWorkout);
@@ -63,6 +64,26 @@ export default function WorkoutTab() {
             >
               <Text>Validate</Text>
             </Pressable>
+          </View>
+        )}
+        {!inWorkout && (
+          <View className="flex-1 border">
+            <View className="flex-1 items-center justify-center border">
+              <Text>Previous Workouts</Text>
+            </View>
+            <View className="flex flex-row gap-1">
+              <Pressable className="flex-1 bg-red-500 py-2">
+                <Text className="text-center text-white">
+                  View Previous Workouts
+                </Text>
+              </Pressable>
+              <PushOntoStackButton
+                href="/(tabs)/workout/template/selectTemplate"
+                className="flex-1 bg-red-500 py-2"
+              >
+                <Text className="text-center text-white">View Templates</Text>
+              </PushOntoStackButton>
+            </View>
           </View>
         )}
       </View>

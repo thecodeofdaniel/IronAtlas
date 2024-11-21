@@ -357,12 +357,13 @@ export function createWorkoutStore() {
         await db.transaction(async (tx) => {
           // If we're inserting
           let date = new Date(startTime);
-          let duration = Date.now() - startTime;
+          let duration = Math.floor((Date.now() - startTime) / 1000); // Convert to seconds
 
           if (workoutId) {
+            console.log('yooooo');
             const [existingWorkout] = await tx
               .delete(schema.workout)
-              .where(eq(schema.workout, workoutId))
+              .where(eq(schema.workout.id, workoutId))
               .returning();
 
             // If updating, change the date and duration to original values
@@ -371,6 +372,9 @@ export function createWorkoutStore() {
               duration = existingWorkout.duration;
             }
           }
+
+          console.log('Date', date);
+          console.log('Duration', duration);
 
           const [workout] = await tx
             .insert(schema.workout)
