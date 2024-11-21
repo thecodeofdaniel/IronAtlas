@@ -5,7 +5,7 @@ import {
   index,
   real,
 } from 'drizzle-orm/sqlite-core';
-import { exercise } from '.';
+import { exercise } from './exercise+tags';
 
 export const workout = sqliteTable('workouts', {
   id: integer('id').primaryKey({ autoIncrement: true }),
