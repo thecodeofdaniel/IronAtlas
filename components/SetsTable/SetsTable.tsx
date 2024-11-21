@@ -172,18 +172,21 @@ export default function SetsTable({
   };
 
   return (
-    <DraggableFlatList
-      keyExtractor={(item) => item.key.toString()}
-      data={template[uuid].sets}
-      renderItem={renderItem}
-      onDragEnd={({ data }) => {
-        reorderSets(uuid, data);
-      }}
-      activationDistance={20}
-      ListHeaderComponent={renderHeader}
-      ListFooterComponent={renderFooter}
-      style={{ borderColor: 'red', borderWidth: 2 }}
-    />
+    <View>
+
+      <DraggableFlatList
+        keyExtractor={(item) => item.key.toString()}
+        data={template[uuid].sets}
+        renderItem={renderItem}
+        onDragEnd={({ data }) => {
+          reorderSets(uuid, data);
+        }}
+        activationDistance={20}
+        ListHeaderComponent={renderHeader}
+        ListFooterComponent={renderFooter}
+        style={{ borderColor: 'red', borderWidth: 2 }}
+      />
+    </View>
   );
 }
 

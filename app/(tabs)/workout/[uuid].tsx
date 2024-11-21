@@ -1,4 +1,4 @@
-import { Pressable, Text } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { Link, Stack, useLocalSearchParams } from 'expo-router';
 import { useWorkoutStore } from '@/store/workout/workoutStore';
@@ -12,6 +12,7 @@ import Animated, {
 } from 'react-native-reanimated';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
+import ExerciseHistory from '@/components/ExerciseHistory';
 
 export default function Exercise() {
   console.log('Render Exercise');
@@ -71,19 +72,25 @@ export default function Exercise() {
       <GestureHandlerRootView
         style={{
           flex: 1,
+          // padding: 8,
           justifyContent: 'center',
-          margin: 8,
+          borderColor: 'blue',
+          borderWidth: 10,
+          height: '100%'
         }}
       >
         <Animated.View style={animatedStyle}>
           {index === null && (
-            <SetsTable
-              uuid={uuid_param}
-              title={''}
-              superSetLength={0}
-              index={null}
-              setIndex={setIndex}
-            />
+            <View className="flex flex-col justify-between">
+              <SetsTable
+                uuid={uuid_param}
+                title={''}
+                superSetLength={0}
+                index={null}
+                setIndex={setIndex}
+              />
+              <ExerciseHistory uuid={uuid_param} />
+            </View>
           )}
           {/* Pressing the superset itself */}
           {index !== null && isSuperset && (
