@@ -78,7 +78,7 @@ export default function WorkoutTab() {
                 </Text>
               </Pressable>
               <PushOntoStackButton
-                href="/(tabs)/workout/template/selectTemplate"
+                href="/(tabs)/workout/template/viewTemplates"
                 className="flex-1 bg-red-500 py-2"
               >
                 <Text className="text-center text-white">View Templates</Text>
