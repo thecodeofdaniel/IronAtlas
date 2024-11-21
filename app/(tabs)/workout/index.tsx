@@ -72,11 +72,14 @@ export default function WorkoutTab() {
               <Text>Previous Workouts</Text>
             </View>
             <View className="flex flex-row gap-1">
-              <Pressable className="flex-1 bg-red-500 py-2">
+              <PushOntoStackButton
+                href="/(tabs)/workout/workouts/viewWorkouts"
+                className="flex-1 bg-red-500 py-2"
+              >
                 <Text className="text-center text-white">
                   View Previous Workouts
                 </Text>
-              </Pressable>
+              </PushOntoStackButton>
               <PushOntoStackButton
                 href="/(tabs)/workout/template/viewTemplates"
                 className="flex-1 bg-red-500 py-2"
