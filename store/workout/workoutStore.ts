@@ -2,8 +2,9 @@ import { produce } from 'immer';
 import { create } from 'zustand';
 import * as Crypto from 'expo-crypto';
 import { db } from '@/db/instance';
-import * as sch from '@/db/schema/template';
-import * as schema from '@/db/schema/workout';
+// import * as sch from '@/db/schema/template';
+// import * as schema from '@/db/schema/workout';
+import * as sch from '@/db/schema';
 import {
   TSelectWorkoutTemplate,
   TSelectVolumeTemplate,
@@ -362,8 +363,8 @@ export function createWorkoutStore() {
           if (workoutId) {
             console.log('yooooo');
             const [existingWorkout] = await tx
-              .delete(schema.workout)
-              .where(eq(schema.workout.id, workoutId))
+              .delete(sch.workout)
+              .where(eq(sch.workout.id, workoutId))
               .returning();
 
             // If updating, change the date and duration to original values
@@ -377,10 +378,10 @@ export function createWorkoutStore() {
           console.log('Duration', duration);
 
           const [workout] = await tx
-            .insert(schema.workout)
+            .insert(sch.workout)
             .values({
               date: date,
-              duration: duration,
+              duration: 0,
             })
             .returning();
 
@@ -395,16 +396,16 @@ export function createWorkoutStore() {
                     const exercise = template[childUUID];
 
                     const [volume] = await tx
-                      .insert(schema.volume)
+                      .insert(sch.volume)
                       .values({
                         exerciseId: exercise.exerciseId!,
                         workoutId: workout.id,
                         index: index,
                         subIndex: subIndex,
                       })
-                      .returning({ id: schema.volume.id });
+                      .returning({ id: sch.volume.id });
 
-                    await tx.insert(schema.sett).values(
+                    await tx.insert(sch.sett).values(
                       exercise.sets.map((sett, idx) => ({
                         volumeId: volume.id,
                         index: idx,
@@ -419,16 +420,16 @@ export function createWorkoutStore() {
                 const exercise = item;
 
                 const [volume] = await tx
-                  .insert(schema.volume)
+                  .insert(sch.volume)
                   .values({
                     exerciseId: exercise.exerciseId!,
                     workoutId: workout.id,
                     index: index,
                     subIndex: null,
                   })
-                  .returning({ id: schema.volume.id });
+                  .returning({ id: sch.volume.id });
 
-                await tx.insert(schema.sett).values(
+                await tx.insert(sch.sett).values(
                   exercise.sets.map((sett, idx) => ({
                     volumeId: volume.id,
                     index: idx,
