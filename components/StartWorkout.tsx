@@ -57,8 +57,8 @@ export default function StartWorkout() {
       async (selectedIndex?: number) => {
         switch (selectedIndex) {
           case 0:
-            toggleWorkout();
             await upsertWorkout();
+            toggleWorkout(); // turns off the workout
             break;
           case cancelButtonIndex:
             break;

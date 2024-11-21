@@ -16,7 +16,7 @@ import { eq } from 'drizzle-orm';
 export type WorkoutStateVal = {
   template: TemplateMap;
   inWorkout: boolean;
-  startTime: number | null;
+  startTime: Date | null;
   pickedExercises: number[];
   pickedExercisesSet: Set<number>;
 };
@@ -66,8 +66,10 @@ export function createWorkoutStore() {
             state.startTime = null; // stop
             state.inWorkout = false;
           } else {
-            state.startTime = Date.now(); // start
+            // state.startTime = Date.now(); // start
+            state.startTime = new Date();
             state.inWorkout = true;
+            console.log(state.startTime);
           }
         }),
       ),
@@ -357,25 +359,22 @@ export function createWorkoutStore() {
 
         await db.transaction(async (tx) => {
           // If we're inserting
-          let date = new Date(startTime);
-          let duration = Math.floor((Date.now() - startTime) / 1000); // Convert to seconds
+          let date = startTime;
+          // let duration = Math.floor(Date.now() - startTime.getTime()) / 1000;
 
           if (workoutId) {
             console.log('yooooo');
             const [existingWorkout] = await tx
               .delete(sch.workout)
               .where(eq(sch.workout.id, workoutId))
-              .returning();
+              .returning({ date: sch.workout.date });
 
             // If updating, change the date and duration to original values
             if (existingWorkout) {
               date = existingWorkout.date;
-              duration = existingWorkout.duration;
+              // duration = existingWorkout.duration;
             }
           }
-
-          console.log('Date', date);
-          console.log('Duration', duration);
 
           const [workout] = await tx
             .insert(sch.workout)
