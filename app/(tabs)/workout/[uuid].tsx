@@ -15,7 +15,7 @@ import { Ionicons } from '@expo/vector-icons';
 import ExerciseHistory from '@/components/ExerciseHistory';
 
 export default function Exercise() {
-  console.log('Render Exercise');
+  // console.log('Render Exercise');
   const { uuid: uuid_param } = useLocalSearchParams<{ uuid: string }>();
   const { template } = useWorkoutStore((state) => state);
   const { exerciseMap } = useExerciseStore((state) => state);
@@ -53,6 +53,18 @@ export default function Exercise() {
     };
   });
 
+  let uuid = uuid_param;
+
+  if (index === null) {
+    uuid = uuid_param;
+  } else if (index !== null && isSuperset) {
+    uuid = template[uuid_param].children[index];
+  } else if (index !== null && isPartOfSuperset) {
+    uuid = template[parentUUID].children[index];
+  }
+
+  // console.log('Current uuid:', uuid);
+
   return (
     <>
       <Stack.Screen
@@ -76,43 +88,48 @@ export default function Exercise() {
           justifyContent: 'center',
           borderColor: 'blue',
           borderWidth: 10,
-          height: '100%'
+          height: '100%',
         }}
       >
         <Animated.View style={animatedStyle}>
           {index === null && (
-            <View className="flex flex-col justify-between">
+            <View className="flex h-full flex-col justify-between">
+              <Text></Text>
               <SetsTable
-                uuid={uuid_param}
+                uuid={uuid}
                 title={''}
                 superSetLength={0}
                 index={null}
                 setIndex={setIndex}
               />
-              <ExerciseHistory uuid={uuid_param} />
+              <ExerciseHistory uuid={uuid} />
             </View>
           )}
           {/* Pressing the superset itself */}
           {index !== null && isSuperset && (
-            <SetsTable
-              uuid={template[uuid_param].children[index]}
-              title=""
-              superSetLength={template[uuid_param].children.length}
-              index={index}
-              setIndex={setIndex}
-            />
+            <View>
+              <SetsTable
+                uuid={uuid}
+                title=""
+                superSetLength={template[uuid_param].children.length}
+                index={index}
+                setIndex={setIndex}
+              />
+              <ExerciseHistory key={uuid} uuid={uuid} />
+            </View>
           )}
           {/* Pressing part of the superset */}
           {index !== null && isPartOfSuperset && (
-            <>
+            <View>
               <SetsTable
-                uuid={template[parentUUID].children[index]}
+                uuid={uuid}
                 title=""
                 superSetLength={template[parentUUID].children.length}
                 index={index}
                 setIndex={setIndex}
               />
-            </>
+              <ExerciseHistory key={uuid} uuid={uuid} />
+            </View>
           )}
         </Animated.View>
       </GestureHandlerRootView>
