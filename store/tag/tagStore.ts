@@ -93,7 +93,7 @@ export const useTagStore = create<TagStore>()((set, get) => ({
       if (dataList.length > 0 && dataList[0].parentId !== null) {
         const parentId = dataList[0].parentId;
         const newChildrenOrder = dataList.map((item) => item.id);
-        console.log(newChildrenOrder);
+        // console.log(newChildrenOrder);
         newItemMap[parentId] = {
           ...newItemMap[parentId],
           children: newChildrenOrder,

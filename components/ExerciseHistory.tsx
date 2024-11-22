@@ -96,14 +96,9 @@ function RenderWorkout({ item, index, exerciseMap }: RenderWorkoutProps) {
         const exerciseName = ` - ${exerciseMap[exerciseId].label}`;
 
         const setsDisplay = setts.map((set, idx) => {
-          if (!set.weight && !set.reps) return null;
-
-          const weightStr = set.weight ? ` ${set.weight}` : '';
-          const repsStr = set.reps ? ` x ${set.reps}` : '';
-
           return (
             <Text key={idx} className="pl-4 text-sm">
-              {`${set.type}${weightStr}${repsStr}`}
+              {`${set.type}: ${set.weight} x ${set.reps}`}
             </Text>
           );
         });
@@ -114,7 +109,7 @@ function RenderWorkout({ item, index, exerciseMap }: RenderWorkoutProps) {
               {!ssIndexHolder.has(index) && ssIndexHolder.add(index) && (
                 <Text className="pl-1 underline">Superset</Text>
               )}
-              <Text className="pl-2">{exerciseName}</Text>
+              {/* <Text className="pl-2">{exerciseName}</Text> */}
               {setsDisplay}
             </View>
           );
@@ -122,7 +117,7 @@ function RenderWorkout({ item, index, exerciseMap }: RenderWorkoutProps) {
 
         return (
           <View key={volumeId}>
-            <Text>{exerciseName}</Text>
+            {/* <Text>{exerciseName}</Text> */}
             {setsDisplay}
           </View>
         );
@@ -199,7 +194,7 @@ export default function ExerciseHistory({ uuid }: Props) {
     return Array.from(workoutsMap.values());
   }, [rawWorkouts]);
 
-  console.log('Workouts from exerciseHistory', workouts);
+  // console.log('Workouts from exerciseHistory', workouts);
 
   if (workouts.length === 0) {
     return (

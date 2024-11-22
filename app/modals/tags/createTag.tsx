@@ -23,12 +23,12 @@ export default function CreateTag({ modalData, closeModal }: Props) {
 
   const handleUpdate = () => {
     if (!isValidTagOrExercise(name)) {
-      console.log('Not a valid tag name:', name);
+      // console.log('Not a valid tag name:', name);
       return;
     }
 
     if (tagSet.has(formatTagOrExercise(name))) {
-      console.log('Tag alreay exists', name);
+      // console.log('Tag alreay exists', name);
       return;
     }
 

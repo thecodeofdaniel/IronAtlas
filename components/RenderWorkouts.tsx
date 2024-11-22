@@ -138,7 +138,7 @@ function RenderWorkout({
 }
 
 export default function RenderWorkouts() {
-  console.log('Render RenderWorkouts');
+  // console.log('Render RenderWorkouts');
   const router = useRouter();
   const exerciseMap = useExerciseStore((state) => state.exerciseMap);
 
@@ -201,7 +201,7 @@ export default function RenderWorkouts() {
     return Array.from(workoutsMap.values());
   }, [rawWorkouts]);
 
-  console.log(workouts);
+  // console.log(workouts);
 
   return (
     <GestureHandlerRootView>

@@ -68,7 +68,7 @@ function RenderItem({
                 .delete(sch.workoutTemplate)
                 .where(eq(sch.workoutTemplate.id, item.workoutId));
             });
-            console.log('Delete workoutId', item.workoutId);
+            // console.log('Delete workoutId', item.workoutId);
             break;
           case 1:
             loadTemplate(item.workoutId);
@@ -147,7 +147,7 @@ type Props = {
 };
 
 export default function RenderTemplates({ selected, setSelected }: Props) {
-  console.log('Render SelectTemplate');
+  // console.log('Render SelectTemplate');
 
   const router = useRouter();
   const exerciseMap = useExerciseStore((state) => state.exerciseMap);

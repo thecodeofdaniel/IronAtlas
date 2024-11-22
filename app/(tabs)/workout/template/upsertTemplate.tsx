@@ -26,7 +26,7 @@ const emptyErrorMsgs = {
 };
 
 export default function UpsertTemplate() {
-  console.log('Render upsertTemplate');
+  // console.log('Render upsertTemplate');
 
   const { templateWorkoutId, templateWorkoutName } = useLocalSearchParams<{
     templateWorkoutId?: string;

@@ -137,7 +137,7 @@ function ExerciseList({
 }
 
 export default function ExercisesTab() {
-  console.log('Render Exercises Tab');
+  // console.log('Render Exercises Tab');
   const router = useRouter();
   const { exerciseMap, exercisesList, setter } = useExerciseStoreWithSetter();
   const { tagMap, setter: tagSetter } = useTagStoreWithSetter();

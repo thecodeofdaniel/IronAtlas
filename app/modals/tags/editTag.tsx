@@ -23,7 +23,7 @@ export default function EditTag({ modalData, closeModal }: Props) {
   // Handle the update button press
   const handleUpdate = () => {
     if (!isValidTagOrExercise(name)) {
-      console.log('Not a valid tag name:', name);
+      // console.log('Not a valid tag name:', name);
       return;
     }
 
@@ -31,7 +31,7 @@ export default function EditTag({ modalData, closeModal }: Props) {
     const tagLabel = name.trim();
 
     if (tagSet.has(tagValue) && tagMap[id].label === tagLabel) {
-      console.log('Tag alreay exists', name);
+      // console.log('Tag alreay exists', name);
       return;
     }
 

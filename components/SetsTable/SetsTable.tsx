@@ -42,7 +42,7 @@ export default function SetsTable({
   index,
   setIndex,
 }: Props) {
-  console.log('Render SetsTable');
+  // console.log('Render SetsTable');
   const itemRefs = useRef(new Map());
   const { template, addSet, reorderSets, editSet } = useWorkoutStore(
     (state) => state,
@@ -70,7 +70,7 @@ export default function SetsTable({
 
   const renderHeader = () => {
     const exerciseId = template[uuid].exerciseId;
-    console.log('Current exerciseId:', exerciseId);
+    // console.log('Current exerciseId:', exerciseId);
 
     return (
       <View>
@@ -173,7 +173,6 @@ export default function SetsTable({
 
   return (
     <View>
-
       <DraggableFlatList
         keyExtractor={(item) => item.key.toString()}
         data={template[uuid].sets}

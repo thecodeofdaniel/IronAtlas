@@ -18,7 +18,7 @@ export default function MultiSelectComponent() {
   );
 
   const tags = useMemo(() => {
-    console.log('Run db function to get all tags');
+    // console.log('Run db function to get all tags');
     return db
       .select({ label: schema.tag.label, value: schema.tag.id })
       .from(schema.tag)

@@ -70,7 +70,7 @@ export function createWorkoutStore() {
             // state.startTime = Date.now(); // start
             state.startTime = new Date();
             state.inWorkout = true;
-            console.log(state.startTime);
+            // console.log(state.startTime);
           }
         }),
       ),
@@ -354,7 +354,7 @@ export function createWorkoutStore() {
         }
 
         const template = get().template;
-        console.log('Current template:', template);
+        // console.log('Current template:', template);
         const startTime = get().startTime!;
         const rootChildren = template[0].children;
 
@@ -364,7 +364,7 @@ export function createWorkoutStore() {
           // let duration = Math.floor(Date.now() - startTime.getTime()) / 1000;
 
           if (workoutId) {
-            console.log('yooooo');
+            // console.log('yooooo');
             const [existingWorkout] = await tx
               .delete(sch.workout)
               .where(eq(sch.workout.id, workoutId))

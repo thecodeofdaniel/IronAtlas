@@ -49,7 +49,7 @@ export default function TagId() {
     new Set(exercises.map((exercise) => exercise.exerciseId)),
   );
 
-  console.log(exerciseIds);
+  // console.log(exerciseIds);
 
   const exercisesByTag = useMemo(() => {
     return exercises.reduce<Record<number, number[]>>(
