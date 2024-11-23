@@ -41,63 +41,17 @@ type RenderWorkoutProps = {
 
 function RenderWorkout({ item, index, exerciseMap }: RenderWorkoutProps) {
   const ssIndexHolder = new Set();
-  // const { showActionSheetWithOptions } = useActionSheet();
-  // const loadTemplate = useWorkoutStore((state) => state.loadTemplate);
-  // const loadWorkout = useWorkoutStore((state) => state.loadWorkout);
-
-  // const handleOptionsPress = async () => {
-  //   const options = ['Delete', 'Cancel'];
-  //   const destructiveButtonIndex = 0;
-  //   const cancelButtonIndex = options.length - 1;
-
-  //   showActionSheetWithOptions(
-  //     {
-  //       options,
-  //       cancelButtonIndex,
-  //       destructiveButtonIndex,
-  //     },
-  //     async (selectedIndex?: number) => {
-  //       switch (selectedIndex) {
-  //         case destructiveButtonIndex:
-  //           await db.delete(s.workout).where(eq(s.workout.id, item.workoutId));
-  //           break;
-  //         // case 1:
-  //         //   loadWorkout(item.workoutId);
-  //         //   router.push({
-  //         //     pathname: '/(tabs)/workout/template/upsertTemplate',
-  //         //     params: {
-  //         //       templateWorkoutId: item.workoutId,
-  //         //       templateWorkoutName: 'Workout',
-  //         //     },
-  //         //   });
-  //         //   break;
-  //         case cancelButtonIndex:
-  //           break;
-  //       }
-  //     },
-  //   );
-  // };
 
   return (
     <Pressable className={'my-1 border px-2'}>
-      <View className="flex flex-row items-center justify-between">
-        <View className="flex flex-row items-center gap-1">
-          <Text className="text-lg font-semibold underline">
-            {item.workoutDate.toLocaleDateString()}
-          </Text>
-        </View>
-        {/* <Ionicons
-          name="ellipsis-horizontal"
-          size={24}
-          // onPress={handleOptionsPress}
-        /> */}
-      </View>
-      {item.volumes.map(({ volumeId, exerciseId, index, subIndex, setts }) => {
-        const exerciseName = ` - ${exerciseMap[exerciseId].label}`;
+      <Text className="text-lg font-semibold underline">
+        {item.workoutDate.toLocaleDateString()}
+      </Text>
 
+      {item.volumes.map(({ volumeId, exerciseId, index, subIndex, setts }) => {
         const setsDisplay = setts.map((set, idx) => {
           return (
-            <Text key={idx} className="pl-4 text-sm">
+            <Text key={idx} className="text-sm">
               {`${set.type}: ${set.weight} x ${set.reps}`}
             </Text>
           );
@@ -107,20 +61,17 @@ function RenderWorkout({ item, index, exerciseMap }: RenderWorkoutProps) {
           return (
             <View key={volumeId}>
               {!ssIndexHolder.has(index) && ssIndexHolder.add(index) && (
-                <Text className="pl-1 underline">Superset</Text>
+                <Text className="underline">Superset</Text>
               )}
-              {/* <Text className="pl-2">{exerciseName}</Text> */}
-              {setsDisplay}
+              <View className="flex flex-row">
+                <Text className="pl-1"></Text>
+                {setsDisplay}
+              </View>
             </View>
           );
         }
 
-        return (
-          <View key={volumeId}>
-            {/* <Text>{exerciseName}</Text> */}
-            {setsDisplay}
-          </View>
-        );
+        return <View key={volumeId}>{setsDisplay}</View>;
       })}
     </Pressable>
   );
@@ -198,15 +149,16 @@ export default function ExerciseHistory({ uuid }: Props) {
 
   if (workouts.length === 0) {
     return (
-      <View>
+      <View className="flex h-40 flex-col items-center justify-center border">
         <Text>No previous history</Text>
       </View>
     );
   }
 
+  console.log('Workouts:', workouts);
+
   return (
-    // <GestureHandlerRootView style={{ borderColor: 'red', borderWidth: 2 }}>
-    <View>
+    <View className="h-40 border">
       <FlatList
         data={workouts}
         renderItem={({ item, index }) => (
@@ -215,7 +167,5 @@ export default function ExerciseHistory({ uuid }: Props) {
         keyExtractor={(item) => item.workoutId.toString()}
       />
     </View>
-
-    // </GestureHandlerRootView>
   );
 }

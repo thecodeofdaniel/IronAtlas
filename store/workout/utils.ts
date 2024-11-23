@@ -1,5 +1,4 @@
-import * as templateSchema from '@/db/schema/template';
-import * as workoutSchema from '@/db/schema/workout';
+import * as sch from '@/db/schema/index';
 
 // Helper function to save individual exercises
 export async function saveExerciseToTemplate(
@@ -22,17 +21,17 @@ export async function saveExerciseToTemplate(
   if (!exercise.exerciseId) return;
 
   const [volumeTemplate] = await tx
-    .insert(templateSchema.volumeTemplate)
+    .insert(sch.volumeTemplate)
     .values({
       workoutTemplateId,
       exerciseId: exercise.exerciseId,
       index,
       subIndex,
     })
-    .returning({ id: templateSchema.volumeTemplate.id });
+    .returning({ id: sch.volumeTemplate.id });
 
   // Batch insert all sets
-  await tx.insert(templateSchema.settTemplate).values(
+  await tx.insert(sch.settTemplate).values(
     exercise.sets.map((sett, idx) => ({
       volumeTemplateId: volumeTemplate.id,
       index: idx,

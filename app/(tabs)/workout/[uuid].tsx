@@ -91,10 +91,13 @@ export default function Exercise() {
           height: '100%',
         }}
       >
-        <Animated.View style={animatedStyle}>
+        <Animated.View
+          style={animatedStyle}
+          className="flex h-full flex-col justify-between"
+        >
+          <View></View>
           {index === null && (
-            <View className="flex h-full flex-col justify-between">
-              <Text></Text>
+            <View className="flex flex-1 flex-col justify-center border">
               <SetsTable
                 uuid={uuid}
                 title={''}
@@ -102,35 +105,29 @@ export default function Exercise() {
                 index={null}
                 setIndex={setIndex}
               />
-              <ExerciseHistory uuid={uuid} />
             </View>
           )}
           {/* Pressing the superset itself */}
           {index !== null && isSuperset && (
-            <View>
-              <SetsTable
-                uuid={uuid}
-                title=""
-                superSetLength={template[uuid_param].children.length}
-                index={index}
-                setIndex={setIndex}
-              />
-              <ExerciseHistory key={uuid} uuid={uuid} />
-            </View>
+            <SetsTable
+              uuid={uuid}
+              title=""
+              superSetLength={template[uuid_param].children.length}
+              index={index}
+              setIndex={setIndex}
+            />
           )}
           {/* Pressing part of the superset */}
           {index !== null && isPartOfSuperset && (
-            <View>
-              <SetsTable
-                uuid={uuid}
-                title=""
-                superSetLength={template[parentUUID].children.length}
-                index={index}
-                setIndex={setIndex}
-              />
-              <ExerciseHistory key={uuid} uuid={uuid} />
-            </View>
+            <SetsTable
+              uuid={uuid}
+              title=""
+              superSetLength={template[parentUUID].children.length}
+              index={index}
+              setIndex={setIndex}
+            />
           )}
+          <ExerciseHistory key={uuid} uuid={uuid} />
         </Animated.View>
       </GestureHandlerRootView>
     </>
