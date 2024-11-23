@@ -11,7 +11,7 @@ import {
 import { useActionSheet } from '@expo/react-native-action-sheet';
 import { Ionicons } from '@expo/vector-icons';
 import clsx from 'clsx';
-import { Stack, useRouter } from 'expo-router';
+import { Link, Stack, useRouter } from 'expo-router';
 import React, { useMemo, useState } from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import DraggableFlatList, {
@@ -93,28 +93,36 @@ function ExerciseList({
     const index = getIndex()!;
 
     return (
-      <TouchableOpacity
-        activeOpacity={1}
-        onLongPress={isDraggable ? drag : undefined}
-        disabled={isActive}
-        className={clsx('my-[1] flex flex-row p-2', {
-          'bg-red-500': isActive,
-          'bg-blue-800': !isActive,
-        })}
+      <Link
+        href={{
+          pathname: '/(tabs)/exercises/[exerciseId]',
+          params: { exerciseId: exercise.id },
+        }}
+        asChild
       >
-        <View className="flex flex-1 flex-row justify-between">
-          <Text className="text-white">
-            {exercise.label} @{index}
-          </Text>
-          <TouchableOpacity onPress={() => handleOnPress(exercise)}>
-            <Ionicons
-              name="ellipsis-horizontal-outline"
-              color="white"
-              size={24}
-            />
-          </TouchableOpacity>
-        </View>
-      </TouchableOpacity>
+        <TouchableOpacity
+          activeOpacity={1}
+          onLongPress={isDraggable ? drag : undefined}
+          disabled={isActive}
+          className={clsx('my-[1] flex flex-row p-2', {
+            'bg-red-500': isActive,
+            'bg-blue-800': !isActive,
+          })}
+        >
+          <View className="flex flex-1 flex-row justify-between">
+            <Text className="text-white">
+              {exercise.label} @{index}
+            </Text>
+            <TouchableOpacity onPress={() => handleOnPress(exercise)}>
+              <Ionicons
+                name="ellipsis-horizontal-outline"
+                color="white"
+                size={24}
+              />
+            </TouchableOpacity>
+          </View>
+        </TouchableOpacity>
+      </Link>
     );
   };
 
