@@ -63,8 +63,6 @@ export default function Exercise() {
     uuid = template[parentUUID].children[index];
   }
 
-  // console.log('Current uuid:', uuid);
-
   return (
     <>
       <Stack.Screen
@@ -127,7 +125,7 @@ export default function Exercise() {
               setIndex={setIndex}
             />
           )}
-          <ExerciseHistory key={uuid} uuid={uuid} />
+          <ExerciseHistory key={uuid} uuid={uuid} className="h-52 border" />
         </Animated.View>
       </GestureHandlerRootView>
     </>

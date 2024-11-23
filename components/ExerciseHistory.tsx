@@ -9,10 +9,7 @@ import { Router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { useExerciseStore } from '@/store/exercise/exerciseStore';
-
-type Props = {
-  uuid: string;
-};
+import clsx from 'clsx';
 
 type TransformedWorkout = {
   workoutId: number;
@@ -77,7 +74,12 @@ function RenderWorkout({ item, index, exerciseMap }: RenderWorkoutProps) {
   );
 }
 
-export default function ExerciseHistory({ uuid }: Props) {
+type Props = {
+  uuid: string;
+  className?: string;
+};
+
+export default function ExerciseHistory({ uuid, className }: Props) {
   const { template } = useWorkoutStore((state) => state);
   const { exerciseMap } = useExerciseStore((state) => state);
   const exerciseId = template[uuid].exerciseId!; // exerciseId should not be null
@@ -145,20 +147,18 @@ export default function ExerciseHistory({ uuid }: Props) {
     return Array.from(workoutsMap.values());
   }, [rawWorkouts]);
 
-  // console.log('Workouts from exerciseHistory', workouts);
-
   if (workouts.length === 0) {
     return (
-      <View className="flex h-40 flex-col items-center justify-center border">
+      <View
+        className={clsx('flex flex-col items-center justify-center', className)}
+      >
         <Text>No previous history</Text>
       </View>
     );
   }
 
-  console.log('Workouts:', workouts);
-
   return (
-    <View className="h-40 border">
+    <View className={clsx(className)}>
       <FlatList
         data={workouts}
         renderItem={({ item, index }) => (
