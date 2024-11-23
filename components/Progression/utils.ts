@@ -26,6 +26,7 @@ export async function getExerciseProgression(exerciseId: number) {
 }
 
 export type SetData = {
+  workoutId: number;
   date: Date;
   weight: number;
   reps: number;
@@ -33,29 +34,28 @@ export type SetData = {
 };
 
 export function analyzeProgression(sets: SetData[]) {
-  // Group sets by workout date
-  const workoutsByDate = sets.reduce(
+  // Group sets by workoutId instead of date
+  const workoutsByWorkoutId = sets.reduce(
     (acc, set) => {
-      const date = set.date.toDateString();
-      if (!acc[date]) acc[date] = [];
-      acc[date].push(set);
+      if (!acc[set.workoutId]) acc[set.workoutId] = [];
+      acc[set.workoutId].push(set);
       return acc;
     },
-    {} as Record<string, SetData[]>,
+    {} as Record<number, SetData[]>,
   );
 
   // Calculate metrics for each workout
-  const workoutMetrics = Object.entries(workoutsByDate).map(([date, sets]) => {
-    return {
-      date: new Date(date),
-      // Highest weight used
-      maxWeight: Math.max(...sets.map((s) => s.weight)),
-      // Total volume (sum of weight × reps)
-      totalVolume: sets.reduce((sum, set) => sum + set.volume, 0),
-      // Average reps per set
-      avgReps: sets.reduce((sum, set) => sum + set.reps, 0) / sets.length,
-    };
-  });
+  const workoutMetrics = Object.entries(workoutsByWorkoutId).map(
+    ([workoutId, sets]) => {
+      return {
+        workoutId: Number(workoutId),
+        date: sets[0].date, // Use the date from the first set
+        maxWeight: Math.max(...sets.map((s) => s.weight)),
+        totalVolume: sets.reduce((sum, set) => sum + set.volume, 0),
+        avgReps: sets.reduce((sum, set) => sum + set.reps, 0) / sets.length,
+      };
+    },
+  );
 
   // Sort by date to analyze trends
   workoutMetrics.sort((a, b) => a.date.getTime() - b.date.getTime());
