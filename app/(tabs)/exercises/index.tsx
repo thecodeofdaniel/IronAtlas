@@ -222,7 +222,7 @@ export default function ExercisesTab() {
           },
         }}
       />
-      <View className="m-2 flex flex-1 flex-col gap-2">
+      <View className="bg-neutral flex flex-1 flex-col gap-2 p-2">
         <MultiDropDown />
         {filteredExercises.length === 0 ? (
           <View>
