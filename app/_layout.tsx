@@ -4,6 +4,7 @@ import { Stack } from 'expo-router';
 import { useFonts } from 'expo-font';
 import 'react-native-reanimated';
 import * as SplashScreen from 'expo-splash-screen';
+import { StatusBar } from 'expo-status-bar';
 
 // Drizzle Stuff
 import { useDrizzleStudio } from 'expo-drizzle-studio-plugin';
@@ -19,6 +20,9 @@ import { useInitializeStores } from '@/hooks/useInitializeStores';
 
 // NativeWind
 import '../global.css';
+import ThemeContextProvider, {
+  useThemeContext,
+} from '@/store/context/themeContext';
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -60,7 +64,15 @@ function MigrateDB() {
     );
   }
 
-  return <Init />;
+  return <ThemeInit />;
+}
+
+function ThemeInit() {
+  return (
+    <ThemeContextProvider>
+      <Init />
+    </ThemeContextProvider>
+  );
 }
 
 function Init() {
@@ -68,12 +80,17 @@ function Init() {
   useDrizzleStudio(expoDb);
   useInitializeStores();
 
+  const { isDark } = useThemeContext();
+
   return (
-    <ActionSheetProvider>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="modal" options={{ presentation: 'modal' }} />
-      </Stack>
-    </ActionSheetProvider>
+    <>
+      <StatusBar style={isDark ? 'light' : 'dark'} />
+      <ActionSheetProvider>
+        <Stack>
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          <Stack.Screen name="modal" options={{ presentation: 'modal' }} />
+        </Stack>
+      </ActionSheetProvider>
+    </>
   );
 }

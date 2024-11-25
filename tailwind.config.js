@@ -4,7 +4,16 @@ module.exports = {
   content: ['./app/**/*.{js,jsx,ts,tsx}', './components/**/*.{js,jsx,ts,tsx}'],
   presets: [require('nativewind/preset')],
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        neutral: 'hsl(var(--neutral) / <alpha-value> )',
+        'neutral-accent': 'hsl(var(--neutral-accent) / <alpha-value> )',
+        'neutral-contrast': 'hsl(var(--neutral-contrast) / <alpha-value> )',
+        primary: 'hsl(var(--primary) / <alpha-value> )',
+        secondary: 'hsl(var(--secondary) / <alpha-value> )',
+        tertiary: 'hsl(var(--tertiary) / <alpha-value> )',
+      },
+    },
   },
   plugins: [],
 };
