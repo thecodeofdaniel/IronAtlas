@@ -23,6 +23,7 @@ import { asc, eq, inArray } from 'drizzle-orm';
 import { getAllChildrenIds } from '@/utils/utils';
 import MultiDropDown from '@/components/MultiDropDown';
 import { useFilterExerciseStore } from '@/store/filterExercises/filterExercisesStore';
+import { useThemeContext } from '@/store/context/themeContext';
 
 type ExerciseListProps = {
   exerciseMap: ExerciseMap;
@@ -147,6 +148,7 @@ function ExerciseList({
 export default function ExercisesTab() {
   // console.log('Render Exercises Tab');
   const router = useRouter();
+  const { colors } = useThemeContext();
   const { exerciseMap, exercisesList, setter } = useExerciseStoreWithSetter();
   const { tagMap, setter: tagSetter } = useTagStoreWithSetter();
   const { showActionSheetWithOptions } = useActionSheet();
@@ -160,6 +162,12 @@ export default function ExercisesTab() {
       {
         options,
         cancelButtonIndex,
+        containerStyle: {
+          backgroundColor: colors['--neutral'],
+        },
+        textStyle: {
+          color: colors['--neutral-contrast'],
+        },
       },
       (selectedIndex?: number) => {
         switch (selectedIndex) {
