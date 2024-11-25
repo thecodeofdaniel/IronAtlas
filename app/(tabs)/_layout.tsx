@@ -1,18 +1,18 @@
 import React from 'react';
 import { Tabs } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
+import { useThemeContext } from '@/store/context/themeContext';
 
 export default function TabLayout() {
+  const { colors } = useThemeContext();
+
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: 'black',
+        tabBarActiveTintColor: colors['--neutral-contrast'],
         headerShown: false,
-        headerStyle: {
-          backgroundColor: 'black',
-        },
         tabBarStyle: {
-          backgroundColor: 'red', // Add your desired tab bar color
+          backgroundColor: colors['--neutral-accent'],
         },
       }}
     >

@@ -8,7 +8,7 @@ export default function SettingsTab() {
   return (
     <>
       <Stack.Screen options={{ title: 'Settings' }} />
-      <View className="flex flex-1 flex-col items-center justify-center gap-2">
+      <View className="bg-neutral flex flex-1 flex-col items-center justify-center gap-2">
         <Text>Current theme: {themeName}</Text>
         <Pressable onPress={setTheme} className="bg-primary border px-4 py-2">
           <Text className="text-neutral-accent">

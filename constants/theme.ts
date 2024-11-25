@@ -32,9 +32,9 @@ export const themes: Theme = {
     //   '--tertiary': 'hsl(48, 89%, 57%)',
     // },
     colors: {
-      '--neutral': 'hsl(186, 47%, 25%)',
-      '--neutral-contrast': 'hsl(324, 3%, 70%)',
-      '--neutral-accent': 'hsl(184, 47%, 7%)',
+      '--neutral': 'hsl(0, 0%, 16%)',
+      '--neutral-contrast': 'hsl(0, 0%, 100%)',
+      '--neutral-accent': 'hsl(0, 0%, 8%)',
       '--primary': 'hsl(24, 100%, 40%)',
       '--secondary': 'hsl(197, 87%, 55%)',
       '--tertiary': 'hsl(48, 89%, 57%)',
