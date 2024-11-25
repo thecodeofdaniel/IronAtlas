@@ -8,6 +8,12 @@ export default function TabLayout() {
       screenOptions={{
         tabBarActiveTintColor: 'black',
         headerShown: false,
+        headerStyle: {
+          backgroundColor: 'black',
+        },
+        tabBarStyle: {
+          backgroundColor: 'red', // Add your desired tab bar color
+        },
       }}
     >
       <Tabs.Screen
@@ -56,6 +62,19 @@ export default function TabLayout() {
           tabBarIcon: ({ color, size, focused }) => (
             <Ionicons
               name={focused ? 'server' : 'server-outline'}
+              color={color}
+              size={size}
+            />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="settings"
+        options={{
+          title: 'Settings',
+          tabBarIcon: ({ color, size, focused }) => (
+            <Ionicons
+              name={focused ? 'cog' : 'cog-outline'}
               color={color}
               size={size}
             />
