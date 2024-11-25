@@ -13,7 +13,7 @@ import { Ionicons } from '@expo/vector-icons';
 import clsx from 'clsx';
 import { Link, Stack, useRouter } from 'expo-router';
 import React, { useMemo, useState } from 'react';
-import { View, Text, TouchableOpacity } from 'react-native';
+import { View, Text, TouchableOpacity, Pressable } from 'react-native';
 import DraggableFlatList, {
   RenderItemParams,
 } from 'react-native-draggable-flatlist';
@@ -105,22 +105,19 @@ function ExerciseList({
           activeOpacity={1}
           onLongPress={isDraggable ? drag : undefined}
           disabled={isActive}
-          className={clsx('my-[1] flex flex-row p-2', {
-            'bg-red-500': isActive,
-            'bg-blue-800': !isActive,
-          })}
+          className={clsx(
+            'my-[1] flex flex-row border-b-4 border-r-4 border-black p-2',
+            {
+              'bg-red-500': isActive,
+              'bg-primary': !isActive,
+            },
+          )}
         >
           <View className="flex flex-1 flex-row justify-between">
-            <Text className="text-white">
-              {exercise.label} @{index}
-            </Text>
-            <TouchableOpacity onPress={() => handleOnPress(exercise)}>
-              <Ionicons
-                name="ellipsis-horizontal-outline"
-                color="white"
-                size={24}
-              />
-            </TouchableOpacity>
+            <Text className="text-white">{exercise.label}</Text>
+            <Pressable onPress={() => handleOnPress(exercise)}>
+              <Ionicons name="ellipsis-horizontal" color="white" size={24} />
+            </Pressable>
           </View>
         </TouchableOpacity>
       </Link>
