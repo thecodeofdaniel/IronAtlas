@@ -10,6 +10,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { useExerciseStore } from '@/store/exercise/exerciseStore';
 import clsx from 'clsx';
+import { cn } from '@/lib/utils';
 
 type TransformedWorkout = {
   workoutId: number;
@@ -40,8 +41,8 @@ function RenderWorkout({ item, index, exerciseMap }: RenderWorkoutProps) {
   const ssIndexHolder = new Set();
 
   return (
-    <Pressable className={'my-1 border px-2'}>
-      <Text className="text-lg font-semibold underline">
+    <Pressable className={'border-neutral-contrast my-1 border px-2'}>
+      <Text className="text-neutral-contrast text-lg font-semibold underline">
         {item.workoutDate.toLocaleDateString()}
       </Text>
 
@@ -49,7 +50,7 @@ function RenderWorkout({ item, index, exerciseMap }: RenderWorkoutProps) {
         const setsDisplay = setts.map((set, idx) => {
           // ${subIndex !== null ? `.${subIndex}` : ''}
           return (
-            <Text key={idx} className="text-sm">
+            <Text key={idx} className="text-neutral-contrast text-sm">
               {` ${index}.${idx}) ${set.type}: ${set.weight} x ${set.reps}`}
             </Text>
           );
@@ -59,7 +60,9 @@ function RenderWorkout({ item, index, exerciseMap }: RenderWorkoutProps) {
           return (
             <View key={volumeId}>
               {!ssIndexHolder.has(index) && ssIndexHolder.add(index) && (
-                <Text className="underline">Superset</Text>
+                <Text className="text-neutral-contrast underline">
+                  Superset
+                </Text>
               )}
               <View className="flex flex-row">
                 <Text className="pl-1"></Text>
@@ -148,14 +151,14 @@ export default function ExerciseHistory2({ exerciseId, className }: Props) {
 
   if (workouts.length === 0) {
     return (
-      <View className={clsx(className)}>
-        <Text>No previous history</Text>
+      <View className={cn(className)}>
+        <Text className="text-neutral-contrast">No previous history</Text>
       </View>
     );
   }
 
   return (
-    <View className={clsx(className)}>
+    <View className={cn(className)}>
       <FlatList
         data={workouts}
         renderItem={({ item, index }) => (

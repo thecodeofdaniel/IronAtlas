@@ -9,6 +9,7 @@ import {
   ProgressionMetrics,
   PRRecord,
 } from './utils';
+import TextContrast from '../ui/TextContrast';
 
 type Props = {
   exerciseId: number;
@@ -50,11 +51,11 @@ export default function Progression({ exerciseId }: Props) {
   }, [exerciseId]);
 
   if (error) {
-    return <Text>{error}</Text>;
+    return <TextContrast>{error}</TextContrast>;
   }
 
   if (!analysis || analysis.metrics.length === 0) {
-    return <Text>Loading...</Text>;
+    return <TextContrast>Loading...</TextContrast>;
   }
 
   const latestMetrics = analysis.metrics[analysis.metrics.length - 1];
@@ -64,45 +65,47 @@ export default function Progression({ exerciseId }: Props) {
       {/* Display PRs */}
       {Object.keys(analysis.allTimePRs).length > 0 ? (
         <>
-          <Text>Personal Records:</Text>
+          <TextContrast>Personal Records:</TextContrast>
           {Object.entries(analysis.allTimePRs).map(([range, pr]) => (
-            <Text key={range}>
+            <TextContrast key={range}>
               {range}: {pr.weight}kg × {pr.reps} reps (
               {pr.date.toLocaleDateString()})
-            </Text>
+            </TextContrast>
           ))}
         </>
       ) : (
-        <Text>No personal records yet</Text>
+        <TextContrast>No personal records yet</TextContrast>
       )}
 
       {/* Display Progress */}
       {analysis.trends ? (
         <>
-          <Text>Progress over {analysis.metrics.length} workouts:</Text>
-          <Text>
+          <TextContrast>
+            Progress over {analysis.metrics.length} workouts:
+          </TextContrast>
+          <TextContrast>
             Weight: {analysis.trends.weightProgress.percentage.toFixed(1)}%
-          </Text>
-          <Text>
+          </TextContrast>
+          <TextContrast>
             Volume: {analysis.trends.volumeProgress.percentage.toFixed(1)}%
-          </Text>
-          <Text>
+          </TextContrast>
+          <TextContrast>
             Estimated 1RM: {analysis.trends.oneRMProgress.percentage.toFixed(1)}
             %
-          </Text>
+          </TextContrast>
         </>
       ) : (
-        <Text>Not enough data to show progress</Text>
+        <TextContrast>Not enough data to show progress</TextContrast>
       )}
 
       {/* Display latest workout */}
       {latestMetrics && (
         <>
-          <Text>Latest Workout:</Text>
-          <Text>
+          <TextContrast>Latest Workout:</TextContrast>
+          <TextContrast>
             Volume: {latestMetrics.movingAverages.volume.toFixed(1)}
             (3-workout average)
-          </Text>
+          </TextContrast>
         </>
       )}
     </View>

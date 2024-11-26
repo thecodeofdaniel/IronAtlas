@@ -13,6 +13,9 @@ module.exports = {
         secondary: 'hsl(var(--secondary) / <alpha-value> )',
         tertiary: 'hsl(var(--tertiary) / <alpha-value> )',
       },
+      textColor: {
+        DEFAULT: 'hsl(var(--neutral-contrast) / <alpha-value> )',
+      },
     },
   },
   plugins: [],
