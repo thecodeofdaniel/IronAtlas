@@ -60,18 +60,26 @@ export default function Progression({ exerciseId }: Props) {
 
   const latestMetrics = analysis.metrics[analysis.metrics.length - 1];
 
+  // Define the order of rep ranges
+  const repRangeOrder = ['1-3', '4-6', '7-10', '11+'];
+
   return (
     <View>
       {/* Display PRs */}
       {Object.keys(analysis.allTimePRs).length > 0 ? (
         <>
           <TextContrast>Personal Records:</TextContrast>
-          {Object.entries(analysis.allTimePRs).map(([range, pr]) => (
-            <TextContrast key={range}>
-              {range}: {pr.weight}kg × {pr.reps} reps (
-              {pr.date.toLocaleDateString()})
-            </TextContrast>
-          ))}
+          {repRangeOrder
+            .filter((range) => analysis.allTimePRs[range])
+            .map((range) => {
+              const pr = analysis.allTimePRs[range];
+              return (
+                <TextContrast key={range}>
+                  {range}: {pr.weight}kg × {pr.reps} reps (
+                  {pr.date.toLocaleDateString()})
+                </TextContrast>
+              );
+            })}
         </>
       ) : (
         <TextContrast>No personal records yet</TextContrast>
