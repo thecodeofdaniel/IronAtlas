@@ -2,36 +2,48 @@ import { View, Text, Dimensions } from 'react-native';
 import React from 'react';
 import { LineChart } from 'react-native-chart-kit';
 
-export default function LineChartComp() {
+type LineChartProps = {
+  data?: {
+    dates: string[];
+    values: number[];
+  };
+  title?: string;
+  yAxisLabel?: string;
+  yAxisSuffix?: string;
+};
+
+export default function LineChartComp({
+  data,
+  title,
+  yAxisLabel = '',
+  yAxisSuffix = '',
+}: LineChartProps) {
+  if (!data?.dates || !data?.values) {
+    return null;
+  }
+
   return (
     <View className="flex flex-col items-center justify-center">
-      {/* <Text>Bezier Line Chart</Text> */}
+      {title && <Text>{title}</Text>}
       <LineChart
         data={{
-          labels: ['January', 'February', 'March', 'April', 'May', 'June'],
+          labels: data.dates,
           datasets: [
             {
-              data: [
-                Math.random() * 100,
-                Math.random() * 100,
-                Math.random() * 100,
-                Math.random() * 100,
-                Math.random() * 100,
-                Math.random() * 100,
-              ],
+              data: data.values,
             },
           ],
         }}
-        width={Dimensions.get('window').width - 20} // from react-native
+        width={Dimensions.get('window').width - 20}
         height={200}
-        yAxisLabel="$"
-        yAxisSuffix="k"
-        yAxisInterval={1} // optional, defaults to 1
+        yAxisLabel={yAxisLabel}
+        yAxisSuffix={yAxisSuffix}
+        yAxisInterval={1}
         chartConfig={{
           backgroundColor: '#e26a00',
           backgroundGradientFrom: '#fb8c00',
           backgroundGradientTo: '#ffa726',
-          decimalPlaces: 2, // optional, defaults to 2dp
+          decimalPlaces: 2,
           color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
           labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
           style: {
@@ -44,7 +56,6 @@ export default function LineChartComp() {
             stroke: '#ffa726',
           },
         }}
-        bezier
         style={{
           marginVertical: 8,
           borderRadius: 16,

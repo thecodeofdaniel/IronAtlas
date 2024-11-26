@@ -187,3 +187,55 @@ export function analyzeTrends(metrics: ProgressionMetrics[]) {
     },
   };
 }
+
+// Add this type to your existing types
+export type GraphMetric = {
+  date: Date;
+  value: number;
+};
+
+export type GraphData = {
+  volume: GraphMetric[];
+  oneRM: GraphMetric[];
+  maxWeight: GraphMetric[];
+  movingAverages: {
+    date: Date;
+    volume: number;
+    weight: number;
+  }[];
+};
+
+// Add this new function
+export function generateGraphMetrics(metrics: ProgressionMetrics[]): GraphData {
+  // Sort metrics by date to ensure chronological order
+  const sortedMetrics = [...metrics].sort((a, b) => 
+    a.date.getTime() - b.date.getTime()
+  );
+
+  return {
+    // Total workout volume over time
+    volume: sortedMetrics.map(m => ({
+      date: m.date,
+      value: m.totalVolume
+    })),
+    
+    // Estimated 1RM progression
+    oneRM: sortedMetrics.map(m => ({
+      date: m.date,
+      value: m.estimatedOneRM
+    })),
+
+    // Max weight used per workout
+    maxWeight: sortedMetrics.map(m => ({
+      date: m.date,
+      value: m.maxWeight
+    })),
+
+    // Moving averages
+    movingAverages: sortedMetrics.map(m => ({
+      date: m.date,
+      volume: m.movingAverages.volume,
+      weight: m.movingAverages.weight
+    }))
+  };
+}

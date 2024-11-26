@@ -8,8 +8,12 @@ import {
   analyzeTrends,
   ProgressionMetrics,
   PRRecord,
+  generateGraphMetrics,
+  GraphData,
+  GraphMetric,
 } from './utils';
 import TextContrast from '../ui/TextContrast';
+import LineChartComp from '../LineChartComp';
 
 type Props = {
   exerciseId: number;
@@ -23,6 +27,7 @@ export default function Progression({ exerciseId }: Props) {
     trends: ReturnType<typeof analyzeTrends>;
   } | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [graphData, setGraphData] = useState<GraphData | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -30,7 +35,6 @@ export default function Progression({ exerciseId }: Props) {
         const data = await getExerciseProgression(exerciseId);
         setSets(data);
 
-        // Check if we have any data
         if (!data || data.length === 0) {
           setError('No data available for this exercise');
           return;
@@ -39,8 +43,10 @@ export default function Progression({ exerciseId }: Props) {
         const metrics = analyzeProgression(data);
         const allTimePRs = findAllTimePRs(metrics);
         const trends = analyzeTrends(metrics);
+        const graphMetrics = generateGraphMetrics(metrics);
 
         setAnalysis({ metrics, allTimePRs, trends });
+        setGraphData(graphMetrics);
       } catch (err) {
         setError('Failed to load exercise data');
         console.error(err);
@@ -75,6 +81,29 @@ export default function Progression({ exerciseId }: Props) {
   const highestRepsSet = sets.reduce((max, set) =>
     set.reps > max.reps ? set : max,
   );
+
+  // Helper function to prepare chart data
+  const prepareChartData = (metrics: GraphMetric[]) => {
+    if (!metrics || metrics.length === 0) return null;
+
+    return {
+      dates: metrics.map((d) => formatDate(d.date)),
+      values: metrics.map((d) => d.value),
+    };
+  };
+
+  // Format dates for display
+  const formatDate = (date: Date) =>
+    date.toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+    });
+
+  if (!graphData) return null;
+
+  const volumeData = prepareChartData(graphData.volume);
+  const oneRMData = prepareChartData(graphData.oneRM);
+  const maxWeightData = prepareChartData(graphData.maxWeight);
 
   return (
     <View>
@@ -127,6 +156,36 @@ export default function Progression({ exerciseId }: Props) {
         </>
       ) : (
         <TextContrast>Not enough data to show progress</TextContrast>
+      )}
+
+      {/* Volume Chart */}
+      {volumeData && (
+        <LineChartComp
+          data={volumeData}
+          title="Volume Progress"
+          yAxisLabel=""
+          yAxisSuffix="kg"
+        />
+      )}
+
+      {/* 1RM Chart */}
+      {oneRMData && (
+        <LineChartComp
+          data={oneRMData}
+          title="Estimated 1RM Progress"
+          yAxisLabel=""
+          yAxisSuffix="kg"
+        />
+      )}
+
+      {/* Max Weight Chart */}
+      {maxWeightData && (
+        <LineChartComp
+          data={maxWeightData}
+          title="Max Weight Progress"
+          yAxisLabel=""
+          yAxisSuffix="kg"
+        />
       )}
     </View>
   );
