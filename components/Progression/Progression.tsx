@@ -58,32 +58,55 @@ export default function Progression({ exerciseId }: Props) {
     return <TextContrast>Loading...</TextContrast>;
   }
 
-  const latestMetrics = analysis.metrics[analysis.metrics.length - 1];
+  // Find highest volume workout and its sets
+  const highestVolumeWorkout = analysis.metrics.reduce((max, workout) =>
+    workout.totalVolume > max.totalVolume ? workout : max,
+  );
 
-  // Define the order of rep ranges
-  const repRangeOrder = ['1-3', '4-6', '7-10', '11+'];
+  // Get the sets for this workout
+  const highestVolumeSets = sets.filter(
+    (set) => set.workoutId === highestVolumeWorkout.workoutId,
+  );
+
+  // Get the 1-3 rep PR
+  const strengthPR = analysis.allTimePRs['1-3'];
+
+  // Find the set with highest reps
+  const highestRepsSet = sets.reduce((max, set) =>
+    set.reps > max.reps ? set : max,
+  );
 
   return (
     <View>
-      {/* Display PRs */}
-      {Object.keys(analysis.allTimePRs).length > 0 ? (
-        <>
-          <TextContrast>Personal Records:</TextContrast>
-          {repRangeOrder
-            .filter((range) => analysis.allTimePRs[range])
-            .map((range) => {
-              const pr = analysis.allTimePRs[range];
-              return (
-                <TextContrast key={range}>
-                  {range}: {pr.weight}kg × {pr.reps} reps (
-                  {pr.date.toLocaleDateString()})
-                </TextContrast>
-              );
-            })}
-        </>
+      <TextContrast>Best Performances:</TextContrast>
+
+      {/* Highest Volume */}
+      <TextContrast>
+        Most Volume: {highestVolumeWorkout.totalVolume.toFixed(1)}kg
+        {highestVolumeSets.map(
+          (set, index) =>
+            ` ${index === 0 ? '(' : ''}${set.weight}kg × ${set.reps}${
+              index === highestVolumeSets.length - 1 ? ')' : ', '
+            }`,
+        )}{' '}
+        ({highestVolumeWorkout.date.toLocaleDateString()})
+      </TextContrast>
+
+      {/* Strength PR */}
+      {strengthPR ? (
+        <TextContrast>
+          Strength PR: {strengthPR.weight}kg × {strengthPR.reps} reps (
+          {strengthPR.date.toLocaleDateString()})
+        </TextContrast>
       ) : (
-        <TextContrast>No personal records yet</TextContrast>
+        <TextContrast>No strength PR yet (1-3 reps)</TextContrast>
       )}
+
+      {/* Highest Reps */}
+      <TextContrast>
+        Most Reps: {highestRepsSet.weight}kg × {highestRepsSet.reps} reps (
+        {highestRepsSet.date.toLocaleDateString()})
+      </TextContrast>
 
       {/* Display Progress */}
       {analysis.trends ? (
@@ -104,17 +127,6 @@ export default function Progression({ exerciseId }: Props) {
         </>
       ) : (
         <TextContrast>Not enough data to show progress</TextContrast>
-      )}
-
-      {/* Display latest workout */}
-      {latestMetrics && (
-        <>
-          <TextContrast>Latest Workout:</TextContrast>
-          <TextContrast>
-            Volume: {latestMetrics.movingAverages.volume.toFixed(1)}
-            (3-workout average)
-          </TextContrast>
-        </>
       )}
     </View>
   );
