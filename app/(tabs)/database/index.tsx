@@ -114,6 +114,7 @@ export default function DatabaseTab() {
           justifyContent: 'center',
           gap: 6,
         }}
+        className="bg-neutral"
       >
         <Text className="text-xl">This DB</Text>
         <Button title="FIND TABLES" onPress={getDbTables} />

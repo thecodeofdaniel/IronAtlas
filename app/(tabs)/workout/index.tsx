@@ -41,7 +41,7 @@ export default function WorkoutTab() {
           headerRight: () => <StartWorkout />,
         }}
       />
-      <View className="m-2 flex-1">
+      <View className="bg-neutral flex-1 p-2">
         {inWorkout && (
           <View className="flex-1">
             <TemplateScreen />

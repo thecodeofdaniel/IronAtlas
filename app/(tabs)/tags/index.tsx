@@ -171,7 +171,7 @@ export default function TagTab() {
       <Stack.Screen
         options={{ title: 'Body Section Tags', headerShown: true }}
       />
-      <View className="flex flex-1 px-2 pt-2">
+      <View className="bg-neutral flex flex-1 px-2 pt-2">
         <GestureHandlerRootView>
           <ActionSheetProvider>
             <DraggableTree
