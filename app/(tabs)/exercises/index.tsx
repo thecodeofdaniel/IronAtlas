@@ -24,6 +24,7 @@ import { getAllChildrenIds } from '@/utils/utils';
 import MultiDropDown from '@/components/MultiDropDown';
 import { useFilterExerciseStore } from '@/store/filterExercises/filterExercisesStore';
 import { useThemeContext } from '@/store/context/themeContext';
+import { getActionSheetStyle } from '@/lib/actionSheetConfig';
 
 type ExerciseListProps = {
   exerciseMap: ExerciseMap;
@@ -42,6 +43,7 @@ function ExerciseList({
   tagSetter,
   isDraggable,
 }: ExerciseListProps) {
+  const { colors } = useThemeContext();
   const { showActionSheetWithOptions } = useActionSheet();
   const openModal = useModalStore((state) => state.openModal);
 
@@ -66,6 +68,7 @@ function ExerciseList({
         options,
         cancelButtonIndex,
         destructiveButtonIndex,
+        ...getActionSheetStyle(colors),
       },
       async (selectedIndex?: number) => {
         switch (selectedIndex) {
