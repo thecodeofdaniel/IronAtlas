@@ -148,37 +148,7 @@ export default function ExercisesTab() {
   const { colors } = useThemeContext();
   const { exerciseMap, exercisesList, setter } = useExerciseStoreWithSetter();
   const { tagMap, setter: tagSetter } = useTagStoreWithSetter();
-  const { showActionSheetWithOptions } = useActionSheet();
   const openModal = useModalStore((state) => state.openModal);
-
-  const handlePress = () => {
-    const options = ['Add Exercise', 'Cancel'];
-    const cancelButtonIndex = options.length - 1;
-
-    showActionSheetWithOptions(
-      {
-        options,
-        cancelButtonIndex,
-        containerStyle: {
-          backgroundColor: colors['--neutral'],
-        },
-        textStyle: {
-          color: colors['--neutral-contrast'],
-        },
-      },
-      (selectedIndex?: number) => {
-        switch (selectedIndex) {
-          case 0:
-            // openModal('createExercise');
-            openModal('upsertExercise', {});
-            router.push('/modal');
-            break;
-          case cancelButtonIndex:
-            break;
-        }
-      },
-    );
-  };
 
   // const [selectedTags, setSelected] = useState<string[]>([]);
   const selectedTags = useFilterExerciseStore((state) => state.selectedTags);
@@ -220,8 +190,17 @@ export default function ExercisesTab() {
           headerShown: true,
           headerRight: () => {
             return (
-              <TouchableOpacity onPress={handlePress}>
-                <Ionicons name="add" size={24} />
+              <TouchableOpacity
+                onPress={() => {
+                  openModal('upsertExercise', {});
+                  router.push('/modal');
+                }}
+              >
+                <Ionicons
+                  name="add"
+                  size={24}
+                  color={colors['--neutral-contrast']}
+                />
               </TouchableOpacity>
             );
           },
