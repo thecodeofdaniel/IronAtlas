@@ -1,6 +1,6 @@
 import { FlatList, TouchableOpacity, View, Text } from 'react-native';
 import { getAllParentIds } from '@/utils/utils';
-import clsx from 'clsx';
+import { cn } from '@/lib/utils';
 
 type SelectFromTagTreeProps = {
   tagMap: TagMap; // Accept itemMap as a prop
@@ -28,9 +28,8 @@ export default function SelectFromTagTree({
   const RenderItem = ({ item }: { item: Tag }) => {
     return (
       <TouchableOpacity
-        className={clsx('my-[1] bg-blue-800 p-2', {
-          'opacity-20': selected.preSelected.has(item.id),
-          'bg-red-500':
+        className={cn('bg-primary my-[1] p-2 opacity-40', {
+          'opacity-100':
             selected.chosen.includes(item.id) ||
             selected.preSelected.has(item.id),
         })}
@@ -57,10 +56,13 @@ export default function SelectFromTagTree({
           })
         }
       >
-        {/* Tags and options */}
-        <View className="flex flex-1 flex-row items-center justify-between">
-          <Text className="text-white">{item.label}</Text>
-        </View>
+        <Text
+          className={cn('text-neutral-contrast', {
+            'font-medium': selected.chosen.includes(item.id),
+          })}
+        >
+          {item.label}
+        </Text>
       </TouchableOpacity>
     );
   };

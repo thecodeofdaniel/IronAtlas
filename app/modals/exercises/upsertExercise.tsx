@@ -11,6 +11,7 @@ import { TInsertExercise } from '@/db/schema';
 import { db } from '@/db/instance';
 import * as schema from '@/db/schema';
 import { eq } from 'drizzle-orm';
+import Button from '@/components/ui/Button';
 
 type CreateOrUpdateExerciseProps = {
   modalData: ModalData['upsertExercise'];
@@ -103,34 +104,37 @@ export default function UpsertExercise({
           headerTitle: id ? 'Edit' : 'Create',
           headerBackTitle: 'Exercises',
           headerRight: () => (
-            <TouchableOpacity
-              onPress={handleOnPress}
+            <Button
               disabled={label.trim() === ''}
-              className="rounded-md bg-blue-500 px-4 py-2"
+              onPress={handleOnPress}
+              className="bg-green-500"
             >
-              <Text className="text-white">{id ? 'Update' : 'Add'}</Text>
-            </TouchableOpacity>
+              <Text className="text-neutral font-medium">
+                {id ? 'Update' : 'Add'}
+              </Text>
+            </Button>
           ),
         }}
       />
-      <View className="flex-1 gap-4 p-2">
-        <View>
-          <Text className="text-xl">Exercise Name</Text>
+      <View className="bg-neutral flex-1 gap-2 p-2">
+        <View className="gap-1">
+          <Text className="text-neutral-contrast text-xl">Exercise Name</Text>
           <TextInput
-            className="h-10 border border-gray-400 px-2"
+            className="border-neutral-contrast text-neutral-contrast h-10 border px-2"
             value={label}
             onChangeText={setLabel}
-            placeholder="Enter exercise name"
           />
         </View>
-        <Text className="text-xl">Select body section tags</Text>
-        <TagTree
-          tagMap={tagMap}
-          tagChildren={[0]}
-          level={0}
-          selected={selected}
-          setSelected={setSelected}
-        />
+        <View className="gap-1">
+          <Text className="text-neutral-contrast text-xl">Select Tags</Text>
+          <TagTree
+            tagMap={tagMap}
+            tagChildren={[0]}
+            level={0}
+            selected={selected}
+            setSelected={setSelected}
+          />
+        </View>
       </View>
     </>
   );
