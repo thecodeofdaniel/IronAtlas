@@ -1,5 +1,5 @@
-import { Slot, Stack } from 'expo-router';
+import HeaderLayout from '@/components/ui/HeaderLayout';
 
 export default function Layout() {
-  return <Stack />;
+  return <HeaderLayout />;
 }

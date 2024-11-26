@@ -1,15 +1,5 @@
-import { Slot, Stack } from 'expo-router';
-import { useThemeContext } from '@/store/context/themeContext';
-import { getStackScreenOptions } from '@/lib/stackScreenConfig';
+import HeaderLayout from '@/components/ui/HeaderLayout';
 
 export default function Layout() {
-  const { colors } = useThemeContext();
-
-  return (
-    <Stack
-      screenOptions={{
-        ...getStackScreenOptions(colors),
-      }}
-    />
-  );
+  return <HeaderLayout />;
 }
