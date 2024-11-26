@@ -35,7 +35,7 @@ export const themes: Theme = {
       '--neutral': 'hsl(0, 0%, 16%)',
       '--neutral-contrast': 'hsl(0, 0%, 100%)',
       '--neutral-accent': 'hsl(0, 0%, 8%)',
-      '--primary': 'hsl(24, 100%, 40%)',
+      '--primary': 'hsl(16, 100%, 40%)',
       '--secondary': 'hsl(197, 87%, 55%)',
       '--tertiary': 'hsl(48, 89%, 57%)',
     },

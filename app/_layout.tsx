@@ -80,7 +80,7 @@ function Init() {
   useDrizzleStudio(expoDb);
   useInitializeStores();
 
-  const { isDark } = useThemeContext();
+  const { colors, isDark } = useThemeContext();
 
   return (
     <>
@@ -88,7 +88,14 @@ function Init() {
       <ActionSheetProvider>
         <Stack>
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          <Stack.Screen name="modal" options={{ presentation: 'modal' }} />
+          <Stack.Screen
+            name="modal"
+            options={{
+              presentation: 'modal',
+              headerStyle: { backgroundColor: colors['--neutral-accent'] },
+              headerTintColor: colors['--neutral-contrast'],
+            }}
+          />
         </Stack>
       </ActionSheetProvider>
     </>

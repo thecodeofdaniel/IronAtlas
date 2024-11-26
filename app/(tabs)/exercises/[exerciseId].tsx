@@ -13,8 +13,10 @@ export default function ExerciseId() {
   return (
     <>
       <Stack.Screen options={{ title: exerciseMap[+exerciseId].label }} />
-      <View className="p-4">
-        <Text className="text-2xl font-semibold">Workout History</Text>
+      <View className="bg-neutral flex-1 p-4">
+        <Text className="text-neutral-contrast text-2xl font-semibold">
+          Workout History
+        </Text>
         <ExerciseHistory2 exerciseId={+exerciseId} />
         <Progression exerciseId={+exerciseId} />
       </View>
