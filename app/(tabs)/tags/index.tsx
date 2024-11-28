@@ -21,6 +21,9 @@ import {
   useExerciseStoreWithSetter,
 } from '@/store/exercise/exerciseStore';
 import { Link } from 'expo-router';
+import { getActionSheetStyle } from '@/lib/actionSheetConfig';
+import { useThemeContext } from '@/store/context/themeContext';
+import { cn } from '@/lib/utils';
 
 type DraggableTreeProps = {
   tagMap: TagMap; // Accept itemMap as a prop
@@ -40,6 +43,7 @@ const DraggableTree = ({
   const router = useRouter();
   const { showActionSheetWithOptions } = useActionSheet();
   const openModal = useModalStore((state) => state.openModal);
+  const { colors } = useThemeContext();
 
   const handleOnPress = (pressedId: number, level: number) => {
     const tag = tagMap[pressedId];
@@ -65,6 +69,7 @@ const DraggableTree = ({
         options,
         cancelButtonIndex,
         destructiveButtonIndex,
+        ...getActionSheetStyle(colors),
       },
       (selectedIndex?: number) => {
         if (selectedIndex === undefined || selectedIndex === cancelButtonIndex)
@@ -95,10 +100,12 @@ const DraggableTree = ({
           activeOpacity={1}
           onLongPress={drag}
           disabled={isActive}
-          className={clsx('my-[1] flex flex-row items-center', {
-            'bg-red-500': isActive,
-            'bg-blue-800': !isActive,
-          })}
+          className={cn(
+            'my-[1] flex flex-row items-center border-b-4 border-r-4 border-neutral-accent bg-primary',
+            {
+              'bg-red-700': isActive,
+            },
+          )}
         >
           {item.children.length > 0 && level > 0 && (
             <Pressable
@@ -171,7 +178,7 @@ export default function TagTab() {
       <Stack.Screen
         options={{ title: 'Body Section Tags', headerShown: true }}
       />
-      <View className="bg-neutral flex flex-1 px-2 pt-2">
+      <View className="flex flex-1 bg-neutral px-2 pt-2">
         <GestureHandlerRootView>
           <ActionSheetProvider>
             <DraggableTree
