@@ -9,11 +9,7 @@ type Props = {
   className?: string;
 };
 
-export default function PushOntoStackButton({
-  children,
-  href,
-  className,
-}: Props) {
+export default function PushOntoStack({ children, href, className }: Props) {
   const router = useRouter();
 
   return (

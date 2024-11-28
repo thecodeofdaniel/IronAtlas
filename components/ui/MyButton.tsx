@@ -7,7 +7,11 @@ interface ButtonProps extends PressableProps {
   className?: string;
 }
 
-export default function Button({ children, className, ...props }: ButtonProps) {
+export default function MyButton({
+  children,
+  className,
+  ...props
+}: ButtonProps) {
   return (
     <Pressable
       {...props}
@@ -23,8 +27,9 @@ export default function Button({ children, className, ...props }: ButtonProps) {
 const styles = StyleSheet.create({
   button: {
     borderColor: 'black',
-    borderWidth: 1,
-    borderBottomWidth: 4,
+    borderTopWidth: 2,
     borderRightWidth: 4,
+    borderBottomWidth: 4,
+    borderLeftWidth: 2,
   },
 });

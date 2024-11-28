@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text } from 'react-native';
 import { Stack } from 'expo-router';
 import { useThemeContext } from '@/store/context/themeContext';
-import Button from '@/components/ui/Button';
+import Button from '@/components/ui/MyButton';
 
 export default function SettingsTab() {
   const { themeName, setTheme } = useThemeContext();

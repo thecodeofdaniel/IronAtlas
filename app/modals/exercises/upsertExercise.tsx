@@ -11,7 +11,7 @@ import { TInsertExercise } from '@/db/schema';
 import { db } from '@/db/instance';
 import * as schema from '@/db/schema';
 import { eq } from 'drizzle-orm';
-import Button from '@/components/ui/Button';
+import Button from '@/components/ui/MyButton';
 
 type CreateOrUpdateExerciseProps = {
   modalData: ModalData['upsertExercise'];

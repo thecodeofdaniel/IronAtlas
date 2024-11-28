@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, Pressable } from 'react-native';
 import { Stack, useRouter } from 'expo-router';
 import { useWorkoutStore } from '@/store/workout/workoutStore';
-import RenderTemplates from '@/components/RenderTemplates';
+import RenderTemplates from '@/app/(tabs)/workout/components/RenderTemplates';
 
 export default function SelectTemplate() {
   const [selected, setSelected] = useState<number>();

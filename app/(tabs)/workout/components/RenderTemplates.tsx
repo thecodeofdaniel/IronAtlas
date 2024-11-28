@@ -3,14 +3,18 @@ import { View, Text, Pressable } from 'react-native';
 import { Router, Stack, useRouter } from 'expo-router';
 import { useLiveQuery } from 'drizzle-orm/expo-sqlite';
 import { db } from '@/db/instance';
-import * as sch from '@/db/schema/template';
+import * as s from '@/db/schema/template';
 import { FlatList, GestureHandlerRootView } from 'react-native-gesture-handler';
 import { asc, eq } from 'drizzle-orm';
 import { useExerciseStore } from '@/store/exercise/exerciseStore';
 import { Ionicons } from '@expo/vector-icons';
 import { useActionSheet } from '@expo/react-native-action-sheet';
 import { useWorkoutStore } from '@/store/workout/workoutStore';
-import clsx from 'clsx';
+import { useThemeContext } from '@/store/context/themeContext';
+import { getActionSheetStyle } from '@/lib/actionSheetConfig';
+import { cn } from '@/lib/utils';
+import TextContrast from '@/components/ui/TextContrast';
+import MyButton from '@/components/ui/MyButton';
 
 interface TransformedTemplate {
   workoutId: number;
@@ -48,6 +52,7 @@ function RenderItem({
   const ssIndexHolder = new Set();
   const { showActionSheetWithOptions } = useActionSheet();
   const loadTemplate = useWorkoutStore((state) => state.loadTemplate);
+  const { colors } = useThemeContext();
 
   const handleOptionsPress = async () => {
     const options = ['Delete', 'Edit', 'Cancel'];
@@ -59,16 +64,16 @@ function RenderItem({
         options,
         cancelButtonIndex,
         destructiveButtonIndex,
+        ...getActionSheetStyle(colors),
       },
       async (selectedIndex?: number) => {
         switch (selectedIndex) {
           case destructiveButtonIndex:
             await db.transaction(async (tx) => {
               await tx
-                .delete(sch.workoutTemplate)
-                .where(eq(sch.workoutTemplate.id, item.workoutId));
+                .delete(s.workoutTemplate)
+                .where(eq(s.workoutTemplate.id, item.workoutId));
             });
-            // console.log('Delete workoutId', item.workoutId);
             break;
           case 1:
             loadTemplate(item.workoutId);
@@ -88,22 +93,25 @@ function RenderItem({
   };
 
   return (
-    <Pressable
-      className={clsx('my-1 border px-2', {
+    <MyButton
+      className={cn('my-1 bg-neutral-accent px-2', {
         'bg-green-500': selected === item.workoutId,
       })}
       onPress={() => (setSelected ? setSelected(item.workoutId) : null)}
     >
       <View className="flex flex-row items-center justify-between">
-        <Text className="text-lg font-semibold underline">{item.name}</Text>
+        <TextContrast className="text-xl font-semibold">
+          {item.name}
+        </TextContrast>
         <Ionicons
           name="ellipsis-horizontal"
           size={24}
+          color={colors['--neutral-contrast']}
           onPress={handleOptionsPress}
         />
       </View>
       {item.volumes.map(({ volumeId, exerciseId, index, subIndex, setts }) => {
-        const exerciseName = ` - ${exerciseMap[exerciseId].label}`;
+        const exerciseName = `• ${exerciseMap[exerciseId].label}`;
 
         const setsDisplay = setts.map((set, idx) => {
           if (!set.weight && !set.reps) return null;
@@ -112,9 +120,9 @@ function RenderItem({
           const repsStr = set.reps ? ` x ${set.reps}` : '';
 
           return (
-            <Text key={idx} className="pl-4 text-sm">
+            <TextContrast key={idx} className="pl-4 text-sm">
               {`${set.type}${weightStr}${repsStr}`}
-            </Text>
+            </TextContrast>
           );
         });
 
@@ -122,9 +130,9 @@ function RenderItem({
           return (
             <View key={volumeId}>
               {!ssIndexHolder.has(index) && ssIndexHolder.add(index) && (
-                <Text className="pl-1 underline">Superset</Text>
+                <TextContrast className="pl-1 underline">Superset</TextContrast>
               )}
-              <Text className="pl-2">{exerciseName}</Text>
+              <TextContrast className="pl-2">{exerciseName}</TextContrast>
               {setsDisplay}
             </View>
           );
@@ -132,12 +140,12 @@ function RenderItem({
 
         return (
           <View key={volumeId}>
-            <Text>{exerciseName}</Text>
+            <TextContrast>{exerciseName}</TextContrast>
             {setsDisplay}
           </View>
         );
       })}
-    </Pressable>
+    </MyButton>
   );
 }
 
@@ -156,26 +164,26 @@ export default function RenderTemplates({ selected, setSelected }: Props) {
   const { data: rawWorkoutTemplates } = useLiveQuery(
     db
       .select({
-        workoutId: sch.workoutTemplate.id,
-        name: sch.workoutTemplate.name,
-        volumeId: sch.volumeTemplate.id,
-        exerciseId: sch.volumeTemplate.exerciseId,
-        index: sch.volumeTemplate.index,
-        subIndex: sch.volumeTemplate.subIndex,
-        setType: sch.settTemplate.type,
-        weight: sch.settTemplate.weight,
-        reps: sch.settTemplate.reps,
+        workoutId: s.workoutTemplate.id,
+        name: s.workoutTemplate.name,
+        volumeId: s.volumeTemplate.id,
+        exerciseId: s.volumeTemplate.exerciseId,
+        index: s.volumeTemplate.index,
+        subIndex: s.volumeTemplate.subIndex,
+        setType: s.settTemplate.type,
+        weight: s.settTemplate.weight,
+        reps: s.settTemplate.reps,
       })
-      .from(sch.workoutTemplate)
+      .from(s.workoutTemplate)
       .innerJoin(
-        sch.volumeTemplate,
-        eq(sch.volumeTemplate.workoutTemplateId, sch.workoutTemplate.id),
+        s.volumeTemplate,
+        eq(s.volumeTemplate.workoutTemplateId, s.workoutTemplate.id),
       )
       .innerJoin(
-        sch.settTemplate,
-        eq(sch.settTemplate.volumeTemplateId, sch.volumeTemplate.id),
+        s.settTemplate,
+        eq(s.settTemplate.volumeTemplateId, s.volumeTemplate.id),
       )
-      .orderBy(asc(sch.workoutTemplate.createdAt)),
+      .orderBy(asc(s.workoutTemplate.createdAt)),
   );
 
   // Transform the flat data into nested structure

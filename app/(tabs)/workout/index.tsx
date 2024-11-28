@@ -1,12 +1,5 @@
 import React, { useRef, useState } from 'react';
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  Pressable,
-  Keyboard,
-  Button,
-} from 'react-native';
+import { View, Text } from 'react-native';
 import { Link, Stack, useRouter } from 'expo-router';
 import {
   GestureHandlerRootView,
@@ -15,8 +8,8 @@ import {
 } from 'react-native-gesture-handler';
 import TrackExercise from '@/components/SetsTable/SetsTable';
 import Popover, { PopoverPlacement } from 'react-native-popover-view';
-import StartWorkout from '@/components/StartWorkout';
-import StartWorkout2 from '@/components/StartWorkout';
+import StartWorkout from '@/app/(tabs)/workout/components/StartWorkout';
+import StartWorkout2 from '@/app/(tabs)/workout/components/StartWorkout';
 import { useModalStore } from '@/store/modalStore';
 import TemplateScreen from '../../../components/TemplateOG/Template';
 import OpenModalButton from '@/components/OpenModalButton';
@@ -24,7 +17,9 @@ import {
   useWorkoutStore,
   useWorkoutStoreHook,
 } from '@/store/workout/workoutStore';
-import PushOntoStackButton from '@/components/PushOntoStackButton';
+import PushOntoStack from '@/components/PushOntoStack';
+import MyButton from '@/components/ui/MyButton';
+import TextContrast from '@/components/ui/TextContrast';
 
 export default function WorkoutTab() {
   // const inWorkout = useWorkoutStore((state) => state.inWorkout);
@@ -41,7 +36,7 @@ export default function WorkoutTab() {
           headerRight: () => <StartWorkout />,
         }}
       />
-      <View className="bg-neutral flex-1 p-2">
+      <View className="flex-1 bg-neutral p-2">
         {inWorkout && (
           <View className="flex-1">
             <TemplateScreen />
@@ -56,36 +51,37 @@ export default function WorkoutTab() {
             >
               <Text className="text-center">Add Exercises</Text>
             </OpenModalButton>
-            <Pressable
+            <MyButton
               onPress={() => {
                 validateWorkout();
               }}
               className="border bg-stone-300 py-2"
             >
               <Text>Validate</Text>
-            </Pressable>
+            </MyButton>
           </View>
         )}
         {!inWorkout && (
-          <View className="flex-1 border">
-            <View className="flex-1 items-center justify-center border">
-              <Text>Previous Workouts</Text>
+          <View className="flex-1">
+            <View className="flex-1 items-center justify-center">
+              {/* <Text>Previous Workouts</Text> */}
             </View>
             <View className="flex flex-row gap-1">
-              <PushOntoStackButton
-                href="/(tabs)/workout/workouts/viewWorkouts"
-                className="flex-1 bg-red-500 py-2"
-              >
-                <Text className="text-center text-white">
-                  View Previous Workouts
-                </Text>
-              </PushOntoStackButton>
-              <PushOntoStackButton
-                href="/(tabs)/workout/template/viewTemplates"
-                className="flex-1 bg-red-500 py-2"
-              >
-                <Text className="text-center text-white">View Templates</Text>
-              </PushOntoStackButton>
+              <MyButton className="flex-1 bg-red-500 py-2">
+                <PushOntoStack href="/(tabs)/workout/workouts/viewWorkouts">
+                  <TextContrast className="text-center">
+                    View Previous Workouts
+                  </TextContrast>
+                </PushOntoStack>
+              </MyButton>
+
+              <MyButton className="flex-1 bg-red-500 py-2">
+                <PushOntoStack href="/(tabs)/workout/template/viewTemplates">
+                  <TextContrast className="text-center">
+                    View Templates
+                  </TextContrast>
+                </PushOntoStack>
+              </MyButton>
             </View>
           </View>
         )}
