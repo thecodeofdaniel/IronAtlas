@@ -2,6 +2,8 @@ import { View, Text, Dimensions } from 'react-native';
 import React from 'react';
 import { LineChart } from 'react-native-chart-kit';
 
+const CHART_WIDTH = Dimensions.get('window').width - 40; // Adjust padding as needed
+
 type LineChartProps = {
   data?: {
     dates: string[];
@@ -24,7 +26,11 @@ export default function LineChartComp({
 
   return (
     <View className="flex flex-col items-center justify-center">
-      {title && <Text>{title}</Text>}
+      {title && (
+        <Text className="mb-2 text-lg font-semibold text-neutral-contrast">
+          {title}
+        </Text>
+      )}
       <LineChart
         data={{
           labels: data.dates,
@@ -34,7 +40,7 @@ export default function LineChartComp({
             },
           ],
         }}
-        width={Dimensions.get('window').width - 20}
+        width={CHART_WIDTH}
         height={200}
         yAxisLabel={yAxisLabel}
         yAxisSuffix={yAxisSuffix}
@@ -48,7 +54,6 @@ export default function LineChartComp({
           labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
           style: {
             borderRadius: 16,
-            marginHorizontal: 'auto',
           },
           propsForDots: {
             r: '6',

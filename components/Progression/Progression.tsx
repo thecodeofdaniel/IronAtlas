@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text } from 'react-native';
+import { View, Text, FlatList } from 'react-native';
 import {
   analyzeProgression,
   getExerciseProgression,
@@ -18,6 +18,8 @@ import LineChartComp from '../LineChartComp';
 type Props = {
   exerciseId: number;
 };
+
+const SUFFIX = 'lb';
 
 export default function Progression({ exerciseId }: Props) {
   const [sets, setSets] = useState<SetData[]>([]);
@@ -83,8 +85,10 @@ export default function Progression({ exerciseId }: Props) {
   );
 
   // Helper function to prepare chart data
-  const prepareChartData = (metrics: GraphMetric[]) => {
-    if (!metrics || metrics.length === 0) return null;
+  const prepareChartData = (
+    metrics: GraphMetric[],
+  ): { dates: string[]; values: number[] } | undefined => {
+    if (!metrics || metrics.length === 0) return undefined;
 
     return {
       dates: metrics.map((d) => formatDate(d.date)),
@@ -101,92 +105,49 @@ export default function Progression({ exerciseId }: Props) {
 
   if (!graphData) return null;
 
-  const volumeData = prepareChartData(graphData.volume);
-  const oneRMData = prepareChartData(graphData.oneRM);
-  const maxWeightData = prepareChartData(graphData.maxWeight);
+  // Prepare chart data objects
+  const charts = [
+    {
+      id: 'volume',
+      title: 'Volume Progress',
+      data: prepareChartData(graphData.volume),
+      suffix: SUFFIX,
+    },
+    {
+      id: 'oneRM',
+      title: 'Estimated 1RM',
+      data: prepareChartData(graphData.oneRM),
+      suffix: SUFFIX,
+    },
+    {
+      id: 'maxWeight',
+      title: 'Max Weight',
+      data: prepareChartData(graphData.maxWeight),
+      suffix: SUFFIX,
+    },
+  ].filter((chart) => chart.data !== undefined); // Only include charts with data
 
   return (
     <View>
-      <TextContrast>Best Performances:</TextContrast>
-
-      {/* Highest Volume */}
-      <TextContrast>
-        Most Volume: {highestVolumeWorkout.totalVolume.toFixed(1)}kg
-        {highestVolumeSets.map(
-          (set, index) =>
-            ` ${index === 0 ? '(' : ''}${set.weight}kg × ${set.reps}${
-              index === highestVolumeSets.length - 1 ? ')' : ', '
-            }`,
-        )}{' '}
-        ({highestVolumeWorkout.date.toLocaleDateString()})
-      </TextContrast>
-
-      {/* Strength PR */}
-      {strengthPR ? (
-        <TextContrast>
-          Strength PR: {strengthPR.weight}kg × {strengthPR.reps} reps (
-          {strengthPR.date.toLocaleDateString()})
-        </TextContrast>
-      ) : (
-        <TextContrast>No strength PR yet (1-3 reps)</TextContrast>
-      )}
-
-      {/* Highest Reps */}
-      <TextContrast>
-        Most Reps: {highestRepsSet.weight}kg × {highestRepsSet.reps} reps (
-        {highestRepsSet.date.toLocaleDateString()})
-      </TextContrast>
-
-      {/* Display Progress */}
-      {analysis.trends ? (
-        <>
-          <TextContrast>
-            Progress over {analysis.metrics.length} workouts:
-          </TextContrast>
-          <TextContrast>
-            Weight: {analysis.trends.weightProgress.percentage.toFixed(1)}%
-          </TextContrast>
-          <TextContrast>
-            Volume: {analysis.trends.volumeProgress.percentage.toFixed(1)}%
-          </TextContrast>
-          <TextContrast>
-            Estimated 1RM: {analysis.trends.oneRMProgress.percentage.toFixed(1)}
-            %
-          </TextContrast>
-        </>
-      ) : (
-        <TextContrast>Not enough data to show progress</TextContrast>
-      )}
-
-      {/* Volume Chart */}
-      {volumeData && (
-        <LineChartComp
-          data={volumeData}
-          title="Volume Progress"
-          yAxisLabel=""
-          yAxisSuffix="kg"
-        />
-      )}
-
-      {/* 1RM Chart */}
-      {oneRMData && (
-        <LineChartComp
-          data={oneRMData}
-          title="Estimated 1RM Progress"
-          yAxisLabel=""
-          yAxisSuffix="kg"
-        />
-      )}
-
-      {/* Max Weight Chart */}
-      {maxWeightData && (
-        <LineChartComp
-          data={maxWeightData}
-          title="Max Weight Progress"
-          yAxisLabel=""
-          yAxisSuffix="kg"
-        />
-      )}
+      <FlatList
+        horizontal
+        data={charts}
+        keyExtractor={(item) => item.id}
+        showsHorizontalScrollIndicator={false}
+        pagingEnabled
+        renderItem={({ item }) => (
+          <View className="px-2">
+            <LineChartComp
+              data={item.data}
+              title={item.title}
+              yAxisSuffix={item.suffix}
+            />
+          </View>
+        )}
+        // Optional: Add dots indicator
+        ListFooterComponent={() => <View className="w-4" />} // Add padding at end
+        ListHeaderComponent={() => <View className="w-4" />} // Add padding at start
+      />
     </View>
   );
 }
