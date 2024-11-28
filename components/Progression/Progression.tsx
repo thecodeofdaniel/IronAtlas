@@ -32,15 +32,15 @@ export default function Progression({ exerciseId }: Props) {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const data = await getExerciseProgression(exerciseId);
-        setSets(data);
+        const setsData = await getExerciseProgression(exerciseId);
+        setSets(setsData);
 
-        if (!data || data.length === 0) {
+        if (!setsData || setsData.length === 0) {
           setError('No data available for this exercise');
           return;
         }
 
-        const metrics = analyzeProgression(data);
+        const metrics = analyzeProgression(setsData);
         const allTimePRs = findAllTimePRs(metrics);
         const trends = analyzeTrends(metrics);
         const graphMetrics = generateGraphMetrics(metrics);

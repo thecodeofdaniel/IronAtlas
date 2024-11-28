@@ -1,6 +1,37 @@
-import { desc, eq, sql } from 'drizzle-orm';
 import { db } from '@/db/instance';
 import * as s from '@/db/schema';
+import { desc, eq, sql } from 'drizzle-orm';
+
+export type SetData = {
+  workoutId: number;
+  date: Date;
+  weight: number;
+  reps: number;
+  volume: number;
+};
+
+export type ProgressionMetrics = {
+  workoutId: number;
+  date: Date;
+  maxWeight: number;
+  totalVolume: number;
+  avgReps: number;
+  estimatedOneRM: number;
+  personalRecords: {
+    [repRange: string]: PRRecord;
+  };
+  movingAverages: {
+    volume: number;
+    weight: number;
+  };
+};
+
+export type PRRecord = {
+  weight: number;
+  reps: number;
+  date: Date;
+  workoutId: number;
+};
 
 // Function to get exercise progression data
 export async function getExerciseProgression(exerciseId: number) {
@@ -20,41 +51,8 @@ export async function getExerciseProgression(exerciseId: number) {
     .orderBy(desc(s.workout.date))
     .all();
 
-  console.log('Sets length:', sets.length);
-
   return sets;
 }
-
-export type SetData = {
-  workoutId: number;
-  date: Date;
-  weight: number;
-  reps: number;
-  volume: number;
-};
-
-export type PRRecord = {
-  weight: number;
-  reps: number;
-  date: Date;
-  workoutId: number;
-};
-
-export type ProgressionMetrics = {
-  workoutId: number;
-  date: Date;
-  maxWeight: number;
-  totalVolume: number;
-  avgReps: number;
-  estimatedOneRM: number;
-  personalRecords: {
-    [repRange: string]: PRRecord;
-  };
-  movingAverages: {
-    volume: number;
-    weight: number;
-  };
-};
 
 export function analyzeProgression(sets: SetData[]): ProgressionMetrics[] {
   // Group sets by workoutId
@@ -208,34 +206,34 @@ export type GraphData = {
 // Add this new function
 export function generateGraphMetrics(metrics: ProgressionMetrics[]): GraphData {
   // Sort metrics by date to ensure chronological order
-  const sortedMetrics = [...metrics].sort((a, b) => 
-    a.date.getTime() - b.date.getTime()
+  const sortedMetrics = [...metrics].sort(
+    (a, b) => a.date.getTime() - b.date.getTime(),
   );
 
   return {
     // Total workout volume over time
-    volume: sortedMetrics.map(m => ({
+    volume: sortedMetrics.map((m) => ({
       date: m.date,
-      value: m.totalVolume
+      value: m.totalVolume,
     })),
-    
+
     // Estimated 1RM progression
-    oneRM: sortedMetrics.map(m => ({
+    oneRM: sortedMetrics.map((m) => ({
       date: m.date,
-      value: m.estimatedOneRM
+      value: m.estimatedOneRM,
     })),
 
     // Max weight used per workout
-    maxWeight: sortedMetrics.map(m => ({
+    maxWeight: sortedMetrics.map((m) => ({
       date: m.date,
-      value: m.maxWeight
+      value: m.maxWeight,
     })),
 
     // Moving averages
-    movingAverages: sortedMetrics.map(m => ({
+    movingAverages: sortedMetrics.map((m) => ({
       date: m.date,
       volume: m.movingAverages.volume,
-      weight: m.movingAverages.weight
-    }))
+      weight: m.movingAverages.weight,
+    })),
   };
 }
