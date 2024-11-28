@@ -21,7 +21,6 @@ export default function ExerciseId() {
         <ExerciseHistory2 exerciseId={+exerciseId} />
         <Progression exerciseId={+exerciseId} />
       </View>
-      <LineChartComp />
     </>
   );
 }
