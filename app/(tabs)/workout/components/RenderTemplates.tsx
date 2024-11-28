@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, Pressable } from 'react-native';
+import { View, Text, Pressable, Platform } from 'react-native';
 import { Router, Stack, useRouter } from 'expo-router';
 import { useLiveQuery } from 'drizzle-orm/expo-sqlite';
 import { db } from '@/db/instance';
@@ -113,35 +113,69 @@ function RenderItem({
       {item.volumes.map(({ volumeId, exerciseId, index, subIndex, setts }) => {
         const exerciseName = `• ${exerciseMap[exerciseId].label}`;
 
+        const setsLength = setts.length;
+
         const setsDisplay = setts.map((set, idx) => {
           if (!set.weight && !set.reps) return null;
 
-          const weightStr = set.weight ? ` ${set.weight}` : '';
-          const repsStr = set.reps ? ` x ${set.reps}` : '';
+          const repsStr = set.reps;
+          const comma = idx >= setsLength - 1 ? '' : ', ';
 
-          return (
-            <TextContrast key={idx} className="pl-4 text-sm">
-              {`${set.type}${weightStr}${repsStr}`}
-            </TextContrast>
-          );
+          // If only reps are included
+          if (!set.weight && set.reps) {
+            return (
+              <Text
+                key={idx}
+                className={cn('text-sm text-neutral-contrast/70', {
+                  'text-purple-400/70': set.type === 'D',
+                })}
+              >
+                {`${repsStr}${comma}`}
+              </Text>
+            );
+          }
+
+          const weightStr = `${set.weight}`;
+
+          // If only weight is included
+          if (set.weight && set.reps) {
+            return (
+              <Text
+                key={idx}
+                className={cn('text-sm text-neutral-contrast/70', {
+                  'text-purple-400/70': set.type === 'D',
+                })}
+              >
+                {`${weightStr} x ${repsStr}${comma}`}
+              </Text>
+            );
+          }
         });
 
+        // If set is part of a superset
         if (subIndex !== null) {
           return (
             <View key={volumeId}>
               {!ssIndexHolder.has(index) && ssIndexHolder.add(index) && (
-                <TextContrast className="pl-1 underline">Superset</TextContrast>
+                <View className="flex flex-row">
+                  <Text> </Text>
+                  <Text className="pl-1 text-neutral-contrast/80 underline">
+                    {'Superset'}
+                  </Text>
+                </View>
               )}
-              <TextContrast className="pl-2">{exerciseName}</TextContrast>
-              {setsDisplay}
+              <Text className="pl-2 text-neutral-contrast/80">
+                {exerciseName}
+              </Text>
+              <View className="flex flex-row pl-4">{setsDisplay}</View>
             </View>
           );
         }
 
         return (
           <View key={volumeId}>
-            <TextContrast>{exerciseName}</TextContrast>
-            {setsDisplay}
+            <Text className="text-neutral-contrast/80">{exerciseName}</Text>
+            <View className={cn('flex flex-row pl-2')}>{setsDisplay}</View>
           </View>
         );
       })}
