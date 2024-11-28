@@ -95,7 +95,7 @@ function RenderItem({
   return (
     <MyButton
       className={cn('my-1 bg-neutral-accent px-2', {
-        'bg-green-500': selected === item.workoutId,
+        'bg-neutral-accent/60': selected === item.workoutId,
       })}
       onPress={() => (setSelected ? setSelected(item.workoutId) : null)}
     >
