@@ -19,6 +19,8 @@ import { db } from '@/db/instance';
 import { eq } from 'drizzle-orm';
 import * as sch from '@/db/schema/template';
 import OpenModalButton from '@/components/OpenModalButton';
+import TextContrast from '@/components/ui/TextContrast';
+import MyButton from '@/components/ui/MyButton';
 
 const emptyErrorMsgs = {
   templateName: '',
@@ -112,16 +114,13 @@ export default function UpsertTemplate() {
           title: templateWorkoutId ? 'Edit Template' : 'Create Template',
           headerBackTitle: 'Back',
           headerRight: () => (
-            <Pressable
-              className="rounded-md bg-green-500 px-4 py-2"
-              onPress={onSubmit}
-            >
+            <MyButton className="bg-green-500" onPress={onSubmit}>
               <Text className="font-semibold text-white">Save</Text>
-            </Pressable>
+            </MyButton>
           ),
         }}
       />
-      <View className="flex-1 p-2">
+      <View className="flex-1 bg-neutral p-2">
         <TouchableWithoutFeedback
           onPress={() => Keyboard.dismiss()}
           accessible={false}
@@ -129,11 +128,13 @@ export default function UpsertTemplate() {
           <GestureHandlerRootView style={{ flex: 1, gap: 4 }}>
             {/* Template Name */}
             <View>
-              <Text className="text-lg font-medium">Template Name</Text>
+              <TextContrast className="text-lg font-medium">
+                Template Name
+              </TextContrast>
               <TextInput
                 onChangeText={(text) => setTemplateName(text)}
                 value={templateName}
-                className="border px-2 py-1"
+                className="border-2 border-neutral-accent px-2 py-1 text-neutral-contrast"
               />
               {errorMsgs.templateName && (
                 <Text className="text-red-500">{errorMsgs.templateName}</Text>
@@ -141,11 +142,13 @@ export default function UpsertTemplate() {
             </View>
             {/* Exercises */}
             <View className="flex-1">
-              <Text className="text-lg font-medium">Exercises</Text>
+              <TextContrast className="text-lg font-medium">
+                Exercises
+              </TextContrast>
               <TemplateScreen2
                 template={template}
                 actions={actions}
-                className="flex-1 border"
+                className="flex-1 border-2 border-neutral-accent p-1"
               />
               {errorMsgs.exercises && (
                 <Text className="text-red-500">{errorMsgs.exercises}</Text>
@@ -153,17 +156,20 @@ export default function UpsertTemplate() {
             </View>
           </GestureHandlerRootView>
         </TouchableWithoutFeedback>
-        <OpenModalButton
-          activeModal="selectExercises"
-          modalData={{
-            isSuperset: false,
-            uuid: '0',
-            storeType: 'workout',
-          }}
-          className="mt-2 bg-blue-500 p-4"
-        >
-          <Text className="text-center text-white">Pick Exercise</Text>
-        </OpenModalButton>
+        <MyButton className="mt-2">
+          <OpenModalButton
+            activeModal="selectExercises"
+            modalData={{
+              isSuperset: false,
+              uuid: '0',
+              storeType: 'workout',
+            }}
+          >
+            <Text className="text-center text-lg font-medium text-white">
+              Pick Exercise
+            </Text>
+          </OpenModalButton>
+        </MyButton>
       </View>
     </>
   );

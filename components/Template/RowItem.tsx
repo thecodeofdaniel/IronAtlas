@@ -20,6 +20,9 @@ import UnderlayLeft from './UnderLayLeft';
 import clsx from 'clsx';
 import SupersetOptions from './SupersetOptions';
 import SupersetAddIcon from './SupersetAddIcon';
+import MyButton from '../ui/MyButton';
+import { cn } from '@/lib/utils';
+import TextContrast from '../ui/TextContrast';
 
 type RowItemProps = {
   drag: () => void;
@@ -76,29 +79,26 @@ export default function RowItem({
             }}
             asChild
           >
-            <TouchableOpacity
-              // onLongPress={level > 0 ? drag : undefined}
+            <MyButton
               onLongPress={drag}
               disabled={isActive}
-              activeOpacity={1}
-              className={clsx('my-[1] flex flex-row items-center', {
-                'bg-red-500': isActive,
-                'bg-blue-800': !isActive,
+              className={cn('mb-[1] py-0 pl-2 pr-0', {
+                'bg-blue-500': isActive,
               })}
             >
               <View className="flex flex-1 flex-row items-center justify-between">
-                <Text className="pl-2 text-white">
+                <TextContrast className="text-white">
                   {item.exerciseId === null
                     ? 'Superset'
                     : exerciseMap[item.exerciseId].label}
-                </Text>
+                </TextContrast>
                 {isSuperset ? (
                   <SupersetOptions uuid={item.uuid} isSuperset={isSuperset} />
                 ) : (
                   <SupersetAddIcon isSuperset={isSuperset} />
                 )}
               </View>
-            </TouchableOpacity>
+            </MyButton>
           </Link>
         </SwipeableItem>
       </ScaleDecorator>
