@@ -28,6 +28,7 @@ function TemplateTree({
 }: TemplateTreeProps) {
   const RenderItem = (params: RenderItemParams<TemplateObj>) => {
     const itemRefs = useRef(new Map());
+
     return (
       <RowItem
         {...params}

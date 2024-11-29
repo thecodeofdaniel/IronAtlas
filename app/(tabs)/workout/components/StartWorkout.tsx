@@ -4,6 +4,7 @@ import { useActionSheet } from '@expo/react-native-action-sheet';
 import { useRouter } from 'expo-router';
 import { useWorkoutStore } from '@/store/workout/workoutStore';
 import MyButton from '@/components/ui/MyButton';
+import MyButtonOpacity from '@/components/ui/MyButtonOpacity';
 
 // type StartWorkoutProps = {
 //   inWorkout: boolean;
@@ -70,23 +71,23 @@ export default function StartWorkout() {
 
   if (!inWorkout) {
     return (
-      <MyButton
+      <MyButtonOpacity
         className="rounded-sm bg-green-500 px-4 py-2"
         onPress={startWorkout}
       >
         <Text className="text-center font-medium text-white">Start</Text>
-      </MyButton>
+      </MyButtonOpacity>
     );
   }
 
   if (inWorkout) {
     return (
-      <MyButton
+      <MyButtonOpacity
         className="rounded-sm bg-red-500 px-4 py-2"
         onPress={endWorkout}
       >
         <Text className="text-center font-medium text-white">End</Text>
-      </MyButton>
+      </MyButtonOpacity>
     );
   }
 }

@@ -20,9 +20,11 @@ import {
 import PushOntoStack from '@/components/PushOntoStack';
 import MyButton from '@/components/ui/MyButton';
 import TextContrast from '@/components/ui/TextContrast';
+import MyButtonOpacity from '@/components/ui/MyButtonOpacity';
 
 export default function WorkoutTab() {
   // const inWorkout = useWorkoutStore((state) => state.inWorkout);
+  const router = useRouter();
   const { template, inWorkout, validateWorkout } = useWorkoutStore(
     (state) => state,
   );
@@ -67,21 +69,27 @@ export default function WorkoutTab() {
               {/* <Text>Previous Workouts</Text> */}
             </View>
             <View className="flex flex-row gap-1">
-              <MyButton className="flex-1 bg-red-500 py-2">
-                <PushOntoStack href="/(tabs)/workout/workouts/viewWorkouts">
-                  <TextContrast className="text-center">
-                    View Previous Workouts
-                  </TextContrast>
-                </PushOntoStack>
-              </MyButton>
+              <MyButtonOpacity
+                className="flex-1 bg-red-500 py-2"
+                onPress={() => {
+                  router.push('/(tabs)/workout/workouts/viewWorkouts');
+                }}
+              >
+                <Text className="text-center font-medium text-neutral-contrast">
+                  View Previous Workouts
+                </Text>
+              </MyButtonOpacity>
 
-              <MyButton className="flex-1 bg-red-500 py-2">
-                <PushOntoStack href="/(tabs)/workout/template/viewTemplates">
-                  <TextContrast className="text-center">
-                    View Templates
-                  </TextContrast>
-                </PushOntoStack>
-              </MyButton>
+              <MyButtonOpacity
+                className="flex-1 bg-red-500 py-2"
+                onPress={() => {
+                  router.push('/(tabs)/workout/template/viewTemplates');
+                }}
+              >
+                <Text className="text-center font-medium text-neutral-contrast">
+                  View Templates
+                </Text>
+              </MyButtonOpacity>
             </View>
           </View>
         )}

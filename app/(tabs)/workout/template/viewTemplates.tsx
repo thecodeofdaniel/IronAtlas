@@ -1,5 +1,5 @@
 import React from 'react';
-import { Pressable, View } from 'react-native';
+import { Pressable, View, TouchableOpacity } from 'react-native';
 import { Stack, useRouter } from 'expo-router';
 import RenderTemplates from '../components/RenderTemplates';
 import { Ionicons } from '@expo/vector-icons';
@@ -7,7 +7,7 @@ import { useWorkoutStore } from '@/store/workout/workoutStore';
 import { useThemeContext } from '@/store/context/themeContext';
 
 export default function ViewTemplates() {
-  console.log('Render ViewTemplates');
+  // console.log('Render ViewTemplates');
   const router = useRouter();
   const clearTemplate = useWorkoutStore((state) => state.clearTemplate);
   const { colors } = useThemeContext();
@@ -18,7 +18,7 @@ export default function ViewTemplates() {
         options={{
           title: 'Templates',
           headerRight: () => (
-            <Pressable
+            <TouchableOpacity
               onPress={() => {
                 clearTemplate();
                 router.push('/workout/template/upsertTemplate');
@@ -29,7 +29,7 @@ export default function ViewTemplates() {
                 size={24}
                 color={colors['--neutral-contrast']}
               />
-            </Pressable>
+            </TouchableOpacity>
           ),
         }}
       />
