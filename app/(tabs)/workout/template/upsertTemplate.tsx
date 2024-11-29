@@ -18,7 +18,7 @@ import {
 import { db } from '@/db/instance';
 import { eq } from 'drizzle-orm';
 import * as sch from '@/db/schema/template';
-import OpenModalButton from '@/components/OpenModalButton';
+import OpenModalWrapper from '@/components/OpenModalWrapper';
 import TextContrast from '@/components/ui/TextContrast';
 import MyButton from '@/components/ui/MyButton';
 
@@ -157,7 +157,7 @@ export default function UpsertTemplate() {
           </GestureHandlerRootView>
         </TouchableWithoutFeedback>
         <MyButton className="mt-2">
-          <OpenModalButton
+          <OpenModalWrapper
             activeModal="selectExercises"
             modalData={{
               isSuperset: false,
@@ -168,7 +168,7 @@ export default function UpsertTemplate() {
             <Text className="text-center text-lg font-medium text-white">
               Pick Exercise
             </Text>
-          </OpenModalButton>
+          </OpenModalWrapper>
         </MyButton>
       </View>
     </>

@@ -12,7 +12,7 @@ import StartWorkout from '@/app/(tabs)/workout/components/StartWorkout';
 import StartWorkout2 from '@/app/(tabs)/workout/components/StartWorkout';
 import { useModalStore } from '@/store/modalStore';
 import TemplateScreen from '../../../components/TemplateOG/Template';
-import OpenModalButton from '@/components/OpenModalButton';
+import OpenModalWrapper from '@/components/OpenModalWrapper';
 import {
   useWorkoutStore,
   useWorkoutStoreHook,
@@ -23,8 +23,8 @@ import TextContrast from '@/components/ui/TextContrast';
 import MyButtonOpacity from '@/components/ui/MyButtonOpacity';
 
 export default function WorkoutTab() {
-  // const inWorkout = useWorkoutStore((state) => state.inWorkout);
   const router = useRouter();
+  const openModal = useModalStore((state) => state.openModal);
   const { template, inWorkout, validateWorkout } = useWorkoutStore(
     (state) => state,
   );
@@ -42,25 +42,29 @@ export default function WorkoutTab() {
         {inWorkout && (
           <View className="flex-1">
             <TemplateScreen />
-            <OpenModalButton
+            <OpenModalWrapper
               activeModal="selectExercises"
               modalData={{
                 isSuperset: false,
                 uuid: '0',
                 storeType: 'workout',
               }}
-              className="border bg-stone-300 py-2"
             >
-              <Text className="text-center">Add Exercises</Text>
-            </OpenModalButton>
-            <MyButton
+              <MyButtonOpacity>
+                <Text className="text-center font-medium text-neutral-contrast">
+                  Add Exercises
+                </Text>
+              </MyButtonOpacity>
+            </OpenModalWrapper>
+            <MyButtonOpacity
               onPress={() => {
                 validateWorkout();
               }}
-              className="border bg-stone-300 py-2"
             >
-              <Text>Validate</Text>
-            </MyButton>
+              <Text className="text-center font-medium text-neutral-contrast">
+                Validate
+              </Text>
+            </MyButtonOpacity>
           </View>
         )}
         {!inWorkout && (
