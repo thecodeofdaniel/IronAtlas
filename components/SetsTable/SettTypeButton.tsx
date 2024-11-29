@@ -4,7 +4,7 @@ import { setsTableStyles as styles } from './setsTableStyles';
 import { type WorkoutStateFunctions } from '@/store/workout/workoutStore';
 import clsx from 'clsx';
 
-const TYPES = ['N', 'D', 'F'];
+const TYPES = ['N', 'D'];
 
 type Props = {
   uuid: string;
@@ -15,9 +15,12 @@ type Props = {
 
 export default function SettTypeButton({ uuid, index, item, editSet }: Props) {
   const rotateType = () => {
-    const currentIndex = TYPES.indexOf(item.type);
-    const nextIndex = (currentIndex + 1) % TYPES.length;
-    editSet(uuid, index, { ...item, type: TYPES[nextIndex] });
+    // const currentIndex = TYPES.indexOf(item.type);
+    // const nextIndex = (currentIndex + 1) % TYPES.length;
+    // editSet(uuid, index, { ...item, type: TYPES[nextIndex] });
+
+    const newType = item.type === 'N' ? 'D' : 'N';
+    editSet(uuid, index, { ...item, type: newType });
   };
 
   return (
