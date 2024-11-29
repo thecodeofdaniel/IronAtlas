@@ -5,6 +5,8 @@ import { useRouter } from 'expo-router';
 import { useWorkoutStore } from '@/store/workout/workoutStore';
 import MyButton from '@/components/ui/MyButton';
 import MyButtonOpacity from '@/components/ui/MyButtonOpacity';
+import { useThemeContext } from '@/store/context/themeContext';
+import { getActionSheetStyle } from '@/lib/actionSheetConfig';
 
 // type StartWorkoutProps = {
 //   inWorkout: boolean;
@@ -14,23 +16,20 @@ import MyButtonOpacity from '@/components/ui/MyButtonOpacity';
 export default function StartWorkout() {
   const router = useRouter();
   const { showActionSheetWithOptions } = useActionSheet();
-  const {
-    template,
-    inWorkout,
-    toggleWorkout,
-    clearTemplate,
-    upsertWorkout,
-    validateWorkout,
-  } = useWorkoutStore((state) => state);
+  const { colors } = useThemeContext();
+  const { inWorkout, toggleWorkout, upsertWorkout } = useWorkoutStore(
+    (state) => state,
+  );
 
   const startWorkout = () => {
-    const options = ['Use template', 'No template', 'Cancel'];
+    const options = ['Use template', 'Without template', 'Cancel'];
     const cancelButtonIndex = options.length - 1;
 
     showActionSheetWithOptions(
       {
         options,
         cancelButtonIndex,
+        ...getActionSheetStyle(colors),
       },
       async (selectedIndex?: number) => {
         switch (selectedIndex) {
@@ -55,6 +54,7 @@ export default function StartWorkout() {
       {
         options,
         cancelButtonIndex,
+        ...getActionSheetStyle(colors),
       },
       async (selectedIndex?: number) => {
         switch (selectedIndex) {
