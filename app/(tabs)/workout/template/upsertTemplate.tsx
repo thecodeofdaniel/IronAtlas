@@ -21,6 +21,7 @@ import * as sch from '@/db/schema/template';
 import OpenModalWrapper from '@/components/OpenModalWrapper';
 import TextContrast from '@/components/ui/TextContrast';
 import MyButton from '@/components/ui/MyButton';
+import MyButtonOpacity from '@/components/ui/MyButtonOpacity';
 
 const emptyErrorMsgs = {
   templateName: '',
@@ -156,7 +157,7 @@ export default function UpsertTemplate() {
             </View>
           </GestureHandlerRootView>
         </TouchableWithoutFeedback>
-        <MyButton className="mt-2">
+        <MyButtonOpacity className="mt-2">
           <OpenModalWrapper
             activeModal="selectExercises"
             modalData={{
@@ -169,7 +170,7 @@ export default function UpsertTemplate() {
               Pick Exercise
             </Text>
           </OpenModalWrapper>
-        </MyButton>
+        </MyButtonOpacity>
       </View>
     </>
   );

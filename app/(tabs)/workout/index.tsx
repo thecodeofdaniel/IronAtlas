@@ -79,7 +79,7 @@ export default function WorkoutTab() {
                   router.push('/(tabs)/workout/workouts/viewWorkouts');
                 }}
               >
-                <Text className="text-center font-medium text-neutral-contrast">
+                <Text className="text-center font-medium text-white">
                   View Previous Workouts
                 </Text>
               </MyButtonOpacity>
@@ -90,7 +90,7 @@ export default function WorkoutTab() {
                   router.push('/(tabs)/workout/template/viewTemplates');
                 }}
               >
-                <Text className="text-center font-medium text-neutral-contrast">
+                <Text className="text-center font-medium text-white">
                   View Templates
                 </Text>
               </MyButtonOpacity>

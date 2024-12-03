@@ -76,9 +76,9 @@ function ExerciseList({
         })}
       >
         <View className="flex flex-1 flex-row justify-between">
-          <Text className="text-neutral-contrast">{exercise.label}</Text>
+          <Text className="text-white">{exercise.label}</Text>
           {pickedExercisePlace && (
-            <Text className="text-neutral-contrast">
+            <Text className="text-white">
               {pickedExercisePlace + indicator}
             </Text>
           )}

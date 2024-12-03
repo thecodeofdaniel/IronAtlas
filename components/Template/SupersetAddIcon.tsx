@@ -17,7 +17,7 @@ export default function SupersetAddIcon({
     <Ionicons
       name="add"
       size={24}
-      color={colors === undefined ? undefined : colors['--neutral-contrast']}
+      color={'white'}
       style={{
         // borderColor: 'white', borderWidth: 2,
         padding: 4,

@@ -38,9 +38,7 @@ export default function AddExercisesOrSuperset({
             'opacity-45': oneIsSel,
           })}
         >
-          <Text className="font-medium text-neutral-contrast">
-            Add Superset
-          </Text>
+          <Text className="font-medium text-white">Add Superset</Text>
         </MyButtonOpacity>
       )}
       <MyButtonOpacity
@@ -55,9 +53,7 @@ export default function AddExercisesOrSuperset({
           'opacity-45': noneAreSel,
         })}
       >
-        <Text className="font-medium text-neutral-contrast">
-          Add Exercise(s)
-        </Text>
+        <Text className="font-medium text-white">Add Exercise(s)</Text>
       </MyButtonOpacity>
     </View>
   );
