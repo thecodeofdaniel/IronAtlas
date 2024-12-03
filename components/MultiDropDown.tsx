@@ -32,17 +32,22 @@ export default function MultiSelectComponent() {
       }));
   }, [tagSet]);
 
+  const textColor = colors['--neutral-contrast'];
+
   return (
     <View className="p-1">
       <MultiSelect
         style={styles.dropdown}
-        placeholderStyle={styles.placeholderStyle}
+        placeholderStyle={[styles.placeholderStyle, { color: textColor }]}
         selectedTextStyle={styles.selectedTextStyle}
-        inputSearchStyle={styles.inputSearchStyle}
-        iconStyle={styles.iconStyle}
+        inputSearchStyle={[
+          styles.inputSearchStyle,
+          { color: textColor, borderColor: textColor },
+        ]}
+        iconStyle={[styles.iconStyle]}
         containerStyle={{ backgroundColor: colors['--neutral'] }}
         activeColor={colors['--neutral-accent']}
-        itemTextStyle={{ color: colors['--neutral-contrast'] }}
+        itemTextStyle={{ color: textColor }}
         search
         alwaysRenderSelectedItem
         data={tags}
@@ -58,17 +63,9 @@ export default function MultiSelectComponent() {
           <Ionicons
             name={visible ? 'chevron-up' : 'chevron-down'}
             size={18}
-            color={'white'}
+            color={textColor}
           />
         )}
-        // renderLeftIcon={() => (
-        //   <AntDesign
-        //     style={styles.icon}
-        //     color="black"
-        //     name="Safety"
-        //     size={20}
-        //   />
-        // )}
         selectedStyle={styles.selectedStyle}
       />
     </View>
@@ -84,33 +81,25 @@ const styles = StyleSheet.create({
   },
   placeholderStyle: {
     fontSize: 16,
-    color: 'white',
   },
   selectedTextStyle: {
     fontSize: 14,
-    color: 'white',
   },
   iconStyle: {
     width: 20,
     height: 20,
-    color: 'red',
   },
   inputSearchStyle: {
     height: 40,
     fontSize: 16,
-    color: 'white',
   },
   icon: {
     marginRight: 5,
   },
   selectedStyle: {
     borderRadius: 12,
-    borderColor: 'white',
     borderWidth: 1,
-    // color: 'white',
-    // backgroundColor: 'red',
-    // backgroundColor: 'green',
-    // padding: 0,
-    // margin: 0,
+    padding: 0,
+    margin: 0,
   },
 });

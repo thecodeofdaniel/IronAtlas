@@ -25,6 +25,7 @@ import MultiDropDown from '@/components/MultiDropDown';
 import { useFilterExerciseStore } from '@/store/filterExercises/filterExercisesStore';
 import { useThemeContext } from '@/store/context/themeContext';
 import { getActionSheetStyle } from '@/lib/actionSheetConfig';
+import MyButtonOpacity from '@/components/ui/MyButtonOpacity';
 
 type ExerciseListProps = {
   exerciseMap: ExerciseMap;
@@ -104,17 +105,14 @@ function ExerciseList({
         }}
         asChild
       >
-        <TouchableOpacity
+        <MyButtonOpacity
           activeOpacity={1}
           onLongPress={isDraggable ? drag : undefined}
           disabled={isActive}
-          className={clsx(
-            'my-[1] flex flex-row border-b-4 border-r-4 border-black p-2',
-            {
-              'bg-red-500': isActive,
-              'bg-primary': !isActive,
-            },
-          )}
+          className={clsx('my-[1] flex flex-row px-2', {
+            'bg-red-500': isActive,
+            'bg-primary': !isActive,
+          })}
         >
           <View className="flex flex-1 flex-row justify-between">
             <Text className="text-white">{exercise.label}</Text>
@@ -122,7 +120,7 @@ function ExerciseList({
               <Ionicons name="ellipsis-horizontal" color="white" size={24} />
             </Pressable>
           </View>
-        </TouchableOpacity>
+        </MyButtonOpacity>
       </Link>
     );
   };
@@ -209,7 +207,7 @@ export default function ExercisesTab() {
           },
         }}
       />
-      <View className="bg-neutral flex flex-1 flex-col gap-2 p-2">
+      <View className="flex flex-1 flex-col gap-2 bg-neutral p-2">
         <MultiDropDown />
         {filteredExercises.length === 0 ? (
           <View>
