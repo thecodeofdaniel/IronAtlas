@@ -24,6 +24,7 @@ import { Link } from 'expo-router';
 import { getActionSheetStyle } from '@/lib/actionSheetConfig';
 import { useThemeContext } from '@/store/context/themeContext';
 import { cn } from '@/lib/utils';
+import MyButtonOpacity from '@/components/ui/MyButtonOpacity';
 
 type DraggableTreeProps = {
   tagMap: TagMap; // Accept itemMap as a prop
@@ -96,23 +97,20 @@ const DraggableTree = ({
         }}
         asChild
       >
-        <TouchableOpacity
+        <MyButtonOpacity
           activeOpacity={1}
           onLongPress={drag}
           disabled={isActive}
-          className={cn(
-            'my-[1] flex flex-row items-center border-b-4 border-r-4 border-neutral-accent bg-primary',
-            {
-              'bg-red-700': isActive,
-            },
-          )}
+          className={cn('my-[1] flex flex-row items-center px-0 py-1', {
+            'bg-red-700': isActive,
+          })}
         >
           {item.children.length > 0 && level > 0 && (
             <Pressable
               onPress={() => {
                 setter.toggleTagOpen(item.id);
               }}
-              className="flex h-full flex-row items-center justify-center pl-[4]"
+              className="flex h-full flex-row items-center justify-center pl-2"
             >
               <Ionicons
                 name={item.isOpen ? 'chevron-down' : 'chevron-forward-outline'}
@@ -128,7 +126,7 @@ const DraggableTree = ({
               <Ionicons name="ellipsis-horizontal" color="white" size={24} />
             </TouchableOpacity>
           </View>
-        </TouchableOpacity>
+        </MyButtonOpacity>
       </Link>
     );
   };
