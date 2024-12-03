@@ -23,6 +23,7 @@ import {
 import CreateSuperset from './components/CreateSuperset';
 import { useExerciseSelectionHook } from '@/store/exerciseSelection/exerciseSelectionHook';
 import AddExercises from './components/AddExercises';
+import AddExercisesOrSuperset from './components/AddExercisesOrSuperset';
 
 type ExerciseListProps = {
   exerciseMap: ExerciseMap;
@@ -159,22 +160,29 @@ export default function SelectExercisesModal({
           //     />
           //   ),
           headerRight: () => (
-            <View className="flex flex-row gap-1">
-              {isSuperset ? null : (
-                <CreateSuperset
-                  pickedExercises={pickedExercises}
-                  actions={actions}
-                  router={router}
-                />
-              )}
-              <AddExercises
-                pickedExercises={pickedExercises}
-                actions={actions}
-                router={router}
-                isSuperset={isSuperset}
-                toExerciseUUID={modalData.uuid}
-              />
-            </View>
+            // <View className="flex flex-row gap-1">
+            //   {isSuperset ? null : (
+            //     <CreateSuperset
+            //       pickedExercises={pickedExercises}
+            //       actions={actions}
+            //       router={router}
+            //     />
+            //   )}
+            //   <AddExercises
+            //     pickedExercises={pickedExercises}
+            //     actions={actions}
+            //     router={router}
+            //     isSuperset={isSuperset}
+            //     toExerciseUUID={modalData.uuid}
+            //   />
+            // </View>
+            <AddExercisesOrSuperset
+              isSuperset={isSuperset}
+              pickedExercises={pickedExercises}
+              forUUID={modalData.uuid}
+              router={router}
+              actions={actions}
+            />
           ),
         }}
       />
