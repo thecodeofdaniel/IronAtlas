@@ -101,27 +101,29 @@ const DraggableTree = ({
           activeOpacity={1}
           onLongPress={drag}
           disabled={isActive}
-          className={cn('my-[1] flex flex-row items-center px-0 py-1', {
+          className={cn('my-[1] flex flex-row items-center px-1', {
             'bg-red-700': isActive,
           })}
         >
-          {item.children.length > 0 && level > 0 && (
-            <Pressable
-              onPress={() => {
-                setter.toggleTagOpen(item.id);
-              }}
-              className="flex h-full flex-row items-center justify-center pl-2"
-            >
+          <TouchableOpacity
+            onPress={() => {
+              setter.toggleTagOpen(item.id);
+            }}
+          >
+            {/* Dropdown option */}
+            {item.children.length > 0 && level > 0 && (
               <Ionicons
                 name={item.isOpen ? 'chevron-down' : 'chevron-forward-outline'}
-                size={18}
+                size={20}
                 color={'white'}
+                // style={{borderColor: 'white', borderWidth: 2}}
               />
-            </Pressable>
-          )}
+            )}
+          </TouchableOpacity>
+
           {/* Tags and options */}
-          <View className="flex flex-1 flex-row items-center justify-between px-1">
-            <Text className="py-2 text-white">{item.label}</Text>
+          <View className="flex flex-1 flex-row items-center justify-between pl-1">
+            <Text className="text-white">{item.label}</Text>
             <TouchableOpacity onPress={() => handleOnPress(item.id, level)}>
               <Ionicons name="ellipsis-horizontal" color="white" size={24} />
             </TouchableOpacity>
