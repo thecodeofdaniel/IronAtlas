@@ -20,9 +20,7 @@ import {
   WorkoutStateFunctions,
   WorkoutStateVal,
 } from '@/store/workout/workoutStore';
-import CreateSuperset from './components/CreateSuperset';
 import { useExerciseSelectionHook } from '@/store/exerciseSelection/exerciseSelectionHook';
-import AddExercises from './components/AddExercises';
 import AddExercisesOrSuperset from './components/AddExercisesOrSuperset';
 
 type ExerciseListProps = {
@@ -151,31 +149,7 @@ export default function SelectExercisesModal({
       <Stack.Screen
         options={{
           title: 'Select',
-          // headerLeft: () =>
-          //   isSuperset ? null : (
-          //     <CreateSuperset
-          //       pickedExercises={pickedExercises}
-          //       actions={actions}
-          //       router={router}
-          //     />
-          //   ),
           headerRight: () => (
-            // <View className="flex flex-row gap-1">
-            //   {isSuperset ? null : (
-            //     <CreateSuperset
-            //       pickedExercises={pickedExercises}
-            //       actions={actions}
-            //       router={router}
-            //     />
-            //   )}
-            //   <AddExercises
-            //     pickedExercises={pickedExercises}
-            //     actions={actions}
-            //     router={router}
-            //     isSuperset={isSuperset}
-            //     toExerciseUUID={modalData.uuid}
-            //   />
-            // </View>
             <AddExercisesOrSuperset
               isSuperset={isSuperset}
               pickedExercises={pickedExercises}
@@ -186,7 +160,7 @@ export default function SelectExercisesModal({
           ),
         }}
       />
-      <View className="m-2 flex flex-1 flex-col gap-2">
+      <View className="flex flex-1 flex-col gap-2 bg-neutral p-2">
         <MultiDropDown />
         {filteredExercises.length === 0 ? (
           <View>

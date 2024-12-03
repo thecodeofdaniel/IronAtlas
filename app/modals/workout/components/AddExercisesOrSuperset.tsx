@@ -1,10 +1,7 @@
-import { View, Text } from 'react-native';
 import React from 'react';
-import CreateSuperset from './CreateSuperset';
-import AddExercises from './AddExercises';
+import { View, Text } from 'react-native';
 import { Router } from 'expo-router';
 import { WorkoutStateFunctions } from '@/store/workout/workoutStore';
-import MyButton from '@/components/ui/MyButton';
 import MyButtonOpacity from '@/components/ui/MyButtonOpacity';
 import { cn } from '@/lib/utils';
 
@@ -24,8 +21,8 @@ export default function AddExercisesOrSuperset({
   forUUID,
 }: Props) {
   const exercisesSelectedLen = pickedExercises.length;
-  const atLeastOneSel = exercisesSelectedLen < 1;
-  const atLeastTwoSel = exercisesSelectedLen < 2;
+  const noneAreSel = exercisesSelectedLen < 1;
+  const oneIsSel = exercisesSelectedLen < 2;
 
   return (
     <View className="flex flex-row gap-1">
@@ -36,9 +33,9 @@ export default function AddExercisesOrSuperset({
             actions.clearPickedExercises();
             router.back();
           }}
-          disabled={atLeastTwoSel}
-          className={cn({
-            'opacity-45': atLeastTwoSel,
+          disabled={oneIsSel}
+          className={cn('', {
+            'opacity-45': oneIsSel,
           })}
         >
           <Text className="font-medium text-neutral-contrast">
@@ -53,9 +50,9 @@ export default function AddExercisesOrSuperset({
           actions.clearPickedExercises();
           router.back();
         }}
-        disabled={atLeastOneSel}
+        disabled={noneAreSel}
         className={cn({
-          'opacity-45': atLeastOneSel,
+          'opacity-45': noneAreSel,
         })}
       >
         <Text className="font-medium text-neutral-contrast">
