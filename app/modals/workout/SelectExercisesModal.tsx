@@ -22,6 +22,8 @@ import {
 } from '@/store/workout/workoutStore';
 import { useExerciseSelectionHook } from '@/store/exerciseSelection/exerciseSelectionHook';
 import AddExercisesOrSuperset from './components/AddExercisesOrSuperset';
+import MyButton from '@/components/ui/MyButton';
+import MyButtonOpacity from '@/components/ui/MyButtonOpacity';
 
 type ExerciseListProps = {
   exerciseMap: ExerciseMap;
@@ -65,24 +67,23 @@ function ExerciseList({
     }
 
     return (
-      <Pressable
+      <MyButton
         onPress={() => {
           actions.pickExercise(exercise.id);
         }}
-        className={clsx('my-[1] flex flex-row bg-blue-500 p-2', {
-          'bg-red-500': isInArray,
+        className={clsx('my-[1] flex flex-row transition-colors', {
+          'bg-blue-500': isInArray,
         })}
       >
         <View className="flex flex-1 flex-row justify-between">
-          <Text className="text-white">{exercise.label}</Text>
+          <Text className="text-neutral-contrast">{exercise.label}</Text>
           {pickedExercisePlace && (
-            <Text className="text-white">
-              {pickedExercisePlace}
-              {indicator}
+            <Text className="text-neutral-contrast">
+              {pickedExercisePlace + indicator}
             </Text>
           )}
         </View>
-      </Pressable>
+      </MyButton>
     );
   };
 
