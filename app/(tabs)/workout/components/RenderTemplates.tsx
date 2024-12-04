@@ -257,7 +257,7 @@ export default function RenderTemplates({ selected, setSelected }: Props) {
         s.volumeTemplate,
         eq(s.volumeTemplate.workoutTemplateId, s.workoutTemplate.id),
       )
-      .innerJoin(
+      .leftJoin(
         s.settTemplate,
         eq(s.settTemplate.volumeTemplateId, s.volumeTemplate.id),
       )
@@ -293,11 +293,14 @@ export default function RenderTemplates({ selected, setSelected }: Props) {
         template.volumes.push(volume);
       }
 
-      volume.setts.push({
-        type: row.setType,
-        weight: row.weight,
-        reps: row.reps,
-      });
+      // Check if a sett was included in a volume
+      if (row.setType) {
+        volume.setts.push({
+          type: row.setType,
+          weight: row.weight,
+          reps: row.reps,
+        });
+      }
     });
 
     return Array.from(templatesMap.values());

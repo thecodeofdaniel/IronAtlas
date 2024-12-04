@@ -31,15 +31,17 @@ export async function saveExerciseToTemplate(
     .returning({ id: sch.volumeTemplate.id });
 
   // Batch insert all sets
-  await tx.insert(sch.settTemplate).values(
-    exercise.sets.map((sett, idx) => ({
-      volumeTemplateId: volumeTemplate.id,
-      index: idx,
-      type: sett.type,
-      weight: sett.weight || null, // '' is falsy
-      reps: sett.reps || null,
-    })),
-  );
+  if (exercise.sets.length > 0) {
+    await tx.insert(sch.settTemplate).values(
+      exercise.sets.map((sett, idx) => ({
+        volumeTemplateId: volumeTemplate.id,
+        index: idx,
+        type: sett.type,
+        weight: sett.weight || null, // '' is falsy
+        reps: sett.reps || null,
+      })),
+    );
+  }
 }
 
 // export async function saveExercisesFromWorkout(
