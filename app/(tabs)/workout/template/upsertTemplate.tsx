@@ -157,20 +157,20 @@ export default function UpsertTemplate() {
             </View>
           </GestureHandlerRootView>
         </TouchableWithoutFeedback>
-        <MyButtonOpacity className="mt-2">
-          <OpenModalWrapper
-            activeModal="selectExercises"
-            modalData={{
-              isSuperset: false,
-              uuid: '0',
-              storeType: 'workout',
-            }}
-          >
+        <OpenModalWrapper
+          activeModal="selectExercises"
+          modalData={{
+            isSuperset: false,
+            uuid: '0',
+            storeType: 'workout',
+          }}
+        >
+          <MyButtonOpacity className="mt-2">
             <Text className="text-center text-lg font-medium text-white">
               Pick Exercise
             </Text>
-          </OpenModalWrapper>
-        </MyButtonOpacity>
+          </MyButtonOpacity>
+        </OpenModalWrapper>
       </View>
     </>
   );
