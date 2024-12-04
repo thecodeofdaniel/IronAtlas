@@ -115,7 +115,7 @@ export default function UpsertTemplate() {
           title: templateWorkoutId ? 'Edit Template' : 'Create Template',
           headerBackTitle: 'Back',
           headerRight: () => (
-            <MyButton className="bg-green-500" onPress={onSubmit}>
+            <MyButton onPress={onSubmit}>
               <Text className="font-semibold text-white">Save</Text>
             </MyButton>
           ),

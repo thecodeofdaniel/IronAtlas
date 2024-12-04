@@ -41,7 +41,7 @@ type RenderItemProps = {
   setSelected?: React.Dispatch<React.SetStateAction<number | undefined>>;
 };
 
-function RenderItem({
+function RenderSingleTemplate({
   item,
   index,
   exerciseMap,
@@ -110,16 +110,36 @@ function RenderItem({
           onPress={handleOptionsPress}
         />
       </View>
+
       {item.volumes.map(({ volumeId, exerciseId, index, subIndex, setts }) => {
         const exerciseName = `• ${exerciseMap[exerciseId].label}`;
 
         const setsLength = setts.length;
+        let currentNumOfReps: number | null = null;
+        let counter = 1;
 
+        // Goes through each set
         const setsDisplay = setts.map((set, idx) => {
           if (!set.weight && !set.reps) return null;
 
           const repsStr = set.reps;
           const comma = idx >= setsLength - 1 ? '' : ', ';
+
+          // Reset counter if this is a new number of reps
+          if (currentNumOfReps !== set.reps) {
+            counter = 1;
+          }
+          currentNumOfReps = set.reps;
+
+          // check if the next set has the same number of reps
+          if (
+            idx < setsLength - 1 &&
+            set.reps === setts[idx + 1].reps &&
+            set.weight === setts[idx + 1].weight
+          ) {
+            counter += 1;
+            return null;
+          }
 
           // If only reps are included
           if (!set.weight && set.reps) {
@@ -130,15 +150,14 @@ function RenderItem({
                   'text-purple-400/70': set.type === 'D',
                 })}
               >
-                {`${repsStr}${comma}`}
+                {`${counter > 1 ? counter + ' x ' : ''}${repsStr}${comma}`}
               </Text>
             );
           }
 
-          const weightStr = `${set.weight}`;
-
-          // If only weight is included
+          // If weight and reps are included
           if (set.weight && set.reps) {
+            const weightStr = `${set.weight}`;
             return (
               <Text
                 key={idx}
@@ -146,7 +165,7 @@ function RenderItem({
                   'text-purple-400/70': set.type === 'D',
                 })}
               >
-                {`${weightStr} x ${repsStr}${comma}`}
+                {`${counter > 1 ? counter + ' x ' : ''}[${weightStr}lb • ${repsStr}]${comma}`}
               </Text>
             );
           }
@@ -265,7 +284,7 @@ export default function RenderTemplates({ selected, setSelected }: Props) {
         <FlatList
           data={workoutTemplates}
           renderItem={({ item, index }) => (
-            <RenderItem
+            <RenderSingleTemplate
               item={item}
               index={index}
               exerciseMap={exerciseMap}

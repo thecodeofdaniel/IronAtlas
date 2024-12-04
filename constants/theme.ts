@@ -46,7 +46,7 @@ export const themes: Theme = {
       '--neutral': ' hsl(0, 0%, 90%)',
       '--neutral-contrast': 'hsl(280, 46%, 14%)',
       '--neutral-accent': 'hsl(219, 14%, 83%)',
-      '--primary': 'hsl(0, 90%, 60%)',
+      '--primary': 'hsl(0, 90%, 63%)',
       '--secondary': 'hsl(338, 71%, 78%)',
       '--tertiary': 'hsl(39, 84%, 45%)',
     },
