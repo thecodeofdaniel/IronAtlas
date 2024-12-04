@@ -115,16 +115,18 @@ function RenderSingleTemplate({
         const exerciseName = `• ${exerciseMap[exerciseId].label}`;
 
         const setsLength = setts.length;
-        let currentNumOfReps: number | null = null;
         let currentSetType: string | null = null;
         let currentWeight: number | null = null;
+        let currentNumOfReps: number | null = null;
         let counter = 1;
 
         // Goes through each set
         const setsDisplay = setts.map((set, idx) => {
-          if (setsLength === 1 || setsLength === 0) return null;
-          // if (!set.weight && !set.reps) return null;
+          // Don't reveal sets if number of sets is less than or equal to 1
+          if (setsLength <= 1) return null;
 
+          const typeStr = set.type;
+          const weightStr = set.weight;
           const repsStr = set.reps;
           const comma = idx >= setsLength - 1 ? '' : ', ';
 
@@ -152,8 +154,8 @@ function RenderSingleTemplate({
             return null;
           }
 
-          // Reveal the type of sets if total number of sets is greater that one
-          if (!set.weight && !set.reps) {
+          // Reveal the type of sets if weight and reps are null
+          if (!weightStr && !repsStr) {
             return (
               <Text
                 key={idx}
@@ -166,8 +168,22 @@ function RenderSingleTemplate({
             );
           }
 
-          // If only reps are included
-          if (!set.weight && set.reps) {
+          // If weight is only included
+          if (weightStr && !repsStr) {
+            return (
+              <Text
+                key={idx}
+                className={cn('text-sm text-neutral-contrast/70', {
+                  'text-purple-400/70': set.type === 'D',
+                })}
+              >
+                {`${counter > 1 ? counter + ' x ' : ''}${weightStr}lb${comma}`}
+              </Text>
+            );
+          }
+
+          // If only reps are only includec
+          if (!weightStr && repsStr) {
             return (
               <Text
                 key={idx}
@@ -181,8 +197,7 @@ function RenderSingleTemplate({
           }
 
           // If weight and reps are included
-          if (set.weight && set.reps) {
-            const weightStr = `${set.weight}`;
+          if (weightStr && repsStr) {
             return (
               <Text
                 key={idx}
@@ -219,7 +234,7 @@ function RenderSingleTemplate({
         return (
           <View key={volumeId}>
             <Text className="text-neutral-contrast/80">{exerciseName}</Text>
-            <View className={cn('flex flex-row pl-2')}>{setsDisplay}</View>
+            <View className={cn('flex flex-row pl-3')}>{setsDisplay}</View>
           </View>
         );
       })}
