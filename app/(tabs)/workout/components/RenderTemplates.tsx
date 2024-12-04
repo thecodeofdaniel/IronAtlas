@@ -116,29 +116,54 @@ function RenderSingleTemplate({
 
         const setsLength = setts.length;
         let currentNumOfReps: number | null = null;
+        let currentSetType: string | null = null;
+        let currentWeight: number | null = null;
         let counter = 1;
 
         // Goes through each set
         const setsDisplay = setts.map((set, idx) => {
-          if (!set.weight && !set.reps) return null;
+          if (setsLength === 1 || setsLength === 0) return null;
+          // if (!set.weight && !set.reps) return null;
 
           const repsStr = set.reps;
           const comma = idx >= setsLength - 1 ? '' : ', ';
 
-          // Reset counter if this is a new number of reps
-          if (currentNumOfReps !== set.reps) {
+          // Reset counter if this is a new number of reps OR different set type OR different weight
+          if (
+            currentSetType !== set.type ||
+            currentWeight !== set.weight ||
+            currentNumOfReps !== set.reps
+          ) {
             counter = 1;
           }
-          currentNumOfReps = set.reps;
 
-          // check if the next set has the same number of reps
+          currentNumOfReps = set.reps;
+          currentSetType = set.type;
+          currentWeight = set.weight;
+
+          // check if the next set has the same number of reps AND same type AND same weight
           if (
             idx < setsLength - 1 &&
-            set.reps === setts[idx + 1].reps &&
-            set.weight === setts[idx + 1].weight
+            set.type === setts[idx + 1].type &&
+            set.weight === setts[idx + 1].weight &&
+            set.reps === setts[idx + 1].reps
           ) {
             counter += 1;
             return null;
+          }
+
+          // Reveal the type of sets if total number of sets is greater that one
+          if (!set.weight && !set.reps) {
+            return (
+              <Text
+                key={idx}
+                className={cn('text-sm text-neutral-contrast/70', {
+                  'text-purple-400/70': set.type === 'D',
+                })}
+              >
+                {`${counter} x ${set.type}${comma}`}
+              </Text>
+            );
           }
 
           // If only reps are included
