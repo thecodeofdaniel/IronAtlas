@@ -115,7 +115,7 @@ function RenderSingleTemplate({
         const exerciseName = `• ${exerciseMap[exerciseId].label}`;
 
         const setsLength = setts.length;
-        let currentSetType: string | null = null;
+        let prevType: string | null = null;
         let currentWeight: number | null = null;
         let currentNumOfReps: number | null = null;
         let counter = 1;
@@ -125,96 +125,66 @@ function RenderSingleTemplate({
           // Don't reveal sets if number of sets is less than or equal to 1
           if (setsLength <= 1) return null;
 
-          const typeStr = set.type;
-          const weightStr = set.weight;
-          const repsStr = set.reps;
+          let finalText: undefined | string;
+
+          const type = set.type;
+          const weight = set.weight;
+          const reps = set.reps;
           const comma = idx >= setsLength - 1 ? '' : ', ';
 
-          // Reset counter if this is a new number of reps OR different set type OR different weight
+          // Reset counter if set if different then previous
           if (
-            currentSetType !== set.type ||
-            currentWeight !== set.weight ||
-            currentNumOfReps !== set.reps
+            prevType !== type ||
+            currentWeight !== weight ||
+            currentNumOfReps !== reps
           ) {
             counter = 1;
           }
 
-          currentNumOfReps = set.reps;
-          currentSetType = set.type;
-          currentWeight = set.weight;
+          prevType = type;
+          currentWeight = weight;
+          currentNumOfReps = reps;
 
           // check if the next set has the same number of reps AND same type AND same weight
           if (
             idx < setsLength - 1 &&
-            set.type === setts[idx + 1].type &&
-            set.weight === setts[idx + 1].weight &&
-            set.reps === setts[idx + 1].reps
+            type === setts[idx + 1].type &&
+            weight === setts[idx + 1].weight &&
+            reps === setts[idx + 1].reps
           ) {
             counter += 1;
             return null;
           }
 
-          // Reveal the type of sets if weight and reps are null
-          if (!weightStr && !repsStr) {
-            return (
-              <Text
-                key={idx}
-                className={cn('text-sm text-neutral-contrast/70', {
-                  'text-purple-400/70': set.type === 'D',
-                })}
-              >
-                {`${counter} x ${set.type}${comma}`}
-              </Text>
-            );
+          const counterDisplay = counter > 1 ? counter + ' x ' : '';
+
+          if (!weight && !reps) {
+            finalText = `${counter} x ${type}${comma}`;
+          } else if (weight && !reps) {
+            finalText = `${counterDisplay}${weight}lb${comma}`;
+          } else if (!weight && reps) {
+            finalText = `${counterDisplay}${reps}${comma}`;
+          } else {
+            finalText = `${counterDisplay}[${weight}lb • ${reps}]${comma}`;
           }
 
-          // If weight is only included
-          if (weightStr && !repsStr) {
-            return (
-              <Text
-                key={idx}
-                className={cn('text-sm text-neutral-contrast/70', {
-                  'text-purple-400/70': set.type === 'D',
-                })}
-              >
-                {`${counter > 1 ? counter + ' x ' : ''}${weightStr}lb${comma}`}
-              </Text>
-            );
-          }
-
-          // If only reps are only includec
-          if (!weightStr && repsStr) {
-            return (
-              <Text
-                key={idx}
-                className={cn('text-sm text-neutral-contrast/70', {
-                  'text-purple-400/70': set.type === 'D',
-                })}
-              >
-                {`${counter > 1 ? counter + ' x ' : ''}${repsStr}${comma}`}
-              </Text>
-            );
-          }
-
-          // If weight and reps are included
-          if (weightStr && repsStr) {
-            return (
-              <Text
-                key={idx}
-                className={cn('text-sm text-neutral-contrast/70', {
-                  'text-purple-400/70': set.type === 'D',
-                })}
-              >
-                {`${counter > 1 ? counter + ' x ' : ''}[${weightStr}lb • ${repsStr}]${comma}`}
-              </Text>
-            );
-          }
+          return (
+            <Text
+              key={idx}
+              className={cn('text-sm text-neutral-contrast/70', {
+                'text-purple-400/70': type === 'D',
+              })}
+            >
+              {finalText}
+            </Text>
+          );
         });
 
         // If set is part of a superset
         if (subIndex !== null) {
           return (
             <View key={volumeId}>
+              {/* Add superset title */}
               {!ssIndexHolder.has(index) && ssIndexHolder.add(index) && (
                 <View className="flex flex-row">
                   <Text> </Text>
@@ -223,6 +193,7 @@ function RenderSingleTemplate({
                   </Text>
                 </View>
               )}
+              {/* Add exercise name */}
               <Text className="pl-2 text-neutral-contrast/80">
                 {exerciseName}
               </Text>
