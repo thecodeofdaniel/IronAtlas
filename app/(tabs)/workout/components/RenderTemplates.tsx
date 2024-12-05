@@ -34,7 +34,7 @@ export interface TransformedTemplate {
 }
 
 type RenderItemProps = {
-  item: TransformedTemplate;
+  workout: TransformedTemplate;
   index: number;
   exerciseMap: ExerciseMap;
   router: Router;
@@ -43,7 +43,7 @@ type RenderItemProps = {
 };
 
 function RenderSingleTemplate({
-  item,
+  workout: workout,
   index,
   exerciseMap,
   router,
@@ -73,16 +73,16 @@ function RenderSingleTemplate({
             await db.transaction(async (tx) => {
               await tx
                 .delete(s.workoutTemplate)
-                .where(eq(s.workoutTemplate.id, item.workoutId));
+                .where(eq(s.workoutTemplate.id, workout.workoutId));
             });
             break;
           case 1:
-            loadTemplate(item.workoutId);
+            loadTemplate(workout.workoutId);
             router.push({
               pathname: '/(tabs)/workout/template/upsertTemplate',
               params: {
-                templateWorkoutId: item.workoutId,
-                templateWorkoutName: item.name,
+                templateWorkoutId: workout.workoutId,
+                templateWorkoutName: workout.name,
               },
             });
             break;
@@ -96,13 +96,13 @@ function RenderSingleTemplate({
   return (
     <MyButton
       className={cn('my-1 bg-neutral-accent px-2', {
-        'bg-neutral-accent/60': selected === item.workoutId,
+        'bg-neutral-accent/60': selected === workout.workoutId,
       })}
-      onPress={() => (setSelected ? setSelected(item.workoutId) : null)}
+      onPress={() => (setSelected ? setSelected(workout.workoutId) : null)}
     >
       <View className="flex flex-row items-center justify-between">
         <TextContrast className="text-xl font-semibold">
-          {item.name}
+          {workout.name}
         </TextContrast>
         <Ionicons
           name="ellipsis-horizontal"
@@ -112,14 +112,25 @@ function RenderSingleTemplate({
         />
       </View>
 
-      {item.volumes.map((volume) => (
+      {/* {item.volumes.map((volume) => (
         <RenderVolume
           key={volume.volumeId}
           exerciseMap={exerciseMap}
           superSettIndexHolder={ssIndexHolder}
           volume={volume}
         />
-      ))}
+      ))} */}
+      <FlatList
+        data={workout.volumes}
+        renderItem={({ item }) => (
+          <RenderVolume
+            volume={item}
+            exerciseMap={exerciseMap}
+            superSettIndexHolder={ssIndexHolder}
+          />
+        )}
+        keyExtractor={(item) => item.volumeId.toString()}
+      />
     </MyButton>
   );
 }
@@ -210,7 +221,7 @@ export default function RenderTemplates({ selected, setSelected }: Props) {
           data={workoutTemplates}
           renderItem={({ item, index }) => (
             <RenderSingleTemplate
-              item={item}
+              workout={item}
               index={index}
               exerciseMap={exerciseMap}
               router={router}

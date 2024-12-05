@@ -107,14 +107,17 @@ function RenderSingleWorkout({
           onPress={handleOptionsPress}
         />
       </View>
-      {workout.volumes.map((volume) => (
-        <RenderVolume
-          key={volume.volumeId}
-          exerciseMap={exerciseMap}
-          superSettIndexHolder={ssIndexHolder}
-          volume={volume}
-        />
-      ))}
+      <FlatList
+        data={workout.volumes}
+        renderItem={({ item }) => (
+          <RenderVolume
+            exerciseMap={exerciseMap}
+            superSettIndexHolder={ssIndexHolder}
+            volume={item}
+          />
+        )}
+        keyExtractor={(item) => item.volumeId.toString()}
+      />
     </MyBorder>
   );
 }
@@ -204,7 +207,6 @@ export default function RenderWorkouts({ className, numberOfWorkouts }: Props) {
         data={workouts}
         renderItem={({ item: workout, index }) => (
           <RenderSingleWorkout
-            key={workout.workoutId}
             workout={workout}
             index={index}
             exerciseMap={exerciseMap}
