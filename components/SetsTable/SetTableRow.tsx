@@ -11,6 +11,7 @@ import clsx from 'clsx';
 import { setsTableStyles as styles } from './setsTableStyles';
 
 import SettTypeButton from './SettTypeButton';
+import { cn } from '@/lib/utils';
 
 const UnderlayLeft = ({
   drag,
@@ -47,6 +48,7 @@ type Props = {
   uuid: string;
   editSet: (uuid: string, index: number, newSet: SettType) => void;
   onPressDelete: () => void;
+  setsLength: number;
 };
 
 export default function SetTableRow({
@@ -56,13 +58,14 @@ export default function SetTableRow({
   itemRefs,
   uuid,
   editSet,
+  setsLength,
   onPressDelete,
 }: Props) {
   const index = getIndex()!;
 
   return (
     <>
-      <ScaleDecorator>
+      <ScaleDecorator activeScale={1}>
         <SwipeableItem
           key={item.key}
           item={item}
@@ -87,8 +90,11 @@ export default function SetTableRow({
           <TouchableOpacity
             activeOpacity={1}
             onLongPress={drag}
-            className={clsx(
-              'flex flex-1 flex-row items-center justify-center bg-stone-500 p-2',
+            className={cn(
+              'flex flex-1 flex-row items-center justify-center border-l-2 border-r-2 border-black bg-neutral p-2',
+              {
+                'border-b-2': index + 1 === setsLength,
+              },
             )}
           >
             <View className="flex flex-1 flex-row justify-between">

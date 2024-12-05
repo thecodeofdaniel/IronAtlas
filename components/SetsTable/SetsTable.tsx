@@ -1,38 +1,14 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Text, View, TouchableOpacity, Pressable } from 'react-native';
-import Animated, {
-  useAnimatedStyle,
-  withTiming,
-  useSharedValue,
-  withSpring,
-} from 'react-native-reanimated';
-import SwipeableItem, {
-  useSwipeableItemParams,
-  OpenDirection,
-} from 'react-native-swipeable-item';
 import DraggableFlatList, {
   RenderItemParams,
-  ScaleDecorator,
 } from 'react-native-draggable-flatlist';
-import { generateId } from '@/utils/utils';
-import {
-  GestureHandlerRootView,
-  ScrollView,
-  TextInput,
-} from 'react-native-gesture-handler';
-import clsx from 'clsx';
-import PopoverSetType from '@/components/SetsTable/PopoverSetType';
-import { setsTableStyles as styles } from './setsTableStyles';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+
 import { useWorkoutStore } from '@/store/workout/workoutStore';
-import { Link, Stack } from 'expo-router';
-import { Ionicons } from '@expo/vector-icons';
-import { useExerciseStore } from '@/store/exercise/exerciseStore';
-import SettTypeButton from './SettTypeButton';
+
+import SetsTableHeader from './SetsTableHeader';
 import SetTableRow from './SetTableRow';
 import SetsTableFooter from './SetsTableFooter';
-import SetsTableHeader from './SetsTableHeader';
-
-const OVERSWIPE_DIST = 20;
 
 type Props = {
   title: string;
@@ -68,6 +44,7 @@ export default function SetsTable({
         uuid={uuid}
         editSet={editSet}
         onPressDelete={onPressDelete}
+        setsLength={template[uuid].sets.length}
       />
     );
   };
