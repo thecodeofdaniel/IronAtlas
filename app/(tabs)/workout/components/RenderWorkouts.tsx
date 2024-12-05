@@ -13,6 +13,9 @@ import { FlatList, GestureHandlerRootView } from 'react-native-gesture-handler';
 import { useActionSheet } from '@expo/react-native-action-sheet';
 import { useWorkoutStore } from '@/store/workout/workoutStore';
 import { Ionicons } from '@expo/vector-icons';
+import RenderVolume from './RenderVolume';
+import MyButton from '@/components/ui/MyButton';
+import MyBorder from '@/components/ui/MyBorder';
 
 type TransformedWorkout = {
   workoutId: number;
@@ -32,7 +35,7 @@ type TransformedWorkout = {
 };
 
 type RenderWorkoutProps = {
-  item: TransformedWorkout;
+  workout: TransformedWorkout;
   index: number;
   exerciseMap: ExerciseMap;
   router: Router;
@@ -40,13 +43,13 @@ type RenderWorkoutProps = {
   setSelected?: React.Dispatch<React.SetStateAction<number | undefined>>;
 };
 
-function RenderWorkout({
-  item,
+function RenderSingleWorkout({
+  workout: workout,
   index,
   exerciseMap,
   router,
 }: RenderWorkoutProps) {
-  const ssIndexHolder = new Set();
+  const ssIndexHolder = new Set<number>();
   const { showActionSheetWithOptions } = useActionSheet();
   // const loadTemplate = useWorkoutStore((state) => state.loadTemplate);
   // const loadWorkout = useWorkoutStore((state) => state.loadWorkout);
@@ -65,7 +68,9 @@ function RenderWorkout({
       async (selectedIndex?: number) => {
         switch (selectedIndex) {
           case destructiveButtonIndex:
-            await db.delete(s.workout).where(eq(s.workout.id, item.workoutId));
+            await db
+              .delete(s.workout)
+              .where(eq(s.workout.id, workout.workoutId));
             break;
           // case 1:
           //   loadWorkout(item.workoutId);
@@ -85,55 +90,25 @@ function RenderWorkout({
   };
 
   return (
-    <Pressable className={'my-1 border px-2'}>
+    <MyBorder className="my-[2] bg-neutral-accent px-2 py-1">
       <View className="flex flex-row items-center justify-between">
-        <View className="flex flex-row items-center gap-1">
-          <Text className="text-lg font-semibold underline">
-            {item.workoutDate.toLocaleDateString()}
-          </Text>
-        </View>
+        <Text className="text-lg font-semibold underline">
+          {workout.workoutDate.toLocaleDateString()}
+        </Text>
         <Ionicons
           name="ellipsis-horizontal"
           size={24}
           onPress={handleOptionsPress}
         />
       </View>
-      {item.volumes.map(({ volumeId, exerciseId, index, subIndex, setts }) => {
-        const exerciseName = ` - ${exerciseMap[exerciseId].label}`;
-
-        const setsDisplay = setts.map((set, idx) => {
-          if (!set.weight && !set.reps) return null;
-
-          const weightStr = set.weight ? ` ${set.weight}` : '';
-          const repsStr = set.reps ? ` x ${set.reps}` : '';
-
-          return (
-            <Text key={idx} className="pl-4 text-sm">
-              {`${set.type}${weightStr}${repsStr}`}
-            </Text>
-          );
-        });
-
-        if (subIndex !== null) {
-          return (
-            <View key={volumeId}>
-              {!ssIndexHolder.has(index) && ssIndexHolder.add(index) && (
-                <Text className="pl-1 underline">Superset</Text>
-              )}
-              <Text className="pl-2">{exerciseName}</Text>
-              {setsDisplay}
-            </View>
-          );
-        }
-
-        return (
-          <View key={volumeId}>
-            <Text>{exerciseName}</Text>
-            {setsDisplay}
-          </View>
-        );
-      })}
-    </Pressable>
+      {workout.volumes.map((volume) => (
+        <RenderVolume
+          exerciseMap={exerciseMap}
+          superSettIndexHolder={ssIndexHolder}
+          volume={volume}
+        />
+      ))}
+    </MyBorder>
   );
 }
 
@@ -201,15 +176,13 @@ export default function RenderWorkouts() {
     return Array.from(workoutsMap.values());
   }, [rawWorkouts]);
 
-  // console.log(workouts);
-
   return (
     <GestureHandlerRootView>
       <FlatList
         data={workouts}
-        renderItem={({ item, index }) => (
-          <RenderWorkout
-            item={item}
+        renderItem={({ item: workout, index }) => (
+          <RenderSingleWorkout
+            workout={workout}
             index={index}
             exerciseMap={exerciseMap}
             router={router}

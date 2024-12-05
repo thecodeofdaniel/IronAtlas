@@ -26,8 +26,7 @@ export default function RenderVolume({
 
   // Goes through each set
   const setsDisplay = setts.map((set, idx) => {
-    // Don't reveal sets if number of sets is less than or equal to 1
-    if (setsLength <= 1) return null;
+    if (setsLength === 0) return null;
 
     let finalText: undefined | string;
 
@@ -62,7 +61,9 @@ export default function RenderVolume({
 
     const counterDisplay = counter > 1 ? counter + ' x ' : '';
 
-    if (!weight && !reps) {
+    if (counter === 1 && !weight && !reps) {
+      return null;
+    } else if (!weight && !reps) {
       finalText = `${counter} x ${type}${comma}`;
     } else if (weight && !reps) {
       finalText = `${counterDisplay}${weight}lb${comma}`;

@@ -1,7 +1,7 @@
 import React from 'react';
 import { View } from 'react-native';
 import { Stack } from 'expo-router';
-import RenderWorkouts from '@/components/RenderWorkouts';
+import RenderWorkouts from '@/app/(tabs)/workout/components/RenderWorkouts';
 
 export default function ViewWorkouts() {
   return (
