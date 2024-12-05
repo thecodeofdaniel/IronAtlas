@@ -5,7 +5,7 @@ import { View, Text, Pressable } from 'react-native';
 import { db } from '@/db/instance';
 import * as s from '@/db/schema';
 import { useLiveQuery } from 'drizzle-orm/expo-sqlite';
-import { desc, eq } from 'drizzle-orm';
+import { desc, eq, inArray } from 'drizzle-orm';
 
 import { type Router, useRouter } from 'expo-router';
 import { useExerciseStore } from '@/store/exercise/exerciseStore';
@@ -134,6 +134,16 @@ export default function RenderWorkouts() {
       .from(s.workout)
       .innerJoin(s.volume, eq(s.volume.workoutId, s.workout.id))
       .innerJoin(s.sett, eq(s.sett.volumeId, s.volume.id))
+      .where(
+        inArray(
+          s.workout.id,
+          db
+            .select({ id: s.workout.id })
+            .from(s.workout)
+            .orderBy(desc(s.workout.date))
+            .limit(5),
+        ),
+      )
       .orderBy(desc(s.workout.date)),
   );
 
