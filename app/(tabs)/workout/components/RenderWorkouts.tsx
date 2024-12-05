@@ -16,6 +16,8 @@ import { Ionicons } from '@expo/vector-icons';
 import RenderVolume from './RenderVolume';
 import MyButton from '@/components/ui/MyButton';
 import MyBorder from '@/components/ui/MyBorder';
+import { useThemeContext } from '@/store/context/themeContext';
+import { getActionSheetStyle } from '@/lib/actionSheetConfig';
 
 type TransformedWorkout = {
   workoutId: number;
@@ -51,8 +53,7 @@ function RenderSingleWorkout({
 }: RenderWorkoutProps) {
   const ssIndexHolder = new Set<number>();
   const { showActionSheetWithOptions } = useActionSheet();
-  // const loadTemplate = useWorkoutStore((state) => state.loadTemplate);
-  // const loadWorkout = useWorkoutStore((state) => state.loadWorkout);
+  const { colors } = useThemeContext();
 
   const handleOptionsPress = async () => {
     const options = ['Delete', 'Cancel'];
@@ -64,6 +65,7 @@ function RenderSingleWorkout({
         options,
         cancelButtonIndex,
         destructiveButtonIndex,
+        ...getActionSheetStyle(colors),
       },
       async (selectedIndex?: number) => {
         switch (selectedIndex) {
@@ -92,12 +94,13 @@ function RenderSingleWorkout({
   return (
     <MyBorder className="my-[2] bg-neutral-accent px-2 py-1">
       <View className="flex flex-row items-center justify-between">
-        <Text className="text-lg font-semibold text-neutral-contrast underline">
+        <Text className="text-lg font-semibold text-neutral-contrast">
           {workout.workoutDate.toLocaleDateString()}
         </Text>
         <Ionicons
           name="ellipsis-horizontal"
           size={24}
+          color={colors['--neutral-contrast']}
           onPress={handleOptionsPress}
         />
       </View>
