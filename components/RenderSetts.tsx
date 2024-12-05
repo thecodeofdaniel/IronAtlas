@@ -4,19 +4,14 @@ import { TransformedTemplate } from '@/app/(tabs)/workout/components/RenderTempl
 import { cn } from '@/lib/utils';
 
 type Props = {
-  superSettIndexHolder: Set<number>;
-  exerciseMap: ExerciseMap;
   volume: TransformedTemplate['volumes'][0];
+  className?: string;
 };
 
-export default function RenderVolumeWithoutName({
-  exerciseMap,
-  superSettIndexHolder,
-  volume,
-}: Props) {
-  const { volumeId, exerciseId, index, subIndex, setts } = volume;
+export default function RenderSetts({ volume, className }: Props) {
+  const { setts } = volume;
 
-  const exerciseName = `• ${exerciseMap[exerciseId].label}`;
+  // const exerciseName = `• ${exerciseMap[exerciseId].label}`;
 
   const setsLength = setts.length;
   let prevType: string | null = null;
@@ -85,31 +80,5 @@ export default function RenderVolumeWithoutName({
     );
   });
 
-  // // If set is part of a superset
-  // if (subIndex !== null) {
-  //   return (
-  //     <View key={volumeId}>
-  //       {/* Add superset title if new index */}
-  //       {/* {!superSettIndexHolder.has(index) &&
-  //         superSettIndexHolder.add(index) && (
-  //           <View className="flex flex-row">
-  //             <Text> </Text>
-  //             <Text className="pl-1 text-neutral-contrast/80 underline">
-  //               {'Superset'}
-  //             </Text>
-  //           </View>
-  //         )} */}
-  //       {/* Add exercise name */}
-  //       {/* <View className="flex flex-row">{setsDisplay}</View> */}
-  //       <View className="flex flex-row">{setsDisplay}</View>
-  //     </View>
-  //   );
-  // }
-
-  return (
-    <View key={volumeId}>
-      <View className="flex flex-row">{setsDisplay}</View>
-      {/* {setsDisplay} */}
-    </View>
-  );
+  return <View className={cn('flex flex-row', className)}>{setsDisplay}</View>;
 }

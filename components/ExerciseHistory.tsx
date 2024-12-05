@@ -11,7 +11,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { useExerciseStore } from '@/store/exercise/exerciseStore';
 import clsx from 'clsx';
 import RenderVolume from '@/app/(tabs)/workout/components/RenderVolume';
-import RenderVolumeWithoutName from './RenderVolumeWithoutName';
+import RenderSetts from './RenderSetts';
 import { cn } from '@/lib/utils';
 
 type TransformedWorkout = {
@@ -53,10 +53,10 @@ function RenderWorkout({ item, index, exerciseMap }: RenderWorkoutProps) {
         return (
           <View key={volume.volumeId} className="flex flex-row gap-2">
             <Text className="text-neutral-contrast">{orderStr}</Text>
-            <RenderVolumeWithoutName
+            <RenderSetts
               volume={volume}
-              exerciseMap={exerciseMap}
-              superSettIndexHolder={ssIndexHolder}
+              // exerciseMap={exerciseMap}
+              // superSettIndexHolder={ssIndexHolder}
             />
           </View>
         );
