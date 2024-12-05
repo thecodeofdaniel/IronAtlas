@@ -15,7 +15,11 @@ import DraggableFlatList, {
   ScaleDecorator,
 } from 'react-native-draggable-flatlist';
 import { generateId } from '@/utils/utils';
-import { ScrollView, TextInput } from 'react-native-gesture-handler';
+import {
+  GestureHandlerRootView,
+  ScrollView,
+  TextInput,
+} from 'react-native-gesture-handler';
 import clsx from 'clsx';
 import PopoverSetType from '@/components/SetsTable/PopoverSetType';
 import { setsTableStyles as styles } from './setsTableStyles';
@@ -24,6 +28,8 @@ import { Link, Stack } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useExerciseStore } from '@/store/exercise/exerciseStore';
 import SettTypeButton from './SettTypeButton';
+import SetTableRow from './SetTableRow';
+import SetsTableFooter from './SetsTableFooter';
 
 const OVERSWIPE_DIST = 20;
 
@@ -58,7 +64,7 @@ export default function SetsTable({
     };
 
     return (
-      <RowItem
+      <SetTableRow
         {...params}
         itemRefs={itemRefs}
         uuid={uuid}
@@ -103,76 +109,82 @@ export default function SetsTable({
     );
   };
 
-  // Footer component that includes the Add Set button
-  const renderFooter = () => {
-    return (
-      <>
-        <View>
-          <View
-            // style={{
-            //   borderWidth: 2,
-            //   borderColor: 'black',
-            // }}
-            className="flex flex-row items-center justify-center py-2"
-          >
-            {index !== null && (
-              <Pressable>
-                <Ionicons
-                  name="chevron-back"
-                  color="black"
-                  size={24}
-                  style={{
-                    paddingHorizontal: 16,
-                  }}
-                  onPress={() =>
-                    setIndex((prev) => {
-                      const prevIndex = prev! - 1;
-                      if (prevIndex < 0) return superSetLength - 1;
-                      return prevIndex;
-                    })
-                  }
-                />
-              </Pressable>
-            )}
-            <Pressable
-              onPress={() => addSet(uuid)}
-              style={styles.shadow}
-              className="flex-1 rounded-md bg-red-500 p-4"
-            >
-              <Text className="text-center text-xl font-medium text-white shadow-lg">
-                Add set
-              </Text>
-            </Pressable>
-            {index !== null && (
-              <Pressable>
-                <Ionicons
-                  name="chevron-forward"
-                  size={24}
-                  color="black"
-                  style={{ paddingHorizontal: 16 }}
-                  onPress={() =>
-                    setIndex((prev) => {
-                      const nextIndex = prev! + 1;
-                      if (nextIndex >= superSetLength) return 0;
-                      return nextIndex;
-                    })
-                  }
-                />
-              </Pressable>
-            )}
-          </View>
-          {index !== null && (
-            <Text className="text-center">
-              {index + 1} of {superSetLength}
-            </Text>
-          )}
-        </View>
-      </>
-    );
-  };
+  // // Footer component that includes the Add Set button
+  // const renderFooter = () => {
+  //   return (
+  //     <>
+  //       <View>
+  //         <View
+  //           // style={{
+  //           //   borderWidth: 2,
+  //           //   borderColor: 'black',
+  //           // }}
+  //           className="flex flex-row items-center justify-center py-2"
+  //         >
+  //           {index !== null && (
+  //             <Pressable>
+  //               <Ionicons
+  //                 name="chevron-back"
+  //                 color="black"
+  //                 size={24}
+  //                 style={{
+  //                   paddingHorizontal: 16,
+  //                 }}
+  //                 onPress={() =>
+  //                   setIndex((prev) => {
+  //                     const prevIndex = prev! - 1;
+  //                     if (prevIndex < 0) return superSetLength - 1;
+  //                     return prevIndex;
+  //                   })
+  //                 }
+  //               />
+  //             </Pressable>
+  //           )}
+  //           <Pressable
+  //             onPress={() => addSet(uuid)}
+  //             style={styles.shadow}
+  //             className="flex-1 rounded-md bg-red-500 p-4"
+  //           >
+  //             <Text className="text-center text-xl font-medium text-white shadow-lg">
+  //               Add set
+  //             </Text>
+  //           </Pressable>
+  //           {index !== null && (
+  //             <Pressable>
+  //               <Ionicons
+  //                 name="chevron-forward"
+  //                 size={24}
+  //                 color="black"
+  //                 style={{ paddingHorizontal: 16 }}
+  //                 onPress={() =>
+  //                   setIndex((prev) => {
+  //                     const nextIndex = prev! + 1;
+  //                     if (nextIndex >= superSetLength) return 0;
+  //                     return nextIndex;
+  //                   })
+  //                 }
+  //               />
+  //             </Pressable>
+  //           )}
+  //         </View>
+  //         {index !== null && (
+  //           <Text className="text-center">
+  //             {index + 1} of {superSetLength}
+  //           </Text>
+  //         )}
+  //       </View>
+  //     </>
+  //   );
+  // };
 
   return (
-    <View>
+    // <View>
+    <GestureHandlerRootView
+      style={{
+        flex: 1,
+        justifyContent: 'center',
+      }}
+    >
       <DraggableFlatList
         keyExtractor={(item) => item.key.toString()}
         data={template[uuid].sets}
@@ -182,123 +194,130 @@ export default function SetsTable({
         }}
         activationDistance={20}
         ListHeaderComponent={renderHeader}
-        ListFooterComponent={renderFooter}
-        style={{ borderColor: 'red', borderWidth: 2 }}
+        ListFooterComponent={() => (
+          <SetsTableFooter
+            uuid={uuid}
+            superSetLength={superSetLength}
+            setIndex={setIndex}
+            index={index}
+          />
+        )}
       />
-    </View>
+    </GestureHandlerRootView>
+    // </View>
   );
 }
 
-type RowItemProps = {
-  drag: () => void;
-  getIndex: () => number | undefined;
-  item: SettType;
-  itemRefs: React.MutableRefObject<Map<any, any>>;
-  uuid: string;
-  editSet: (uuid: string, index: number, newSet: SettType) => void;
-  onPressDelete: () => void;
-};
+// type RowItemProps = {
+//   drag: () => void;
+//   getIndex: () => number | undefined;
+//   item: SettType;
+//   itemRefs: React.MutableRefObject<Map<any, any>>;
+//   uuid: string;
+//   editSet: (uuid: string, index: number, newSet: SettType) => void;
+//   onPressDelete: () => void;
+// };
 
-function RowItem({
-  drag,
-  getIndex,
-  item,
-  itemRefs,
-  uuid,
-  editSet,
-  onPressDelete,
-}: RowItemProps) {
-  const index = getIndex()!;
+// function RowItem({
+//   drag,
+//   getIndex,
+//   item,
+//   itemRefs,
+//   uuid,
+//   editSet,
+//   onPressDelete,
+// }: RowItemProps) {
+//   const index = getIndex()!;
 
-  return (
-    <>
-      <ScaleDecorator>
-        <SwipeableItem
-          key={item.key}
-          item={item}
-          ref={(ref) => {
-            if (ref && !itemRefs.current.get(item.key)) {
-              itemRefs.current.set(item.key, ref);
-            }
-          }}
-          onChange={({ openDirection }) => {
-            if (openDirection !== OpenDirection.NONE) {
-              [...itemRefs.current.entries()].forEach(([key, ref]) => {
-                if (key !== item.key && ref) ref.close();
-              });
-            }
-          }}
-          overSwipe={OVERSWIPE_DIST}
-          renderUnderlayLeft={() => (
-            <UnderlayLeft drag={drag} onPressDelete={onPressDelete} />
-          )}
-          snapPointsLeft={[100]}
-        >
-          <TouchableOpacity
-            activeOpacity={1}
-            onLongPress={drag}
-            className={clsx(
-              'flex flex-1 flex-row items-center justify-center bg-stone-500 p-2',
-            )}
-          >
-            <View className="flex flex-1 flex-row justify-between">
-              <SettTypeButton
-                uuid={uuid}
-                index={index}
-                item={item}
-                editSet={editSet}
-              />
-              <TextInput
-                value={item.weight}
-                keyboardType="numeric"
-                returnKeyType="done"
-                style={[styles.weightWidth, styles.infoFontSize]}
-                className="rounded bg-stone-600 p-1 text-white"
-                onChangeText={(text) =>
-                  editSet(uuid, index, { ...item, weight: text })
-                }
-              />
-              <TextInput
-                value={item.reps}
-                keyboardType="numeric"
-                returnKeyType="done"
-                style={[styles.weightWidth, styles.infoFontSize]}
-                className="rounded bg-stone-600 p-1 text-white"
-                onChangeText={(text) =>
-                  editSet(uuid, index, { ...item, reps: text })
-                }
-              />
-            </View>
-          </TouchableOpacity>
-        </SwipeableItem>
-      </ScaleDecorator>
-    </>
-  );
-}
+//   return (
+//     <>
+//       <ScaleDecorator>
+//         <SwipeableItem
+//           key={item.key}
+//           item={item}
+//           ref={(ref) => {
+//             if (ref && !itemRefs.current.get(item.key)) {
+//               itemRefs.current.set(item.key, ref);
+//             }
+//           }}
+//           onChange={({ openDirection }) => {
+//             if (openDirection !== OpenDirection.NONE) {
+//               [...itemRefs.current.entries()].forEach(([key, ref]) => {
+//                 if (key !== item.key && ref) ref.close();
+//               });
+//             }
+//           }}
+//           overSwipe={OVERSWIPE_DIST}
+//           renderUnderlayLeft={() => (
+//             <UnderlayLeft drag={drag} onPressDelete={onPressDelete} />
+//           )}
+//           snapPointsLeft={[100]}
+//         >
+//           <TouchableOpacity
+//             activeOpacity={1}
+//             onLongPress={drag}
+//             className={clsx(
+//               'flex flex-1 flex-row items-center justify-center bg-stone-500 p-2',
+//             )}
+//           >
+//             <View className="flex flex-1 flex-row justify-between">
+//               <SettTypeButton
+//                 uuid={uuid}
+//                 index={index}
+//                 item={item}
+//                 editSet={editSet}
+//               />
+//               <TextInput
+//                 value={item.weight}
+//                 keyboardType="numeric"
+//                 returnKeyType="done"
+//                 style={[styles.weightWidth, styles.infoFontSize]}
+//                 className="rounded bg-stone-600 p-1 text-white"
+//                 onChangeText={(text) =>
+//                   editSet(uuid, index, { ...item, weight: text })
+//                 }
+//               />
+//               <TextInput
+//                 value={item.reps}
+//                 keyboardType="numeric"
+//                 returnKeyType="done"
+//                 style={[styles.weightWidth, styles.infoFontSize]}
+//                 className="rounded bg-stone-600 p-1 text-white"
+//                 onChangeText={(text) =>
+//                   editSet(uuid, index, { ...item, reps: text })
+//                 }
+//               />
+//             </View>
+//           </TouchableOpacity>
+//         </SwipeableItem>
+//       </ScaleDecorator>
+//     </>
+//   );
+// }
 
-const UnderlayLeft = ({
-  drag,
-  onPressDelete,
-}: {
-  drag: () => void;
-  onPressDelete: () => void;
-}) => {
-  const { item, percentOpen } = useSwipeableItemParams<SettType>();
-  const animStyle = useAnimatedStyle(
-    () => ({
-      opacity: percentOpen.value,
-    }),
-    [percentOpen],
-  );
+// const UnderlayLeft = ({
+//   drag,
+//   onPressDelete,
+// }: {
+//   drag: () => void;
+//   onPressDelete: () => void;
+// }) => {
+//   const { item, percentOpen } = useSwipeableItemParams<SettType>();
+//   const animStyle = useAnimatedStyle(
+//     () => ({
+//       opacity: percentOpen.value,
+//     }),
+//     [percentOpen],
+//   );
 
-  return (
-    <Animated.View
-      style={[animStyle]}
-      className="flex-1 flex-row items-center justify-end bg-red-500 pr-4"
-    >
-      <TouchableOpacity onPress={onPressDelete}>
-        <Text className="text-2xl font-bold text-white">Delete</Text>
-      </TouchableOpacity>
-    </Animated.View>
-  );
-};
+//   return (
+//     <Animated.View
+//       style={[animStyle]}
+//       className="flex-1 flex-row items-center justify-end bg-red-500 pr-4"
+//     >
+//       <TouchableOpacity onPress={onPressDelete}>
+//         <Text className="text-2xl font-bold text-white">Delete</Text>
+//       </TouchableOpacity>
+//     </Animated.View>
+//   );
+// };

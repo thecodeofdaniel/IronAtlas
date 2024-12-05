@@ -79,55 +79,43 @@ export default function Exercise() {
             ),
         }}
       />
-      <GestureHandlerRootView
-        style={{
-          flex: 1,
-          // padding: 8,
-          justifyContent: 'center',
-          borderColor: 'blue',
-          borderWidth: 10,
-          height: '100%',
-        }}
+
+      <Animated.View
+        // style={animatedStyle}
+        className="flex h-full flex-col justify-between bg-neutral p-2"
       >
-        <Animated.View
-          style={animatedStyle}
-          className="flex h-full flex-col justify-between"
-        >
-          <View></View>
-          {index === null && (
-            <View className="flex flex-1 flex-col justify-center border">
-              <SetsTable
-                uuid={uuid}
-                title={''}
-                superSetLength={0}
-                index={null}
-                setIndex={setIndex}
-              />
-            </View>
-          )}
-          {/* Pressing the superset itself */}
-          {index !== null && isSuperset && (
-            <SetsTable
-              uuid={uuid}
-              title=""
-              superSetLength={template[uuid_param].children.length}
-              index={index}
-              setIndex={setIndex}
-            />
-          )}
-          {/* Pressing part of the superset */}
-          {index !== null && isPartOfSuperset && (
-            <SetsTable
-              uuid={uuid}
-              title=""
-              superSetLength={template[parentUUID].children.length}
-              index={index}
-              setIndex={setIndex}
-            />
-          )}
-          <ExerciseHistory key={uuid} uuid={uuid} className="h-52 border" />
-        </Animated.View>
-      </GestureHandlerRootView>
+        <View></View>
+        {index === null && (
+          <SetsTable
+            uuid={uuid}
+            title={''}
+            superSetLength={0}
+            index={null}
+            setIndex={setIndex}
+          />
+        )}
+        {/* Pressing the superset itself */}
+        {index !== null && isSuperset && (
+          <SetsTable
+            uuid={uuid}
+            title=""
+            superSetLength={template[uuid_param].children.length}
+            index={index}
+            setIndex={setIndex}
+          />
+        )}
+        {/* Pressing part of the superset */}
+        {index !== null && isPartOfSuperset && (
+          <SetsTable
+            uuid={uuid}
+            title=""
+            superSetLength={template[parentUUID].children.length}
+            index={index}
+            setIndex={setIndex}
+          />
+        )}
+        <ExerciseHistory key={uuid} uuid={uuid} className="h-52 border" />
+      </Animated.View>
     </>
   );
 }
