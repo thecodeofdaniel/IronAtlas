@@ -92,7 +92,7 @@ function RenderSingleWorkout({
   return (
     <MyBorder className="my-[2] bg-neutral-accent px-2 py-1">
       <View className="flex flex-row items-center justify-between">
-        <Text className="text-lg font-semibold underline">
+        <Text className="text-lg font-semibold text-neutral-contrast underline">
           {workout.workoutDate.toLocaleDateString()}
         </Text>
         <Ionicons
