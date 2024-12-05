@@ -10,7 +10,7 @@ export const setsTableStyles = StyleSheet.create({
   setWidth: {
     width: 62,
     textAlign: 'center',
-    borderRadius: 6,
+    // borderRadius: 6,
     // alignContent: 'center',
     // borderWidth: 2,
     // borderColor: 'blue',
@@ -18,14 +18,14 @@ export const setsTableStyles = StyleSheet.create({
   weightWidth: {
     width: 62,
     textAlign: 'center',
-    borderRadius: 6,
+    // borderRadius: 6,
     // borderWidth: 2,
     // borderColor: 'blue',
   },
   repsWidth: {
     width: 62,
     textAlign: 'center',
-    borderRadius: 6,
+    // borderRadius: 6,
     // borderWidth: 2,
     // borderColor: 'blue',
   },

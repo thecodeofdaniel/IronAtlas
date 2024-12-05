@@ -10,7 +10,7 @@ import { TextInput } from 'react-native-gesture-handler';
 import clsx from 'clsx';
 import { setsTableStyles as styles } from './setsTableStyles';
 
-import SettTypeButton from './SettTypeButton';
+import SetsTableTypeButton from './SetsTableTypeButton';
 import { cn } from '@/lib/utils';
 
 const UnderlayLeft = ({
@@ -51,7 +51,7 @@ type Props = {
   setsLength: number;
 };
 
-export default function SetTableRow({
+export default function SetsTableRow({
   drag,
   getIndex,
   item,
@@ -98,7 +98,7 @@ export default function SetTableRow({
             )}
           >
             <View className="flex flex-1 flex-row justify-between">
-              <SettTypeButton
+              <SetsTableTypeButton
                 uuid={uuid}
                 index={index}
                 item={item}
@@ -109,7 +109,7 @@ export default function SetTableRow({
                 keyboardType="numeric"
                 returnKeyType="done"
                 style={[styles.weightWidth, styles.infoFontSize]}
-                className="rounded bg-stone-600 p-1 text-white"
+                className="bg-neutral-accent p-1 text-neutral-contrast"
                 onChangeText={(text) =>
                   editSet(uuid, index, { ...item, weight: text })
                 }
@@ -119,7 +119,7 @@ export default function SetTableRow({
                 keyboardType="numeric"
                 returnKeyType="done"
                 style={[styles.weightWidth, styles.infoFontSize]}
-                className="rounded bg-stone-600 p-1 text-white"
+                className="bg-neutral-accent p-1 text-neutral-contrast"
                 onChangeText={(text) =>
                   editSet(uuid, index, { ...item, reps: text })
                 }

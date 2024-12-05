@@ -7,7 +7,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { useWorkoutStore } from '@/store/workout/workoutStore';
 
 import SetsTableHeader from './SetsTableHeader';
-import SetTableRow from './SetTableRow';
+import SetTableRow from './SetsTableRow';
 import SetsTableFooter from './SetsTableFooter';
 
 type Props = {

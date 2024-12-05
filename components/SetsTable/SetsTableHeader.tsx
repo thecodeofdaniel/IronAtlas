@@ -21,7 +21,7 @@ export default function SetsTableHeader({ uuid }: Props) {
           {exerciseMap[exerciseId!].label}
         </Text>
       </ScrollView>
-      <View className="flex flex-row justify-between border-l-2 border-r-2 border-t-2 border-black bg-neutral-accent/90 p-2">
+      <View className="flex flex-row justify-between border-2 border-black bg-neutral-accent/90 p-2">
         <Text
           style={[styles.setWidth, styles.headerFontSize]}
           className="font-medium text-neutral-contrast"

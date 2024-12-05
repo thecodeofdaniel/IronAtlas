@@ -45,7 +45,7 @@ export default function PopoverSetType({
         >
           <Text
             style={styles.infoFontSize}
-            className={clsx('text-center text-white p-1', {
+            className={clsx('p-1 text-center text-white', {
               'text-yellow-500': item.type === 'W',
               'text-purple-500': item.type === 'D',
               'text-red-500': item.type === 'F',
