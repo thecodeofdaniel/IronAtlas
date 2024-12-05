@@ -10,6 +10,9 @@ import { Ionicons } from '@expo/vector-icons';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { useExerciseStore } from '@/store/exercise/exerciseStore';
 import clsx from 'clsx';
+import RenderVolume from '@/app/(tabs)/workout/components/RenderVolume';
+import RenderVolumeWithoutName from './RenderVolumeWithoutName';
+import { cn } from '@/lib/utils';
 
 type TransformedWorkout = {
   workoutId: number;
@@ -37,38 +40,26 @@ type RenderWorkoutProps = {
 };
 
 function RenderWorkout({ item, index, exerciseMap }: RenderWorkoutProps) {
-  const ssIndexHolder = new Set();
+  const ssIndexHolder = new Set<number>();
 
   return (
     <Pressable className={'my-1 border px-2'}>
-      <Text className="text-lg font-semibold underline">
+      <Text className="text-lg font-semibold text-neutral-contrast">
         {item.workoutDate.toLocaleDateString()}
       </Text>
 
-      {item.volumes.map(({ volumeId, exerciseId, index, subIndex, setts }) => {
-        const setsDisplay = setts.map((set, idx) => {
-          return (
-            <Text key={idx} className="text-sm">
-              {`${set.type}: ${set.weight} x ${set.reps}`}
-            </Text>
-          );
-        });
-
-        if (subIndex !== null) {
-          return (
-            <View key={volumeId}>
-              {!ssIndexHolder.has(index) && ssIndexHolder.add(index) && (
-                <Text className="underline">Superset</Text>
-              )}
-              <View className="flex flex-row">
-                <Text className="pl-1"></Text>
-                {setsDisplay}
-              </View>
-            </View>
-          );
-        }
-
-        return <View key={volumeId}>{setsDisplay}</View>;
+      {item.volumes.map((volume) => {
+        const orderStr = `${volume.index + 1}${volume.subIndex !== null ? `.${volume.subIndex + 1}` : ''})`;
+        return (
+          <View key={volume.volumeId} className="flex flex-row gap-2">
+            <Text className="text-neutral-contrast">{orderStr}</Text>
+            <RenderVolumeWithoutName
+              volume={volume}
+              exerciseMap={exerciseMap}
+              superSettIndexHolder={ssIndexHolder}
+            />
+          </View>
+        );
       })}
     </Pressable>
   );
@@ -158,11 +149,16 @@ export default function ExerciseHistory({ uuid, className }: Props) {
   }
 
   return (
-    <View className={clsx(className)}>
+    <View className={cn(className)}>
       <FlatList
         data={workouts}
         renderItem={({ item, index }) => (
-          <RenderWorkout item={item} index={index} exerciseMap={exerciseMap} />
+          <RenderWorkout
+            key={item.workoutId}
+            item={item}
+            index={index}
+            exerciseMap={exerciseMap}
+          />
         )}
         keyExtractor={(item) => item.workoutId.toString()}
       />

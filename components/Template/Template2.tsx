@@ -8,8 +8,9 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { WorkoutStateFunctions } from '@/store/workout/workoutStore';
 import { useExerciseStore } from '@/store/exercise/exerciseStore';
 
-import RowItem from './RowItem';
+import TemplateRow from './TemplateRow';
 import clsx from 'clsx';
+import { cn } from '@/lib/utils';
 
 type TemplateTreeProps = {
   templateMap: TemplateMap;
@@ -30,7 +31,7 @@ function TemplateTree({
     const itemRefs = useRef(new Map());
 
     return (
-      <RowItem
+      <TemplateRow
         {...params}
         actions={actions}
         exerciseMap={exerciseMap}
@@ -71,7 +72,7 @@ function TemplateTree({
 type TemplateScreenProps = {
   template: TemplateMap;
   actions: WorkoutStateFunctions;
-  className: string;
+  className?: string;
 };
 
 export default function TemplateScreen2({
@@ -83,10 +84,7 @@ export default function TemplateScreen2({
 
   return (
     <>
-      {/* <GestureHandlerRootView
-        style={{ borderColor: 'black', borderWidth: 1, flex: 1 }}
-      > */}
-      <View className={clsx(className)}>
+      <View className={cn(className)}>
         <TemplateTree
           templateMap={template}
           actions={actions}
@@ -95,7 +93,6 @@ export default function TemplateScreen2({
           level={0}
         />
       </View>
-      {/* </GestureHandlerRootView> */}
     </>
   );
 }

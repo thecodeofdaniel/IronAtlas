@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text } from 'react-native';
-import { TransformedTemplate } from './RenderTemplates';
+import { TransformedTemplate } from '@/app/(tabs)/workout/components/RenderTemplates';
 import { cn } from '@/lib/utils';
 
 type Props = {
@@ -9,7 +9,7 @@ type Props = {
   volume: TransformedTemplate['volumes'][0];
 };
 
-export default function RenderVolume({
+export default function RenderVolumeWithoutName({
   exerciseMap,
   superSettIndexHolder,
   volume,
@@ -85,31 +85,31 @@ export default function RenderVolume({
     );
   });
 
-  // If set is part of a superset
-  if (subIndex !== null) {
-    return (
-      <View key={volumeId}>
-        {/* Add superset title if new index */}
-        {!superSettIndexHolder.has(index) &&
-          superSettIndexHolder.add(index) && (
-            <View className="flex flex-row">
-              <Text> </Text>
-              <Text className="pl-1 text-neutral-contrast/80 underline">
-                {'Superset'}
-              </Text>
-            </View>
-          )}
-        {/* Add exercise name */}
-        <Text className="pl-2 text-neutral-contrast/80">{exerciseName}</Text>
-        <View className="flex flex-row pl-4">{setsDisplay}</View>
-      </View>
-    );
-  }
+  // // If set is part of a superset
+  // if (subIndex !== null) {
+  //   return (
+  //     <View key={volumeId}>
+  //       {/* Add superset title if new index */}
+  //       {/* {!superSettIndexHolder.has(index) &&
+  //         superSettIndexHolder.add(index) && (
+  //           <View className="flex flex-row">
+  //             <Text> </Text>
+  //             <Text className="pl-1 text-neutral-contrast/80 underline">
+  //               {'Superset'}
+  //             </Text>
+  //           </View>
+  //         )} */}
+  //       {/* Add exercise name */}
+  //       {/* <View className="flex flex-row">{setsDisplay}</View> */}
+  //       <View className="flex flex-row">{setsDisplay}</View>
+  //     </View>
+  //   );
+  // }
 
   return (
     <View key={volumeId}>
-      <Text className="text-neutral-contrast/80">{exerciseName}</Text>
-      <View className={cn('flex flex-row pl-3')}>{setsDisplay}</View>
+      <View className="flex flex-row">{setsDisplay}</View>
+      {/* {setsDisplay} */}
     </View>
   );
 }

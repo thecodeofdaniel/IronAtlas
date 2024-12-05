@@ -23,8 +23,9 @@ import SupersetAddIcon from './SupersetAddIcon';
 import MyButton from '../ui/MyButton';
 import { cn } from '@/lib/utils';
 import TextContrast from '../ui/TextContrast';
+import MyButtonOpacity from '../ui/MyButtonOpacity';
 
-type RowItemProps = {
+type Props = {
   drag: () => void;
   getIndex: () => number | undefined;
   isActive: boolean;
@@ -34,7 +35,7 @@ type RowItemProps = {
   itemRefs: React.MutableRefObject<Map<any, any>>;
 };
 
-export default function RowItem({
+export default function TemplateRow({
   drag,
   getIndex,
   isActive,
@@ -42,7 +43,7 @@ export default function RowItem({
   actions,
   exerciseMap,
   itemRefs,
-}: RowItemProps) {
+}: Props) {
   const isSuperset = item.exerciseId === null;
 
   return (
@@ -82,7 +83,7 @@ export default function RowItem({
             <MyButton
               onLongPress={drag}
               disabled={isActive}
-              className={cn('mb-[1] py-0 pl-2 pr-0', {
+              className={cn('mb-[1] bg-red-800 py-0 pl-2 pr-0', {
                 'bg-blue-500': isActive,
               })}
             >

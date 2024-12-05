@@ -92,7 +92,10 @@ function RenderSingleWorkout({
   };
 
   return (
-    <MyBorder className="my-[2] bg-neutral-accent px-2 py-1">
+    <MyBorder
+      key={workout.workoutId}
+      className="my-[2] bg-neutral-accent px-2 py-1"
+    >
       <View className="flex flex-row items-center justify-between">
         <Text className="text-lg font-semibold text-neutral-contrast">
           {workout.workoutDate.toLocaleDateString()}
@@ -201,6 +204,7 @@ export default function RenderWorkouts({ className, numberOfWorkouts }: Props) {
         data={workouts}
         renderItem={({ item: workout, index }) => (
           <RenderSingleWorkout
+            key={workout.workoutId}
             workout={workout}
             index={index}
             exerciseMap={exerciseMap}

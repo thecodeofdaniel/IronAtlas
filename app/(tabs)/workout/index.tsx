@@ -23,13 +23,11 @@ import TextContrast from '@/components/ui/TextContrast';
 import MyButtonOpacity from '@/components/ui/MyButtonOpacity';
 import ViewWorkouts from './workouts/viewWorkouts';
 import RenderWorkouts from './components/RenderWorkouts';
+import TemplateScreen2 from '@/components/Template/Template2';
 
 export default function WorkoutTab() {
   const router = useRouter();
-  const openModal = useModalStore((state) => state.openModal);
-  const { template, inWorkout, validateWorkout } = useWorkoutStore(
-    (state) => state,
-  );
+  const { template, inWorkout, actions } = useWorkoutStoreHook();
 
   return (
     <>
@@ -43,7 +41,9 @@ export default function WorkoutTab() {
       <View className="flex-1 bg-neutral p-2">
         {inWorkout && (
           <View className="flex-1">
-            <TemplateScreen />
+            <GestureHandlerRootView>
+              <TemplateScreen2 template={template} actions={actions} />
+            </GestureHandlerRootView>
             <OpenModalWrapper
               activeModal="selectExercises"
               modalData={{
@@ -60,7 +60,7 @@ export default function WorkoutTab() {
             </OpenModalWrapper>
             <MyButtonOpacity
               onPress={() => {
-                validateWorkout();
+                actions.validateWorkout();
               }}
             >
               <Text className="text-center font-medium text-neutral-contrast">
