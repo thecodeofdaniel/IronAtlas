@@ -21,6 +21,8 @@ import PushOntoStack from '@/components/PushOntoStack';
 import MyButton from '@/components/ui/MyButton';
 import TextContrast from '@/components/ui/TextContrast';
 import MyButtonOpacity from '@/components/ui/MyButtonOpacity';
+import ViewWorkouts from './workouts/viewWorkouts';
+import RenderWorkouts from './components/RenderWorkouts';
 
 export default function WorkoutTab() {
   const router = useRouter();
@@ -68,9 +70,12 @@ export default function WorkoutTab() {
           </View>
         )}
         {!inWorkout && (
-          <View className="flex-1">
-            <View className="flex-1 items-center justify-center">
-              {/* <Text>Previous Workouts</Text> */}
+          <>
+            <View className="flex-1">
+              <Text className="text-xl font-bold text-neutral-contrast">
+                Last Five Workouts
+              </Text>
+              <RenderWorkouts numberOfWorkouts={5} />
             </View>
             <View className="flex flex-row gap-1">
               <MyButtonOpacity
@@ -95,7 +100,7 @@ export default function WorkoutTab() {
                 </Text>
               </MyButtonOpacity>
             </View>
-          </View>
+          </>
         )}
       </View>
     </>

@@ -103,6 +103,7 @@ function RenderSingleWorkout({
       </View>
       {workout.volumes.map((volume) => (
         <RenderVolume
+          key={volume.volumeId}
           exerciseMap={exerciseMap}
           superSettIndexHolder={ssIndexHolder}
           volume={volume}
@@ -112,7 +113,12 @@ function RenderSingleWorkout({
   );
 }
 
-export default function RenderWorkouts() {
+type Props = {
+  className?: string;
+  numberOfWorkouts?: number;
+};
+
+export default function RenderWorkouts({ className, numberOfWorkouts }: Props) {
   // console.log('Render RenderWorkouts');
   const router = useRouter();
   const exerciseMap = useExerciseStore((state) => state.exerciseMap);
@@ -141,7 +147,7 @@ export default function RenderWorkouts() {
             .select({ id: s.workout.id })
             .from(s.workout)
             .orderBy(desc(s.workout.date))
-            .limit(5),
+            .limit(numberOfWorkouts ?? 999999),
         ),
       )
       .orderBy(desc(s.workout.date)),
