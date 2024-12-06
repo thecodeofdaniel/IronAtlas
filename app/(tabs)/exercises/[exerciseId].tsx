@@ -2,10 +2,9 @@ import React from 'react';
 import { View, Text } from 'react-native';
 import { Stack, useLocalSearchParams } from 'expo-router';
 import { useExerciseStore } from '@/store/exercise/exerciseStore';
-import ExerciseHistory2 from '@/components/ExerciseHistory2';
 import Progression from '@/components/Progression/Progression';
-import LineChartComp from '@/components/LineChartComp';
-import { ScrollView } from 'react-native';
+import ExerciseHistory from '@/components/ExerciseHistory/ExerciseHistory';
+
 export default function ExerciseId() {
   // console.log('Render ExerciseId');
   const { exerciseId } = useLocalSearchParams<{ exerciseId: string }>();
@@ -14,11 +13,13 @@ export default function ExerciseId() {
   return (
     <>
       <Stack.Screen options={{ title: exerciseMap[+exerciseId].label }} />
-      <View className="bg-neutral flex-1 p-4">
-        <Text className="text-neutral-contrast text-2xl font-semibold">
+      <View className="flex-1 bg-neutral p-4">
+        <Text className="text-2xl font-semibold text-neutral-contrast">
           Workout History
         </Text>
-        <ExerciseHistory2 exerciseId={+exerciseId} />
+        {/* <ExerciseHistory2 exerciseId={+exerciseId} /> */}
+        {/* <ExerciseHistory /> */}
+        <ExerciseHistory exerciseId={+exerciseId} />
         <Progression exerciseId={+exerciseId} />
       </View>
     </>

@@ -13,6 +13,7 @@ import Animated, {
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import ExerciseHistory from '@/components/ExerciseHistory';
+import ExerciseHistory2 from '@/components/ExerciseHistory2';
 
 export default function Exercise() {
   // console.log('Render Exercise');
@@ -119,7 +120,12 @@ export default function Exercise() {
           <ExerciseHistory key={uuid} uuid={uuid} className="h-52 flex-1" />
         </View> */}
 
-        <ExerciseHistory key={uuid} uuid={uuid} className="h-52" />
+        {/* <ExerciseHistory key={uuid} uuid={uuid} className="h-52" /> */}
+        <ExerciseHistory2
+          key={uuid}
+          exerciseId={template[uuid].exerciseId!}
+          className="h-52"
+        />
       </Animated.View>
     </>
   );
