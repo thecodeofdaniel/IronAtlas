@@ -1,6 +1,7 @@
 import { FlatList, TouchableOpacity, View, Text } from 'react-native';
 import { getAllParentIds } from '@/utils/utils';
 import { cn } from '@/lib/utils';
+import MyButtonOpacity from './ui/MyButtonOpacity';
 
 type SelectFromTagTreeProps = {
   tagMap: TagMap; // Accept itemMap as a prop
@@ -27,9 +28,9 @@ export default function SelectFromTagTree({
 }: SelectFromTagTreeProps) {
   const RenderItem = ({ item }: { item: Tag }) => {
     return (
-      <TouchableOpacity
-        className={cn('bg-primary my-[1] p-2 opacity-40', {
-          'opacity-100':
+      <MyButtonOpacity
+        className={cn('my-[1] bg-neutral-accent p-2 opacity-40', {
+          'bg-primary opacity-100':
             selected.chosen.includes(item.id) ||
             selected.preSelected.has(item.id),
         })}
@@ -63,7 +64,7 @@ export default function SelectFromTagTree({
         >
           {item.label}
         </Text>
-      </TouchableOpacity>
+      </MyButtonOpacity>
     );
   };
 

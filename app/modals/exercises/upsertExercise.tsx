@@ -5,13 +5,14 @@ import { Stack, useRouter } from 'expo-router';
 import { useExerciseStoreWithSetter } from '@/store/zustand/exercise/exerciseStore';
 import { useTagStoreWithSetter } from '@/store/zustand/tag/tagStore';
 import { getAllParentIds } from '@/utils/utils';
-import TagTree from '@/components/SelectFromTagTree';
 import { formatTagOrExercise, isValidTagOrExercise } from '@/utils/utils';
 import { TInsertExercise } from '@/db/schema';
 import { db } from '@/db/instance';
 import * as schema from '@/db/schema';
 import { eq } from 'drizzle-orm';
 import Button from '@/components/ui/MyButton';
+import MyButtonOpacity from '@/components/ui/MyButtonOpacity';
+import SelectFromTagTree from '@/components/SelectFromTagTree';
 
 type CreateOrUpdateExerciseProps = {
   modalData: ModalData['upsertExercise'];
@@ -104,30 +105,33 @@ export default function UpsertExercise({
           headerTitle: id ? 'Edit' : 'Create',
           headerBackTitle: 'Exercises',
           headerRight: () => (
-            <Button
+            <MyButtonOpacity
               disabled={label.trim() === ''}
               onPress={handleOnPress}
-              className="bg-green-500"
             >
-              <Text className="text-neutral font-medium">
+              <Text className="font-medium text-white">
                 {id ? 'Update' : 'Add'}
               </Text>
-            </Button>
+            </MyButtonOpacity>
           ),
         }}
       />
-      <View className="bg-neutral flex-1 gap-2 p-2">
+      <View className="flex-1 gap-2 bg-neutral p-2">
         <View className="gap-1">
-          <Text className="text-neutral-contrast text-xl">Exercise Name</Text>
+          <Text className="text-lg font-medium text-neutral-contrast">
+            Exercise Name
+          </Text>
           <TextInput
-            className="border-neutral-contrast text-neutral-contrast h-10 border px-2"
+            className="h-10 border border-neutral-accent px-2 text-neutral-contrast"
             value={label}
             onChangeText={setLabel}
           />
         </View>
-        <View className="gap-1">
-          <Text className="text-neutral-contrast text-xl">Select Tags</Text>
-          <TagTree
+        <View className="flex-1 gap-1">
+          <Text className="text-lg font-medium text-neutral-contrast">
+            Select Tags
+          </Text>
+          <SelectFromTagTree
             tagMap={tagMap}
             tagChildren={[0]}
             level={0}
