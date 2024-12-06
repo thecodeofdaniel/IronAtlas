@@ -12,13 +12,13 @@ import Animated, {
 } from 'react-native-reanimated';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import ExerciseHistory from '@/components/ExerciseHistory';
+import ExerciseHistory from '@/components/ExerciseHistory/ExerciseHistory';
 import ExerciseHistory2 from '@/components/ExerciseHistory2';
 
 export default function Exercise() {
   // console.log('Render Exercise');
   const { uuid: uuid_param } = useLocalSearchParams<{ uuid: string }>();
-  const { template } = useWorkoutStore((state) => state);
+  const { template, inWorkout } = useWorkoutStore((state) => state);
   const { exerciseMap } = useExerciseStore((state) => state);
 
   const router = useRouter();
@@ -115,17 +115,13 @@ export default function Exercise() {
             setIndex={setIndex}
           />
         )}
-        {/* <View className="flex flex-row gap-2 border">
-          <ExerciseHistory key={uuid} uuid={uuid} className="h-52 flex-1" />
-          <ExerciseHistory key={uuid} uuid={uuid} className="h-52 flex-1" />
-        </View> */}
-
-        {/* <ExerciseHistory key={uuid} uuid={uuid} className="h-52" /> */}
-        <ExerciseHistory2
-          key={uuid}
-          exerciseId={template[uuid].exerciseId!}
-          className="h-52"
-        />
+        {inWorkout && (
+          <ExerciseHistory
+            key={uuid}
+            exerciseId={template[uuid].exerciseId!}
+            className="h-52"
+          />
+        )}
       </Animated.View>
     </>
   );

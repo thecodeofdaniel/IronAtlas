@@ -3,13 +3,11 @@ import React, { useRef } from 'react';
 import DraggableFlatList, {
   RenderItemParams,
 } from 'react-native-draggable-flatlist';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 import { WorkoutStateFunctions } from '@/store/workout/workoutStore';
 import { useExerciseStore } from '@/store/exercise/exerciseStore';
 
 import TemplateRow from './TemplateRow';
-import clsx from 'clsx';
 import { cn } from '@/lib/utils';
 
 type TemplateTreeProps = {

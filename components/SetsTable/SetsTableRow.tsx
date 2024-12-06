@@ -1,5 +1,5 @@
 import React from 'react';
-import { Text, View, TouchableOpacity, Pressable } from 'react-native';
+import { Text, View, TouchableOpacity } from 'react-native';
 import Animated, { useAnimatedStyle } from 'react-native-reanimated';
 import SwipeableItem, {
   useSwipeableItemParams,
@@ -7,7 +7,6 @@ import SwipeableItem, {
 } from 'react-native-swipeable-item';
 import { ScaleDecorator } from 'react-native-draggable-flatlist';
 import { TextInput } from 'react-native-gesture-handler';
-import clsx from 'clsx';
 import { setsTableStyles as styles } from './setsTableStyles';
 
 import SetsTableTypeButton from './SetsTableTypeButton';

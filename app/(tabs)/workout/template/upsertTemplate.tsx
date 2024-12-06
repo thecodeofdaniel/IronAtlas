@@ -162,7 +162,7 @@ export default function UpsertTemplate() {
           modalData={{
             isSuperset: false,
             uuid: '0',
-            storeType: 'workout',
+            storeType: 'workout'
           }}
         >
           <MyButtonOpacity className="mt-2">
