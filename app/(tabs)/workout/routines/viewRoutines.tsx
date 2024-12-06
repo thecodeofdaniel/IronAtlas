@@ -1,14 +1,13 @@
 import React from 'react';
 import { Pressable, View, TouchableOpacity } from 'react-native';
 import { Stack, useRouter } from 'expo-router';
-import RenderTemplates from '../components/RenderTemplates';
+import RenderTemplates from '../components/RenderRoutines';
 import { Ionicons } from '@expo/vector-icons';
 import { useWorkoutStore } from '@/store/workout/workoutStore';
 import { useThemeContext } from '@/store/context/themeContext';
+import PushOntoStackWrapper from '@/components/PushOntoStackWrapper';
 
-export default function ViewTemplates() {
-  // console.log('Render ViewTemplates');
-  const router = useRouter();
+export default function ViewRoutines() {
   const clearTemplate = useWorkoutStore((state) => state.clearTemplate);
   const { colors } = useThemeContext();
 
@@ -16,20 +15,17 @@ export default function ViewTemplates() {
     <>
       <Stack.Screen
         options={{
-          title: 'Templates',
+          title: 'Routines',
           headerRight: () => (
-            <TouchableOpacity
-              onPress={() => {
-                clearTemplate();
-                router.push('/workout/template/upsertTemplate');
-              }}
-            >
-              <Ionicons
-                name="add"
-                size={24}
-                color={colors['--neutral-contrast']}
-              />
-            </TouchableOpacity>
+            <PushOntoStackWrapper href="/workout/routines/upsertRoutine">
+              <TouchableOpacity onPress={clearTemplate}>
+                <Ionicons
+                  name="add"
+                  size={24}
+                  color={colors['--neutral-contrast']}
+                />
+              </TouchableOpacity>
+            </PushOntoStackWrapper>
           ),
         }}
       />

@@ -112,12 +112,14 @@ export default function UpsertTemplate() {
     <>
       <Stack.Screen
         options={{
-          title: templateWorkoutId ? 'Edit Template' : 'Create Template',
+          title: `${templateWorkoutId ? 'Edit' : 'Create'} Routine`,
           headerBackTitle: 'Back',
           headerRight: () => (
-            <MyButton onPress={onSubmit}>
-              <Text className="font-semibold text-white">Save</Text>
-            </MyButton>
+            <MyButtonOpacity onPress={onSubmit}>
+              <Text className="font-semibold text-white">
+                {templateWorkoutId ? 'Update' : 'Add'}
+              </Text>
+            </MyButtonOpacity>
           ),
         }}
       />
@@ -127,10 +129,10 @@ export default function UpsertTemplate() {
           accessible={false}
         >
           <GestureHandlerRootView style={{ flex: 1, gap: 4 }}>
-            {/* Template Name */}
+            {/* Routine Name */}
             <View>
               <TextContrast className="text-lg font-medium">
-                Template Name
+                Routine Name
               </TextContrast>
               <TextInput
                 onChangeText={(text) => setTemplateName(text)}
@@ -162,7 +164,7 @@ export default function UpsertTemplate() {
           modalData={{
             isSuperset: false,
             uuid: '0',
-            storeType: 'workout'
+            storeType: 'workout',
           }}
         >
           <MyButtonOpacity className="mt-2">

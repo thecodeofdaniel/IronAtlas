@@ -79,7 +79,7 @@ function RenderSingleTemplate({
           case 1:
             loadTemplate(workout.workoutId);
             router.push({
-              pathname: '/(tabs)/workout/template/upsertTemplate',
+              pathname: '/(tabs)/workout/routines/upsertRoutine',
               params: {
                 templateWorkoutId: workout.workoutId,
                 templateWorkoutName: workout.name,
@@ -96,7 +96,7 @@ function RenderSingleTemplate({
   return (
     <MyButton
       className={cn('my-1 bg-neutral-accent px-2', {
-        'bg-neutral-accent/60': selected === workout.workoutId,
+        'border-green-500': selected === workout.workoutId,
       })}
       onPress={() => (setSelected ? setSelected(workout.workoutId) : null)}
     >
@@ -111,15 +111,6 @@ function RenderSingleTemplate({
           onPress={handleOptionsPress}
         />
       </View>
-
-      {/* {item.volumes.map((volume) => (
-        <RenderVolume
-          key={volume.volumeId}
-          exerciseMap={exerciseMap}
-          superSettIndexHolder={ssIndexHolder}
-          volume={volume}
-        />
-      ))} */}
       <FlatList
         data={workout.volumes}
         renderItem={({ item }) => (
@@ -169,7 +160,7 @@ export default function RenderTemplates({ selected, setSelected }: Props) {
         s.settTemplate,
         eq(s.settTemplate.volumeTemplateId, s.volumeTemplate.id),
       )
-      .orderBy(asc(s.workoutTemplate.createdAt)),
+      .orderBy(asc(s.workoutTemplate.name)),
   );
 
   // Transform the flat data into nested structure

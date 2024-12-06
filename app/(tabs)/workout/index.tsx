@@ -24,6 +24,7 @@ import MyButtonOpacity from '@/components/ui/MyButtonOpacity';
 import ViewWorkouts from './workouts/viewWorkouts';
 import RenderWorkouts from './components/RenderWorkouts';
 import TemplateScreen2 from '@/components/Template/Template2';
+import PushOntoStackWrapper from '@/components/PushOntoStackWrapper';
 
 export default function WorkoutTab() {
   const router = useRouter();
@@ -89,16 +90,18 @@ export default function WorkoutTab() {
                 </Text>
               </MyButtonOpacity>
 
-              <MyButtonOpacity
-                className="flex-1 bg-red-500 py-2"
-                onPress={() => {
-                  router.push('/(tabs)/workout/template/viewTemplates');
-                }}
-              >
-                <Text className="text-center font-medium text-white">
-                  View Templates
-                </Text>
-              </MyButtonOpacity>
+              <PushOntoStackWrapper href="/(tabs)/workout/routines/viewRoutines">
+                <MyButtonOpacity
+                  className="flex-1 bg-red-500 py-2"
+                  // onPress={() => {
+                  //   router.push('/(tabs)/workout/template/viewTemplates');
+                  // }}
+                >
+                  <Text className="text-center font-medium text-white">
+                    View Routines
+                  </Text>
+                </MyButtonOpacity>
+              </PushOntoStackWrapper>
             </View>
           </>
         )}

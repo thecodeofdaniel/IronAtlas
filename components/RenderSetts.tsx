@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text } from 'react-native';
-import { TransformedTemplate } from '@/app/(tabs)/workout/components/RenderTemplates';
+import { TransformedTemplate } from '@/app/(tabs)/workout/components/RenderRoutines';
 import { cn } from '@/lib/utils';
 import { TextInput } from 'react-native-gesture-handler';
 

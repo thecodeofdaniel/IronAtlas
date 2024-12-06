@@ -22,7 +22,7 @@ export default function StartWorkout() {
   );
 
   const startWorkout = () => {
-    const options = ['Use template', 'Without template', 'Cancel'];
+    const options = ['Use routine', 'Without routine', 'Cancel'];
     const cancelButtonIndex = options.length - 1;
 
     showActionSheetWithOptions(
@@ -34,7 +34,7 @@ export default function StartWorkout() {
       async (selectedIndex?: number) => {
         switch (selectedIndex) {
           case 0: // use template
-            router.push('/(tabs)/workout/template/selectTemplate');
+            router.push('/(tabs)/workout/routines/selectRoutine');
             break;
           case 1:
             toggleWorkout();

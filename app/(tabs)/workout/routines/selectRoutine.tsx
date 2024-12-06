@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, Pressable } from 'react-native';
 import { Stack, useRouter } from 'expo-router';
 import { useWorkoutStore } from '@/store/workout/workoutStore';
-import RenderTemplates from '@/app/(tabs)/workout/components/RenderTemplates';
+import RenderTemplates from '@/app/(tabs)/workout/components/RenderRoutines';
 import MyButton from '@/components/ui/MyButton';
 import { cn } from '@/lib/utils';
 
@@ -17,7 +17,7 @@ export default function SelectTemplate() {
 
   return (
     <>
-      <Stack.Screen options={{ title: 'Select Template' }} />
+      <Stack.Screen options={{ title: 'Select Routine' }} />
       <View className="flex-1 bg-neutral">
         <View className="flex-1 p-2">
           <RenderTemplates selected={selected} setSelected={setSelected} />
@@ -41,18 +41,18 @@ export default function SelectTemplate() {
                 'text-neutral-contrast/40': isUnselected,
               })}
             >
-              Pick Template
+              Pick Routine
             </Text>
           </MyButton>
           <MyButton
             className="flex-1 bg-blue-500 p-4"
             onPress={() => {
               clearTemplate();
-              router.push('/workout/template/upsertTemplate');
+              router.push('/(tabs)/workout/routines/upsertRoutine');
             }}
           >
             <Text className="text-center font-medium text-neutral-contrast">
-              Create Template
+              Create Routine
             </Text>
           </MyButton>
         </View>
