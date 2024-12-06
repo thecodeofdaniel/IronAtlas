@@ -1,10 +1,16 @@
-import { db } from '@/db/instance';
-import { useTagStoreWithSetter } from '@/store/tag/tagStore';
-import { Stack, useLocalSearchParams } from 'expo-router';
 import React, { useMemo } from 'react';
 import { View, Text, FlatList } from 'react-native';
-import * as schema from '@/db/schema';
-import { inArray } from 'drizzle-orm';
+import { Stack, useLocalSearchParams } from 'expo-router';
+
+import { useTagStoreWithSetter } from '@/store/tag/tagStore';
+import { useExerciseStore } from '@/store/exercise/exerciseStore';
+
+import MyButtonOpacity from '@/components/ui/MyButtonOpacity';
+
+// db stuff
+import { db } from '@/db/instance';
+import * as s from '@/db/schema';
+import { eq, inArray } from 'drizzle-orm';
 
 function getAllChildrenIds(tagMap: TagMap, tagId: number): number[] {
   const tag = tagMap[tagId];
@@ -24,6 +30,7 @@ function getAllChildrenIds(tagMap: TagMap, tagId: number): number[] {
 
 export default function TagId() {
   const { tagId: id } = useLocalSearchParams<{ tagId: string }>();
+  const { exerciseMap } = useExerciseStore((state) => state);
   const { tagMap } = useTagStoreWithSetter();
 
   const currentTag = tagMap[+id];
@@ -37,11 +44,22 @@ export default function TagId() {
   const exercises = useMemo(() => {
     return db
       .select({
-        exerciseId: schema.exerciseTags.exerciseId,
-        tagId: schema.exerciseTags.tagId,
+        exerciseId: s.exerciseTags.exerciseId,
+        tagId: s.exerciseTags.tagId,
       })
-      .from(schema.exerciseTags)
-      .where(inArray(schema.exerciseTags.tagId, allTagIds))
+      .from(s.exerciseTags)
+      .where(eq(s.exerciseTags.tagId, +id))
+      .all();
+  }, [allTagIds]);
+
+  const childrenExercises = useMemo(() => {
+    return db
+      .select({
+        exerciseId: s.exerciseTags.exerciseId,
+        tagId: s.exerciseTags.tagId,
+      })
+      .from(s.exerciseTags)
+      .where(inArray(s.exerciseTags.tagId, allChildrenIds))
       .all();
   }, [allTagIds]);
 
@@ -49,18 +67,22 @@ export default function TagId() {
     new Set(exercises.map((exercise) => exercise.exerciseId)),
   );
 
+  const childrenExerciseIds = Array.from(
+    new Set(childrenExercises.map((exercise) => exercise.exerciseId)),
+  );
+
   // console.log(exerciseIds);
 
-  const exercisesByTag = useMemo(() => {
-    return exercises.reduce<Record<number, number[]>>(
-      (acc, { exerciseId, tagId }) => {
-        if (!acc[tagId]) acc[tagId] = [];
-        acc[tagId].push(exerciseId);
-        return acc;
-      },
-      {},
-    );
-  }, [exercises]);
+  // const exercisesByTag = useMemo(() => {
+  //   return exercises.reduce<Record<number, number[]>>(
+  //     (acc, { exerciseId, tagId }) => {
+  //       if (!acc[tagId]) acc[tagId] = [];
+  //       acc[tagId].push(exerciseId);
+  //       return acc;
+  //     },
+  //     {},
+  //   );
+  // }, [exercises]);
 
   return (
     <>
@@ -70,21 +92,50 @@ export default function TagId() {
           headerBackTitle: 'Back',
         }}
       />
-      <View>
-        <Text>Current Tag Exercises: {exercisesByTag[+id]?.length || 0}</Text>
-        <Text>All Children:</Text>
-        <FlatList
-          data={allChildrenIds}
-          keyExtractor={(item) => item.toString()}
-          renderItem={({ item }) => (
-            <View>
-              <Text className="text-black">{tagMap[item].label}</Text>
-              <Text className="text-gray-600">
-                Exercises: {exercisesByTag[item]?.length || 0}
-              </Text>
-            </View>
-          )}
-        />
+      <View className="flex-1 gap-2 bg-neutral p-2">
+        {exerciseIds.length === 0 && childrenExerciseIds.length === 0 && (
+          <View>
+            <Text className="text-neutral-contrast">
+              No exercises related to this tag :(
+            </Text>
+          </View>
+        )}
+        {exerciseIds.length > 0 && (
+          <View className="gap-1">
+            <Text className="text-xl font-medium text-neutral-contrast">
+              Exercises
+            </Text>
+            <FlatList
+              data={exerciseIds}
+              keyExtractor={(item) => item.toString()}
+              renderItem={({ item }) => (
+                <MyButtonOpacity className="my-[1] bg-neutral-accent">
+                  <Text className="text-neutral-contrast">
+                    {exerciseMap[item].label}
+                  </Text>
+                </MyButtonOpacity>
+              )}
+            />
+          </View>
+        )}
+        {childrenExerciseIds.length > 0 && (
+          <View className="gap-1">
+            <Text className="text-lg font-medium text-neutral-contrast">
+              Children Exercises
+            </Text>
+            <FlatList
+              data={childrenExerciseIds}
+              keyExtractor={(item) => item.toString()}
+              renderItem={({ item }) => (
+                <MyButtonOpacity className="my-[1] bg-neutral-accent">
+                  <Text className="text-neutral-contrast">
+                    {exerciseMap[item].label}
+                  </Text>
+                </MyButtonOpacity>
+              )}
+            />
+          </View>
+        )}
       </View>
     </>
   );
