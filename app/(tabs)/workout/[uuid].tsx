@@ -114,7 +114,12 @@ export default function Exercise() {
             setIndex={setIndex}
           />
         )}
-        <ExerciseHistory key={uuid} uuid={uuid} className="h-52 border" />
+        {/* <View className="flex flex-row gap-2 border">
+          <ExerciseHistory key={uuid} uuid={uuid} className="h-52 flex-1" />
+          <ExerciseHistory key={uuid} uuid={uuid} className="h-52 flex-1" />
+        </View> */}
+
+        <ExerciseHistory key={uuid} uuid={uuid} className="h-52" />
       </Animated.View>
     </>
   );

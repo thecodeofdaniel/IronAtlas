@@ -13,6 +13,7 @@ import clsx from 'clsx';
 import RenderVolume from '@/app/(tabs)/workout/components/RenderVolume';
 import RenderSetts from './RenderSetts';
 import { cn } from '@/lib/utils';
+import MyBorder from './ui/MyBorder';
 
 type TransformedWorkout = {
   workoutId: number;
@@ -40,28 +41,22 @@ type RenderWorkoutProps = {
 };
 
 function RenderWorkout({ item, index, exerciseMap }: RenderWorkoutProps) {
-  const ssIndexHolder = new Set<number>();
-
   return (
-    <Pressable className={'my-1 border px-2'}>
+    <MyBorder className="my-[1] bg-neutral-accent px-2">
       <Text className="text-lg font-semibold text-neutral-contrast">
         {item.workoutDate.toLocaleDateString()}
       </Text>
 
       {item.volumes.map((volume) => {
-        const orderStr = `${volume.index + 1}${volume.subIndex !== null ? `.${volume.subIndex + 1}` : ''})`;
+        const exerciseOrder = `${volume.index + 1}${volume.subIndex !== null ? `.${volume.subIndex + 1}` : ''})`;
         return (
           <View key={volume.volumeId} className="flex flex-row gap-2">
-            <Text className="text-neutral-contrast">{orderStr}</Text>
-            <RenderSetts
-              volume={volume}
-              // exerciseMap={exerciseMap}
-              // superSettIndexHolder={ssIndexHolder}
-            />
+            <Text className="text-neutral-contrast">{exerciseOrder}</Text>
+            <RenderSetts volume={volume} />
           </View>
         );
       })}
-    </Pressable>
+    </MyBorder>
   );
 }
 
@@ -139,13 +134,7 @@ export default function ExerciseHistory({ uuid, className }: Props) {
   }, [rawWorkouts]);
 
   if (workouts.length === 0) {
-    return (
-      <View
-        className={clsx('flex flex-col items-center justify-center', className)}
-      >
-        <Text>No previous history</Text>
-      </View>
-    );
+    return <View className={cn(className)}></View>;
   }
 
   return (
