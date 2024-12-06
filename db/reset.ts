@@ -6,3 +6,7 @@ export async function reset() {
   await db.delete(schema.exercise);
   await db.delete(schema.exerciseTags);
 }
+
+export async function deleteWorkouts() {
+  await db.delete(schema.workout);
+}

@@ -11,5 +11,11 @@ export const getActionSheetStyle = (
     textStyle: {
       color: colors['--neutral-contrast'],
     },
+    titleTextStyle: {
+      color: colors['--neutral-contrast'],
+      opacity: 0.7,
+      fontWeight: 'bold',
+    },
+    messageTextStyle: { color: colors['--neutral-contrast'], opacity: 0.6 },
   };
 };
