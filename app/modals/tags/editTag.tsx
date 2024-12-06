@@ -4,6 +4,7 @@ import { Stack, useRouter } from 'expo-router';
 import { useTagStoreWithSetter } from '@/store/zustand/tag/tagStore';
 import { ModalData } from '@/store/zustand/modal/modalStore';
 import { formatTagOrExercise, isValidTagOrExercise } from '@/utils/utils';
+import MyButtonOpacity from '@/components/ui/MyButtonOpacity';
 
 type Props = {
   modalData: ModalData['updateTag'];
@@ -16,53 +17,68 @@ export default function EditTag({ modalData, closeModal }: Props) {
   const id = modalData.id;
   const { tagMap, tagSet, setter } = useTagStoreWithSetter();
   const ogName = tagMap[id].label;
+  const [name, setName] = useState(ogName);
+  const [error, setError] = useState('');
 
   // Prefill the input with the existing exercise name
-  const [name, setName] = useState(ogName);
 
   // Handle the update button press
   const handleUpdate = () => {
-    if (!isValidTagOrExercise(name)) {
-      // console.log('Not a valid tag name:', name);
+    const tagLabel = name.trim();
+
+    if (tagLabel === '') {
+      setError('Give a name to the tag :)');
       return;
     }
 
-    const tagValue = formatTagOrExercise(name);
-    const tagLabel = name.trim();
+    if (tagLabel === ogName) {
+      router.back();
+    }
 
-    if (tagSet.has(tagValue) && tagMap[id].label === tagLabel) {
-      // console.log('Tag alreay exists', name);
+    if (!isValidTagOrExercise(tagLabel)) {
+      setError('Not a valid tag name!');
+      return;
+    }
+
+    const tagValue = formatTagOrExercise(tagLabel);
+    if (tagSet.has(tagValue)) {
+      setError(`Tag name with ${tagLabel} already exists`);
       return;
     }
 
     setter.editTagTitle(id, tagLabel, tagValue);
     closeModal();
-    router.back(); // Navigate back after update
+    router.back();
   };
 
   // Handle the cancel button press
   const handleCancel = () => {
-    router.back(); // Navigate back without updating
+    router.back();
   };
 
   return (
     <>
       <Stack.Screen options={{ headerTitle: 'Edit' }} />
-      <View className="flex-1 p-4">
-        <Text className="mb-2 text-xl">Edit Tag Name</Text>
-        <TextInput
-          className="h-10 border border-gray-400 px-2"
-          value={name}
-          onChangeText={setName}
-          placeholder="Enter exercise name"
-        />
-        <View className="mt-4 flex-row justify-between">
-          <Button title="Cancel" onPress={handleCancel} color="red" />
-          <Button
-            title="Update"
-            onPress={handleUpdate}
-            disabled={name === ogName || name.length === 0}
+      <View className="flex-1 gap-2 bg-neutral p-4">
+        <View className="gap-1">
+          <Text className="text-lg font-medium text-white">Tag Name</Text>
+          <TextInput
+            className="h-10 border border-gray-400 px-2 text-neutral-contrast"
+            value={name}
+            onChangeText={setName}
           />
+          {error && <Text className="text-red-500">{error}</Text>}
+        </View>
+        <View className="flex flex-row justify-between gap-2">
+          <MyButtonOpacity onPress={handleCancel} className="flex-1">
+            <Text className="text-center font-medium text-white">Cancel</Text>
+          </MyButtonOpacity>
+          <MyButtonOpacity
+            onPress={handleUpdate}
+            className="flex-1 bg-green-500"
+          >
+            <Text className="text-center font-medium text-white">Update</Text>
+          </MyButtonOpacity>
         </View>
       </View>
     </>
