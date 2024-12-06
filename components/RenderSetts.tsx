@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text } from 'react-native';
 import { TransformedTemplate } from '@/app/(tabs)/workout/components/RenderTemplates';
 import { cn } from '@/lib/utils';
+import { TextInput } from 'react-native-gesture-handler';
 
 type Props = {
   volume: TransformedTemplate['volumes'][0];
@@ -77,8 +78,21 @@ export default function RenderSetts({ volume, className }: Props) {
       >
         {finalText}
       </Text>
+      // <TextInput
+      //   key={idx}
+      //   multiline
+      //   editable={false}
+      //   value={finalText}
+      //   className={cn('text-sm text-neutral-contrast/70', {
+      //     'text-purple-400/70': type === 'D',
+      //   })}
+      // />
     );
   });
 
-  return <View className={cn('flex flex-row', className)}>{setsDisplay}</View>;
+  return (
+    <View className={cn('flex flex-row flex-wrap', className)}>
+      {setsDisplay}
+    </View>
+  );
 }
