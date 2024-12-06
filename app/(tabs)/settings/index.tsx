@@ -1,11 +1,13 @@
 import React from 'react';
 import { View, Text, Alert } from 'react-native';
-import { Stack } from 'expo-router';
+import { Stack, useRouter } from 'expo-router';
 import { useThemeContext } from '@/store/context/themeContext';
 import { useActionSheet } from '@expo/react-native-action-sheet';
 import { getActionSheetStyle } from '@/lib/actionSheetConfig';
 import { deleteWorkouts } from '@/db/reset';
 import Button from '@/components/ui/MyButton';
+import MyButtonOpacity from '@/components/ui/MyButtonOpacity';
+import PushOntoStackWrapper from '@/components/PushOntoStackWrapper';
 
 export default function SettingsTab() {
   const { colors, themeName, setTheme } = useThemeContext();
@@ -49,7 +51,7 @@ export default function SettingsTab() {
       <Stack.Screen options={{ title: 'Settings' }} />
       <View className="flex flex-1 flex-col gap-2 bg-neutral p-2">
         <View className="flex flex-row items-center gap-2">
-          <Text className="w-40 text-xl font-medium text-neutral-contrast">
+          <Text className="w-44 text-xl font-medium text-neutral-contrast">
             Theme Settings
           </Text>
           <Button onPress={setTheme} className="flex-1 bg-neutral-accent">
@@ -59,7 +61,7 @@ export default function SettingsTab() {
           </Button>
         </View>
         <View className="flex flex-row items-center gap-2">
-          <Text className="w-40 text-xl font-medium text-neutral-contrast">
+          <Text className="w-44 text-xl font-medium text-neutral-contrast">
             Workout Settings
           </Text>
           <Button
@@ -70,6 +72,18 @@ export default function SettingsTab() {
               Delete All Previous Workouts
             </Text>
           </Button>
+        </View>
+        <View className="flex flex-row items-center gap-2">
+          <Text className="w-44 text-xl font-medium text-neutral-contrast">
+            Feedback Settings
+          </Text>
+          <PushOntoStackWrapper href="/(tabs)/settings/feedback">
+            <MyButtonOpacity className="flex-1 bg-neutral-accent">
+              <Text className="text-center text-xl text-neutral-contrast">
+                Send feedback
+              </Text>
+            </MyButtonOpacity>
+          </PushOntoStackWrapper>
         </View>
       </View>
     </>

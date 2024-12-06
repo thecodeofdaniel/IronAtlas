@@ -17,7 +17,7 @@ import {
   useWorkoutStore,
   useWorkoutStoreHook,
 } from '@/store/workout/workoutStore';
-import PushOntoStack from '@/components/PushOntoStack';
+import PushOntoStack from '@/components/PushOntoStackWrapper';
 import MyButton from '@/components/ui/MyButton';
 import TextContrast from '@/components/ui/TextContrast';
 import MyButtonOpacity from '@/components/ui/MyButtonOpacity';
