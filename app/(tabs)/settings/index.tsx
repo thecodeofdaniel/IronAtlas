@@ -73,7 +73,7 @@ export default function SettingsTab() {
             </Text>
           </Button>
         </View>
-        <View className="flex flex-row items-center gap-2">
+        {/* <View className="flex flex-row items-center gap-2">
           <Text className="w-44 text-xl font-medium text-neutral-contrast">
             Feedback Settings
           </Text>
@@ -84,7 +84,7 @@ export default function SettingsTab() {
               </Text>
             </MyButtonOpacity>
           </PushOntoStackWrapper>
-        </View>
+        </View> */}
       </View>
     </>
   );
