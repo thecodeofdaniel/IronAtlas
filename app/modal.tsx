@@ -1,6 +1,6 @@
 // Modal Manager
 
-import { ModalData, useModalStore } from '@/store/modalStore';
+import { ModalData, useModalStore } from '@/store/zustand/modal/modalStore';
 import EditExerciseOrMuscleModal from './modals/tags/editTag';
 import AddExerciseOrMuscleModal from './modals/tags/createTag';
 import MoveTag from '@/app/modals/tags/moveTag';

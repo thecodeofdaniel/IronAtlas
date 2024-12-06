@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import MyButtonOpacity from '../ui/MyButtonOpacity';
-import { useWorkoutStore } from '@/store/workout/workoutStore';
+import { useWorkoutStore } from '@/store/zustand/workout/workoutStore';
 import { useThemeContext } from '@/store/context/themeContext';
 
 const ARROW_ICON_SIZE = 24;

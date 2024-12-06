@@ -3,7 +3,7 @@ import { Pressable, View, TouchableOpacity } from 'react-native';
 import { Stack, useRouter } from 'expo-router';
 import RenderTemplates from '../components/RenderRoutines';
 import { Ionicons } from '@expo/vector-icons';
-import { useWorkoutStore } from '@/store/workout/workoutStore';
+import { useWorkoutStore } from '@/store/zustand/workout/workoutStore';
 import { useThemeContext } from '@/store/context/themeContext';
 import PushOntoStackWrapper from '@/components/PushOntoStackWrapper';
 

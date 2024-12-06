@@ -9,17 +9,17 @@ import { Ionicons } from '@expo/vector-icons';
 import {
   useTagStoreWithSetter,
   type TagStateFunctions,
-} from '@/store/tag/tagStore';
+} from '@/store/zustand/tag/tagStore';
 import {
   ActionSheetProvider,
   useActionSheet,
 } from '@expo/react-native-action-sheet';
 import { Stack, useRouter } from 'expo-router';
-import { useModalStore } from '@/store/modalStore';
+import { useModalStore } from '@/store/zustand/modal/modalStore';
 import {
   ExerciseStateFunctions,
   useExerciseStoreWithSetter,
-} from '@/store/exercise/exerciseStore';
+} from '@/store/zustand/exercise/exerciseStore';
 import { Link } from 'expo-router';
 import { getActionSheetStyle } from '@/lib/actionSheetConfig';
 import { useThemeContext } from '@/store/context/themeContext';

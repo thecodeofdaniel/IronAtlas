@@ -78,15 +78,6 @@ export default function RenderSetts({ volume, className }: Props) {
       >
         {finalText}
       </Text>
-      // <TextInput
-      //   key={idx}
-      //   multiline
-      //   editable={false}
-      //   value={finalText}
-      //   className={cn('text-sm text-neutral-contrast/70', {
-      //     'text-purple-400/70': type === 'D',
-      //   })}
-      // />
     );
   });
 

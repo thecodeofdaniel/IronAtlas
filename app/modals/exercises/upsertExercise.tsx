@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity } from 'react-native';
-import { ModalData } from '@/store/modalStore';
+import { ModalData } from '@/store/zustand/modal/modalStore';
 import { Stack, useRouter } from 'expo-router';
-import { useExerciseStoreWithSetter } from '@/store/exercise/exerciseStore';
-import { useTagStoreWithSetter } from '@/store/tag/tagStore';
+import { useExerciseStoreWithSetter } from '@/store/zustand/exercise/exerciseStore';
+import { useTagStoreWithSetter } from '@/store/zustand/tag/tagStore';
 import { getAllParentIds } from '@/utils/utils';
 import TagTree from '@/components/SelectFromTagTree';
 import { formatTagOrExercise, isValidTagOrExercise } from '@/utils/utils';

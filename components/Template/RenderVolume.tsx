@@ -1,8 +1,7 @@
 import React from 'react';
 import { View, Text } from 'react-native';
-import { TransformedTemplate } from './RenderRoutines';
-import { cn } from '@/lib/utils';
-import RenderSetts from '@/components/RenderSetts';
+import { TransformedTemplate } from '../../app/(tabs)/workout/components/RenderRoutines';
+import RenderSetts from '@/components/Template/RenderSetts';
 
 type Props = {
   superSettIndexHolder: Set<number>;

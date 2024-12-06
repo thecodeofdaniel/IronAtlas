@@ -2,12 +2,12 @@ import { db } from '@/db/instance';
 import {
   ExerciseStateFunctions,
   useExerciseStoreWithSetter,
-} from '@/store/exercise/exerciseStore';
-import { useModalStore } from '@/store/modalStore';
+} from '@/store/zustand/exercise/exerciseStore';
+import { useModalStore } from '@/store/zustand/modal/modalStore';
 import {
   useTagStoreWithSetter,
   type TagStateFunctions,
-} from '@/store/tag/tagStore';
+} from '@/store/zustand/tag/tagStore';
 import { useActionSheet } from '@expo/react-native-action-sheet';
 import { Ionicons } from '@expo/vector-icons';
 import clsx from 'clsx';
@@ -22,7 +22,7 @@ import * as schema from '@/db/schema';
 import { asc, eq, inArray } from 'drizzle-orm';
 import { getAllChildrenIds } from '@/utils/utils';
 import MultiDropDown from '@/components/MultiDropDown';
-import { useFilterExerciseStore } from '@/store/filterExercises/filterExercisesStore';
+import { useFilterExerciseStore } from '@/store/zustand/filterExercises/filterExercisesStore';
 import { useThemeContext } from '@/store/context/themeContext';
 import { getActionSheetStyle } from '@/lib/actionSheetConfig';
 import MyButtonOpacity from '@/components/ui/MyButtonOpacity';

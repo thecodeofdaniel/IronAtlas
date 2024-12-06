@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text } from 'react-native';
 import { Router } from 'expo-router';
-import { WorkoutStateFunctions } from '@/store/workout/workoutStore';
+import { WorkoutStateFunctions } from '@/store/zustand/workout/workoutStore';
 import MyButtonOpacity from '@/components/ui/MyButtonOpacity';
 import { cn } from '@/lib/utils';
 

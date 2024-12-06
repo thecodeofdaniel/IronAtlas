@@ -8,12 +8,12 @@ import { useLiveQuery } from 'drizzle-orm/expo-sqlite';
 import { desc, eq, inArray } from 'drizzle-orm';
 
 import { type Router, useRouter } from 'expo-router';
-import { useExerciseStore } from '@/store/exercise/exerciseStore';
+import { useExerciseStore } from '@/store/zustand/exercise/exerciseStore';
 import { FlatList, GestureHandlerRootView } from 'react-native-gesture-handler';
 import { useActionSheet } from '@expo/react-native-action-sheet';
-import { useWorkoutStore } from '@/store/workout/workoutStore';
+import { useWorkoutStore } from '@/store/zustand/workout/workoutStore';
 import { Ionicons } from '@expo/vector-icons';
-import RenderVolume from './RenderVolume';
+import RenderVolume from '../../../../components/Template/RenderVolume';
 import MyButton from '@/components/ui/MyButton';
 import MyBorder from '@/components/ui/MyBorder';
 import { useThemeContext } from '@/store/context/themeContext';

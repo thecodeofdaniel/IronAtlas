@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, ScrollView } from 'react-native';
-import { useExerciseStore } from '@/store/exercise/exerciseStore';
-import { useWorkoutStore } from '@/store/workout/workoutStore';
+import { useExerciseStore } from '@/store/zustand/exercise/exerciseStore';
+import { useWorkoutStore } from '@/store/zustand/workout/workoutStore';
 import { setsTableStyles as styles } from './setsTableStyles';
 
 type Props = {

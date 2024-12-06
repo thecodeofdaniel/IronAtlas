@@ -10,13 +10,12 @@ import TrackExercise from '@/components/SetsTable/SetsTable';
 import Popover, { PopoverPlacement } from 'react-native-popover-view';
 import StartWorkout from '@/app/(tabs)/workout/components/StartWorkout';
 import StartWorkout2 from '@/app/(tabs)/workout/components/StartWorkout';
-import { useModalStore } from '@/store/modalStore';
-import TemplateScreen from '../../../components/TemplateOG/Template';
+import { useModalStore } from '@/store/zustand/modal/modalStore';
 import OpenModalWrapper from '@/components/OpenModalWrapper';
 import {
   useWorkoutStore,
   useWorkoutStoreHook,
-} from '@/store/workout/workoutStore';
+} from '@/store/zustand/workout/workoutStore';
 import PushOntoStack from '@/components/PushOntoStackWrapper';
 import MyButton from '@/components/ui/MyButton';
 import TextContrast from '@/components/ui/TextContrast';

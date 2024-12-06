@@ -1,5 +1,5 @@
 import React from 'react';
-import { ModalData, useModalStore } from '@/store/modalStore';
+import { ModalData, useModalStore } from '@/store/zustand/modal/modalStore';
 import { useRouter } from 'expo-router';
 
 type OpenModalButtonProps = {

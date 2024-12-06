@@ -2,9 +2,9 @@ import React, { useMemo } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { MultiSelect } from 'react-native-element-dropdown';
 import { Ionicons } from '@expo/vector-icons';
-import { useFilterExerciseStore } from '@/store/filterExercises/filterExercisesStore';
-import { useExerciseStore } from '@/store/exercise/exerciseStore';
-import { useTagStore } from '@/store/tag/tagStore';
+import { useFilterExerciseStore } from '@/store/zustand/filterExercises/filterExercisesStore';
+import { useExerciseStore } from '@/store/zustand/exercise/exerciseStore';
+import { useTagStore } from '@/store/zustand/tag/tagStore';
 
 // db stuff
 import { db } from '@/db/instance';

@@ -4,8 +4,8 @@ import DraggableFlatList, {
   RenderItemParams,
 } from 'react-native-draggable-flatlist';
 
-import { WorkoutStateFunctions } from '@/store/workout/workoutStore';
-import { useExerciseStore } from '@/store/exercise/exerciseStore';
+import { WorkoutStateFunctions } from '@/store/zustand/workout/workoutStore';
+import { useExerciseStore } from '@/store/zustand/exercise/exerciseStore';
 
 import TemplateRow from './TemplateRow';
 import { cn } from '@/lib/utils';

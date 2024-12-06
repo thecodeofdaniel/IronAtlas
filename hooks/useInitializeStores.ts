@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
-import { useExerciseStore } from '@/store/exercise/exerciseStore';
-import { useTagStore } from '@/store/tag/tagStore';
+import { useExerciseStore } from '@/store/zustand/exercise/exerciseStore';
+import { useTagStore } from '@/store/zustand/tag/tagStore';
 
 export function useInitializeStores() {
   const initExerciseStore = useExerciseStore(

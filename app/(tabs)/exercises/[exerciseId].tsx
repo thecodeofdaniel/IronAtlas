@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text } from 'react-native';
 import { Stack, useLocalSearchParams } from 'expo-router';
-import { useExerciseStore } from '@/store/exercise/exerciseStore';
+import { useExerciseStore } from '@/store/zustand/exercise/exerciseStore';
 import Progression from '@/components/Progression/Progression';
 import ExerciseHistory from '@/components/ExerciseHistory/ExerciseHistory';
 
@@ -17,8 +17,6 @@ export default function ExerciseId() {
         <Text className="text-2xl font-semibold text-neutral-contrast">
           Workout History
         </Text>
-        {/* <ExerciseHistory2 exerciseId={+exerciseId} /> */}
-        {/* <ExerciseHistory /> */}
         <ExerciseHistory exerciseId={+exerciseId} />
         <Progression exerciseId={+exerciseId} />
       </View>

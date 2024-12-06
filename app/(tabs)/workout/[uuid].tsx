@@ -1,8 +1,8 @@
 import { Pressable, Text, View } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { Link, Stack, useLocalSearchParams } from 'expo-router';
-import { useWorkoutStore } from '@/store/workout/workoutStore';
-import { useExerciseStore } from '@/store/exercise/exerciseStore';
+import { useWorkoutStore } from '@/store/zustand/workout/workoutStore';
+import { useExerciseStore } from '@/store/zustand/exercise/exerciseStore';
 import SetsTable from '@/components/SetsTable/SetsTable';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import Animated, {

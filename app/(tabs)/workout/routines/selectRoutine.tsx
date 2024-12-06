@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, Pressable } from 'react-native';
 import { Stack, useRouter } from 'expo-router';
-import { useWorkoutStore } from '@/store/workout/workoutStore';
+import { useWorkoutStore } from '@/store/zustand/workout/workoutStore';
 import RenderTemplates from '@/app/(tabs)/workout/components/RenderRoutines';
 import MyButton from '@/components/ui/MyButton';
 import { cn } from '@/lib/utils';

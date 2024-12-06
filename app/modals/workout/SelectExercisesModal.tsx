@@ -2,9 +2,12 @@ import { db } from '@/db/instance';
 import {
   useExerciseStore,
   useExerciseStoreWithSetter,
-} from '@/store/exercise/exerciseStore';
-import { ModalData } from '@/store/modalStore';
-import { useTagStore, useTagStoreWithSetter } from '@/store/tag/tagStore';
+} from '@/store/zustand/exercise/exerciseStore';
+import { ModalData } from '@/store/zustand/modal/modalStore';
+import {
+  useTagStore,
+  useTagStoreWithSetter,
+} from '@/store/zustand/tag/tagStore';
 
 import clsx from 'clsx';
 import { Stack, useRouter } from 'expo-router';
@@ -14,13 +17,13 @@ import * as schema from '@/db/schema';
 import { asc, eq, inArray } from 'drizzle-orm';
 import { getAllChildrenIds } from '@/utils/utils';
 import MultiDropDown from '@/components/MultiDropDown';
-import { useFilterExerciseStore } from '@/store/filterExercises/filterExercisesStore';
+import { useFilterExerciseStore } from '@/store/zustand/filterExercises/filterExercisesStore';
 import {
   useWorkoutStore,
+  useWorkoutStoreHook,
   WorkoutStateFunctions,
   WorkoutStateVal,
-} from '@/store/workout/workoutStore';
-import { useExerciseSelectionHook } from '@/store/exerciseSelection/exerciseSelectionHook';
+} from '@/store/zustand/workout/workoutStore';
 import AddExercisesOrSuperset from './components/AddExercisesOrSuperset';
 import MyButton from '@/components/ui/MyButton';
 import MyButtonOpacity from '@/components/ui/MyButtonOpacity';
@@ -113,8 +116,10 @@ export default function SelectExercisesModal({
   const { exerciseMap, exercisesList } = useExerciseStore((state) => state);
   const tagMap = useTagStore((state) => state.tagMap);
   const selectedTags = useFilterExerciseStore((state) => state.selectedTags);
+  // const { pickedExercises, pickedExercisesSet, actions } =
+  //   useExerciseSelectionHook(storeType);
   const { pickedExercises, pickedExercisesSet, actions } =
-    useExerciseSelectionHook(storeType);
+    useWorkoutStoreHook();
 
   let filteredExercises = exercisesList;
 

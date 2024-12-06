@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text } from 'react-native';
 import MyBorder from '@/components/ui/MyBorder';
-import RenderSetts from '@/components/RenderSetts';
+import RenderSetts from '@/components/Template/RenderSetts';
 import { type TransformedWorkout } from './ExerciseHistory';
 
 type RenderWorkoutProps = {

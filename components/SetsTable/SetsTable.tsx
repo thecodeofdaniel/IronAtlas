@@ -4,7 +4,7 @@ import DraggableFlatList, {
 } from 'react-native-draggable-flatlist';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
-import { useWorkoutStore } from '@/store/workout/workoutStore';
+import { useWorkoutStore } from '@/store/zustand/workout/workoutStore';
 
 import SetsTableHeader from './SetsTableHeader';
 import SetTableRow from './SetsTableRow';

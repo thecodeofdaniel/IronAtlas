@@ -2,8 +2,8 @@ import React, { useMemo } from 'react';
 import { View, Text, FlatList } from 'react-native';
 import { Stack, useLocalSearchParams } from 'expo-router';
 
-import { useTagStoreWithSetter } from '@/store/tag/tagStore';
-import { useExerciseStore } from '@/store/exercise/exerciseStore';
+import { useTagStoreWithSetter } from '@/store/zustand/tag/tagStore';
+import { useExerciseStore } from '@/store/zustand/exercise/exerciseStore';
 
 import MyButtonOpacity from '@/components/ui/MyButtonOpacity';
 

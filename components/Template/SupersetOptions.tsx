@@ -1,6 +1,6 @@
 import React from 'react';
 import { useRouter } from 'expo-router';
-import { useModalStore } from '@/store/modalStore';
+import { useModalStore } from '@/store/zustand/modal/modalStore';
 import { useActionSheet } from '@expo/react-native-action-sheet';
 import SupersetAddIcon from './SupersetAddIcon';
 import { useThemeContext } from '@/store/context/themeContext';

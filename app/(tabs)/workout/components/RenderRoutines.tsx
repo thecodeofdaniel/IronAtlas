@@ -6,16 +6,16 @@ import { db } from '@/db/instance';
 import * as s from '@/db/schema/template';
 import { FlatList, GestureHandlerRootView } from 'react-native-gesture-handler';
 import { asc, eq } from 'drizzle-orm';
-import { useExerciseStore } from '@/store/exercise/exerciseStore';
+import { useExerciseStore } from '@/store/zustand/exercise/exerciseStore';
 import { Ionicons } from '@expo/vector-icons';
 import { useActionSheet } from '@expo/react-native-action-sheet';
-import { useWorkoutStore } from '@/store/workout/workoutStore';
+import { useWorkoutStore } from '@/store/zustand/workout/workoutStore';
 import { useThemeContext } from '@/store/context/themeContext';
 import { getActionSheetStyle } from '@/lib/actionSheetConfig';
 import { cn } from '@/lib/utils';
 import TextContrast from '@/components/ui/TextContrast';
 import MyButton from '@/components/ui/MyButton';
-import RenderVolume from './RenderVolume';
+import RenderVolume from '../../../../components/Template/RenderVolume';
 
 export interface TransformedTemplate {
   workoutId: number;

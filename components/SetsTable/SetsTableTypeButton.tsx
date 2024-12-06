@@ -1,7 +1,7 @@
 import React from 'react';
 import { Text, Pressable } from 'react-native';
 import { setsTableStyles as styles } from './setsTableStyles';
-import { type WorkoutStateFunctions } from '@/store/workout/workoutStore';
+import { type WorkoutStateFunctions } from '@/store/zustand/workout/workoutStore';
 import { cn } from '@/lib/utils';
 
 type Props = {

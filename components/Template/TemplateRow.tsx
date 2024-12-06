@@ -1,8 +1,8 @@
-import { useModalStore } from '@/store/modalStore';
+import { useModalStore } from '@/store/zustand/modal/modalStore';
 import {
   useWorkoutStore,
   WorkoutStateFunctions,
-} from '@/store/workout/workoutStore';
+} from '@/store/zustand/workout/workoutStore';
 import { useActionSheet } from '@expo/react-native-action-sheet';
 import { Link, useRouter } from 'expo-router';
 import React from 'react';

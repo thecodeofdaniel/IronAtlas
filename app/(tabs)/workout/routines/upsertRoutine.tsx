@@ -9,8 +9,8 @@ import {
   Button,
 } from 'react-native';
 import TemplateScreen2 from '../../../../components/Template/Template2';
-import { useModalStore } from '@/store/modalStore';
-import { useWorkoutStoreHook } from '@/store/workout/workoutStore';
+import { useModalStore } from '@/store/zustand/modal/modalStore';
+import { useWorkoutStoreHook } from '@/store/zustand/workout/workoutStore';
 import {
   GestureHandlerRootView,
   TextInput,
