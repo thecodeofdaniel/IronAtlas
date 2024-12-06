@@ -62,6 +62,8 @@ const DraggableTree = ({
       Delete: () => setter.deleteTag(pressedId),
       Create: () => openModal('createTag', { pressedId }),
       Edit: () => openModal('updateTag', { id: pressedId }),
+      // Create: () => openModal('upsertTag'),
+      // Edit: () => openModal('upsertTag', { id: pressedId }),
       Move: () => openModal('moveTag', { pressedId }),
     };
 

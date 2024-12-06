@@ -30,6 +30,8 @@ export default function transformDbTagsToState(): TagStateVal {
         isOpen: dbTag.isOpen,
         children: [],
       };
+
+      tagSet.add(dbTag.value);
     }
 
     // Second pass: populate children arrays for each tag object and sort by order

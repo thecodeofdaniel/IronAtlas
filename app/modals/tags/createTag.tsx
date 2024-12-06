@@ -4,6 +4,8 @@ import { ModalData } from '@/store/zustand/modal/modalStore';
 import { Stack, useRouter } from 'expo-router';
 import { useTagStoreWithSetter } from '@/store/zustand/tag/tagStore';
 import { formatTagOrExercise, isValidTagOrExercise } from '@/utils/utils';
+import MyButtonOpacity from '@/components/ui/MyButtonOpacity';
+import { useThemeContext } from '@/store/context/themeContext';
 
 type Props = {
   modalData: ModalData['createTag'];
@@ -15,20 +17,26 @@ export default function CreateTag({ modalData, closeModal }: Props) {
   const router = useRouter();
   const { tagMap, tagSet, setter } = useTagStoreWithSetter();
   const [name, setName] = useState('');
+  const [error, setError] = useState('');
 
   const handleCancel = () => {
     closeModal();
     router.back();
   };
 
-  const handleUpdate = () => {
+  const handleCreate = () => {
+    if (name.trim() === '') {
+      setError('Name cannot be blank');
+      return;
+    }
+
     if (!isValidTagOrExercise(name)) {
-      // console.log('Not a valid tag name:', name);
+      setError('Not a valid tag name! Only use letters');
       return;
     }
 
     if (tagSet.has(formatTagOrExercise(name))) {
-      // console.log('Tag alreay exists', name);
+      setError('Tag already exists!');
       return;
     }
 
@@ -39,25 +47,34 @@ export default function CreateTag({ modalData, closeModal }: Props) {
 
   return (
     <>
-      <Stack.Screen options={{ headerTitle: 'Add' }} />
-      <View className="flex-1 p-4">
-        <Text className="mb-2 text-xl">
-          Add tag under{' '}
-          <Text className="font-bold underline">{tagMap[pressedId].label}</Text>
-        </Text>
-        <TextInput
-          className="h-10 border border-gray-400 px-2"
-          value={name}
-          onChangeText={setName}
-          placeholder="Enter exercise name"
-        />
-        <View className="mt-4 flex-row justify-between">
-          <Button title="Cancel" onPress={handleCancel} color="red" />
-          <Button
-            title="Update"
-            onPress={handleUpdate}
-            disabled={name === ''}
+      <Stack.Screen
+        options={{ headerTitle: `Create Tag Under ${tagMap[pressedId].label}` }}
+      />
+      <View className="flex-1 gap-2 bg-neutral p-4">
+        <View className="gap-1">
+          <Text className="text-lg font-medium text-neutral-contrast">
+            Tag Name
+          </Text>
+          <TextInput
+            className="h-10 border border-neutral-accent px-2 text-neutral-contrast"
+            value={name}
+            onChangeText={setName}
+            autoCapitalize="none"
           />
+          {error && <Text className="text-red-500">{error}</Text>}
+        </View>
+        <View className="flex flex-row justify-between gap-2">
+          <MyButtonOpacity className="flex-1">
+            <Text className="text-center text-white" onPress={handleCancel}>
+              Cancel
+            </Text>
+          </MyButtonOpacity>
+          <MyButtonOpacity
+            className="flex-1 bg-green-500"
+            onPress={handleCreate}
+          >
+            <Text className="text-center text-white">Add</Text>
+          </MyButtonOpacity>
         </View>
       </View>
     </>
