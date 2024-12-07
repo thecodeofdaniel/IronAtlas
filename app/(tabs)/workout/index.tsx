@@ -24,6 +24,7 @@ import ViewWorkouts from './workouts/viewWorkouts';
 import RenderWorkouts from './components/RenderWorkouts';
 import TemplateScreen2 from '@/components/Template/Template2';
 import PushOntoStackWrapper from '@/components/PushOntoStackWrapper';
+import ScreenLayoutWrapper from '@/components/ui/ScreenLayoutWrapper';
 
 export default function WorkoutTab() {
   const router = useRouter();
@@ -38,7 +39,7 @@ export default function WorkoutTab() {
           headerRight: () => <StartWorkout />,
         }}
       />
-      <View className="flex-1 bg-neutral p-2">
+      <ScreenLayoutWrapper>
         {inWorkout && (
           <View className="flex-1">
             <GestureHandlerRootView>
@@ -73,7 +74,7 @@ export default function WorkoutTab() {
           <>
             <View className="flex-1">
               <Text className="text-xl font-bold text-neutral-contrast">
-                Last Five Workouts
+                Previous Workouts
               </Text>
               <RenderWorkouts numberOfWorkouts={5} />
             </View>
@@ -104,7 +105,7 @@ export default function WorkoutTab() {
             </View>
           </>
         )}
-      </View>
+      </ScreenLayoutWrapper>
     </>
   );
 }
