@@ -4,7 +4,7 @@ import DraggableFlatList, {
 } from 'react-native-draggable-flatlist';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
-import { useWorkoutStore } from '@/store/zustand/workout/workoutStore';
+import { useTemplateStore } from '@/store/zustand/template/templateStore';
 
 import SetsTableHeader from './SetsTableHeader';
 import SetTableRow from './SetsTableRow';
@@ -27,7 +27,7 @@ export default function SetsTable({
 }: Props) {
   // console.log('Render SetsTable');
   const itemRefs = useRef(new Map());
-  const { template, reorderSets, editSet } = useWorkoutStore((state) => state);
+  const { template, reorderSets, editSet } = useTemplateStore((state) => state);
 
   const renderItem = (params: RenderItemParams<SettType>) => {
     const onPressDelete = () => {

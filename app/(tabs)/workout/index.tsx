@@ -13,9 +13,9 @@ import StartWorkout2 from '@/app/(tabs)/workout/components/StartWorkout';
 import { useModalStore } from '@/store/zustand/modal/modalStore';
 import OpenModalWrapper from '@/components/OpenModalWrapper';
 import {
-  useWorkoutStore,
+  useTemplateStore,
   useWorkoutStoreHook,
-} from '@/store/zustand/workout/workoutStore';
+} from '@/store/zustand/template/templateStore';
 import PushOntoStack from '@/components/PushOntoStackWrapper';
 import MyButton from '@/components/ui/MyButton';
 import TextContrast from '@/components/ui/TextContrast';

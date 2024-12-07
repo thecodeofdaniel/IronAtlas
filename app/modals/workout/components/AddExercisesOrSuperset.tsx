@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text } from 'react-native';
 import { Router } from 'expo-router';
-import { WorkoutStateFunctions } from '@/store/zustand/workout/workoutStore';
+import { TemplateStateFunctions } from '@/store/zustand/template/templateStore';
 import MyButtonOpacity from '@/components/ui/MyButtonOpacity';
 import { cn } from '@/lib/utils';
 
@@ -9,7 +9,7 @@ type Props = {
   isSuperset: boolean;
   pickedExercises: number[];
   forUUID: string;
-  actions: WorkoutStateFunctions;
+  actions: TemplateStateFunctions;
   router: Router;
 };
 

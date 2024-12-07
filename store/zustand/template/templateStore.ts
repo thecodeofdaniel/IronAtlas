@@ -1,19 +1,16 @@
-import { produce } from 'immer';
 import { create } from 'zustand';
+import { produce } from 'immer';
 import * as Crypto from 'expo-crypto';
 import { db } from '@/db/instance';
-// import * as sch from '@/db/schema/template';
-// import * as schema from '@/db/schema/workout';
 import * as sch from '@/db/schema';
 import {
-  TSelectWorkoutTemplate,
   TSelectVolumeTemplate,
   TSelectSettTemplate,
 } from '@/db/schema/template';
 import { generateSettId, saveExerciseToTemplate } from './utils';
 import { eq } from 'drizzle-orm';
 
-export type WorkoutStateVal = {
+export type TemplateStateVal = {
   template: TemplateMap;
   inWorkout: boolean;
   startTime: Date | null;
@@ -21,7 +18,7 @@ export type WorkoutStateVal = {
   pickedExercisesSet: Set<number>;
 };
 
-export type WorkoutStateFunctions = {
+export type TemplateStateFunctions = {
   toggleWorkout: () => void;
   clearPickedExercises: () => void;
   clearTemplate: () => void;
@@ -41,7 +38,7 @@ export type WorkoutStateFunctions = {
   loadWorkout: (id: number) => Promise<void>;
 };
 
-type WorkoutStore = WorkoutStateVal & WorkoutStateFunctions;
+type TemplateStore = TemplateStateVal & TemplateStateFunctions;
 
 const TEMPLATE_ROOT = {
   '0': {
@@ -53,8 +50,8 @@ const TEMPLATE_ROOT = {
   },
 };
 
-export function createWorkoutStore() {
-  return create<WorkoutStore>((set, get) => ({
+export function createTemplateStore() {
+  return create<TemplateStore>((set, get) => ({
     template: TEMPLATE_ROOT,
     inWorkout: false,
     startTime: null,
@@ -62,15 +59,13 @@ export function createWorkoutStore() {
     pickedExercisesSet: new Set(),
     toggleWorkout: () =>
       set(
-        produce<WorkoutStore>((state) => {
+        produce<TemplateStore>((state) => {
           if (state.inWorkout) {
             state.startTime = null; // stop
             state.inWorkout = false;
           } else {
-            // state.startTime = Date.now(); // start
-            state.startTime = new Date();
+            state.startTime = new Date(); // start
             state.inWorkout = true;
-            // console.log(state.startTime);
           }
         }),
       ),
@@ -79,7 +74,7 @@ export function createWorkoutStore() {
     clearTemplate: () => set({ template: TEMPLATE_ROOT }),
     pickExercise: (id) =>
       set(
-        produce<WorkoutStore>((state) => {
+        produce<TemplateStore>((state) => {
           // If exercise exists in set then remove from array
           if (state.pickedExercisesSet.has(id)) {
             const newPickedOrder = state.pickedExercises.filter(
@@ -99,7 +94,7 @@ export function createWorkoutStore() {
 
     addExercises: (exerciseIds, uuid = '0') =>
       set(
-        produce<WorkoutStore>((state) => {
+        produce<TemplateStore>((state) => {
           const newUUIDs: string[] = [];
 
           // Create object with generated UUID
@@ -125,7 +120,7 @@ export function createWorkoutStore() {
       ),
     addSuperset: (exerciseIds) =>
       set(
-        produce<WorkoutStore>((state) => {
+        produce<TemplateStore>((state) => {
           // Create parent UUID
           const parentUUID = Crypto.randomUUID();
 
@@ -163,7 +158,7 @@ export function createWorkoutStore() {
       ),
     reorderTemplate: (templateObjs) =>
       set(
-        produce<WorkoutStore>((state) => {
+        produce<TemplateStore>((state) => {
           const parentId = templateObjs[0].parentId; // Get the parentId from the first item
           const updatedChildren = templateObjs.map((obj) => obj.uuid);
 
@@ -173,7 +168,7 @@ export function createWorkoutStore() {
       ),
     deleteExercise: (uuid) =>
       set(
-        produce<WorkoutStore>((state) => {
+        produce<TemplateStore>((state) => {
           const parentUUID = state.template[uuid].parentId;
           if (!parentUUID) return;
 
@@ -200,7 +195,7 @@ export function createWorkoutStore() {
       ),
     addSet: (uuid) =>
       set(
-        produce<WorkoutStore>((state) => {
+        produce<TemplateStore>((state) => {
           const lastElementIdx = state.template[uuid].sets.length - 1;
 
           if (lastElementIdx === -1) {
@@ -222,13 +217,13 @@ export function createWorkoutStore() {
       ),
     reorderSets: (uuid, sets) =>
       set(
-        produce<WorkoutStore>((state) => {
+        produce<TemplateStore>((state) => {
           state.template[uuid].sets = sets;
         }),
       ),
     editSet: (uuid, index, newSet) =>
       set(
-        produce<WorkoutStore>((state) => {
+        produce<TemplateStore>((state) => {
           state.template[uuid].sets[index] = newSet;
         }),
       ),
@@ -450,7 +445,7 @@ export function createWorkoutStore() {
       let hasValidWorkout = false;
 
       set(
-        produce<WorkoutStore>((state) => {
+        produce<TemplateStore>((state) => {
           const rootChildren = [...state.template[0].children];
 
           // Process each root level item
@@ -558,7 +553,7 @@ export function createWorkoutStore() {
 
         // Update state with grouped data
         set(
-          produce<WorkoutStore>((state) => {
+          produce<TemplateStore>((state) => {
             Object.values(volumesByIndex).forEach((volumeGroup) => {
               const volumes = Array.from(volumeGroup.values());
 
@@ -652,7 +647,7 @@ export function createWorkoutStore() {
         );
 
         set(
-          produce<WorkoutStore>((state) => {
+          produce<TemplateStore>((state) => {
             Object.values(volumesByIndex).forEach((volumeGroup) => {
               const volumes = Array.from(volumeGroup.values());
 
@@ -713,10 +708,10 @@ export function createWorkoutStore() {
   }));
 }
 
-export const useWorkoutStore = createWorkoutStore();
+export const useTemplateStore = createTemplateStore();
 
-export function useWorkoutStoreHook(): WorkoutStateVal & {
-  actions: WorkoutStateFunctions;
+export function useWorkoutStoreHook(): TemplateStateVal & {
+  actions: TemplateStateFunctions;
 } {
   const {
     template,
@@ -725,7 +720,7 @@ export function useWorkoutStoreHook(): WorkoutStateVal & {
     pickedExercises,
     pickedExercisesSet,
     ...actions
-  } = useWorkoutStore((state) => state);
+  } = useTemplateStore((state) => state);
 
   return {
     template,

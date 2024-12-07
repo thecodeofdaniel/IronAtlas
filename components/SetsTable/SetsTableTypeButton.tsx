@@ -1,14 +1,14 @@
 import React from 'react';
 import { Text, Pressable } from 'react-native';
 import { setsTableStyles as styles } from './setsTableStyles';
-import { type WorkoutStateFunctions } from '@/store/zustand/workout/workoutStore';
+import { type TemplateStateFunctions } from '@/store/zustand/template/templateStore';
 import { cn } from '@/lib/utils';
 
 type Props = {
   uuid: string;
   index: number;
   item: SettType;
-  editSet: WorkoutStateFunctions['editSet'];
+  editSet: TemplateStateFunctions['editSet'];
 };
 
 export default function SetsTableTypeButton({

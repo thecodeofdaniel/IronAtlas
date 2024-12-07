@@ -1,8 +1,8 @@
 import { useModalStore } from '@/store/zustand/modal/modalStore';
 import {
-  useWorkoutStore,
-  WorkoutStateFunctions,
-} from '@/store/zustand/workout/workoutStore';
+  useTemplateStore,
+  TemplateStateFunctions,
+} from '@/store/zustand/template/templateStore';
 import { useActionSheet } from '@expo/react-native-action-sheet';
 import { Link, useRouter } from 'expo-router';
 import React from 'react';
@@ -30,7 +30,7 @@ type Props = {
   getIndex: () => number | undefined;
   isActive: boolean;
   item: TemplateObj;
-  actions: WorkoutStateFunctions;
+  actions: TemplateStateFunctions;
   exerciseMap: ExerciseMap;
   itemRefs: React.MutableRefObject<Map<any, any>>;
 };

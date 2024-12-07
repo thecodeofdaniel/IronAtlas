@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import MyButtonOpacity from '../ui/MyButtonOpacity';
-import { useWorkoutStore } from '@/store/zustand/workout/workoutStore';
+import { useTemplateStore } from '@/store/zustand/template/templateStore';
 import { useThemeContext } from '@/store/context/themeContext';
 
 const ARROW_ICON_SIZE = 24;
@@ -20,7 +20,7 @@ export default function SetsTableFooter({
   index,
   setIndex,
 }: Props) {
-  const addSet = useWorkoutStore((state) => state.addSet);
+  const addSet = useTemplateStore((state) => state.addSet);
   const { colors } = useThemeContext();
 
   return (

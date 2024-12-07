@@ -4,7 +4,7 @@ import DraggableFlatList, {
   RenderItemParams,
 } from 'react-native-draggable-flatlist';
 
-import { WorkoutStateFunctions } from '@/store/zustand/workout/workoutStore';
+import { type TemplateStateFunctions } from '@/store/zustand/template/templateStore';
 import { useExerciseStore } from '@/store/zustand/exercise/exerciseStore';
 
 import TemplateRow from './TemplateRow';
@@ -12,7 +12,7 @@ import { cn } from '@/lib/utils';
 
 type TemplateTreeProps = {
   templateMap: TemplateMap;
-  actions: WorkoutStateFunctions;
+  actions: TemplateStateFunctions;
   exerciseMap: ExerciseMap;
   templateChildren: string[];
   level: number;
@@ -69,7 +69,7 @@ function TemplateTree({
 
 type TemplateScreenProps = {
   template: TemplateMap;
-  actions: WorkoutStateFunctions;
+  actions: TemplateStateFunctions;
   className?: string;
 };
 

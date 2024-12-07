@@ -11,7 +11,7 @@ import { type Router, useRouter } from 'expo-router';
 import { useExerciseStore } from '@/store/zustand/exercise/exerciseStore';
 import { FlatList, GestureHandlerRootView } from 'react-native-gesture-handler';
 import { useActionSheet } from '@expo/react-native-action-sheet';
-import { useWorkoutStore } from '@/store/zustand/workout/workoutStore';
+import { useTemplateStore } from '@/store/zustand/template/templateStore';
 import { Ionicons } from '@expo/vector-icons';
 import RenderVolume from '../../../../components/Template/RenderVolume';
 import MyButton from '@/components/ui/MyButton';

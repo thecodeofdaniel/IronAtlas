@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, Pressable } from 'react-native';
 import { Stack, useRouter } from 'expo-router';
-import { useWorkoutStore } from '@/store/zustand/workout/workoutStore';
+import { useTemplateStore } from '@/store/zustand/template/templateStore';
 import RenderTemplates from '@/app/(tabs)/workout/components/RenderRoutines';
 import MyButton from '@/components/ui/MyButton';
 import { cn } from '@/lib/utils';
@@ -11,7 +11,7 @@ export default function SelectTemplate() {
   const isUnselected = selected === undefined;
 
   const router = useRouter();
-  const { clearTemplate, loadTemplate, toggleWorkout } = useWorkoutStore(
+  const { clearTemplate, loadTemplate, toggleWorkout } = useTemplateStore(
     (state) => state,
   );
 

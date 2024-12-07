@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import TemplateScreen2 from '../../../../components/Template/Template2';
 import { useModalStore } from '@/store/zustand/modal/modalStore';
-import { useWorkoutStoreHook } from '@/store/zustand/workout/workoutStore';
+import { useWorkoutStoreHook } from '@/store/zustand/template/templateStore';
 import {
   GestureHandlerRootView,
   TextInput,

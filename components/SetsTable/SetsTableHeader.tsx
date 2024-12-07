@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, ScrollView } from 'react-native';
 import { useExerciseStore } from '@/store/zustand/exercise/exerciseStore';
-import { useWorkoutStore } from '@/store/zustand/workout/workoutStore';
+import { useTemplateStore } from '@/store/zustand/template/templateStore';
 import { setsTableStyles as styles } from './setsTableStyles';
 
 type Props = {
@@ -9,7 +9,7 @@ type Props = {
 };
 
 export default function SetsTableHeader({ uuid }: Props) {
-  const template = useWorkoutStore((state) => state.template);
+  const template = useTemplateStore((state) => state.template);
   const exerciseMap = useExerciseStore((state) => state.exerciseMap);
 
   const exerciseId = template[uuid].exerciseId;

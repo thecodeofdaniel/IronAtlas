@@ -9,7 +9,7 @@ import { asc, eq } from 'drizzle-orm';
 import { useExerciseStore } from '@/store/zustand/exercise/exerciseStore';
 import { Ionicons } from '@expo/vector-icons';
 import { useActionSheet } from '@expo/react-native-action-sheet';
-import { useWorkoutStore } from '@/store/zustand/workout/workoutStore';
+import { useTemplateStore } from '@/store/zustand/template/templateStore';
 import { useThemeContext } from '@/store/context/themeContext';
 import { getActionSheetStyle } from '@/lib/actionSheetConfig';
 import { cn } from '@/lib/utils';
@@ -52,7 +52,7 @@ function RenderSingleTemplate({
 }: RenderItemProps) {
   const ssIndexHolder = new Set<number>();
   const { showActionSheetWithOptions } = useActionSheet();
-  const loadTemplate = useWorkoutStore((state) => state.loadTemplate);
+  const loadTemplate = useTemplateStore((state) => state.loadTemplate);
   const { colors } = useThemeContext();
 
   const handleOptionsPress = async () => {

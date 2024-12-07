@@ -2,7 +2,7 @@ import React from 'react';
 import { Text, Pressable } from 'react-native';
 import { useActionSheet } from '@expo/react-native-action-sheet';
 import { useRouter } from 'expo-router';
-import { useWorkoutStore } from '@/store/zustand/workout/workoutStore';
+import { useTemplateStore } from '@/store/zustand/template/templateStore';
 import MyButton from '@/components/ui/MyButton';
 import MyButtonOpacity from '@/components/ui/MyButtonOpacity';
 import { useThemeContext } from '@/store/context/themeContext';
@@ -17,7 +17,7 @@ export default function StartWorkout() {
   const router = useRouter();
   const { showActionSheetWithOptions } = useActionSheet();
   const { colors } = useThemeContext();
-  const { inWorkout, toggleWorkout, upsertWorkout } = useWorkoutStore(
+  const { inWorkout, toggleWorkout, upsertWorkout } = useTemplateStore(
     (state) => state,
   );
 

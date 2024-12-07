@@ -19,11 +19,11 @@ import { getAllChildrenIds } from '@/utils/utils';
 import MultiDropDown from '@/components/MultiDropDown';
 import { useFilterExerciseStore } from '@/store/zustand/filterExercises/filterExercisesStore';
 import {
-  useWorkoutStore,
+  useTemplateStore,
   useWorkoutStoreHook,
-  WorkoutStateFunctions,
-  WorkoutStateVal,
-} from '@/store/zustand/workout/workoutStore';
+  TemplateStateFunctions,
+  TemplateStateVal,
+} from '@/store/zustand/template/templateStore';
 import AddExercisesOrSuperset from './components/AddExercisesOrSuperset';
 import MyButton from '@/components/ui/MyButton';
 import MyButtonOpacity from '@/components/ui/MyButtonOpacity';
@@ -31,9 +31,9 @@ import MyButtonOpacity from '@/components/ui/MyButtonOpacity';
 type ExerciseListProps = {
   exerciseMap: ExerciseMap;
   exerciseList: number[];
-  pickedExercises: WorkoutStateVal['pickedExercises'];
-  pickedExercisesSet: WorkoutStateVal['pickedExercisesSet'];
-  actions: WorkoutStateFunctions;
+  pickedExercises: TemplateStateVal['pickedExercises'];
+  pickedExercisesSet: TemplateStateVal['pickedExercisesSet'];
+  actions: TemplateStateFunctions;
 };
 
 function ExerciseList({

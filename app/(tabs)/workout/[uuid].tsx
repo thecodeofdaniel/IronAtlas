@@ -1,7 +1,7 @@
 import { Pressable, Text, View } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { Link, Stack, useLocalSearchParams } from 'expo-router';
-import { useWorkoutStore } from '@/store/zustand/workout/workoutStore';
+import { useTemplateStore } from '@/store/zustand/template/templateStore';
 import { useExerciseStore } from '@/store/zustand/exercise/exerciseStore';
 import SetsTable from '@/components/SetsTable/SetsTable';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
@@ -18,7 +18,7 @@ import ExerciseHistory2 from '@/components/ExerciseHistory2';
 export default function Exercise() {
   // console.log('Render Exercise');
   const { uuid: uuid_param } = useLocalSearchParams<{ uuid: string }>();
-  const { template, inWorkout } = useWorkoutStore((state) => state);
+  const { template, inWorkout } = useTemplateStore((state) => state);
   const { exerciseMap } = useExerciseStore((state) => state);
 
   const router = useRouter();
