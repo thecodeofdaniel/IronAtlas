@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity } from 'react-native';
 import { ModalData } from '@/store/zustand/modal/modalStore';
 import { Stack, useRouter } from 'expo-router';
-import { useExerciseStoreWithSetter } from '@/store/zustand/exercise/exerciseStore';
+import { useExerciseStoreHook } from '@/store/zustand/exercise/exerciseStore';
 import { useTagStoreWithSetter } from '@/store/zustand/tag/tagStore';
 import { getAllParentIds } from '@/utils/utils';
 import { formatTagOrExercise, isValidTagOrExercise } from '@/utils/utils';
@@ -29,7 +29,7 @@ export default function UpsertExercise({
     exerciseMap,
     exercisesList,
     setter: exerciseSetter,
-  } = useExerciseStoreWithSetter();
+  } = useExerciseStoreHook();
   const { tagMap, setter: tagSetter } = useTagStoreWithSetter();
 
   // Fill out the data

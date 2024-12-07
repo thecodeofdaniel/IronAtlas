@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import TemplateScreen2 from '../../../../components/Template/Template2';
 import { useModalStore } from '@/store/zustand/modal/modalStore';
-import { useWorkoutStoreHook } from '@/store/zustand/template/templateStore';
+import { useTemplateStoreHook } from '@/store/zustand/template/templateStore';
 import {
   GestureHandlerRootView,
   TextInput,
@@ -36,7 +36,7 @@ export default function UpsertRoutine() {
   }>();
 
   const router = useRouter();
-  const { template, actions } = useWorkoutStoreHook();
+  const { template, actions } = useTemplateStoreHook();
 
   const [templateName, setTemplateName] = useState(templateWorkoutName ?? '');
   const [errorMsgs, setErrorMsgs] = useState(emptyErrorMsgs);

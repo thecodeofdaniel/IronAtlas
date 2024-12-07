@@ -650,7 +650,7 @@ export function createTemplateStore() {
 
 export const useTemplateStore = createTemplateStore();
 
-export function useWorkoutStoreHook(): TemplateStateVal & {
+export function useTemplateStoreHook(): TemplateStateVal & {
   actions: TemplateStateFunctions;
 } {
   const {

@@ -189,7 +189,7 @@ export const useExerciseStore = create<ExerciseStore>()((set, get) => ({
   },
 }));
 
-export function useExerciseStoreWithSetter(): ExerciseStateVal & {
+export function useExerciseStoreHook(): ExerciseStateVal & {
   setter: ExerciseStateFunctions;
 } {
   const {

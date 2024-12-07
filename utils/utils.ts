@@ -1,3 +1,5 @@
+import { useTagStore } from '@/store/zustand/tag/tagStore';
+
 export function formatTagOrExercise(input: string) {
   return input
     .trim() // Remove leading and trailing spaces

@@ -1,7 +1,7 @@
 import { db } from '@/db/instance';
 import {
   useExerciseStore,
-  useExerciseStoreWithSetter,
+  useExerciseStoreHook,
 } from '@/store/zustand/exercise/exerciseStore';
 import { ModalData } from '@/store/zustand/modal/modalStore';
 import {
@@ -20,13 +20,15 @@ import MultiDropDown from '@/components/MultiDropDown';
 import { useFilterExerciseStore } from '@/store/zustand/filterExercises/filterExercisesStore';
 import {
   useTemplateStore,
-  useWorkoutStoreHook,
+  useTemplateStoreHook,
   TemplateStateFunctions,
   TemplateStateVal,
 } from '@/store/zustand/template/templateStore';
 import AddExercisesOrSuperset from './components/AddExercisesOrSuperset';
 import MyButton from '@/components/ui/MyButton';
 import MyButtonOpacity from '@/components/ui/MyButtonOpacity';
+import ScreenLayoutWrapper from '@/components/ui/ScreenLayoutWrapper';
+import ExerciseListWrapper from '@/components/ExerciseList/ExerciseListWrapper';
 
 type ExerciseListProps = {
   exerciseMap: ExerciseMap;
@@ -110,7 +112,6 @@ export default function SelectExercisesModal({
   modalData,
 }: SelectExercisesModalProps) {
   const isSuperset = modalData.isSuperset;
-  const storeType = modalData.storeType; // This determines if we're in a workout or creating a template
 
   const router = useRouter();
   const { exerciseMap, exercisesList } = useExerciseStore((state) => state);
@@ -119,7 +120,7 @@ export default function SelectExercisesModal({
   // const { pickedExercises, pickedExercisesSet, actions } =
   //   useExerciseSelectionHook(storeType);
   const { pickedExercises, pickedExercisesSet, actions } =
-    useWorkoutStoreHook();
+    useTemplateStoreHook();
 
   let filteredExercises = exercisesList;
 
@@ -166,13 +167,13 @@ export default function SelectExercisesModal({
           ),
         }}
       />
-      <View className="flex flex-1 flex-col gap-2 bg-neutral p-2">
+      <ScreenLayoutWrapper>
         <MultiDropDown />
-        {filteredExercises.length === 0 ? (
-          <View>
-            <Text>No exercises found :(</Text>
-          </View>
-        ) : (
+        <ExerciseListWrapper
+          selectedTags={selectedTags}
+          exercisesList={exercisesList}
+          filteredExercises={filteredExercises}
+        >
           <ExerciseList
             exerciseMap={exerciseMap}
             exerciseList={filteredExercises}
@@ -180,8 +181,8 @@ export default function SelectExercisesModal({
             pickedExercisesSet={pickedExercisesSet}
             actions={actions}
           />
-        )}
-      </View>
+        </ExerciseListWrapper>
+      </ScreenLayoutWrapper>
     </>
   );
 }

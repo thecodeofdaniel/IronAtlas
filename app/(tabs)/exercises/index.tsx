@@ -1,7 +1,7 @@
 import { db } from '@/db/instance';
 import {
   ExerciseStateFunctions,
-  useExerciseStoreWithSetter,
+  useExerciseStoreHook,
 } from '@/store/zustand/exercise/exerciseStore';
 import { useModalStore } from '@/store/zustand/modal/modalStore';
 import {
@@ -28,13 +28,12 @@ import { getActionSheetStyle } from '@/lib/actionSheetConfig';
 import MyButtonOpacity from '@/components/ui/MyButtonOpacity';
 import ScreenLayoutWrapper from '@/components/ui/ScreenLayoutWrapper';
 import TextContrast from '@/components/ui/TextContrast';
+import ExerciseListWrapper from '@/components/ExerciseList/ExerciseListWrapper';
 
 type ExerciseListProps = {
   exerciseMap: ExerciseMap;
   exerciseList: number[];
   exerciseSetter: ExerciseStateFunctions;
-  tagMap: TagMap;
-  tagSetter: TagStateFunctions;
   isDraggable: boolean;
 };
 
@@ -42,8 +41,6 @@ function ExerciseList({
   exerciseMap,
   exerciseList,
   exerciseSetter,
-  tagMap,
-  tagSetter,
   isDraggable,
 }: ExerciseListProps) {
   const { colors } = useThemeContext();
@@ -149,8 +146,8 @@ export default function ExercisesTab() {
   // console.log('Render Exercises Tab');
   const router = useRouter();
   const { colors } = useThemeContext();
-  const { exerciseMap, exercisesList, setter } = useExerciseStoreWithSetter();
-  const { tagMap, setter: tagSetter } = useTagStoreWithSetter();
+  const { exerciseMap, exercisesList, setter } = useExerciseStoreHook();
+  const { tagMap } = useTagStoreWithSetter();
   const openModal = useModalStore((state) => state.openModal);
 
   // const [selectedTags, setSelected] = useState<string[]>([]);
@@ -211,29 +208,18 @@ export default function ExercisesTab() {
       />
       <ScreenLayoutWrapper>
         <MultiDropDown />
-        {selectedTags.length === 0 && exercisesList.length === 0 && (
-          <View className="flex-1 items-center justify-center">
-            <TextContrast>No Exercises Found</TextContrast>
-            <MyButtonOpacity>
-              <Text className="font-medium text-white">Add Exercises</Text>
-            </MyButtonOpacity>
-          </View>
-        )}
-        {selectedTags.length > 0 && filteredExercises.length === 0 && (
-          <View className="flex-1 items-center justify-center">
-            <TextContrast>No Exercises Found!</TextContrast>
-          </View>
-        )}
-        {filteredExercises.length > 0 && (
+        <ExerciseListWrapper
+          selectedTags={selectedTags}
+          exercisesList={exercisesList}
+          filteredExercises={filteredExercises}
+        >
           <ExerciseList
             exerciseMap={exerciseMap}
             exerciseList={filteredExercises}
             exerciseSetter={setter}
-            tagMap={tagMap}
-            tagSetter={tagSetter}
             isDraggable={exercisesList.length === filteredExercises.length}
           />
-        )}
+        </ExerciseListWrapper>
       </ScreenLayoutWrapper>
     </>
   );

@@ -18,7 +18,7 @@ import { Stack, useRouter } from 'expo-router';
 import { useModalStore } from '@/store/zustand/modal/modalStore';
 import {
   ExerciseStateFunctions,
-  useExerciseStoreWithSetter,
+  useExerciseStoreHook,
 } from '@/store/zustand/exercise/exerciseStore';
 import { Link } from 'expo-router';
 import { getActionSheetStyle } from '@/lib/actionSheetConfig';
@@ -177,7 +177,7 @@ const DraggableTree = ({
 
 export default function TagTab() {
   const { tagMap, setter } = useTagStoreWithSetter();
-  const { setter: exerciseSetter } = useExerciseStoreWithSetter();
+  const { setter: exerciseSetter } = useExerciseStoreHook();
 
   return (
     <>

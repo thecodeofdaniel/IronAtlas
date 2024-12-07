@@ -14,7 +14,7 @@ import { useModalStore } from '@/store/zustand/modal/modalStore';
 import OpenModalWrapper from '@/components/OpenModalWrapper';
 import {
   useTemplateStore,
-  useWorkoutStoreHook,
+  useTemplateStoreHook,
 } from '@/store/zustand/template/templateStore';
 import PushOntoStack from '@/components/PushOntoStackWrapper';
 import MyButton from '@/components/ui/MyButton';
@@ -27,7 +27,7 @@ import PushOntoStackWrapper from '@/components/PushOntoStackWrapper';
 
 export default function WorkoutTab() {
   const router = useRouter();
-  const { template, inWorkout, actions } = useWorkoutStoreHook();
+  const { template, inWorkout, actions } = useTemplateStoreHook();
 
   return (
     <>
