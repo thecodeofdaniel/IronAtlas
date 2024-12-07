@@ -143,14 +143,7 @@ export const useTagStore = create<TagStore>()((set, get) => ({
   },
   deleteTag: async (pressedId: number) => {
     try {
-      // Remove tag from tag table
-      await db.delete(schema.tag).where(eq(schema.tag.id, pressedId));
-
-      // Remove exercises associated with tag in many to many table
-      await db
-        .delete(schema.exerciseTags)
-        .where(eq(schema.exerciseTags.tagId, pressedId));
-
+      // First update the state to prevent rendering issues
       set(
         produce<TagStore>((state) => {
           // Helper function to recursively delete an item and all its children
@@ -178,6 +171,13 @@ export const useTagStore = create<TagStore>()((set, get) => ({
           deleteItemAndChildren(pressedId);
         }),
       );
+
+      // Then perform database operations
+      await db.delete(schema.tag).where(eq(schema.tag.id, pressedId));
+      await db
+        .delete(schema.exerciseTags)
+        .where(eq(schema.exerciseTags.tagId, pressedId));
+
     } catch (error) {
       console.error('Error: Deleting tag and associated exercises', error);
     }
