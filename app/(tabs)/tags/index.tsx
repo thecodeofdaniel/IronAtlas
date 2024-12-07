@@ -151,7 +151,7 @@ const DraggableTree = ({
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item, drag, isActive, getIndex }) => {
           return (
-            <View key={item.id} style={{ paddingLeft: 3 * level }}>
+            <View key={item.id} style={{ paddingLeft: 5 * level }}>
               <RenderItem
                 item={item}
                 drag={drag}

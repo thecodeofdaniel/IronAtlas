@@ -123,7 +123,7 @@ export default function MoveTag({ modalData, closeModal }: Props) {
           </Text>
           <Tree
             tagMap={tagMap}
-            tagChildren={[0]}
+            tagChildren={tagMap[0].children}
             level={0}
             idToBeMoved={idToBeMoved}
             selected={selected}
