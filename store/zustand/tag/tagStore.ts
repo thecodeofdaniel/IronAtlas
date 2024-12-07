@@ -68,21 +68,21 @@ export const useTagStore = create<TagStore>()((set, get) => ({
 
       return newState;
     }),
-  reorderTags: (dataList: Tag[]) =>
+  reorderTags: (tagList: Tag[]) =>
     set((state) => {
-      const newItemMap = { ...state.tagMap };
+      const newTagMap = { ...state.tagMap };
 
       // First, update the order of items
-      dataList.forEach((item, index) => {
-        newItemMap[item.id] = {
-          ...newItemMap[item.id],
+      tagList.forEach((tag, index) => {
+        newTagMap[tag.id] = {
+          ...newTagMap[tag.id],
           index: index,
         };
 
         // Update database asynchronously
         db.update(schema.tag)
           .set({ index: index })
-          .where(eq(schema.tag.id, item.id))
+          .where(eq(schema.tag.id, tag.id))
           .execute()
           .catch((error) => {
             console.error('Failed to update tag order state', error);
@@ -90,17 +90,16 @@ export const useTagStore = create<TagStore>()((set, get) => ({
       });
 
       // Then, update the parent's children array to reflect the new order
-      if (dataList.length > 0 && dataList[0].parentId !== null) {
-        const parentId = dataList[0].parentId;
-        const newChildrenOrder = dataList.map((item) => item.id);
-        // console.log(newChildrenOrder);
-        newItemMap[parentId] = {
-          ...newItemMap[parentId],
+      if (tagList.length > 0 && tagList[0].parentId !== null) {
+        const parentId = tagList[0].parentId;
+        const newChildrenOrder = tagList.map((item) => item.id);
+        newTagMap[parentId] = {
+          ...newTagMap[parentId],
           children: newChildrenOrder,
         };
       }
 
-      return { tagMap: newItemMap };
+      return { tagMap: newTagMap };
     }),
   createChildTag: async (pressedId: number, title: string) => {
     try {
@@ -129,6 +128,7 @@ export const useTagStore = create<TagStore>()((set, get) => ({
         // Add new tag to the map
         newTagMap[newTag.id] = {
           ...newTag,
+          parentId: newTag.parentId ?? 0,
           children: [],
         };
 

@@ -142,8 +142,11 @@ const DraggableTree = ({
     <View>
       <DraggableFlatList
         data={tags}
-        onDragEnd={({ data }) => {
-          tagSetter.reorderTags(data);
+        onDragEnd={({ data: newTagOrder }) => {
+          // for (const newTag of newTagOrder) {
+          //   console.log(newTag.id);
+          // }
+          tagSetter.reorderTags(newTagOrder);
         }}
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item, drag, isActive, getIndex }) => {
@@ -173,6 +176,7 @@ const DraggableTree = ({
 };
 
 export default function TagTab() {
+  console.log('render');
   const { colors } = useThemeContext();
   const { tagMap, setter: tagSetter } = useTagStoreHook();
   const { setter: exerciseSetter } = useExerciseStoreHook();
