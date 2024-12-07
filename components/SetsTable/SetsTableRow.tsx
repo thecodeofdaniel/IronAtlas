@@ -11,6 +11,7 @@ import { setsTableStyles as styles } from './setsTableStyles';
 
 import SetsTableTypeButton from './SetsTableTypeButton';
 import { cn } from '@/lib/utils';
+import { useTemplateStore } from '@/store/zustand/template/templateStore';
 
 const UnderlayLeft = ({
   drag,
@@ -61,6 +62,7 @@ export default function SetsTableRow({
   onPressDelete,
 }: Props) {
   const index = getIndex()!;
+  const { inWorkout } = useTemplateStore((state) => state);
 
   return (
     <>
@@ -103,12 +105,16 @@ export default function SetsTableRow({
                 item={item}
                 editSet={editSet}
               />
+
               <TextInput
-                value={item.weight}
+                editable={inWorkout}
+                value={inWorkout ? item.weight : 'N/A'}
                 keyboardType="numeric"
                 returnKeyType="done"
                 style={[styles.weightWidth, styles.infoFontSize]}
-                className="bg-neutral-accent p-1 text-neutral-contrast"
+                className={cn('bg-neutral-accent p-1 text-neutral-contrast', {
+                  'text-neutral-contrast/50': !inWorkout,
+                })}
                 onChangeText={(text) =>
                   editSet(uuid, index, { ...item, weight: text })
                 }
