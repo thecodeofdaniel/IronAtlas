@@ -1,7 +1,7 @@
 import React from 'react';
 import { Pressable, View, TouchableOpacity } from 'react-native';
 import { Stack, useRouter } from 'expo-router';
-import RenderTemplates from '../components/RenderRoutines';
+import RenderRoutines from '../components/RenderRoutines';
 import { Ionicons } from '@expo/vector-icons';
 import { useTemplateStore } from '@/store/zustand/template/templateStore';
 import { useThemeContext } from '@/store/context/themeContext';
@@ -30,7 +30,7 @@ export default function ViewRoutines() {
         }}
       />
       <View className="flex-1 bg-neutral p-2">
-        <RenderTemplates />
+        <RenderRoutines />
       </View>
     </>
   );

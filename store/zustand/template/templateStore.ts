@@ -30,10 +30,10 @@ export type TemplateStateFunctions = {
   addSet: (uuid: string) => void;
   editSet: (uuid: string, index: number, newSet: SettType) => void;
   reorderSets: (uuid: string, sets: SettType[]) => void;
-  upsertTemplate: (name: string, id?: number) => Promise<void>;
+  upsertRoutine: (name: string, id?: number) => Promise<void>;
   upsertWorkout: (id?: number) => Promise<void>;
   validateWorkout: (workoutId?: number) => Promise<boolean>;
-  loadTemplate: (id: number) => Promise<void>;
+  loadRoutine: (id: number) => Promise<void>;
   loadWorkout: (id: number) => Promise<void>;
 };
 
@@ -225,7 +225,7 @@ export function createTemplateStore() {
           state.template[uuid].sets = sets;
         }),
       ),
-    upsertTemplate: async (name, workoutTemplateId) => {
+    upsertRoutine: async (name, workoutTemplateId) => {
       try {
         const template = get().template;
         const rootChildren = template[0].children;
@@ -446,7 +446,7 @@ export function createTemplateStore() {
 
       return hasValidWorkout;
     },
-    loadTemplate: async (id) => {
+    loadRoutine: async (id) => {
       try {
         set({ template: TEMPLATE_ROOT });
 

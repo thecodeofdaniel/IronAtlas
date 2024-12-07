@@ -28,9 +28,7 @@ const emptyErrorMsgs = {
   exercises: '',
 };
 
-export default function UpsertTemplate() {
-  // console.log('Render upsertTemplate');
-
+export default function UpsertRoutine() {
   const { templateWorkoutId, templateWorkoutName } = useLocalSearchParams<{
     templateWorkoutId?: string;
     templateWorkoutName?: string;
@@ -100,7 +98,7 @@ export default function UpsertTemplate() {
     // Stop if form has errors
     if (hasError) return;
 
-    actions.upsertTemplate(
+    actions.upsertRoutine(
       templateName.trim(),
       templateWorkoutId ? +templateWorkoutId : undefined,
     );

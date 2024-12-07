@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-import { View, Text, Pressable, Platform } from 'react-native';
-import { Router, Stack, useRouter } from 'expo-router';
+import React from 'react';
+import { View } from 'react-native';
+import { Router, useRouter } from 'expo-router';
 import { useLiveQuery } from 'drizzle-orm/expo-sqlite';
 import { db } from '@/db/instance';
 import * as s from '@/db/schema/template';
@@ -42,7 +42,7 @@ type RenderItemProps = {
   setSelected?: React.Dispatch<React.SetStateAction<number | undefined>>;
 };
 
-function RenderSingleTemplate({
+function RenderSingleRoutine({
   workout: workout,
   index,
   exerciseMap,
@@ -52,7 +52,7 @@ function RenderSingleTemplate({
 }: RenderItemProps) {
   const ssIndexHolder = new Set<number>();
   const { showActionSheetWithOptions } = useActionSheet();
-  const loadTemplate = useTemplateStore((state) => state.loadTemplate);
+  const loadTemplate = useTemplateStore((state) => state.loadRoutine);
   const { colors } = useThemeContext();
 
   const handleOptionsPress = async () => {
@@ -131,9 +131,7 @@ type Props = {
   setSelected?: React.Dispatch<React.SetStateAction<number | undefined>>;
 };
 
-export default function RenderTemplates({ selected, setSelected }: Props) {
-  // console.log('Render SelectTemplate');
-
+export default function RenderRoutines({ selected, setSelected }: Props) {
   const router = useRouter();
   const exerciseMap = useExerciseStore((state) => state.exerciseMap);
 
@@ -211,7 +209,7 @@ export default function RenderTemplates({ selected, setSelected }: Props) {
         <FlatList
           data={workoutTemplates}
           renderItem={({ item, index }) => (
-            <RenderSingleTemplate
+            <RenderSingleRoutine
               workout={item}
               index={index}
               exerciseMap={exerciseMap}

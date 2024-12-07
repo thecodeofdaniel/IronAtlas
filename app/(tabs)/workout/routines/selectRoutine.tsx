@@ -2,16 +2,16 @@ import React, { useState } from 'react';
 import { View, Text, Pressable } from 'react-native';
 import { Stack, useRouter } from 'expo-router';
 import { useTemplateStore } from '@/store/zustand/template/templateStore';
-import RenderTemplates from '@/app/(tabs)/workout/components/RenderRoutines';
+import RenderRoutines from '@/app/(tabs)/workout/components/RenderRoutines';
 import MyButton from '@/components/ui/MyButton';
 import { cn } from '@/lib/utils';
 
-export default function SelectTemplate() {
+export default function SelectRoutine() {
   const [selected, setSelected] = useState<number>();
   const isUnselected = selected === undefined;
 
   const router = useRouter();
-  const { clearTemplate, loadTemplate, toggleWorkout } = useTemplateStore(
+  const { clearTemplate, loadRoutine, toggleWorkout } = useTemplateStore(
     (state) => state,
   );
 
@@ -20,7 +20,7 @@ export default function SelectTemplate() {
       <Stack.Screen options={{ title: 'Select Routine' }} />
       <View className="flex-1 bg-neutral">
         <View className="flex-1 p-2">
-          <RenderTemplates selected={selected} setSelected={setSelected} />
+          <RenderRoutines selected={selected} setSelected={setSelected} />
         </View>
         <View className="flex flex-row justify-between gap-2 p-2">
           <MyButton
@@ -31,7 +31,7 @@ export default function SelectTemplate() {
             onPress={() => {
               if (isUnselected) return;
 
-              loadTemplate(selected);
+              loadRoutine(selected);
               router.back();
               toggleWorkout();
             }}
