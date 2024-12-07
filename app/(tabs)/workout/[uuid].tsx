@@ -1,19 +1,16 @@
 import { Pressable, Text, View } from 'react-native';
 import React, { useEffect, useState } from 'react';
-import { Link, Stack, useLocalSearchParams } from 'expo-router';
+import { Stack, useLocalSearchParams } from 'expo-router';
 import { useTemplateStore } from '@/store/zustand/template/templateStore';
 import { useExerciseStore } from '@/store/zustand/exercise/exerciseStore';
 import SetsTable from '@/components/SetsTable/SetsTable';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import Animated, {
   useAnimatedStyle,
   withTiming,
   useSharedValue,
 } from 'react-native-reanimated';
 import { useRouter } from 'expo-router';
-import { Ionicons } from '@expo/vector-icons';
 import ExerciseHistory from '@/components/ExerciseHistory/ExerciseHistory';
-import ExerciseHistory2 from '@/components/ExerciseHistory2';
 
 export default function Exercise() {
   // console.log('Render Exercise');
