@@ -19,10 +19,10 @@ export type TemplateStateVal = {
 };
 
 export type TemplateStateFunctions = {
-  toggleWorkout: () => void;
-  clearPickedExercises: () => void;
   clearTemplate: () => void;
+  toggleWorkout: () => void;
   pickExercise: (id: number) => void;
+  clearPickedExercises: () => void;
   addExercises: (exerciseIds: number[], uuid?: string) => void;
   addSuperset: (exerciseIds: number[]) => void;
   reorderTemplate: (templateObjs: TemplateObj[]) => void;
@@ -57,6 +57,7 @@ export function createTemplateStore() {
     startTime: null,
     pickedExercises: [],
     pickedExercisesSet: new Set(),
+    clearTemplate: () => set({ template: TEMPLATE_ROOT }),
     toggleWorkout: () =>
       set(
         produce<TemplateStore>((state) => {
@@ -69,9 +70,6 @@ export function createTemplateStore() {
           }
         }),
       ),
-    clearPickedExercises: () =>
-      set({ pickedExercises: [], pickedExercisesSet: new Set() }),
-    clearTemplate: () => set({ template: TEMPLATE_ROOT }),
     pickExercise: (id) =>
       set(
         produce<TemplateStore>((state) => {
@@ -91,7 +89,8 @@ export function createTemplateStore() {
           }
         }),
       ),
-
+    clearPickedExercises: () =>
+      set({ pickedExercises: [], pickedExercisesSet: new Set() }),
     addExercises: (exerciseIds, uuid = '0') =>
       set(
         produce<TemplateStore>((state) => {
@@ -215,16 +214,16 @@ export function createTemplateStore() {
           }
         }),
       ),
-    reorderSets: (uuid, sets) =>
-      set(
-        produce<TemplateStore>((state) => {
-          state.template[uuid].sets = sets;
-        }),
-      ),
     editSet: (uuid, index, newSet) =>
       set(
         produce<TemplateStore>((state) => {
           state.template[uuid].sets[index] = newSet;
+        }),
+      ),
+    reorderSets: (uuid, sets) =>
+      set(
+        produce<TemplateStore>((state) => {
+          state.template[uuid].sets = sets;
         }),
       ),
     saveAsTemplate: async (name) => {
