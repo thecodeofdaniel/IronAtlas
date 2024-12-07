@@ -23,6 +23,8 @@ import '../global.css';
 import ThemeContextProvider, {
   useThemeContext,
 } from '@/store/context/themeContext';
+import ScreenLayoutWrapper from '@/components/ui/ScreenLayoutWrapper';
+import TextContrast from '@/components/ui/TextContrast';
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -42,7 +44,15 @@ export default function RootLayout() {
     return null;
   }
 
-  return <MigrateDB />;
+  return <ThemeInit />;
+}
+
+function ThemeInit() {
+  return (
+    <ThemeContextProvider>
+      <MigrateDB />
+    </ThemeContextProvider>
+  );
 }
 
 function MigrateDB() {
@@ -50,33 +60,24 @@ function MigrateDB() {
 
   if (error) {
     return (
-      <View>
-        <Text>Migration error: {error.message}</Text>
-      </View>
+      <ScreenLayoutWrapper className="items-center justify-center">
+        <TextContrast>Migration error: {error.message}</TextContrast>
+      </ScreenLayoutWrapper>
     );
   }
 
   if (!success) {
     return (
-      <View>
-        <Text>Migration is in progress...</Text>
-      </View>
+      <ScreenLayoutWrapper className="items-center justify-center">
+        <TextContrast>Migration is in progress...</TextContrast>
+      </ScreenLayoutWrapper>
     );
   }
 
-  return <ThemeInit />;
-}
-
-function ThemeInit() {
-  return (
-    <ThemeContextProvider>
-      <Init />
-    </ThemeContextProvider>
-  );
+  return <Init />;
 }
 
 function Init() {
-  // console.log('Init function');
   useDrizzleStudio(expoDb);
   useInitializeStores();
 

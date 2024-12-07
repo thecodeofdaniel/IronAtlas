@@ -26,6 +26,8 @@ import { useFilterExerciseStore } from '@/store/zustand/filterExercises/filterEx
 import { useThemeContext } from '@/store/context/themeContext';
 import { getActionSheetStyle } from '@/lib/actionSheetConfig';
 import MyButtonOpacity from '@/components/ui/MyButtonOpacity';
+import ScreenLayoutWrapper from '@/components/ui/ScreenLayoutWrapper';
+import TextContrast from '@/components/ui/TextContrast';
 
 type ExerciseListProps = {
   exerciseMap: ExerciseMap;
@@ -207,13 +209,22 @@ export default function ExercisesTab() {
           },
         }}
       />
-      <View className="flex flex-1 flex-col gap-2 bg-neutral p-2">
+      <ScreenLayoutWrapper>
         <MultiDropDown />
-        {filteredExercises.length === 0 ? (
-          <View>
-            <Text>No exercises found :(</Text>
+        {selectedTags.length === 0 && exercisesList.length === 0 && (
+          <View className="flex-1 items-center justify-center">
+            <TextContrast>No Exercises Found</TextContrast>
+            <MyButtonOpacity>
+              <Text className="font-medium text-white">Add Exercises</Text>
+            </MyButtonOpacity>
           </View>
-        ) : (
+        )}
+        {selectedTags.length > 0 && filteredExercises.length === 0 && (
+          <View className="flex-1 items-center justify-center">
+            <TextContrast>No Exercises Found!</TextContrast>
+          </View>
+        )}
+        {filteredExercises.length > 0 && (
           <ExerciseList
             exerciseMap={exerciseMap}
             exerciseList={filteredExercises}
@@ -223,7 +234,7 @@ export default function ExercisesTab() {
             isDraggable={exercisesList.length === filteredExercises.length}
           />
         )}
-      </View>
+      </ScreenLayoutWrapper>
     </>
   );
 }

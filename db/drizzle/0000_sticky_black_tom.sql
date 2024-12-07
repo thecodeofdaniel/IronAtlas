@@ -23,38 +23,38 @@ CREATE TABLE `tags` (
 	FOREIGN KEY (`parent_id`) REFERENCES `tags`(`id`) ON UPDATE no action ON DELETE no action
 );
 --> statement-breakpoint
-CREATE TABLE `sett_templates` (
-	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
-	`volume_template_id` integer,
-	`type` text NOT NULL,
-	`weight` real,
-	`reps` integer,
-	`index` integer NOT NULL,
-	FOREIGN KEY (`volume_template_id`) REFERENCES `volume_templates`(`id`) ON UPDATE no action ON DELETE cascade
-);
---> statement-breakpoint
-CREATE INDEX `volume_template_id_index` ON `sett_templates` (`volume_template_id`);--> statement-breakpoint
-CREATE INDEX `sett_template_index_index` ON `sett_templates` (`index`);--> statement-breakpoint
-CREATE TABLE `volume_templates` (
-	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
-	`workout_template_id` integer NOT NULL,
-	`exercise_id` integer NOT NULL,
-	`index` integer NOT NULL,
-	`sub_index` integer,
-	FOREIGN KEY (`workout_template_id`) REFERENCES `workout_templates`(`id`) ON UPDATE no action ON DELETE cascade,
-	FOREIGN KEY (`exercise_id`) REFERENCES `exercises`(`id`) ON UPDATE no action ON DELETE cascade
-);
---> statement-breakpoint
-CREATE INDEX `workout_template_id_index` ON `volume_templates` (`workout_template_id`);--> statement-breakpoint
-CREATE INDEX `volume_template_index_index` ON `volume_templates` (`index`);--> statement-breakpoint
-CREATE INDEX `volume_template_sub_index_index` ON `volume_templates` (`sub_index`);--> statement-breakpoint
-CREATE TABLE `workout_templates` (
+CREATE TABLE `routines` (
 	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
 	`name` text NOT NULL,
 	`created_at` integer DEFAULT (unixepoch()) NOT NULL
 );
 --> statement-breakpoint
-CREATE UNIQUE INDEX `workout_templates_name_unique` ON `workout_templates` (`name`);--> statement-breakpoint
+CREATE UNIQUE INDEX `routines_name_unique` ON `routines` (`name`);--> statement-breakpoint
+CREATE TABLE `sett_routines` (
+	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
+	`volume_routine_id` integer,
+	`type` text NOT NULL,
+	`weight` real,
+	`reps` integer,
+	`index` integer NOT NULL,
+	FOREIGN KEY (`volume_routine_id`) REFERENCES `volume_routines`(`id`) ON UPDATE no action ON DELETE cascade
+);
+--> statement-breakpoint
+CREATE INDEX `volume_routine_id_index` ON `sett_routines` (`volume_routine_id`);--> statement-breakpoint
+CREATE INDEX `sett_rountine_index_index` ON `sett_routines` (`index`);--> statement-breakpoint
+CREATE TABLE `volume_routines` (
+	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
+	`routine_id` integer NOT NULL,
+	`exercise_id` integer NOT NULL,
+	`index` integer NOT NULL,
+	`sub_index` integer,
+	FOREIGN KEY (`routine_id`) REFERENCES `routines`(`id`) ON UPDATE no action ON DELETE cascade,
+	FOREIGN KEY (`exercise_id`) REFERENCES `exercises`(`id`) ON UPDATE no action ON DELETE cascade
+);
+--> statement-breakpoint
+CREATE INDEX `routine_id_index` ON `volume_routines` (`routine_id`);--> statement-breakpoint
+CREATE INDEX `volume_routine_index_index` ON `volume_routines` (`index`);--> statement-breakpoint
+CREATE INDEX `volume_routine_sub_index_index` ON `volume_routines` (`sub_index`);--> statement-breakpoint
 CREATE TABLE `setts` (
 	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
 	`volume_id` integer NOT NULL,

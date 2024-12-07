@@ -59,7 +59,11 @@ const DraggableTree = ({
     const destructiveButtonIndex = options.indexOf('Delete');
 
     const actions = {
-      Delete: () => setter.deleteTag(pressedId),
+      // Delete: () => setter.deleteTag(pressedId),
+      Delete: async () => {
+        // console.log('pressedId', pressedId);
+        await setter.deleteTag(pressedId);
+      },
       Create: () => openModal('createTag', { pressedId }),
       Edit: () => openModal('updateTag', { id: pressedId }),
       // Create: () => openModal('upsertTag'),
@@ -182,15 +186,18 @@ export default function TagTab() {
       />
       <View className="flex flex-1 bg-neutral px-2 pt-2">
         <GestureHandlerRootView>
-          <ActionSheetProvider>
-            <DraggableTree
-              tagMap={tagMap}
-              tagChildren={[0]}
-              level={0}
-              setter={setter}
-              exerciseSetter={exerciseSetter}
-            />
-          </ActionSheetProvider>
+          {/* <ActionSheetProvider> */}
+          {/* {tagMap[0].children.length > 0 && ( */}
+          <DraggableTree
+            tagMap={tagMap}
+            tagChildren={[0]}
+            level={0}
+            setter={setter}
+            exerciseSetter={exerciseSetter}
+          />
+          {/* )} */}
+
+          {/* </ActionSheetProvider> */}
         </GestureHandlerRootView>
       </View>
     </>

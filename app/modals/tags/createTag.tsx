@@ -25,22 +25,24 @@ export default function CreateTag({ modalData, closeModal }: Props) {
   };
 
   const handleCreate = () => {
-    if (name.trim() === '') {
+    const tagName = name.trim();
+
+    if (tagName === '') {
       setError('Name cannot be blank');
       return;
     }
 
-    if (!isValidTagOrExercise(name)) {
+    if (!isValidTagOrExercise(tagName)) {
       setError('Not a valid tag name! Only use letters');
       return;
     }
 
-    if (tagSet.has(formatTagOrExercise(name))) {
+    if (tagSet.has(formatTagOrExercise(tagName))) {
       setError('Tag already exists!');
       return;
     }
 
-    setter.createChildTag(pressedId, name.trim());
+    setter.createChildTag(pressedId, tagName);
     closeModal();
     router.back();
   };

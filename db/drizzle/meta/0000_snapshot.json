@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "99f88722-4f53-4eec-9703-58703d5736ec",
+  "id": "4b9e1af2-c23a-411f-96d7-616d0e273f46",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "exercises": {
@@ -167,8 +167,8 @@
       "uniqueConstraints": {},
       "checkConstraints": {}
     },
-    "sett_templates": {
-      "name": "sett_templates",
+    "routines": {
+      "name": "routines",
       "columns": {
         "id": {
           "name": "id",
@@ -177,8 +177,48 @@
           "notNull": true,
           "autoincrement": true
         },
-        "volume_template_id": {
-          "name": "volume_template_id",
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "(unixepoch())"
+        }
+      },
+      "indexes": {
+        "routines_name_unique": {
+          "name": "routines_name_unique",
+          "columns": [
+            "name"
+          ],
+          "isUnique": true
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "sett_routines": {
+      "name": "sett_routines",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": true
+        },
+        "volume_routine_id": {
+          "name": "volume_routine_id",
           "type": "integer",
           "primaryKey": false,
           "notNull": false,
@@ -214,15 +254,15 @@
         }
       },
       "indexes": {
-        "volume_template_id_index": {
-          "name": "volume_template_id_index",
+        "volume_routine_id_index": {
+          "name": "volume_routine_id_index",
           "columns": [
-            "volume_template_id"
+            "volume_routine_id"
           ],
           "isUnique": false
         },
-        "sett_template_index_index": {
-          "name": "sett_template_index_index",
+        "sett_rountine_index_index": {
+          "name": "sett_rountine_index_index",
           "columns": [
             "index"
           ],
@@ -230,12 +270,12 @@
         }
       },
       "foreignKeys": {
-        "sett_templates_volume_template_id_volume_templates_id_fk": {
-          "name": "sett_templates_volume_template_id_volume_templates_id_fk",
-          "tableFrom": "sett_templates",
-          "tableTo": "volume_templates",
+        "sett_routines_volume_routine_id_volume_routines_id_fk": {
+          "name": "sett_routines_volume_routine_id_volume_routines_id_fk",
+          "tableFrom": "sett_routines",
+          "tableTo": "volume_routines",
           "columnsFrom": [
-            "volume_template_id"
+            "volume_routine_id"
           ],
           "columnsTo": [
             "id"
@@ -248,8 +288,8 @@
       "uniqueConstraints": {},
       "checkConstraints": {}
     },
-    "volume_templates": {
-      "name": "volume_templates",
+    "volume_routines": {
+      "name": "volume_routines",
       "columns": {
         "id": {
           "name": "id",
@@ -258,8 +298,8 @@
           "notNull": true,
           "autoincrement": true
         },
-        "workout_template_id": {
-          "name": "workout_template_id",
+        "routine_id": {
+          "name": "routine_id",
           "type": "integer",
           "primaryKey": false,
           "notNull": true,
@@ -288,22 +328,22 @@
         }
       },
       "indexes": {
-        "workout_template_id_index": {
-          "name": "workout_template_id_index",
+        "routine_id_index": {
+          "name": "routine_id_index",
           "columns": [
-            "workout_template_id"
+            "routine_id"
           ],
           "isUnique": false
         },
-        "volume_template_index_index": {
-          "name": "volume_template_index_index",
+        "volume_routine_index_index": {
+          "name": "volume_routine_index_index",
           "columns": [
             "index"
           ],
           "isUnique": false
         },
-        "volume_template_sub_index_index": {
-          "name": "volume_template_sub_index_index",
+        "volume_routine_sub_index_index": {
+          "name": "volume_routine_sub_index_index",
           "columns": [
             "sub_index"
           ],
@@ -311,12 +351,12 @@
         }
       },
       "foreignKeys": {
-        "volume_templates_workout_template_id_workout_templates_id_fk": {
-          "name": "volume_templates_workout_template_id_workout_templates_id_fk",
-          "tableFrom": "volume_templates",
-          "tableTo": "workout_templates",
+        "volume_routines_routine_id_routines_id_fk": {
+          "name": "volume_routines_routine_id_routines_id_fk",
+          "tableFrom": "volume_routines",
+          "tableTo": "routines",
           "columnsFrom": [
-            "workout_template_id"
+            "routine_id"
           ],
           "columnsTo": [
             "id"
@@ -324,9 +364,9 @@
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
-        "volume_templates_exercise_id_exercises_id_fk": {
-          "name": "volume_templates_exercise_id_exercises_id_fk",
-          "tableFrom": "volume_templates",
+        "volume_routines_exercise_id_exercises_id_fk": {
+          "name": "volume_routines_exercise_id_exercises_id_fk",
+          "tableFrom": "volume_routines",
           "tableTo": "exercises",
           "columnsFrom": [
             "exercise_id"
@@ -338,46 +378,6 @@
           "onUpdate": "no action"
         }
       },
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
-      "checkConstraints": {}
-    },
-    "workout_templates": {
-      "name": "workout_templates",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "integer",
-          "primaryKey": true,
-          "notNull": true,
-          "autoincrement": true
-        },
-        "name": {
-          "name": "name",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "created_at": {
-          "name": "created_at",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false,
-          "default": "(unixepoch())"
-        }
-      },
-      "indexes": {
-        "workout_templates_name_unique": {
-          "name": "workout_templates_name_unique",
-          "columns": [
-            "name"
-          ],
-          "isUnique": true
-        }
-      },
-      "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
       "checkConstraints": {}

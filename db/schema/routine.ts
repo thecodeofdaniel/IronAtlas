@@ -8,7 +8,7 @@ import {
 } from 'drizzle-orm/sqlite-core';
 import { exercise } from './exercise+tags';
 
-export const routine = sqliteTable('workout_templates', {
+export const routine = sqliteTable('routines', {
   id: integer('id').primaryKey({ autoIncrement: true }),
   name: text('name').notNull().unique(),
   createdAt: integer('created_at', { mode: 'number' })
@@ -17,10 +17,10 @@ export const routine = sqliteTable('workout_templates', {
 });
 
 export const volumeRoutine = sqliteTable(
-  'volume_templates',
+  'volume_routines',
   {
     id: integer('id').primaryKey({ autoIncrement: true }),
-    routineId: integer('workout_template_id')
+    routineId: integer('routine_id')
       .references(() => routine.id, {
         onDelete: 'cascade',
       })
@@ -34,17 +34,17 @@ export const volumeRoutine = sqliteTable(
     subIndex: integer('sub_index'), // can be null
   },
   (table) => ({
-    routineIdIndex: index('workout_template_id_index').on(table.routineId),
-    indexIndex: index('volume_template_index_index').on(table.index),
-    subIndexIndex: index('volume_template_sub_index_index').on(table.subIndex),
+    routineIdIndex: index('routine_id_index').on(table.routineId),
+    indexIndex: index('volume_routine_index_index').on(table.index),
+    subIndexIndex: index('volume_routine_sub_index_index').on(table.subIndex),
   }),
 );
 
 export const settRoutine = sqliteTable(
-  'sett_templates',
+  'sett_routines',
   {
     id: integer('id').primaryKey({ autoIncrement: true }),
-    volumeRoutineId: integer('volume_template_id').references(
+    volumeRoutineId: integer('volume_routine_id').references(
       () => volumeRoutine.id,
       {
         onDelete: 'cascade',
@@ -57,10 +57,10 @@ export const settRoutine = sqliteTable(
     index: integer('index').notNull(),
   },
   (table) => ({
-    volumeRoutineIdIndex: index('volume_template_id_index').on(
+    volumeRoutineIdIndex: index('volume_routine_id_index').on(
       table.volumeRoutineId,
     ),
-    indexIndex: index('sett_template_index_index').on(table.index),
+    indexIndex: index('sett_rountine_index_index').on(table.index),
   }),
 );
 
