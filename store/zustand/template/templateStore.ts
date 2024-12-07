@@ -3,10 +3,7 @@ import { produce } from 'immer';
 import * as Crypto from 'expo-crypto';
 import { db } from '@/db/instance';
 import * as sch from '@/db/schema';
-import {
-  TSelectVolumeTemplate,
-  TSelectSettTemplate,
-} from '@/db/schema/template';
+import { TSelectVolumeRoutine, TSelectSettRoutine } from '@/db/schema/routine';
 import { generateSettId, saveExerciseToTemplate } from './utils';
 import { eq } from 'drizzle-orm';
 
@@ -235,15 +232,15 @@ export function createTemplateStore() {
 
           if (workoutTemplateId) {
             const [existingWorkout] = await tx
-              .delete(sch.workoutTemplate)
-              .where(eq(sch.workoutTemplate.id, workoutTemplateId))
+              .delete(sch.routine)
+              .where(eq(sch.routine.id, workoutTemplateId))
               .returning();
 
             if (existingWorkout) createdAt = existingWorkout.createdAt;
           }
 
           const [workoutTemplate] = await tx
-            .insert(sch.workoutTemplate)
+            .insert(sch.routine)
             .values({ name, createdAt })
             .returning();
 
@@ -453,19 +450,19 @@ export function createTemplateStore() {
         // Get volumes with their sets in a single query
         const volumes = await db
           .select({
-            volume: sch.volumeTemplate,
-            sett: sch.settTemplate,
+            volume: sch.volumeRoutine,
+            sett: sch.settRoutine,
           })
-          .from(sch.volumeTemplate)
+          .from(sch.volumeRoutine)
           .leftJoin(
-            sch.settTemplate,
-            eq(sch.volumeTemplate.id, sch.settTemplate.volumeTemplateId),
+            sch.settRoutine,
+            eq(sch.volumeRoutine.id, sch.settRoutine.volumeRoutineId),
           )
-          .where(eq(sch.volumeTemplate.workoutTemplateId, id))
+          .where(eq(sch.volumeRoutine.routineId, id))
           .orderBy(
-            sch.volumeTemplate.index,
-            sch.volumeTemplate.subIndex,
-            sch.settTemplate.index,
+            sch.volumeRoutine.index,
+            sch.volumeRoutine.subIndex,
+            sch.settRoutine.index,
           );
 
         // Group volumes with their sets more directly
@@ -490,10 +487,7 @@ export function createTemplateStore() {
           },
           {} as Record<
             number,
-            Map<
-              number,
-              TSelectVolumeTemplate & { setts: TSelectSettTemplate[] }
-            >
+            Map<number, TSelectVolumeRoutine & { setts: TSelectSettRoutine[] }>
           >,
         );
 

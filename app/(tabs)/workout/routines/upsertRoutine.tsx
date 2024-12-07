@@ -17,7 +17,7 @@ import {
 } from 'react-native-gesture-handler';
 import { db } from '@/db/instance';
 import { eq } from 'drizzle-orm';
-import * as sch from '@/db/schema/template';
+import * as sch from '@/db/schema/routine';
 import OpenModalWrapper from '@/components/OpenModalWrapper';
 import TextContrast from '@/components/ui/TextContrast';
 import MyButton from '@/components/ui/MyButton';
@@ -82,9 +82,9 @@ export default function UpsertRoutine() {
     // If inserting or updating template with a different name
     if (templateName === undefined || templateWorkoutName !== templateName) {
       const nameExists = db
-        .select({ id: sch.workoutTemplate.id })
-        .from(sch.workoutTemplate)
-        .where(eq(sch.workoutTemplate.name, templateName))
+        .select({ id: sch.routine.id })
+        .from(sch.routine)
+        .where(eq(sch.routine.name, templateName))
         .get();
 
       if (nameExists) {

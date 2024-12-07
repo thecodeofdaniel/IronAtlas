@@ -21,18 +21,18 @@ export async function saveExerciseToTemplate(
   if (!exercise.exerciseId) return;
 
   const [volumeTemplate] = await tx
-    .insert(sch.volumeTemplate)
+    .insert(sch.volumeRoutine)
     .values({
       workoutTemplateId,
       exerciseId: exercise.exerciseId,
       index,
       subIndex,
     })
-    .returning({ id: sch.volumeTemplate.id });
+    .returning({ id: sch.volumeRoutine.id });
 
   // Batch insert all sets
   if (exercise.sets.length > 0) {
-    await tx.insert(sch.settTemplate).values(
+    await tx.insert(sch.settRoutine).values(
       exercise.sets.map((sett, idx) => ({
         volumeTemplateId: volumeTemplate.id,
         index: idx,

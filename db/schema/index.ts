@@ -1,3 +1,3 @@
 export * from './exercise+tags';
-export * from './template';
+export * from './routine';
 export * from './workout';

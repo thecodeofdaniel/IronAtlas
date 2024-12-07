@@ -3,7 +3,7 @@ import { View } from 'react-native';
 import { Router, useRouter } from 'expo-router';
 import { useLiveQuery } from 'drizzle-orm/expo-sqlite';
 import { db } from '@/db/instance';
-import * as s from '@/db/schema/template';
+import * as s from '@/db/schema/routine';
 import { FlatList, GestureHandlerRootView } from 'react-native-gesture-handler';
 import { asc, eq } from 'drizzle-orm';
 import { useExerciseStore } from '@/store/zustand/exercise/exerciseStore';
@@ -15,7 +15,7 @@ import { getActionSheetStyle } from '@/lib/actionSheetConfig';
 import { cn } from '@/lib/utils';
 import TextContrast from '@/components/ui/TextContrast';
 import MyButton from '@/components/ui/MyButton';
-import RenderVolume from '../../../../components/Template/RenderVolume';
+import RenderVolume from '@/components/Template/RenderVolume';
 
 export interface TransformedTemplate {
   workoutId: number;
@@ -72,8 +72,8 @@ function RenderSingleRoutine({
           case destructiveButtonIndex:
             await db.transaction(async (tx) => {
               await tx
-                .delete(s.workoutTemplate)
-                .where(eq(s.workoutTemplate.id, workout.workoutId));
+                .delete(s.routine)
+                .where(eq(s.routine.id, workout.workoutId));
             });
             break;
           case 1:
@@ -136,48 +136,45 @@ export default function RenderRoutines({ selected, setSelected }: Props) {
   const exerciseMap = useExerciseStore((state) => state.exerciseMap);
 
   // Fetch the workout templates
-  const { data: rawWorkoutTemplates } = useLiveQuery(
+  const { data: rawRoutines } = useLiveQuery(
     db
       .select({
-        workoutId: s.workoutTemplate.id,
-        name: s.workoutTemplate.name,
-        volumeId: s.volumeTemplate.id,
-        exerciseId: s.volumeTemplate.exerciseId,
-        index: s.volumeTemplate.index,
-        subIndex: s.volumeTemplate.subIndex,
-        setType: s.settTemplate.type,
-        weight: s.settTemplate.weight,
-        reps: s.settTemplate.reps,
+        workoutId: s.routine.id,
+        name: s.routine.name,
+        volumeId: s.volumeRoutine.id,
+        exerciseId: s.volumeRoutine.exerciseId,
+        index: s.volumeRoutine.index,
+        subIndex: s.volumeRoutine.subIndex,
+        setType: s.settRoutine.type,
+        weight: s.settRoutine.weight,
+        reps: s.settRoutine.reps,
       })
-      .from(s.workoutTemplate)
-      .innerJoin(
-        s.volumeTemplate,
-        eq(s.volumeTemplate.workoutTemplateId, s.workoutTemplate.id),
-      )
+      .from(s.routine)
+      .innerJoin(s.volumeRoutine, eq(s.volumeRoutine.routineId, s.routine.id))
       .leftJoin(
-        s.settTemplate,
-        eq(s.settTemplate.volumeTemplateId, s.volumeTemplate.id),
+        s.settRoutine,
+        eq(s.settRoutine.volumeRoutineId, s.volumeRoutine.id),
       )
-      .orderBy(asc(s.workoutTemplate.name)),
+      .orderBy(asc(s.routine.name)),
   );
 
   // Transform the flat data into nested structure
-  const workoutTemplates: TransformedTemplate[] = React.useMemo(() => {
-    if (!rawWorkoutTemplates) return [];
+  const routines: TransformedTemplate[] = React.useMemo(() => {
+    if (!rawRoutines) return [];
 
-    const templatesMap = new Map<number, TransformedTemplate>();
+    const routinesMap = new Map<number, TransformedTemplate>();
 
-    rawWorkoutTemplates.forEach((row) => {
-      if (!templatesMap.has(row.workoutId)) {
-        templatesMap.set(row.workoutId, {
+    rawRoutines.forEach((row) => {
+      if (!routinesMap.has(row.workoutId)) {
+        routinesMap.set(row.workoutId, {
           workoutId: row.workoutId,
           name: row.name,
           volumes: [],
         });
       }
 
-      const template = templatesMap.get(row.workoutId)!;
-      let volume = template.volumes.find((v) => v.volumeId === row.volumeId);
+      const routine = routinesMap.get(row.workoutId)!;
+      let volume = routine.volumes.find((v) => v.volumeId === row.volumeId);
 
       if (!volume) {
         volume = {
@@ -187,7 +184,7 @@ export default function RenderRoutines({ selected, setSelected }: Props) {
           subIndex: row.subIndex,
           setts: [],
         };
-        template.volumes.push(volume);
+        routine.volumes.push(volume);
       }
 
       // Check if a sett was included in a volume
@@ -200,14 +197,14 @@ export default function RenderRoutines({ selected, setSelected }: Props) {
       }
     });
 
-    return Array.from(templatesMap.values());
-  }, [rawWorkoutTemplates]);
+    return Array.from(routinesMap.values());
+  }, [rawRoutines]);
 
   return (
     <>
       <GestureHandlerRootView>
         <FlatList
-          data={workoutTemplates}
+          data={routines}
           renderItem={({ item, index }) => (
             <RenderSingleRoutine
               workout={item}
