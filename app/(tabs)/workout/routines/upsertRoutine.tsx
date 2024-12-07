@@ -22,6 +22,7 @@ import OpenModalWrapper from '@/components/OpenModalWrapper';
 import TextContrast from '@/components/ui/TextContrast';
 import MyButton from '@/components/ui/MyButton';
 import MyButtonOpacity from '@/components/ui/MyButtonOpacity';
+import ScreenLayoutWrapper from '@/components/ui/ScreenLayoutWrapper';
 
 const emptyErrorMsgs = {
   templateName: '',
@@ -121,7 +122,7 @@ export default function UpsertRoutine() {
           ),
         }}
       />
-      <View className="flex-1 bg-neutral p-2">
+      <ScreenLayoutWrapper>
         <TouchableWithoutFeedback
           onPress={() => Keyboard.dismiss()}
           accessible={false}
@@ -171,7 +172,7 @@ export default function UpsertRoutine() {
             </Text>
           </MyButtonOpacity>
         </OpenModalWrapper>
-      </View>
+      </ScreenLayoutWrapper>
     </>
   );
 }

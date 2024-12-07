@@ -5,6 +5,7 @@ import { useTemplateStore } from '@/store/zustand/template/templateStore';
 import RenderRoutines from '@/app/(tabs)/workout/components/RenderRoutines';
 import MyButton from '@/components/ui/MyButton';
 import { cn } from '@/lib/utils';
+import ScreenLayoutWrapper from '@/components/ui/ScreenLayoutWrapper';
 
 export default function SelectRoutine() {
   const [selected, setSelected] = useState<number>();
@@ -18,11 +19,11 @@ export default function SelectRoutine() {
   return (
     <>
       <Stack.Screen options={{ title: 'Select Routine' }} />
-      <View className="flex-1 bg-neutral">
-        <View className="flex-1 p-2">
+      <ScreenLayoutWrapper className="gap-4">
+        <View className="flex-1">
           <RenderRoutines selected={selected} setSelected={setSelected} />
         </View>
-        <View className="flex flex-row justify-between gap-2 p-2">
+        <View className="flex flex-row justify-between gap-2">
           <MyButton
             disabled={isUnselected}
             className={cn('flex-1 bg-green-500 p-4 transition-all', {
@@ -56,7 +57,7 @@ export default function SelectRoutine() {
             </Text>
           </MyButton>
         </View>
-      </View>
+      </ScreenLayoutWrapper>
     </>
   );
 }

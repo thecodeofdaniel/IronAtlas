@@ -8,5 +8,7 @@ type Props = {
 };
 
 export default function ScreenLayoutWrapper({ children, className }: Props) {
-  return <View className={cn('bg-neutral p-4', className)}>{children}</View>;
+  return (
+    <View className={cn('flex-1 bg-neutral p-2', className)}>{children}</View>
+  );
 }

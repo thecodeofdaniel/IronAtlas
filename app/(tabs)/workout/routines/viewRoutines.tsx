@@ -6,6 +6,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useTemplateStore } from '@/store/zustand/template/templateStore';
 import { useThemeContext } from '@/store/context/themeContext';
 import PushOntoStackWrapper from '@/components/PushOntoStackWrapper';
+import ScreenLayoutWrapper from '@/components/ui/ScreenLayoutWrapper';
 
 export default function ViewRoutines() {
   const clearTemplate = useTemplateStore((state) => state.clearTemplate);
@@ -29,9 +30,9 @@ export default function ViewRoutines() {
           ),
         }}
       />
-      <View className="flex-1 bg-neutral p-2">
+      <ScreenLayoutWrapper>
         <RenderRoutines />
-      </View>
+      </ScreenLayoutWrapper>
     </>
   );
 }
