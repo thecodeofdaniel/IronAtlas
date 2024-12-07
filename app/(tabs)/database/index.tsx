@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Button, Alert, Text } from 'react-native';
+import { View, Button, Alert } from 'react-native';
 import { Stack } from 'expo-router';
 
 // expo-sqlite
@@ -10,6 +10,10 @@ import * as FileSystem from 'expo-file-system';
 import { DB_NAME, expoDb } from '@/db/instance';
 import { seed } from '@/db/seed/seed';
 import { reset } from '@/db/reset';
+
+// Components
+import ScreenLayoutWrapper from '@/components/ui/ScreenLayoutWrapper';
+import TextContrast from '@/components/ui/TextContrast';
 
 const getDbTables = async () => {
   try {
@@ -107,36 +111,32 @@ export default function DatabaseTab() {
           headerShown: true,
         }}
       />
-      <View
-        style={{
-          flex: 1,
-          alignItems: 'center',
-          justifyContent: 'center',
-          gap: 6,
-        }}
-        className="bg-neutral"
-      >
-        <Text className="text-xl">This DB</Text>
-        <Button title="FIND TABLES" onPress={getDbTables} />
-        <Button title="SEED DB" onPress={seedDb} />
-        <Button
-          title="RESET TABLES"
-          onPress={() => deleteProxy('Reset tables', () => reset())}
-          color={'orange'}
-        />
-        <Button
-          title="DELETE CURRENT DB"
-          onPress={() => deleteProxy('Delete current db', deleteDb)}
-          color={'red'}
-        />
-        <Text className="text-xl">Other DBs</Text>
-        <Button title="FIND OTHER DBS" onPress={getOtherDbs} />
-        <Button
-          title="DELETE OTHER DBS"
-          onPress={() => deleteProxy('Delete other dbs', deleteOtherDbs)}
-          color={'red'}
-        />
-      </View>
+      <ScreenLayoutWrapper className="gap-2">
+        <View>
+          <TextContrast className="text-lg font-medium">This DB</TextContrast>
+          <Button title="FIND TABLES" onPress={getDbTables} />
+          <Button title="SEED DB" onPress={seedDb} />
+          <Button
+            title="RESET TABLES"
+            onPress={() => deleteProxy('Reset tables', () => reset())}
+            color={'orange'}
+          />
+          <Button
+            title="DELETE CURRENT DB"
+            onPress={() => deleteProxy('Delete current db', deleteDb)}
+            color={'red'}
+          />
+        </View>
+        <View>
+          <TextContrast className="text-lg font-medium">Other DBs</TextContrast>
+          <Button title="FIND OTHER DBS" onPress={getOtherDbs} />
+          <Button
+            title="DELETE OTHER DBS"
+            onPress={() => deleteProxy('Delete other dbs', deleteOtherDbs)}
+            color={'red'}
+          />
+        </View>
+      </ScreenLayoutWrapper>
     </>
   );
 }
