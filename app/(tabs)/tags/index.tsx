@@ -7,7 +7,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import clsx from 'clsx';
 import { Ionicons } from '@expo/vector-icons';
 import {
-  useTagStoreWithSetter,
+  useTagStoreHook,
   type TagStateFunctions,
 } from '@/store/zustand/tag/tagStore';
 import {
@@ -176,7 +176,7 @@ const DraggableTree = ({
 };
 
 export default function TagTab() {
-  const { tagMap, setter } = useTagStoreWithSetter();
+  const { tagMap, setter } = useTagStoreHook();
   const { setter: exerciseSetter } = useExerciseStoreHook();
 
   return (

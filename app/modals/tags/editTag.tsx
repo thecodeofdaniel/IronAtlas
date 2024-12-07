@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, Button } from 'react-native';
 import { Stack, useRouter } from 'expo-router';
-import { useTagStoreWithSetter } from '@/store/zustand/tag/tagStore';
+import { useTagStoreHook } from '@/store/zustand/tag/tagStore';
 import { ModalData } from '@/store/zustand/modal/modalStore';
 import { formatTagOrExercise, isValidTagOrExercise } from '@/utils/utils';
 import MyButtonOpacity from '@/components/ui/MyButtonOpacity';
@@ -15,7 +15,7 @@ export default function EditTag({ modalData, closeModal }: Props) {
   const router = useRouter();
 
   const id = modalData.id;
-  const { tagMap, tagSet, setter } = useTagStoreWithSetter();
+  const { tagMap, tagSet, setter } = useTagStoreHook();
   const ogName = tagMap[id].label;
   const [name, setName] = useState(ogName);
   const [error, setError] = useState('');

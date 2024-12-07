@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 import { View, Text, FlatList } from 'react-native';
 import { Stack, useLocalSearchParams } from 'expo-router';
 
-import { useTagStoreWithSetter } from '@/store/zustand/tag/tagStore';
+import { useTagStoreHook } from '@/store/zustand/tag/tagStore';
 import { useExerciseStore } from '@/store/zustand/exercise/exerciseStore';
 
 import MyButtonOpacity from '@/components/ui/MyButtonOpacity';
@@ -31,7 +31,7 @@ function getAllChildrenIds(tagMap: TagMap, tagId: number): number[] {
 export default function TagId() {
   const { tagId: id } = useLocalSearchParams<{ tagId: string }>();
   const { exerciseMap } = useExerciseStore((state) => state);
-  const { tagMap } = useTagStoreWithSetter();
+  const { tagMap } = useTagStoreHook();
 
   const currentTag = tagMap[+id];
   const allChildrenIds = useMemo(

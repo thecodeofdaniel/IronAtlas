@@ -177,7 +177,6 @@ export const useTagStore = create<TagStore>()((set, get) => ({
       await db
         .delete(schema.exerciseTags)
         .where(eq(schema.exerciseTags.tagId, pressedId));
-
     } catch (error) {
       console.error('Error: Deleting tag and associated exercises', error);
     }
@@ -241,7 +240,7 @@ export const useTagStore = create<TagStore>()((set, get) => ({
   },
 }));
 
-export function useTagStoreWithSetter(): TagStateVal & {
+export function useTagStoreHook(): TagStateVal & {
   setter: TagStateFunctions;
 } {
   const {

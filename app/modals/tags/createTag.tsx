@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, Button } from 'react-native';
 import { ModalData } from '@/store/zustand/modal/modalStore';
 import { Stack, useRouter } from 'expo-router';
-import { useTagStoreWithSetter } from '@/store/zustand/tag/tagStore';
+import { useTagStoreHook } from '@/store/zustand/tag/tagStore';
 import { formatTagOrExercise, isValidTagOrExercise } from '@/utils/utils';
 import MyButtonOpacity from '@/components/ui/MyButtonOpacity';
 import { useThemeContext } from '@/store/context/themeContext';
@@ -15,7 +15,7 @@ type Props = {
 export default function CreateTag({ modalData, closeModal }: Props) {
   const pressedId = modalData.pressedId;
   const router = useRouter();
-  const { tagMap, tagSet, setter } = useTagStoreWithSetter();
+  const { tagMap, tagSet, setter } = useTagStoreHook();
   const [name, setName] = useState('');
   const [error, setError] = useState('');
 

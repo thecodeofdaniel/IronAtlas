@@ -3,7 +3,7 @@ import { View, Text, TextInput, TouchableOpacity } from 'react-native';
 import { ModalData } from '@/store/zustand/modal/modalStore';
 import { Stack, useRouter } from 'expo-router';
 import { useExerciseStoreHook } from '@/store/zustand/exercise/exerciseStore';
-import { useTagStoreWithSetter } from '@/store/zustand/tag/tagStore';
+import { useTagStoreHook } from '@/store/zustand/tag/tagStore';
 import { getAllParentIds } from '@/utils/utils';
 import { formatTagOrExercise, isValidTagOrExercise } from '@/utils/utils';
 import { TInsertExercise } from '@/db/schema';
@@ -30,7 +30,7 @@ export default function UpsertExercise({
     exercisesList,
     setter: exerciseSetter,
   } = useExerciseStoreHook();
-  const { tagMap, setter: tagSetter } = useTagStoreWithSetter();
+  const { tagMap, setter: tagSetter } = useTagStoreHook();
 
   // Fill out the data
   const [label, setLabel] = useState(id ? exerciseMap[id].label : '');

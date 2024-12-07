@@ -1,7 +1,7 @@
 import { View, Text, FlatList, TouchableOpacity, Button } from 'react-native';
 import React, { useState } from 'react';
 import { ModalData } from '@/store/zustand/modal/modalStore';
-import { useTagStoreWithSetter } from '@/store/zustand/tag/tagStore';
+import { useTagStoreHook } from '@/store/zustand/tag/tagStore';
 import clsx from 'clsx';
 import { Stack, useRouter } from 'expo-router';
 import ScreenLayoutWrapper from '@/components/ui/ScreenLayoutWrapper';
@@ -87,7 +87,7 @@ const Tree = ({
 
 export default function MoveTag({ modalData, closeModal }: Props) {
   const idToBeMoved = modalData.pressedId;
-  const { tagMap, setter } = useTagStoreWithSetter();
+  const { tagMap, setter } = useTagStoreHook();
   const [selected, setSelected] = useState<number | null>(null);
   const [error, setError] = useState('');
   const router = useRouter();

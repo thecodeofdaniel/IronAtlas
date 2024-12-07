@@ -4,10 +4,7 @@ import {
   useExerciseStoreHook,
 } from '@/store/zustand/exercise/exerciseStore';
 import { ModalData } from '@/store/zustand/modal/modalStore';
-import {
-  useTagStore,
-  useTagStoreWithSetter,
-} from '@/store/zustand/tag/tagStore';
+import { useTagStore, useTagStoreHook } from '@/store/zustand/tag/tagStore';
 
 import clsx from 'clsx';
 import { Stack, useRouter } from 'expo-router';
@@ -29,6 +26,7 @@ import MyButton from '@/components/ui/MyButton';
 import MyButtonOpacity from '@/components/ui/MyButtonOpacity';
 import ScreenLayoutWrapper from '@/components/ui/ScreenLayoutWrapper';
 import ExerciseListWrapper from '@/components/ExerciseList/ExerciseListWrapper';
+import filterExercises from '@/db/funcs/filterExercises';
 
 type ExerciseListProps = {
   exerciseMap: ExerciseMap;
@@ -116,40 +114,14 @@ export default function SelectExercisesModal({
   const router = useRouter();
   const { exerciseMap, exercisesList } = useExerciseStore((state) => state);
   const tagMap = useTagStore((state) => state.tagMap);
-  const selectedTags = useFilterExerciseStore((state) => state.selectedTags);
-  // const { pickedExercises, pickedExercisesSet, actions } =
-  //   useExerciseSelectionHook(storeType);
   const { pickedExercises, pickedExercisesSet, actions } =
     useTemplateStoreHook();
 
-  let filteredExercises = exercisesList;
-
-  // If the number of selected tags is greater than one then filter
-  if (selectedTags.length > 0) {
-    const allTagIds = selectedTags.flatMap((tagId) => [
-      +tagId,
-      ...getAllChildrenIds(tagMap, +tagId),
-    ]);
-
-    filteredExercises = [
-      ...new Set(
-        db
-          .select({
-            exerciseId: schema.exerciseTags.exerciseId,
-            index: schema.exercise.index,
-          })
-          .from(schema.exerciseTags)
-          .innerJoin(
-            schema.exercise,
-            eq(schema.exerciseTags.exerciseId, schema.exercise.id),
-          )
-          .where(inArray(schema.exerciseTags.tagId, allTagIds))
-          .orderBy(asc(schema.exercise.index))
-          .all()
-          .map((result) => result.exerciseId),
-      ),
-    ];
-  }
+  const selectedTags = useFilterExerciseStore((state) => state.selectedTags);
+  const filteredExercises =
+    selectedTags.length > 0
+      ? filterExercises(tagMap, selectedTags)
+      : exercisesList;
 
   return (
     <>

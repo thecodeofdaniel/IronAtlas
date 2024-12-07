@@ -5,7 +5,7 @@ import {
 } from '@/store/zustand/exercise/exerciseStore';
 import { useModalStore } from '@/store/zustand/modal/modalStore';
 import {
-  useTagStoreWithSetter,
+  useTagStoreHook,
   type TagStateFunctions,
 } from '@/store/zustand/tag/tagStore';
 import { useActionSheet } from '@expo/react-native-action-sheet';
@@ -29,6 +29,7 @@ import MyButtonOpacity from '@/components/ui/MyButtonOpacity';
 import ScreenLayoutWrapper from '@/components/ui/ScreenLayoutWrapper';
 import TextContrast from '@/components/ui/TextContrast';
 import ExerciseListWrapper from '@/components/ExerciseList/ExerciseListWrapper';
+import filterExercises from '@/db/funcs/filterExercises';
 
 type ExerciseListProps = {
   exerciseMap: ExerciseMap;
@@ -143,44 +144,17 @@ function ExerciseList({
 }
 
 export default function ExercisesTab() {
-  // console.log('Render Exercises Tab');
   const router = useRouter();
   const { colors } = useThemeContext();
   const { exerciseMap, exercisesList, setter } = useExerciseStoreHook();
-  const { tagMap } = useTagStoreWithSetter();
+  const { tagMap } = useTagStoreHook();
   const openModal = useModalStore((state) => state.openModal);
 
-  // const [selectedTags, setSelected] = useState<string[]>([]);
   const selectedTags = useFilterExerciseStore((state) => state.selectedTags);
-
-  let filteredExercises = exercisesList;
-
-  // If the number of selected tags is greater than one then filter
-  if (selectedTags.length > 0) {
-    const allTagIds = selectedTags.flatMap((tagId) => [
-      +tagId,
-      ...getAllChildrenIds(tagMap, +tagId),
-    ]);
-
-    filteredExercises = [
-      ...new Set(
-        db
-          .select({
-            exerciseId: schema.exerciseTags.exerciseId,
-            index: schema.exercise.index,
-          })
-          .from(schema.exerciseTags)
-          .innerJoin(
-            schema.exercise,
-            eq(schema.exerciseTags.exerciseId, schema.exercise.id),
-          )
-          .where(inArray(schema.exerciseTags.tagId, allTagIds))
-          .orderBy(asc(schema.exercise.index))
-          .all()
-          .map((result) => result.exerciseId),
-      ),
-    ];
-  }
+  const filteredExercises =
+    selectedTags.length > 0
+      ? filterExercises(tagMap, selectedTags)
+      : exercisesList;
 
   return (
     <>
