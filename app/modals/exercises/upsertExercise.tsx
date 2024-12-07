@@ -133,7 +133,7 @@ export default function UpsertExercise({
           </Text>
           <SelectFromTagTree
             tagMap={tagMap}
-            tagChildren={[0]}
+            tagChildren={tagMap[0].children}
             level={0}
             selected={selected}
             setSelected={setSelected}

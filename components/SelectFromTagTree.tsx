@@ -27,6 +27,28 @@ export default function SelectFromTagTree({
   setSelected,
 }: SelectFromTagTreeProps) {
   const RenderItem = ({ item }: { item: Tag }) => {
+    const handleOnSelect = () => {
+      setSelected((prev) => {
+        // Determine if chosen id is already included in array
+        const isAlreadySelected = prev.chosen.includes(item.id);
+        let newChosenList: number[] = isAlreadySelected
+          ? prev.chosen.filter((id) => id !== item.id) // remove from array
+          : [...prev.chosen, item.id]; // add to array
+
+        // Add preSelected ids to set according to chosen ids
+        const preSelectedSet = new Set<number>();
+        for (const chosen of newChosenList) {
+          const parentIds = getAllParentIds(tagMap, chosen);
+          parentIds.forEach((id) => preSelectedSet.add(id));
+        }
+
+        return {
+          chosen: newChosenList,
+          preSelected: preSelectedSet,
+        };
+      });
+    };
+
     return (
       <MyButtonOpacity
         className={cn('my-[1] bg-neutral-accent p-2 opacity-40', {
@@ -35,27 +57,28 @@ export default function SelectFromTagTree({
             selected.preSelected.has(item.id),
         })}
         disabled={selected.preSelected.has(item.id)}
-        onPress={() =>
-          setSelected((prev) => {
-            // Determine if chosen id is already included in array
-            const isAlreadySelected = prev.chosen.includes(item.id);
-            let newChosenList: number[] = isAlreadySelected
-              ? prev.chosen.filter((id) => id !== item.id) // remove from array
-              : [...prev.chosen, item.id]; // add to array
+        onPress={handleOnSelect}
+        // onPress={() =>
+        //   setSelected((prev) => {
+        //     // Determine if chosen id is already included in array
+        //     const isAlreadySelected = prev.chosen.includes(item.id);
+        //     let newChosenList: number[] = isAlreadySelected
+        //       ? prev.chosen.filter((id) => id !== item.id) // remove from array
+        //       : [...prev.chosen, item.id]; // add to array
 
-            // Add preSelected ids to set according to chosen ids
-            const preSelectedSet = new Set<number>();
-            for (const chosen of newChosenList) {
-              const parentIds = getAllParentIds(tagMap, chosen);
-              parentIds.forEach((id) => preSelectedSet.add(id));
-            }
+        //     // Add preSelected ids to set according to chosen ids
+        //     const preSelectedSet = new Set<number>();
+        //     for (const chosen of newChosenList) {
+        //       const parentIds = getAllParentIds(tagMap, chosen);
+        //       parentIds.forEach((id) => preSelectedSet.add(id));
+        //     }
 
-            return {
-              chosen: newChosenList,
-              preSelected: preSelectedSet,
-            };
-          })
-        }
+        //     return {
+        //       chosen: newChosenList,
+        //       preSelected: preSelectedSet,
+        //     };
+        //   })
+        // }
       >
         <Text
           className={cn('text-neutral-contrast', {
