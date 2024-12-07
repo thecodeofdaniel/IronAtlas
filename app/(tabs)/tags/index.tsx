@@ -1,19 +1,15 @@
-import React, { useState } from 'react';
-import { Text, View, TouchableOpacity, Pressable, Button } from 'react-native';
+import React from 'react';
+import { Text, View, TouchableOpacity } from 'react-native';
 import DraggableFlatList, {
   RenderItemParams,
 } from 'react-native-draggable-flatlist';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import clsx from 'clsx';
 import { Ionicons } from '@expo/vector-icons';
 import {
   useTagStoreHook,
   type TagStateFunctions,
 } from '@/store/zustand/tag/tagStore';
-import {
-  ActionSheetProvider,
-  useActionSheet,
-} from '@expo/react-native-action-sheet';
+import { useActionSheet } from '@expo/react-native-action-sheet';
 import { Stack, useRouter } from 'expo-router';
 import { useModalStore } from '@/store/zustand/modal/modalStore';
 import {
@@ -25,12 +21,15 @@ import { getActionSheetStyle } from '@/lib/actionSheetConfig';
 import { useThemeContext } from '@/store/context/themeContext';
 import { cn } from '@/lib/utils';
 import MyButtonOpacity from '@/components/ui/MyButtonOpacity';
+import ScreenLayoutWrapper from '@/components/ui/ScreenLayoutWrapper';
+import OpenModalWrapper from '@/components/OpenModalWrapper';
+import TextContrast from '@/components/ui/TextContrast';
 
 type DraggableTreeProps = {
   tagMap: TagMap; // Accept itemMap as a prop
   tagChildren: number[]; // Accept item IDs as a prop
   level: number;
-  setter: TagStateFunctions;
+  tagSetter: TagStateFunctions;
   exerciseSetter: ExerciseStateFunctions;
 };
 
@@ -38,7 +37,7 @@ const DraggableTree = ({
   tagMap,
   tagChildren,
   level = 0,
-  setter,
+  tagSetter,
   exerciseSetter,
 }: DraggableTreeProps) => {
   const router = useRouter();
@@ -46,28 +45,25 @@ const DraggableTree = ({
   const openModal = useModalStore((state) => state.openModal);
   const { colors } = useThemeContext();
 
-  const handleOnPress = (pressedId: number, level: number) => {
+  const handleOnPress = (pressedId: number) => {
     const tag = tagMap[pressedId];
-    const baseOptions = ['Create', 'Cancel'];
     const options = [
-      ...(level > 0 && tag.children.length === 0 ? ['Delete'] : []),
-      ...(level > 0 ? ['Edit', 'Move'] : []),
-      ...baseOptions,
+      ...(tag.children.length === 0 ? ['Delete'] : []),
+      'Edit',
+      'Move',
+      'Create',
+      'Cancel',
     ];
 
     const cancelButtonIndex = options.length - 1;
     const destructiveButtonIndex = options.indexOf('Delete');
 
     const actions = {
-      // Delete: () => setter.deleteTag(pressedId),
       Delete: async () => {
-        // console.log('pressedId', pressedId);
-        await setter.deleteTag(pressedId);
+        await tagSetter.deleteTag(pressedId);
       },
       Create: () => openModal('createTag', { pressedId }),
       Edit: () => openModal('updateTag', { id: pressedId }),
-      // Create: () => openModal('upsertTag'),
-      // Edit: () => openModal('upsertTag', { id: pressedId }),
       Move: () => openModal('moveTag', { pressedId }),
     };
 
@@ -84,6 +80,8 @@ const DraggableTree = ({
 
         const action = actions[options[selectedIndex] as keyof typeof actions];
         action();
+
+        // If not the delete option then push modal
         if (options[selectedIndex] !== 'Delete') router.push('/modal');
       },
     );
@@ -113,16 +111,15 @@ const DraggableTree = ({
         >
           <TouchableOpacity
             onPress={() => {
-              setter.toggleTagOpen(item.id);
+              tagSetter.toggleTagOpen(item.id);
             }}
           >
             {/* Dropdown option */}
-            {item.children.length > 0 && level > 0 && (
+            {item.children.length > 0 && (
               <Ionicons
                 name={item.isOpen ? 'chevron-down' : 'chevron-forward-outline'}
                 size={20}
-                color={'white'}
-                // style={{borderColor: 'white', borderWidth: 2}}
+                color="white"
               />
             )}
           </TouchableOpacity>
@@ -130,7 +127,7 @@ const DraggableTree = ({
           {/* Tags and options */}
           <View className="flex flex-1 flex-row items-center justify-between pl-1">
             <Text className="text-white">{item.label}</Text>
-            <TouchableOpacity onPress={() => handleOnPress(item.id, level)}>
+            <TouchableOpacity onPress={() => handleOnPress(item.id)}>
               <Ionicons name="ellipsis-horizontal" color="white" size={24} />
             </TouchableOpacity>
           </View>
@@ -146,7 +143,7 @@ const DraggableTree = ({
       <DraggableFlatList
         data={tags}
         onDragEnd={({ data }) => {
-          setter.reorderTags(data);
+          tagSetter.reorderTags(data);
         }}
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item, drag, isActive, getIndex }) => {
@@ -163,7 +160,7 @@ const DraggableTree = ({
                   tagMap={tagMap}
                   tagChildren={item.children}
                   level={level + 1}
-                  setter={setter}
+                  tagSetter={tagSetter}
                   exerciseSetter={exerciseSetter}
                 />
               )}
@@ -176,30 +173,52 @@ const DraggableTree = ({
 };
 
 export default function TagTab() {
-  const { tagMap, setter } = useTagStoreHook();
+  const { colors } = useThemeContext();
+  const { tagMap, setter: tagSetter } = useTagStoreHook();
   const { setter: exerciseSetter } = useExerciseStoreHook();
 
   return (
     <>
       <Stack.Screen
-        options={{ title: 'Body Section Tags', headerShown: true }}
+        options={{
+          title: 'Body Section Tags',
+          headerRight: () => (
+            <OpenModalWrapper
+              activeModal="createTag"
+              modalData={{ pressedId: 0 }}
+            >
+              <TouchableOpacity>
+                <Ionicons
+                  name="add"
+                  size={24}
+                  color={colors['--neutral-contrast']}
+                />
+              </TouchableOpacity>
+            </OpenModalWrapper>
+          ),
+        }}
       />
-      <View className="flex flex-1 bg-neutral px-2 pt-2">
-        <GestureHandlerRootView>
-          {/* <ActionSheetProvider> */}
-          {/* {tagMap[0].children.length > 0 && ( */}
-          <DraggableTree
-            tagMap={tagMap}
-            tagChildren={[0]}
-            level={0}
-            setter={setter}
-            exerciseSetter={exerciseSetter}
-          />
-          {/* )} */}
-
-          {/* </ActionSheetProvider> */}
-        </GestureHandlerRootView>
-      </View>
+      <ScreenLayoutWrapper>
+        {tagMap[0].children.length === 0 && (
+          <View className="flex-1 items-center justify-center">
+            <TextContrast>No Tags Found</TextContrast>
+            <MyButtonOpacity>
+              <Text className="font-medium text-white">Add Tags</Text>
+            </MyButtonOpacity>
+          </View>
+        )}
+        {tagMap[0].children.length > 0 && (
+          <GestureHandlerRootView>
+            <DraggableTree
+              tagMap={tagMap}
+              tagChildren={tagMap[0].children}
+              level={0}
+              tagSetter={tagSetter}
+              exerciseSetter={exerciseSetter}
+            />
+          </GestureHandlerRootView>
+        )}
+      </ScreenLayoutWrapper>
     </>
   );
 }
