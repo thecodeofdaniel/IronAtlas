@@ -7,6 +7,6 @@ type Props = {
   className?: string;
 };
 
-export default function PageLayoutWrapper({ children, className }: Props) {
+export default function ScreenLayoutWrapper({ children, className }: Props) {
   return <View className={cn('bg-neutral p-4', className)}>{children}</View>;
 }
