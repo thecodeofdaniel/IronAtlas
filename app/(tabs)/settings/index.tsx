@@ -1,13 +1,14 @@
 import React from 'react';
 import { View, Text, Alert } from 'react-native';
-import { Stack, useRouter } from 'expo-router';
+import { Stack } from 'expo-router';
 import { useThemeContext } from '@/store/context/themeContext';
 import { useActionSheet } from '@expo/react-native-action-sheet';
 import { getActionSheetStyle } from '@/lib/actionSheetConfig';
 import { deleteWorkouts } from '@/db/reset';
-import Button from '@/components/ui/MyButton';
 import MyButtonOpacity from '@/components/ui/MyButtonOpacity';
 import PushOntoStackWrapper from '@/components/PushOntoStackWrapper';
+import ScreenLayoutWrapper from '@/components/ui/ScreenLayoutWrapper';
+import TextContrast from '@/components/ui/TextContrast';
 
 export default function SettingsTab() {
   const { colors, themeName, setTheme } = useThemeContext();
@@ -49,34 +50,37 @@ export default function SettingsTab() {
   return (
     <>
       <Stack.Screen options={{ title: 'Settings' }} />
-      <View className="flex flex-1 flex-col gap-2 bg-neutral p-2">
+      <ScreenLayoutWrapper className="gap-2">
         <View className="flex flex-row items-center gap-2">
-          <Text className="w-44 text-xl font-medium text-neutral-contrast">
+          <TextContrast className="w-44 text-xl font-medium">
             Theme Settings
-          </Text>
-          <Button onPress={setTheme} className="flex-1 bg-neutral-accent">
+          </TextContrast>
+          <MyButtonOpacity
+            onPress={setTheme}
+            className="flex-1 bg-neutral-accent"
+          >
             <Text className="text-center text-xl text-neutral-contrast">
               Set {themeName === 'light' ? 'Dark' : 'Light'} Theme
             </Text>
-          </Button>
+          </MyButtonOpacity>
         </View>
         <View className="flex flex-row items-center gap-2">
-          <Text className="w-44 text-xl font-medium text-neutral-contrast">
+          <TextContrast className="w-44 text-xl font-medium">
             Workout Settings
-          </Text>
-          <Button
+          </TextContrast>
+          <MyButtonOpacity
             onPress={handleDeleteWorkouts}
             className="flex-1 bg-neutral-accent"
           >
             <Text className="text-center text-xl text-neutral-contrast">
               Delete All Previous Workouts
             </Text>
-          </Button>
+          </MyButtonOpacity>
         </View>
         {/* <View className="flex flex-row items-center gap-2">
-          <Text className="w-44 text-xl font-medium text-neutral-contrast">
+          <TextContrast className="w-44 text-xl font-medium">
             Feedback Settings
-          </Text>
+          </TextContrast>
           <PushOntoStackWrapper href="/(tabs)/settings/feedback">
             <MyButtonOpacity className="flex-1 bg-neutral-accent">
               <Text className="text-center text-xl text-neutral-contrast">
@@ -85,7 +89,7 @@ export default function SettingsTab() {
             </MyButtonOpacity>
           </PushOntoStackWrapper>
         </View> */}
-      </View>
+      </ScreenLayoutWrapper>
     </>
   );
 }
