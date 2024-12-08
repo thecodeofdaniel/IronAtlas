@@ -128,7 +128,55 @@ export default function Progression({ exerciseId }: Props) {
   ].filter((chart) => chart.data !== undefined); // Only include charts with data
 
   return (
-    <View>
+    <View className="flex-1">
+      {/* Stats Section */}
+      <View className="py-2">
+        {/* Strength PR */}
+        {strengthPR && (
+          <View className="flex-row items-center gap-2">
+            <Text className="w-48 text-lg font-semibold text-neutral-contrast">
+              Strength PR (1-3 reps)
+            </Text>
+            <Text className="text-neutral-contrast">
+              {strengthPR.weight}
+              {SUFFIX} x {strengthPR.reps}
+            </Text>
+            <Text className="text-neutral-contrast opacity-50">
+              on {formatDate(strengthPR.date)}
+            </Text>
+          </View>
+        )}
+
+        <View className="flex-row items-center gap-2">
+          <Text className="w-48 text-lg font-semibold text-neutral-contrast">
+            Highest Volume Set
+          </Text>
+          <Text className="text-neutral-contrast">
+            {highestVolumeSets[0]?.weight}
+            {SUFFIX} x {highestVolumeSets[0]?.reps} ={' '}
+            {highestVolumeSets[0]?.weight * highestVolumeSets[0]?.reps}
+            {SUFFIX}
+          </Text>
+          <Text className="text-neutral-contrast opacity-50">
+            on {formatDate(highestVolumeSets[0].date)}
+          </Text>
+        </View>
+
+        {/* <View className="flex-row items-center gap-2">
+          <Text className="w-48 text-lg font-semibold text-neutral-contrast">
+            Most Reps
+          </Text>
+          <Text className="text-neutral-contrast">
+            {highestRepsSet.weight}
+            {SUFFIX} x {highestRepsSet.reps}
+          </Text>
+          <Text className="text-neutral-contrast opacity-50">
+            on {formatDate(new Date(highestRepsSet.date))}
+          </Text>
+        </View> */}
+      </View>
+
+      {/* Existing Charts Section */}
       <FlatList
         horizontal
         data={charts}
@@ -136,7 +184,7 @@ export default function Progression({ exerciseId }: Props) {
         showsHorizontalScrollIndicator={false}
         pagingEnabled
         renderItem={({ item }) => (
-          <View className="px-2">
+          <View className="justify-center px-2">
             <LineChartComp
               data={item.data}
               title={item.title}
@@ -144,9 +192,8 @@ export default function Progression({ exerciseId }: Props) {
             />
           </View>
         )}
-        // Optional: Add dots indicator
-        ListFooterComponent={() => <View className="w-4" />} // Add padding at end
-        ListHeaderComponent={() => <View className="w-4" />} // Add padding at start
+        ListFooterComponent={() => <View className="w-4" />}
+        ListHeaderComponent={() => <View className="w-4" />}
       />
     </View>
   );

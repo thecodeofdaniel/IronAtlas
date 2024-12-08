@@ -106,25 +106,63 @@ export async function createWorkouts() {
         const includeDropSet = Math.random() < 0.2; // 20% chance of including a dropset
         const regularSets = includeDropSet ? setCount - 1 : setCount;
 
-        // Create regular sets
-        for (let k = 0; k < regularSets; k++) {
-          let weight = progress.currentWeight;
-          let reps = 0;
+        // Add heavy, low-rep sets at the beginning (30% chance)
+        const includeStrengthSets = Math.random() < 0.3;
+        
+        if (includeStrengthSets) {
+          // Do 1-2 heavy sets with 1-3 reps
+          const strengthSetCount = Math.floor(Math.random() * 2) + 1;
+          for (let k = 0; k < strengthSetCount; k++) {
+            const weight = progress.currentWeight * (1.1 + Math.random() * 0.1); // 110-120% of working weight
+            const reps = Math.floor(Math.random() * 3) + 1; // 1-3 reps
 
-          // Add some variation to working sets
-          weight = weight * (0.95 + Math.random() * 0.1); // ±5% variation
+            await trx.insert(schema.sett).values({
+              volumeId: volume.id,
+              type: 'N',
+              weight: Math.round(weight),
+              reps,
+              index: k,
+            });
+          }
 
-          // As weight goes up, reps typically go down
-          const maxPossibleReps = Math.max(5, Math.floor(12 - k * 1.5));
-          reps = Math.floor(Math.random() * 3) + maxPossibleReps - 2;
+          // Adjust remaining sets to start after strength sets
+          for (let k = strengthSetCount; k < regularSets; k++) {
+            let weight = progress.currentWeight;
+            let reps = 0;
 
-          await trx.insert(schema.sett).values({
-            volumeId: volume.id,
-            type: 'N',
-            weight: Math.round(weight), // Round to nearest pound
-            reps,
-            index: k,
-          });
+            // Add some variation to working sets
+            weight = weight * (0.95 + Math.random() * 0.1); // ±5% variation
+
+            // As weight goes up, reps typically go down
+            const maxPossibleReps = Math.max(5, Math.floor(12 - k * 1.5));
+            reps = Math.floor(Math.random() * 3) + maxPossibleReps - 2;
+
+            await trx.insert(schema.sett).values({
+              volumeId: volume.id,
+              type: 'N',
+              weight: Math.round(weight),
+              reps,
+              index: k,
+            });
+          }
+        } else {
+          // Original working sets logic
+          for (let k = 0; k < regularSets; k++) {
+            let weight = progress.currentWeight;
+            let reps = 0;
+
+            weight = weight * (0.95 + Math.random() * 0.1);
+            const maxPossibleReps = Math.max(5, Math.floor(12 - k * 1.5));
+            reps = Math.floor(Math.random() * 3) + maxPossibleReps - 2;
+
+            await trx.insert(schema.sett).values({
+              volumeId: volume.id,
+              type: 'N',
+              weight: Math.round(weight),
+              reps,
+              index: k,
+            });
+          }
         }
 
         // Add dropset if applicable
@@ -132,8 +170,8 @@ export async function createWorkouts() {
           await trx.insert(schema.sett).values({
             volumeId: volume.id,
             type: 'D',
-            weight: Math.round(progress.currentWeight * 0.6), // 60% of working weight
-            reps: Math.floor(Math.random() * 4) + 8, // 8-12 reps for dropset
+            weight: Math.round(progress.currentWeight * 0.6),
+            reps: Math.floor(Math.random() * 4) + 8,
             index: regularSets,
           });
         }

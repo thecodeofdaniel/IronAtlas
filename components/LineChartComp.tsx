@@ -11,7 +11,7 @@ type LineChartProps = {
     dates: string[];
     values: number[];
   };
-  title?: string;
+  title: string;
   yAxisLabel?: string;
   yAxisSuffix?: string;
 };
@@ -23,17 +23,18 @@ export default function LineChartComp({
   yAxisSuffix = '',
 }: LineChartProps) {
   const { colors } = useThemeContext();
+
   if (!data?.dates || !data?.values) {
     return null;
   }
 
+  const SCREEN_HEIGHT = Dimensions.get('window').height / 2 - 200;
+
   return (
     <View className="flex flex-col items-center justify-center">
-      {title && (
-        <Text className="text-lg font-semibold text-neutral-contrast">
-          {title}
-        </Text>
-      )}
+      <Text className="mb-1 text-xl font-semibold text-neutral-contrast">
+        {title}
+      </Text>
       <LineChart
         data={{
           labels: data.dates,
@@ -45,7 +46,7 @@ export default function LineChartComp({
           ],
         }}
         width={CHART_WIDTH}
-        height={200}
+        height={SCREEN_HEIGHT}
         yAxisLabel={yAxisLabel}
         yAxisSuffix={yAxisSuffix}
         yAxisInterval={1}
@@ -70,7 +71,6 @@ export default function LineChartComp({
           },
         }}
         style={{
-          marginVertical: 8,
           borderRadius: 0,
           borderColor: 'black',
           borderTopWidth: 2,
