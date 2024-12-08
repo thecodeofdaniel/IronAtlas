@@ -46,9 +46,12 @@ export default function TagId() {
       .select({
         exerciseId: s.exerciseTags.exerciseId,
         tagId: s.exerciseTags.tagId,
+        label: s.exercise.label,
       })
       .from(s.exerciseTags)
+      .innerJoin(s.exercise, eq(s.exercise.id, s.exerciseTags.exerciseId))
       .where(eq(s.exerciseTags.tagId, +id))
+      .orderBy(s.exercise.label)
       .all();
   }, [allTagIds]);
 
@@ -57,9 +60,12 @@ export default function TagId() {
       .select({
         exerciseId: s.exerciseTags.exerciseId,
         tagId: s.exerciseTags.tagId,
+        label: s.exercise.label,
       })
       .from(s.exerciseTags)
+      .innerJoin(s.exercise, eq(s.exercise.id, s.exerciseTags.exerciseId))
       .where(inArray(s.exerciseTags.tagId, allChildrenIds))
+      .orderBy(s.exercise.label)
       .all();
   }, [allTagIds]);
 
