@@ -54,7 +54,7 @@ export default function WorkoutTab() {
               </Text>
               <RenderWorkouts numberOfWorkouts={5} />
             </View>
-            <View className="flex flex-row gap-1">
+            <View className="flex flex-row gap-1 py-2">
               <MyButtonOpacity
                 className="flex-1 bg-red-500 py-2"
                 onPress={() => {
