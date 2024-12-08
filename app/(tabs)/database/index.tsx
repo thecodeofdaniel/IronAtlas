@@ -23,12 +23,9 @@ const getDbTables = async () => {
     );
 
     if (result.length === 0) {
-      Alert.alert('Database is empty', 'No tables found.');
+      Alert.alert('DB Empty', 'No tables found');
     } else {
-      Alert.alert(
-        'Database Tables',
-        JSON.stringify(result.map((r: any) => r.name)),
-      );
+      Alert.alert('DB Tables', JSON.stringify(result.map((r: any) => r.name)));
     }
   } catch (error) {
     console.error(error);
@@ -38,10 +35,7 @@ const getDbTables = async () => {
 const deleteDb = () => {
   expoDb.closeSync();
   SQLite.deleteDatabaseSync(DB_NAME);
-  Alert.alert(
-    `Deleted database: ${DB_NAME}`,
-    'Reload the app to start a new db',
-  );
+  Alert.alert(`Deleted DB: ${DB_NAME}`, 'Reload the app to start a new db');
 };
 
 const getOtherDbs = async () => {
@@ -51,7 +45,7 @@ const getOtherDbs = async () => {
 
     // Filter for .db files
     const dbFiles = files.filter((file) => file.endsWith('.db'));
-    Alert.alert('Found database(s)', JSON.stringify(dbFiles));
+    Alert.alert('DBs', JSON.stringify(dbFiles));
   } catch (error) {
     console.error(error);
   }
@@ -75,11 +69,11 @@ const deleteOtherDbs = async () => {
     }
 
     if (deletedDbs.length === 0) {
-      Alert.alert('No other dbs were found');
+      Alert.alert('No other DBs were found');
       return;
     }
 
-    Alert.alert(`Deleted dbs`, JSON.stringify(deletedDbs));
+    Alert.alert(`Deleted DBs`, JSON.stringify(deletedDbs));
   } catch (error) {
     console.error(error);
   }
@@ -88,16 +82,16 @@ const deleteOtherDbs = async () => {
 const deleteProxy = (title: string, func: () => any) =>
   Alert.alert(title, 'Are you sure?', [
     {
-      text: 'CANCEL',
+      text: 'Cancel',
     },
-    { text: 'yes', onPress: () => func() },
+    { text: 'Yes', onPress: () => func() },
   ]);
 
 const seedDb = async () => {
   try {
     const isAlreadySeeded = await seed();
-    if (isAlreadySeeded) Alert.alert('Already seeded db', '');
-    else Alert.alert('Seeded DB!', 'Reload the app to see changes');
+    if (isAlreadySeeded) Alert.alert('Already Seeded DB', '');
+    else Alert.alert('Seeded DB', 'Reload the app to see changes');
   } catch (error) {
     console.error('Seeding went wrong:', error);
   }
@@ -126,13 +120,18 @@ export default function DatabaseTab() {
             className="bg-blue-500"
           />
           <MySimpleButton
-            title="Reset Tables"
-            onPress={() => deleteProxy('Reset tables', reset)}
+            title="Clear Tables"
+            onPress={() =>
+              deleteProxy('Clear Tables', () => {
+                reset();
+                Alert.alert('Cleared Tables', 'Reload the app to see changes');
+              })
+            }
             className="bg-orange-500"
           />
           <MySimpleButton
             title="Delete DB"
-            onPress={() => deleteProxy('Delete current db', deleteDb)}
+            onPress={() => deleteProxy('Delete DB', deleteDb)}
             className="bg-red-500"
           />
         </View>
@@ -145,7 +144,7 @@ export default function DatabaseTab() {
           />
           <MySimpleButton
             title="Delete Other DBs"
-            onPress={() => deleteProxy('Delete other dbs', deleteOtherDbs)}
+            onPress={() => deleteProxy('Delete Other DBs', deleteOtherDbs)}
             className="bg-red-500"
           />
         </View>
