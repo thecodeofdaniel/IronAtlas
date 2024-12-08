@@ -1,25 +1,18 @@
 import React from 'react';
-import { Text, Pressable } from 'react-native';
+import { Text } from 'react-native';
 import { useActionSheet } from '@expo/react-native-action-sheet';
 import { useRouter } from 'expo-router';
 import { useTemplateStore } from '@/store/zustand/template/templateStore';
-import MyButton from '@/components/ui/MyButton';
 import MyButtonOpacity from '@/components/ui/MyButtonOpacity';
 import { useThemeContext } from '@/store/context/themeContext';
 import { getActionSheetStyle } from '@/lib/actionSheetConfig';
-
-// type StartWorkoutProps = {
-//   inWorkout: boolean;
-//   setInWorkout: React.Dispatch<React.SetStateAction<boolean>>;
-// };
 
 export default function StartWorkout() {
   const router = useRouter();
   const { showActionSheetWithOptions } = useActionSheet();
   const { colors } = useThemeContext();
-  const { inWorkout, toggleWorkout, upsertWorkout } = useTemplateStore(
-    (state) => state,
-  );
+  const { inWorkout, toggleWorkout, upsertWorkout, clearTemplate } =
+    useTemplateStore((state) => state);
 
   const startWorkout = () => {
     const options = ['Use routine', 'Without routine', 'Cancel'];
@@ -37,6 +30,7 @@ export default function StartWorkout() {
             router.push('/(tabs)/workout/routines/selectRoutine');
             break;
           case 1:
+            clearTemplate();
             toggleWorkout();
             break;
           case cancelButtonIndex:
