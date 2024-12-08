@@ -203,7 +203,7 @@ export default function RenderRoutines({ selected, setSelected }: Props) {
   if (routines.length === 0) {
     return (
       <View className="flex-1 items-center justify-center">
-        <Text className="text-neutral-contrast">No Routines</Text>
+        <Text className="text-neutral-contrast">No Routines Found</Text>
       </View>
     );
   }
