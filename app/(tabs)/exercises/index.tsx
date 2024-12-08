@@ -107,7 +107,7 @@ function ExerciseList({
       >
         <MyButtonOpacity
           activeOpacity={1}
-          onLongPress={isDraggable ? drag : undefined}
+          // onLongPress={isDraggable ? drag : undefined}
           disabled={isActive}
           className={clsx('my-[1] flex flex-row px-2', {
             'bg-red-500': isActive,
@@ -130,11 +130,11 @@ function ExerciseList({
       <GestureHandlerRootView>
         <DraggableFlatList
           data={exercises}
-          onDragEnd={({ data }) => {
-            // Convert Exercise objects back to ID array when updating store
-            const newOrder = data.map((exercise) => exercise.id);
-            exerciseSetter.updateExerciseList(newOrder);
-          }}
+          // onDragEnd={({ data }) => {
+          //   // Convert Exercise objects back to ID array when updating store
+          //   const newOrder = data.map((exercise) => exercise.id);
+          //   exerciseSetter.updateExerciseList(newOrder);
+          // }}
           keyExtractor={(exercise) => exercise.id.toString()}
           renderItem={renderItem}
         />
