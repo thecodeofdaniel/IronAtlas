@@ -67,16 +67,43 @@ export const useExerciseStore = create<ExerciseStore>()((set, get) => ({
         return [exercise];
       });
 
-      set((state) => ({
-        exerciseMap: {
-          ...state.exerciseMap,
-          [newExerciseFromDb.id]: {
-            ...newExerciseFromDb,
+      set((state) => {
+        // Find the correct position to insert the new exercise
+        const currentList = state.exercisesList;
+        let insertIndex = currentList.length;
+
+        for (let i = 0; i < currentList.length; i++) {
+          const currentValue = state.exerciseMap[currentList[i]].value;
+          if (
+            newExerciseFromDb.value.toLowerCase() < currentValue.toLowerCase()
+          ) {
+            insertIndex = i;
+            break;
+          }
+        }
+
+        // Create new list with exercise inserted at correct position
+        const newList = [
+          ...currentList.slice(0, insertIndex),
+          newExerciseFromDb.id,
+          ...currentList.slice(insertIndex),
+        ];
+
+        // Update the indices in the database
+        get().updateExerciseList(newList);
+
+        return {
+          exerciseMap: {
+            ...state.exerciseMap,
+            [newExerciseFromDb.id]: {
+              ...newExerciseFromDb,
+              index: insertIndex, // Set the correct index
+            },
           },
-        },
-        exercisesList: [...state.exercisesList, newExerciseFromDb.id],
-        exerciseSet: new Set([...state.exerciseSet, newExerciseFromDb.value]),
-      }));
+          exercisesList: newList,
+          exerciseSet: new Set([...state.exerciseSet, newExerciseFromDb.value]),
+        };
+      });
     } catch (error) {
       console.error('Error: Not able to add exercise', error);
     }

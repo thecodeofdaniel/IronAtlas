@@ -11,7 +11,12 @@ export default function transformDbExercisesToState(): ExerciseStateVal {
     const dbExercises = db.select().from(schema.exercise).all();
 
     // Create an array to hold exercise objects with id and index
-    const exercisesWithIdAndIndex: { id: number; index: number }[] = [];
+    // const exercisesWithIdAndIndex: { id: number; index: number }[] = [];
+    const exercisesWithIdAndIndex: {
+      id: number;
+      index: number;
+      label: string;
+    }[] = [];
 
     for (const exercise of dbExercises) {
       const exerciseId = exercise.id;
@@ -31,11 +36,15 @@ export default function transformDbExercisesToState(): ExerciseStateVal {
       exercisesWithIdAndIndex.push({
         id: exerciseId,
         index: exercise.index,
+        label: exercise.label,
       });
     }
 
     // Sort the exercises by their order and create exerciseList from that order
-    exercisesWithIdAndIndex.sort((a, b) => a.index - b.index);
+    // exercisesWithIdAndIndex.sort((a, b) => a.index - b.index);
+    exercisesWithIdAndIndex.sort((a, b) =>
+      a.label.toLowerCase().localeCompare(b.label.toLowerCase()),
+    );
     exercisesWithIdAndIndex.map((exercise) => exercisesList.push(exercise.id));
   } catch (error) {
     console.error('Error fetching exercises from DB:', error);
