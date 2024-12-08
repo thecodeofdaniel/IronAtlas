@@ -176,7 +176,6 @@ const DraggableTree = ({
 };
 
 export default function TagTab() {
-  console.log('render');
   const { colors } = useThemeContext();
   const { tagMap, setter: tagSetter } = useTagStoreHook();
   const { setter: exerciseSetter } = useExerciseStoreHook();
