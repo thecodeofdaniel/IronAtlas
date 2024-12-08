@@ -1,54 +1,68 @@
 import { db } from '@/db/instance';
-import * as schema from '../schema';
-import { eq } from 'drizzle-orm';
+import * as schema from '@/db/schema';
 import { formatTagOrExercise } from '@/utils/utils';
 import { tagTree, exercises } from './data';
 
-const transformTagTree = (
-  tree: any[],
-  parentId: number | null = null
-): schema.TInsertTag[] => {
-  return tree.flatMap((tag, index) => {
-    const children = transformTagTree(tag.children, tag.id);
-    return [
-      {
-        id: tag.id,
-        label: tag.label,
-        value: formatTagOrExercise(tag.label),
-        parentId: parentId,
-        index: index,
-        isOpen: children.length > 0,
-      },
-      ...children, // Include the children in the returned array
-    ];
-  });
-};
-
 async function createTags() {
-  const startingTags = transformTagTree(tagTree);
+  // Helper function to process one level and get IDs for the next
+  async function insertLevel(
+    nodes: any[],
+    parentId: number | null = null,
+    order: number = 0,
+    trx: any,
+  ) {
+    for (const [index, node] of nodes.entries()) {
+      // Insert current node
+      const [insertedTag] = await trx
+        .insert(schema.tag)
+        .values({
+          label: node.label,
+          value: formatTagOrExercise(node.label),
+          parentId: parentId,
+          index: order + index,
+          isOpen: node.children.length > 0,
+        })
+        .returning();
+
+      // Process children with the actual parent ID
+      if (node.children.length > 0) {
+        await insertLevel(node.children, insertedTag.id, 0, trx);
+      }
+    }
+  }
 
   await db.transaction(async (trx) => {
-    for (const tagData of startingTags) {
-      await trx.insert(schema.tag).values(tagData);
-    }
+    await insertLevel(tagTree, null, 0, trx);
   });
 }
 
 async function createExercisesAndRelationships() {
   await db.transaction(async (trx) => {
+    // First, get all tags to create a label-to-id mapping
+    const allTags = await trx.select().from(schema.tag);
+    const tagMap = new Map(allTags.map((tag) => [tag.label, tag.id]));
+
     for (const [i, exercise] of exercises.entries()) {
-      const exerciseId = i + 1;
+      // Insert exercise
+      const [insertedExercise] = await trx
+        .insert(schema.exercise)
+        .values({
+          label: exercise.label,
+          value: formatTagOrExercise(exercise.label),
+          index: i,
+        })
+        .returning();
 
-      await trx.insert(schema.exercise).values({
-        id: exerciseId,
-        label: exercise.label,
-        value: formatTagOrExercise(exercise.label),
-        index: i,
-      });
+      // Create relationships using tag labels
+      for (const tagLabel of exercise.tags) {
+        const tagId = tagMap.get(tagLabel);
+        if (!tagId) {
+          console.warn(`Tag not found: ${tagLabel}`);
+          continue;
+        }
 
-      for (const tagId of exercise.tags) {
         await trx.insert(schema.exerciseTags).values({
-          exerciseId: exerciseId,
+          exerciseId: insertedExercise.id,
           tagId: tagId,
         });
       }
@@ -58,12 +72,9 @@ async function createExercisesAndRelationships() {
 
 /** Return true if already seeded */
 export async function seed() {
-  const [exercise] = await db
-    .select()
-    .from(schema.exercise)
-    .where(eq(schema.exercise.id, 1));
-
-  if (exercise !== undefined) return true;
+  const exercises = db.select().from(schema.exercise).all();
+  const tags = db.select().from(schema.tag).all();
+  if (exercises.length > 0 && tags.length > 0) return true;
 
   await createTags();
   await createExercisesAndRelationships();

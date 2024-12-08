@@ -1,66 +1,53 @@
 export const tagTree = [
   {
-    id: 1,
     label: 'Upper Body',
     children: [
       {
-        id: 2,
         label: 'Chest',
         children: [
           {
-            id: 3,
             label: 'Upper Chest',
             children: [],
           },
           {
-            id: 4,
             label: 'Middle Chest',
             children: [],
           },
         ],
       },
       {
-        id: 10,
         label: 'Arms',
         children: [
           {
-            id: 11,
             label: 'Triceps',
             children: [],
           },
           {
-            id: 12,
             label: 'Biceps',
             children: [],
           },
           {
-            id: 13,
             label: 'Shoulders',
             children: [],
           },
           {
-            id: 17,
             label: 'Forearms',
             children: [],
           },
         ],
       },
       {
-        id: 14,
         label: 'Back',
         children: [
           {
-            id: 15,
             label: 'Traps',
             children: [],
           },
           {
-            id: 16,
             label: 'Lats',
             children: [],
           },
           {
-            id: 18,
             label: 'Rhomboids',
             children: [],
           },
@@ -69,26 +56,21 @@ export const tagTree = [
     ],
   },
   {
-    id: 5,
     label: 'Lower Body',
     children: [
       {
-        id: 6,
         label: 'Quads',
         children: [],
       },
       {
-        id: 7,
         label: 'Hamstrings',
         children: [],
       },
       {
-        id: 8,
         label: 'Glutes',
         children: [],
       },
       {
-        id: 9,
         label: 'Calves',
         children: [],
       },
@@ -99,74 +81,74 @@ export const tagTree = [
 export const exercises = [
   {
     label: 'Bench Press',
-    tags: [2],
+    tags: ['Chest'],
   },
   {
     label: 'Squats',
-    tags: [6, 7, 8],
+    tags: ['Quads', 'Hamstrings', 'Glutes'],
   },
   {
     label: 'Pullup',
-    tags: [16],
+    tags: ['Lats'],
   },
   {
     label: 'Deadlift',
-    tags: [7, 8],
+    tags: ['Hamstrings', 'Glutes'],
   },
   {
     label: 'Pulldown',
-    tags: [16],
+    tags: ['Lats'],
   },
   {
     label: 'Bicep Curls',
-    tags: [12],
+    tags: ['Biceps'],
   },
   {
     label: 'Bulgarian Split Squats',
-    tags: [6, 7, 8],
+    tags: ['Quads', 'Hamstrings', 'Glutes'],
   },
   {
     label: 'Leg Curl',
-    tags: [7],
+    tags: ['Hamstrings'],
   },
   {
     label: 'Leg Extension',
-    tags: [6],
+    tags: ['Quads'],
   },
   {
     label: 'Leg Press',
-    tags: [6, 7, 8],
+    tags: ['Quads', 'Hamstrings', 'Glutes'],
   },
   {
     label: 'Calf Raises',
-    tags: [9],
+    tags: ['Calves'],
   },
   {
     label: 'Incline Dumbbell Bench Press',
-    tags: [3, 11],
+    tags: ['Upper Chest', 'Triceps'],
   },
   {
     label: 'Machine Incline Bench Press',
-    tags: [3, 11],
+    tags: ['Upper Chest', 'Triceps'],
   },
   {
     label: 'Shoulder Press',
-    tags: [13],
+    tags: ['Shoulders'],
   },
   {
     label: 'Tricep Extensions',
-    tags: [11],
+    tags: ['Triceps'],
   },
   {
     label: 'Hammer Curls',
-    tags: [12, 17],
+    tags: ['Biceps', 'Forearms'],
   },
   {
     label: 'Reverse Curls',
-    tags: [17],
+    tags: ['Forearms'],
   },
   {
     label: 'Close Grip Seated Row',
-    tags: [16, 18],
+    tags: ['Lats', 'Rhomboids'],
   },
 ];
