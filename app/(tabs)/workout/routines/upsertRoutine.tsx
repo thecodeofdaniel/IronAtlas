@@ -8,7 +8,7 @@ import {
   TouchableWithoutFeedback,
   Button,
 } from 'react-native';
-import TemplateScreen2 from '../../../../components/Template/Template2';
+import TemplateLayout from '../../../../components/Template/Template';
 import { useModalStore } from '@/store/zustand/modal/modalStore';
 import { useTemplateStoreHook } from '@/store/zustand/template/templateStore';
 import {
@@ -147,7 +147,7 @@ export default function UpsertRoutine() {
               <TextContrast className="text-lg font-medium">
                 Exercises
               </TextContrast>
-              <TemplateScreen2
+              <TemplateLayout
                 template={template}
                 actions={actions}
                 className="flex-1 border-2 border-neutral-accent p-1"

@@ -73,7 +73,7 @@ type TemplateScreenProps = {
   className?: string;
 };
 
-export default function TemplateScreen2({
+export default function TemplateLayout({
   template,
   actions,
   className,

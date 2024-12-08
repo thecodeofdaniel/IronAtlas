@@ -1,29 +1,15 @@
-import { useModalStore } from '@/store/zustand/modal/modalStore';
-import {
-  useTemplateStore,
-  TemplateStateFunctions,
-} from '@/store/zustand/template/templateStore';
-import { useActionSheet } from '@expo/react-native-action-sheet';
-import { Link, useRouter } from 'expo-router';
 import React from 'react';
-import SwipeableItem, {
-  useSwipeableItemParams,
-  OpenDirection,
-} from 'react-native-swipeable-item';
-import DraggableFlatList, {
-  RenderItemParams,
-  ScaleDecorator,
-} from 'react-native-draggable-flatlist';
-import { TouchableOpacity, View, Text } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import { View } from 'react-native';
+import { TemplateStateFunctions } from '@/store/zustand/template/templateStore';
+import { Link } from 'expo-router';
+import SwipeableItem, { OpenDirection } from 'react-native-swipeable-item';
+import { ScaleDecorator } from 'react-native-draggable-flatlist';
 import UnderlayLeft from './UnderLayLeft';
-import clsx from 'clsx';
 import SupersetOptions from './SupersetOptions';
 import SupersetAddIcon from './SupersetAddIcon';
-import MyButton from '../ui/MyButton';
+import MyButton from '@/components/ui/MyButton';
 import { cn } from '@/lib/utils';
-import TextContrast from '../ui/TextContrast';
-import MyButtonOpacity from '../ui/MyButtonOpacity';
+import TextContrast from '@/components/ui/TextContrast';
 
 type Props = {
   drag: () => void;
@@ -83,7 +69,7 @@ export default function TemplateRow({
             <MyButton
               onLongPress={drag}
               disabled={isActive}
-              className={cn('mb-[1] bg-red-800 py-0 pl-2 pr-0', {
+              className={cn('mb-[1] py-0 pl-2 pr-0', {
                 'bg-blue-500': isActive,
               })}
             >

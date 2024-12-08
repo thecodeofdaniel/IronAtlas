@@ -1,28 +1,13 @@
-import React, { useRef, useState } from 'react';
+import React from 'react';
 import { View, Text } from 'react-native';
-import { Link, Stack, useRouter } from 'expo-router';
-import {
-  GestureHandlerRootView,
-  ScrollView,
-  TouchableWithoutFeedback,
-} from 'react-native-gesture-handler';
-import TrackExercise from '@/components/SetsTable/SetsTable';
-import Popover, { PopoverPlacement } from 'react-native-popover-view';
+import { Stack, useRouter } from 'expo-router';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import StartWorkout from '@/app/(tabs)/workout/components/StartWorkout';
-import StartWorkout2 from '@/app/(tabs)/workout/components/StartWorkout';
-import { useModalStore } from '@/store/zustand/modal/modalStore';
 import OpenModalWrapper from '@/components/OpenModalWrapper';
-import {
-  useTemplateStore,
-  useTemplateStoreHook,
-} from '@/store/zustand/template/templateStore';
-import PushOntoStack from '@/components/PushOntoStackWrapper';
-import MyButton from '@/components/ui/MyButton';
-import TextContrast from '@/components/ui/TextContrast';
+import { useTemplateStoreHook } from '@/store/zustand/template/templateStore';
 import MyButtonOpacity from '@/components/ui/MyButtonOpacity';
-import ViewWorkouts from './workouts/viewWorkouts';
 import RenderWorkouts from './components/RenderWorkouts';
-import TemplateScreen2 from '@/components/Template/Template2';
+import TemplateLayout from '@/components/Template/Template';
 import PushOntoStackWrapper from '@/components/PushOntoStackWrapper';
 import ScreenLayoutWrapper from '@/components/ui/ScreenLayoutWrapper';
 
@@ -43,7 +28,7 @@ export default function WorkoutTab() {
         {inWorkout && (
           <View className="flex-1">
             <GestureHandlerRootView>
-              <TemplateScreen2 template={template} actions={actions} />
+              <TemplateLayout template={template} actions={actions} />
             </GestureHandlerRootView>
             <OpenModalWrapper
               activeModal="selectExercises"
@@ -53,21 +38,12 @@ export default function WorkoutTab() {
                 storeType: 'workout',
               }}
             >
-              <MyButtonOpacity>
+              <MyButtonOpacity className="py-4">
                 <Text className="text-center font-medium text-neutral-contrast">
                   Add Exercises
                 </Text>
               </MyButtonOpacity>
             </OpenModalWrapper>
-            <MyButtonOpacity
-              onPress={() => {
-                actions.validateWorkout();
-              }}
-            >
-              <Text className="text-center font-medium text-neutral-contrast">
-                Validate
-              </Text>
-            </MyButtonOpacity>
           </View>
         )}
         {!inWorkout && (
@@ -91,12 +67,7 @@ export default function WorkoutTab() {
               </MyButtonOpacity>
 
               <PushOntoStackWrapper href="/(tabs)/workout/routines/viewRoutines">
-                <MyButtonOpacity
-                  className="flex-1 bg-red-500 py-2"
-                  // onPress={() => {
-                  //   router.push('/(tabs)/workout/template/viewTemplates');
-                  // }}
-                >
+                <MyButtonOpacity className="flex-1 bg-red-500 py-2">
                   <Text className="text-center font-medium text-white">
                     View Routines
                   </Text>
