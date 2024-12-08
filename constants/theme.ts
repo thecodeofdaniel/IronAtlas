@@ -53,6 +53,12 @@ export const themes: Theme = {
   },
 };
 
+// Add this utility function
+export function getHSLColor(hslString: string, opacity = 1): string {
+  const values = extract(hslString);
+  return `hsla(${values}, ${opacity})`;
+}
+
 // This will return the 3 values inside the hsl(x, x, x)
 function extract(hslString: string): string {
   const match = hslString.match(/\d+, \d+%, \d+%/);
