@@ -201,6 +201,10 @@ export default function RenderWorkouts({ className, numberOfWorkouts }: Props) {
     return Array.from(workoutsMap.values());
   }, [rawWorkouts]);
 
+  if (workouts.length === 0) {
+    return null;
+  }
+
   return (
     <GestureHandlerRootView>
       <FlatList

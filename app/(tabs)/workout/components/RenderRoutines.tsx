@@ -1,5 +1,5 @@
 import React from 'react';
-import { View } from 'react-native';
+import { View, Text } from 'react-native';
 import { Router, useRouter } from 'expo-router';
 import { useLiveQuery } from 'drizzle-orm/expo-sqlite';
 import { db } from '@/db/instance';
@@ -199,6 +199,14 @@ export default function RenderRoutines({ selected, setSelected }: Props) {
 
     return Array.from(routinesMap.values());
   }, [rawRoutines]);
+
+  if (routines.length === 0) {
+    return (
+      <View className="flex-1 items-center justify-center">
+        <Text className="text-neutral-contrast">No Routines</Text>
+      </View>
+    );
+  }
 
   return (
     <>
