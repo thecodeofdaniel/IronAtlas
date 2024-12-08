@@ -1,11 +1,10 @@
 import { create } from 'zustand';
 import { produce } from 'immer';
-import * as Crypto from 'expo-crypto';
 import { db } from '@/db/instance';
 import * as sch from '@/db/schema';
-import { TSelectVolumeRoutine, TSelectSettRoutine } from '@/db/schema/routine';
-import { generateSettId, saveExerciseToTemplate } from './utils';
 import { eq } from 'drizzle-orm';
+import * as Crypto from 'expo-crypto';
+import { generateSettId } from './utils';
 
 export type TemplateStateVal = {
   template: TemplateMap;
@@ -526,7 +525,10 @@ export function createTemplateStore() {
           },
           {} as Record<
             number,
-            Map<number, TSelectVolumeRoutine & { setts: TSelectSettRoutine[] }>
+            Map<
+              number,
+              sch.TSelectVolumeRoutine & { setts: sch.TSelectSettRoutine[] }
+            >
           >,
         );
 
