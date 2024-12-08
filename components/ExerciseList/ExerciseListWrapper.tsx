@@ -1,15 +1,20 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text } from 'react-native';
 import { FilterExerciseStateVal } from '@/store/zustand/filterExercises/filterExercisesStore';
 import {
   type ExerciseStateVal,
   type ExerciseStateFunctions,
   useExerciseStoreHook,
+  useExerciseStore,
 } from '@/store/zustand/exercise/exerciseStore';
 import TextContrast from '@/components/ui/TextContrast';
 import MyButtonOpacity from '@/components/ui/MyButtonOpacity';
 import { exercises } from '@/db/seed/data';
 import { formatTagOrExercise } from '@/utils/utils';
+import { useRouter } from 'expo-router';
+import { seed } from '@/db/seed/seed';
+import { useTagStore } from '@/store/zustand/tag/tagStore';
+import { cn } from '@/lib/utils';
 
 async function createExercises(func: ExerciseStateFunctions['createExercise']) {
   for (const [index, exercise] of exercises.entries()) {
@@ -39,7 +44,11 @@ export default function ExerciseListWrapper({
   children,
   className,
 }: Props) {
-  const { setter } = useExerciseStoreHook();
+  const [clicked, setClicked] = useState(false);
+  const initExerciseStore = useExerciseStore(
+    (state) => state.initExerciseStore,
+  );
+  const initTagStore = useTagStore((state) => state.initTagStore);
 
   return (
     <>
@@ -47,9 +56,28 @@ export default function ExerciseListWrapper({
         <View className="flex-1 items-center justify-center">
           <TextContrast>No Exercises Found</TextContrast>
           <MyButtonOpacity
-            onPress={() => createExercises(setter.createExercise)}
+            disabled={clicked}
+            onPress={async () => {
+              if (clicked) return;
+              setClicked(true);
+              try {
+                await seed();
+                initExerciseStore();
+                initTagStore();
+              } catch (error) {
+                console.error('Error seeding data:', error);
+              } finally {
+                setClicked(false);
+              }
+            }}
           >
-            <Text className="font-medium text-white">Add Exercises</Text>
+            <Text
+              className={cn('font-medium text-white', {
+                'opacity-50': clicked,
+              })}
+            >
+              Add Exercises & Tags
+            </Text>
           </MyButtonOpacity>
         </View>
       )}
