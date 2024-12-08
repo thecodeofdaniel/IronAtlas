@@ -24,6 +24,7 @@ import MyButtonOpacity from '@/components/ui/MyButtonOpacity';
 import ScreenLayoutWrapper from '@/components/ui/ScreenLayoutWrapper';
 import OpenModalWrapper from '@/components/OpenModalWrapper';
 import TextContrast from '@/components/ui/TextContrast';
+import InsertExercisesAndTagsButton from '@/components/InsertExercisesAndTagsButton';
 
 type DraggableTreeProps = {
   tagMap: TagMap; // Accept itemMap as a prop
@@ -205,9 +206,7 @@ export default function TagTab() {
         {tagMap[0].children.length === 0 && (
           <View className="flex-1 items-center justify-center">
             <TextContrast>No Tags Found</TextContrast>
-            <MyButtonOpacity>
-              <Text className="font-medium text-white">Add Tags</Text>
-            </MyButtonOpacity>
+            <InsertExercisesAndTagsButton />
           </View>
         )}
         {tagMap[0].children.length > 0 && (
