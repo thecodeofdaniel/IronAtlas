@@ -39,7 +39,7 @@ export default function WorkoutTab() {
               }}
             >
               <MyButtonOpacity className="py-4">
-                <Text className="text-center font-medium text-neutral-contrast">
+                <Text className="text-center text-lg font-medium text-white">
                   Add Exercises
                 </Text>
               </MyButtonOpacity>
