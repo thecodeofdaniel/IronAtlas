@@ -60,7 +60,7 @@ export const settRoutine = sqliteTable(
     volumeRoutineIdIndex: index('volume_routine_id_index').on(
       table.volumeRoutineId,
     ),
-    indexIndex: index('sett_rountine_index_index').on(table.index),
+    indexIndex: index('sett_routine_index_index').on(table.index),
   }),
 );
 

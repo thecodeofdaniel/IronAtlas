@@ -222,7 +222,7 @@ export function createTemplateStore() {
           state.template[uuid].sets = sets;
         }),
       ),
-    upsertRoutine: async (name, workoutTemplateId) => {
+    upsertRoutine: async (name, routineId) => {
       try {
         const template = get().template;
         const rootChildren = template[0].children;
@@ -230,16 +230,18 @@ export function createTemplateStore() {
         await db.transaction(async (tx) => {
           let createdAt: number | undefined;
 
-          if (workoutTemplateId) {
-            const [existingWorkout] = await tx
+          // Remove the existing routine if we're updating
+          if (routineId) {
+            const [existingRoutine] = await tx
               .delete(sch.routine)
-              .where(eq(sch.routine.id, workoutTemplateId))
+              .where(eq(sch.routine.id, routineId))
               .returning();
 
-            if (existingWorkout) createdAt = existingWorkout.createdAt;
+            // Save the date
+            if (existingRoutine) createdAt = existingRoutine.createdAt;
           }
 
-          const [workoutTemplate] = await tx
+          const [routine] = await tx
             .insert(sch.routine)
             .values({ name, createdAt })
             .returning();
@@ -249,28 +251,65 @@ export function createTemplateStore() {
             rootChildren.map(async (uuid, index) => {
               const templateItem = template[uuid];
 
+              // Handle superset
               if (templateItem.exerciseId === null) {
-                // Handle superset
                 await Promise.all(
-                  templateItem.children.map((childUUID, subIndex) =>
-                    saveExerciseToTemplate(tx, {
-                      template,
-                      exerciseUUID: childUUID,
-                      workoutTemplateId: workoutTemplate.id,
-                      index,
-                      subIndex,
-                    }),
-                  ),
+                  templateItem.children.map(async (childUUID, subIndex) => {
+                    const exercise = template[childUUID];
+
+                    // Insert the volumes (exercises)
+                    const [volumeRoutine] = await tx
+                      .insert(sch.volumeRoutine)
+                      .values({
+                        routineId: routine.id,
+                        exerciseId: exercise.exerciseId!,
+                        index: index,
+                        subIndex: subIndex,
+                      })
+                      .returning({ id: sch.volumeRoutine.id });
+
+                    // Insert setts based on volume
+                    if (exercise.sets.length > 0) {
+                      await tx.insert(sch.settRoutine).values(
+                        exercise.sets.map((sett, idx) => ({
+                          volumeRoutineId: volumeRoutine.id,
+                          index: idx,
+                          type: sett.type,
+                          weight: sett.weight ? Number(sett.weight) : null,
+                          reps: sett.reps ? Number(sett.reps) : null,
+                        })),
+                      );
+                    }
+                  }),
                 );
-              } else {
-                // Handle single exercise
-                await saveExerciseToTemplate(tx, {
-                  template,
-                  exerciseUUID: uuid,
-                  workoutTemplateId: workoutTemplate.id,
-                  index,
-                  subIndex: null,
-                });
+              }
+              // Handle single exercise
+              else {
+                const exercise = templateItem;
+
+                // Insert the volumes (exercises)
+                const [volumeRoutine] = await tx
+                  .insert(sch.volumeRoutine)
+                  .values({
+                    routineId: routine.id,
+                    exerciseId: exercise.exerciseId!,
+                    index: index,
+                    subIndex: null,
+                  })
+                  .returning({ id: sch.volumeRoutine.id });
+
+                // Insert setts based on volume
+                if (exercise.sets.length > 0) {
+                  await tx.insert(sch.settRoutine).values(
+                    exercise.sets.map((sett, idx) => ({
+                      volumeRoutineId: volumeRoutine.id,
+                      index: idx,
+                      type: sett.type,
+                      weight: sett.weight ? Number(sett.weight) : null,
+                      reps: sett.reps ? Number(sett.reps) : null,
+                    })),
+                  );
+                }
               }
             }),
           );
