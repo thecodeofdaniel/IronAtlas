@@ -17,7 +17,7 @@ export default function ExerciseId() {
         <Text className="text-2xl font-semibold text-neutral-contrast">
           Workout History
         </Text>
-        <ExerciseHistory exerciseId={+exerciseId} />
+        <ExerciseHistory exerciseId={+exerciseId} className='h-1/2' />
         <Progression exerciseId={+exerciseId} />
       </View>
     </>

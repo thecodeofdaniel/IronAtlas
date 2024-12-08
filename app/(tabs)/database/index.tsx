@@ -15,6 +15,7 @@ import { reset } from '@/db/reset';
 import ScreenLayoutWrapper from '@/components/ui/ScreenLayoutWrapper';
 import TextContrast from '@/components/ui/TextContrast';
 import MySimpleButton from '@/components/ui/MySimpleButton';
+import { createWorkouts } from '@/db/seed/workouts';
 
 const getDbTables = async () => {
   try {
@@ -97,6 +98,11 @@ const seedDb = async () => {
   }
 };
 
+const seedWorkouts = async () => {
+  await createWorkouts();
+  Alert.alert('Seeded Workouts', 'Reload the app to see changes');
+};
+
 export default function DatabaseTab() {
   return (
     <>
@@ -117,6 +123,11 @@ export default function DatabaseTab() {
           <MySimpleButton
             title="Seed DB"
             onPress={seedDb}
+            className="bg-blue-500"
+          />
+          <MySimpleButton
+            title="Seed Workouts"
+            onPress={seedWorkouts}
             className="bg-blue-500"
           />
           <MySimpleButton

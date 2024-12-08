@@ -103,6 +103,9 @@ export default function ExerciseHistory({ exerciseId, className }: Props) {
 
   return (
     <View className={cn(className)}>
+      <Text className="text-neutral-contrast">
+        Performed {workouts.length} times
+      </Text>
       <FlatList
         data={workouts}
         renderItem={({ item }) => <RenderSingleExerciseHistory item={item} />}
