@@ -21,8 +21,8 @@ export default function AddExercisesOrSuperset({
   forUUID,
 }: Props) {
   const exercisesSelectedLen = pickedExercises.length;
-  const noneAreSel = exercisesSelectedLen < 1;
-  const oneIsSel = exercisesSelectedLen < 2;
+  const noneAreSel = exercisesSelectedLen === 0;
+  const noneOrOneIsSel = exercisesSelectedLen <= 1;
 
   return (
     <View className="flex flex-row gap-1">
@@ -33,9 +33,9 @@ export default function AddExercisesOrSuperset({
             actions.clearPickedExercises();
             router.back();
           }}
-          disabled={oneIsSel}
-          className={cn('', {
-            'opacity-45': oneIsSel,
+          disabled={noneOrOneIsSel}
+          className={cn({
+            'opacity-45': noneOrOneIsSel,
           })}
         >
           <Text className="font-medium text-white">Add Superset</Text>
