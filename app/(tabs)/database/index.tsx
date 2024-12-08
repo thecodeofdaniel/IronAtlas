@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Button, Alert } from 'react-native';
+import { View, Alert } from 'react-native';
 import { Stack } from 'expo-router';
 
 // expo-sqlite
@@ -14,6 +14,7 @@ import { reset } from '@/db/reset';
 // Components
 import ScreenLayoutWrapper from '@/components/ui/ScreenLayoutWrapper';
 import TextContrast from '@/components/ui/TextContrast';
+import MySimpleButton from '@/components/ui/MySimpleButton';
 
 const getDbTables = async () => {
   try {
@@ -112,28 +113,40 @@ export default function DatabaseTab() {
         }}
       />
       <ScreenLayoutWrapper className="gap-2">
-        <View>
+        <View className="gap-1">
           <TextContrast className="text-lg font-medium">This DB</TextContrast>
-          <Button title="FIND TABLES" onPress={getDbTables} />
-          <Button title="SEED DB" onPress={seedDb} />
-          <Button
-            title="RESET TABLES"
-            onPress={() => deleteProxy('Reset tables', () => reset())}
-            color={'orange'}
+          <MySimpleButton
+            title="Find Tables"
+            onPress={getDbTables}
+            className="bg-blue-500"
           />
-          <Button
-            title="DELETE CURRENT DB"
+          <MySimpleButton
+            title="Seed DB"
+            onPress={seedDb}
+            className="bg-blue-500"
+          />
+          <MySimpleButton
+            title="Reset Tables"
+            onPress={() => deleteProxy('Reset tables', reset)}
+            className="bg-orange-500"
+          />
+          <MySimpleButton
+            title="Delete DB"
             onPress={() => deleteProxy('Delete current db', deleteDb)}
-            color={'red'}
+            className="bg-red-500"
           />
         </View>
-        <View>
+        <View className="gap-1">
           <TextContrast className="text-lg font-medium">Other DBs</TextContrast>
-          <Button title="FIND OTHER DBS" onPress={getOtherDbs} />
-          <Button
-            title="DELETE OTHER DBS"
+          <MySimpleButton
+            title="Find Other DBs"
+            onPress={getOtherDbs}
+            className="bg-blue-500"
+          />
+          <MySimpleButton
+            title="Delete Other DBs"
             onPress={() => deleteProxy('Delete other dbs', deleteOtherDbs)}
-            color={'red'}
+            className="bg-red-500"
           />
         </View>
       </ScreenLayoutWrapper>
