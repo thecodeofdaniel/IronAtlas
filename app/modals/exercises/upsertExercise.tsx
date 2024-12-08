@@ -127,18 +127,20 @@ export default function UpsertExercise({
             onChangeText={setLabel}
           />
         </View>
-        <View className="flex-1 gap-1">
-          <Text className="text-lg font-medium text-neutral-contrast">
-            Select Tags
-          </Text>
-          <SelectFromTagTree
-            tagMap={tagMap}
-            tagChildren={tagMap[0].children}
-            level={0}
-            selected={selected}
-            setSelected={setSelected}
-          />
-        </View>
+        {tagMap[0].children.length > 0 && (
+          <View className="flex-1 gap-1">
+            <Text className="text-lg font-medium text-neutral-contrast">
+              Select Tags
+            </Text>
+            <SelectFromTagTree
+              tagMap={tagMap}
+              tagChildren={tagMap[0].children}
+              level={0}
+              selected={selected}
+              setSelected={setSelected}
+            />
+          </View>
+        )}
       </View>
     </>
   );

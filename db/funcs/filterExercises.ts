@@ -27,7 +27,7 @@ export default function filterExercises(
           eq(schema.exerciseTags.exerciseId, schema.exercise.id),
         )
         .where(inArray(schema.exerciseTags.tagId, allTagIds))
-        .orderBy(asc(schema.exercise.index))
+        .orderBy(asc(schema.exercise.label))
         .all()
         .map((result) => result.exerciseId),
     ),
