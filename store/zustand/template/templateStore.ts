@@ -353,7 +353,7 @@ export function createTemplateStore() {
         const isValid = await get().validateWorkout(workoutId);
 
         if (!isValid) {
-          console.error('Invalid workout, cannot upsert.');
+          // console.error('Invalid workout, cannot upsert.');
           return;
         }
 
@@ -368,7 +368,6 @@ export function createTemplateStore() {
           // let duration = Math.floor(Date.now() - startTime.getTime()) / 1000;
 
           if (workoutId) {
-            // console.log('yooooo');
             const [existingWorkout] = await tx
               .delete(sch.workout)
               .where(eq(sch.workout.id, workoutId))
