@@ -12,7 +12,7 @@ import React, { useMemo } from 'react';
 import { View, Text, Pressable, FlatList } from 'react-native';
 import * as schema from '@/db/schema';
 import { asc, eq, inArray } from 'drizzle-orm';
-import { getAllChildrenIds } from '@/utils/utils';
+import { getAllChildrenIds, placeIndicator } from '@/utils/utils';
 import MultiDropDown from '@/components/MultiDropDown';
 import { useFilterExerciseStore } from '@/store/zustand/filterExercises/filterExercisesStore';
 import {
@@ -59,16 +59,6 @@ function ExerciseList({
     if (isInArray)
       pickedExercisePlace = pickedExercises.indexOf(exercise.id) + 1;
 
-    let indicator = 'th';
-
-    if (pickedExercisePlace === 1) {
-      indicator = 'st';
-    } else if (pickedExercisePlace === 2) {
-      indicator = 'nd';
-    } else if (pickedExercisePlace === 3) {
-      indicator = 'rd';
-    }
-
     return (
       <MyButton
         onPress={() => {
@@ -82,7 +72,7 @@ function ExerciseList({
           <Text className="text-white">{exercise.label}</Text>
           {pickedExercisePlace && (
             <Text className="text-white">
-              {pickedExercisePlace + indicator}
+              {placeIndicator(pickedExercisePlace)}
             </Text>
           )}
         </View>

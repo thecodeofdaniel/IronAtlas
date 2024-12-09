@@ -59,3 +59,17 @@ export function generateId() {
   const randomNum = Math.random() * 1000000;
   return `${timestamp}-${Math.floor(randomNum)}`;
 }
+
+export function placeIndicator(place: number) {
+  let indicator = 'th';
+
+  if (place === 1) {
+    indicator = 'st';
+  } else if (place === 2) {
+    indicator = 'nd';
+  } else if (place === 3) {
+    indicator = 'rd';
+  }
+
+  return `${place}${indicator}`;
+}
