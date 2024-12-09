@@ -59,7 +59,7 @@ export default function Progression({ exerciseId }: Props) {
   }, [exerciseId]);
 
   if (error) {
-    return <TextContrast>{error}</TextContrast>;
+    return <TextContrast className="text-center">{error}</TextContrast>;
   }
 
   if (!analysis || analysis.metrics.length === 0) {
