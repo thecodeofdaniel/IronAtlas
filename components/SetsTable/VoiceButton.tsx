@@ -64,7 +64,7 @@ export default function VoiceButton({ uuid }: Props) {
     setLatestResult(spokenText); // Just keep updating the latest result
   });
   useSpeechRecognitionEvent('error', (event) => {
-    console.log('error code:', event.error, 'error message:', event.message);
+    // console.log('error code:', event.error, 'error message:', event.message);
   });
 
   const handleStart = async () => {

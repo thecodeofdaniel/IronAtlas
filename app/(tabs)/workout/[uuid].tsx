@@ -16,7 +16,7 @@ import CountdownTimer from '@/components/CountDownTimer';
 import TimerModal from '@/components/TimerModal';
 
 export default function Exercise() {
-  console.log('Render Exercise');
+  // console.log('Render Exercise');
   const { uuid: uuid_param } = useLocalSearchParams<{ uuid: string }>();
   const { template, inWorkout } = useTemplateStore((state) => state);
   const { exerciseMap } = useExerciseStore((state) => state);
