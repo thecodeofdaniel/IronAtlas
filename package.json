@@ -30,6 +30,7 @@
     "expo-font": "~12.0.9",
     "expo-linking": "~6.3.1",
     "expo-router": "^3.5.24",
+    "expo-speech-recognition": "^1.1.0",
     "expo-splash-screen": "^0.27.7",
     "expo-sqlite": "^14.0.6",
     "expo-status-bar": "~1.12.1",
