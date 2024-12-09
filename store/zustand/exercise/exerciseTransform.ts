@@ -1,5 +1,6 @@
 import { db } from '@/db/instance';
 import * as schema from '@/db/schema';
+import { sql } from 'drizzle-orm';
 import { ExerciseStateVal } from './exerciseStore';
 
 export default function transformDbExercisesToState(): ExerciseStateVal {
@@ -8,44 +9,26 @@ export default function transformDbExercisesToState(): ExerciseStateVal {
   const exercisesList: number[] = [];
 
   try {
-    const dbExercises = db.select().from(schema.exercise).all();
+    const dbExercises = db
+      .select()
+      .from(schema.exercise)
+      .orderBy(sql`LOWER(${schema.exercise.label})`)
+      .all();
 
-    // Create an array to hold exercise objects with id and index
-    // const exercisesWithIdAndIndex: { id: number; index: number }[] = [];
-    const exercisesWithIdAndIndex: {
-      id: number;
-      index: number;
-      label: string;
-    }[] = [];
-
-    for (const exercise of dbExercises) {
+    // Now we can just iterate once since the data is already sorted
+    for (const [index, exercise] of dbExercises.entries()) {
       const exerciseId = exercise.id;
 
-      // Add exercise to map
       exerciseMap[exerciseId] = {
         id: exerciseId,
         label: exercise.label,
         value: exercise.value,
-        index: exercise.index,
+        index: index,
       };
 
-      // Add exercise to set
       exerciseSet.add(exercise.value);
-
-      // Add object to array
-      exercisesWithIdAndIndex.push({
-        id: exerciseId,
-        index: exercise.index,
-        label: exercise.label,
-      });
+      exercisesList.push(exerciseId);
     }
-
-    // Sort the exercises by their order and create exerciseList from that order
-    // exercisesWithIdAndIndex.sort((a, b) => a.index - b.index);
-    exercisesWithIdAndIndex.sort((a, b) =>
-      a.label.toLowerCase().localeCompare(b.label.toLowerCase()),
-    );
-    exercisesWithIdAndIndex.map((exercise) => exercisesList.push(exercise.id));
   } catch (error) {
     console.error('Error fetching exercises from DB:', error);
   }
