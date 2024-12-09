@@ -3,6 +3,7 @@ import { View, Text } from 'react-native';
 import MyBorder from '@/components/ui/MyBorder';
 import RenderSetts from '@/components/Template/RenderSetts';
 import { type TransformedWorkout } from './ExerciseHistory';
+import { placeIndicator } from '@/utils/utils';
 
 type RenderWorkoutProps = {
   item: TransformedWorkout;
@@ -18,10 +19,11 @@ export default function RenderSingleExerciseHistory({
       </Text>
 
       {item.volumes.map((volume) => {
-        const exerciseOrder = `${volume.index + 1}${volume.subIndex !== null ? `.${volume.subIndex + 1}` : ''})`;
+        // const exerciseOrder = `${volume.index + 1}${volume.subIndex !== null ? `.${volume.subIndex + 1}` : ''})`;
+        const volumePlace = `${placeIndicator(volume.index + 1)}`;
         return (
           <View key={volume.volumeId} className="flex flex-row gap-2">
-            <Text className="text-neutral-contrast">{exerciseOrder}</Text>
+            <Text className="text-neutral-contrast">{volumePlace}</Text>
             <RenderSetts volume={volume} />
           </View>
         );
