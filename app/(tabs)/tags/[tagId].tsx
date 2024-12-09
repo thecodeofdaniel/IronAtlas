@@ -12,6 +12,8 @@ import { db } from '@/db/instance';
 import * as s from '@/db/schema';
 import { eq, inArray } from 'drizzle-orm';
 import { analyzeTagProgress, TagProgress } from './utils';
+import MyBorder from '@/components/ui/MyBorder';
+import OverallProgress from './OverallProgress';
 
 function getAllChildrenIds(tagMap: TagMap, tagId: number): number[] {
   const tag = tagMap[tagId];
@@ -72,19 +74,27 @@ export default function TagId() {
       .all();
   }, [allChildrenIds]);
 
-  const exerciseIds = useMemo(() => 
-    Array.from(new Set(exercises?.map(exercise => exercise.exerciseId) ?? [])),
-    [exercises]
+  const exerciseIds = useMemo(
+    () =>
+      Array.from(
+        new Set(exercises?.map((exercise) => exercise.exerciseId) ?? []),
+      ),
+    [exercises],
   );
 
-  const childrenExerciseIds = useMemo(() => 
-    Array.from(new Set(childrenExercises?.map(exercise => exercise.exerciseId) ?? [])),
-    [childrenExercises]
+  const childrenExerciseIds = useMemo(
+    () =>
+      Array.from(
+        new Set(
+          childrenExercises?.map((exercise) => exercise.exerciseId) ?? [],
+        ),
+      ),
+    [childrenExercises],
   );
 
-  const allExerciseIds = useMemo(() => 
-    [...exerciseIds, ...childrenExerciseIds],
-    [exerciseIds, childrenExerciseIds]
+  const allExerciseIds = useMemo(
+    () => [...exerciseIds, ...childrenExerciseIds],
+    [exerciseIds, childrenExerciseIds],
   );
 
   const [tagProgress, setTagProgress] = useState<TagProgress | null>(null);
@@ -106,43 +116,7 @@ export default function TagId() {
       />
       <View className="flex-1 gap-2 bg-neutral p-2">
         {/* Progress Overview */}
-        {tagProgress && (
-          <View className="bg-neutral-accent rounded-lg p-4 mb-2">
-            <Text className="text-xl font-medium text-neutral-contrast mb-2">
-              Overall Progress
-            </Text>
-
-            {/* One RM Progress */}
-            <View className="mb-2">
-              <Text className="text-neutral-contrast font-medium">Strength (1RM)</Text>
-              <Text className="text-neutral-contrast">
-                {tagProgress.oneRM.percentage.toFixed(1)}% overall
-                ({tagProgress.oneRM.averagePerDay > 0 ? '+' : ''}
-                {tagProgress.oneRM.averagePerDay.toFixed(2)}kg/day)
-              </Text>
-            </View>
-
-            {/* Volume Progress */}
-            <View className="mb-2">
-              <Text className="text-neutral-contrast font-medium">Volume</Text>
-              <Text className="text-neutral-contrast">
-                {tagProgress.volume.percentage.toFixed(1)}% overall
-                ({tagProgress.volume.averagePerDay > 0 ? '+' : ''}
-                {tagProgress.volume.averagePerDay.toFixed(2)}kg/day)
-              </Text>
-            </View>
-
-            {/* Max Weight Progress */}
-            <View>
-              <Text className="text-neutral-contrast font-medium">Max Weight</Text>
-              <Text className="text-neutral-contrast">
-                {tagProgress.maxWeight.percentage.toFixed(1)}% overall
-                ({tagProgress.maxWeight.averagePerDay > 0 ? '+' : ''}
-                {tagProgress.maxWeight.averagePerDay.toFixed(2)}kg/day)
-              </Text>
-            </View>
-          </View>
-        )}
+        {tagProgress && <OverallProgress tagProgress={tagProgress} />}
 
         {exerciseIds.length === 0 && childrenExerciseIds.length === 0 && (
           <View>
