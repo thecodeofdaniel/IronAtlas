@@ -51,38 +51,18 @@ export default function SelectFromTagTree({
 
     return (
       <MyButtonOpacity
-        className={cn('my-[1] bg-neutral-accent p-2 opacity-40', {
+        className={cn('my-[1] bg-neutral-accent p-2 opacity-50', {
           'bg-primary opacity-100':
             selected.chosen.includes(item.id) ||
             selected.preSelected.has(item.id),
         })}
         disabled={selected.preSelected.has(item.id)}
         onPress={handleOnSelect}
-        // onPress={() =>
-        //   setSelected((prev) => {
-        //     // Determine if chosen id is already included in array
-        //     const isAlreadySelected = prev.chosen.includes(item.id);
-        //     let newChosenList: number[] = isAlreadySelected
-        //       ? prev.chosen.filter((id) => id !== item.id) // remove from array
-        //       : [...prev.chosen, item.id]; // add to array
-
-        //     // Add preSelected ids to set according to chosen ids
-        //     const preSelectedSet = new Set<number>();
-        //     for (const chosen of newChosenList) {
-        //       const parentIds = getAllParentIds(tagMap, chosen);
-        //       parentIds.forEach((id) => preSelectedSet.add(id));
-        //     }
-
-        //     return {
-        //       chosen: newChosenList,
-        //       preSelected: preSelectedSet,
-        //     };
-        //   })
-        // }
       >
         <Text
           className={cn('text-neutral-contrast', {
-            'font-medium': selected.chosen.includes(item.id),
+            'font-medium text-white': selected.chosen.includes(item.id),
+            'text-white': selected.preSelected.has(item.id),
           })}
         >
           {item.label}
