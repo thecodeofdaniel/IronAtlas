@@ -302,7 +302,8 @@ export function createTemplateStore() {
                           volumeRoutineId: volumeRoutine.id,
                           index: idx,
                           type: sett.type,
-                          weight: sett.weight ? Number(sett.weight) : null,
+                          // weight: sett.weight ? Number(sett.weight) : null,
+                          weight: null,
                           reps: sett.reps ? Number(sett.reps) : null,
                         })),
                       );
@@ -332,7 +333,8 @@ export function createTemplateStore() {
                       volumeRoutineId: volumeRoutine.id,
                       index: idx,
                       type: sett.type,
-                      weight: sett.weight ? Number(sett.weight) : null,
+                      // weight: sett.weight ? Number(sett.weight) : null,
+                      weight: null,
                       reps: sett.reps ? Number(sett.reps) : null,
                     })),
                   );

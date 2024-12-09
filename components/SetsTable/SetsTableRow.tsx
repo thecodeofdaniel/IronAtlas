@@ -62,7 +62,7 @@ export default function SetsTableRow({
   onPressDelete,
 }: Props) {
   const index = getIndex()!;
-  const { inWorkout } = useTemplateStore((state) => state);
+  // const { inWorkout } = useTemplateStore((state) => state);
 
   return (
     <>
@@ -107,14 +107,16 @@ export default function SetsTableRow({
               />
 
               <TextInput
-                editable={inWorkout}
-                value={inWorkout ? item.weight : 'N/A'}
+                // editable={inWorkout}
+                // value={inWorkout ? item.weight : 'N/A'}
+                value={item.weight}
                 keyboardType="numeric"
                 returnKeyType="done"
                 style={[styles.weightWidth, styles.infoFontSize]}
-                className={cn('bg-neutral-accent p-1 text-neutral-contrast', {
-                  'text-neutral-contrast/50': !inWorkout,
-                })}
+                // className={cn('bg-neutral-accent p-1 text-neutral-contrast', {
+                //   'text-neutral-contrast/50': !inWorkout,
+                // })}
+                className={'bg-neutral-accent p-1 text-neutral-contrast'}
                 onChangeText={(text) =>
                   editSet(uuid, index, { ...item, weight: text })
                 }
