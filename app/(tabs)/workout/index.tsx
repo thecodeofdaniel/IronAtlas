@@ -34,9 +34,9 @@ export default function WorkoutTab() {
             <View className="self-start pb-2">
               <MyButtonOpacity
                 onPress={() => setModalVisible(true)}
-                className="bg-neutral-contrast/90 px-4 py-2"
+                className="w-32 bg-neutral-contrast/90"
               >
-                <CountdownTimer className="text-neutral-accent" />
+                <CountdownTimer className="text-center font-medium text-neutral-accent" />
               </MyButtonOpacity>
             </View>
             <TimerModal

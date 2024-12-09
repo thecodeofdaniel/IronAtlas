@@ -13,23 +13,27 @@ type Props = {
 
 export default function TimerModal({ isModalVisible, setModalVisible }: Props) {
   const { seconds, actions: timerActions } = useTimerStore();
-  const toggleModal = () => {
-    setModalVisible(!isModalVisible);
-  };
 
   return (
     <Modal
       isVisible={isModalVisible}
-      animationIn={'fadeIn'}
-      animationOut={'fadeOut'}
+      animationIn="fadeIn"
+      animationOut="fadeOut"
+      animationInTiming={200}
+      animationOutTiming={200}
+      backdropTransitionInTiming={200}
+      backdropTransitionOutTiming={0}
+      useNativeDriver={true}
       style={{
         margin: 0,
         justifyContent: 'flex-start',
-        paddingTop: 50,
+        alignItems: 'center',
+        marginTop: 50,
       }}
-      onBackdropPress={toggleModal}
+      onBackdropPress={() => setModalVisible(false)}
+      hideModalContentWhileAnimating={true}
     >
-      <MyBorder className="mx-4 bg-neutral p-4">
+      <MyBorder className="mx-4 w-[90%] bg-neutral p-4">
         {seconds === 0 && (
           <View className="gap-1">
             <MySimpleButton
@@ -54,7 +58,7 @@ export default function TimerModal({ isModalVisible, setModalVisible }: Props) {
                 onPress={() => timerActions.decrementTimer(10)}
                 className="flex-1"
               />
-              <CountdownTimer className="px-4 text-xl text-white" />
+              <CountdownTimer className="px-4 text-xl text-neutral-contrast" />
               <MySimpleButton
                 title="+10"
                 onPress={() => timerActions.incrementTimer(10)}
@@ -64,8 +68,10 @@ export default function TimerModal({ isModalVisible, setModalVisible }: Props) {
             <MySimpleButton
               title="Stop Timer"
               onPress={() => {
-                timerActions.stopTimer();
-                toggleModal();
+                setModalVisible(false);
+                setTimeout(() => {
+                  timerActions.stopTimer();
+                }, 200);
               }}
             />
           </View>
