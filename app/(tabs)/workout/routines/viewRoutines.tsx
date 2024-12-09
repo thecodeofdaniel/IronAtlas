@@ -18,8 +18,13 @@ export default function ViewRoutines() {
         options={{
           title: 'Routines',
           headerRight: () => (
-            <PushOntoStackWrapper href="/workout/routines/upsertRoutine">
-              <TouchableOpacity onPress={clearTemplate}>
+            <PushOntoStackWrapper
+              href="/workout/routines/upsertRoutine"
+              func={() => {
+                clearTemplate();
+              }}
+            >
+              <TouchableOpacity>
                 <Ionicons
                   name="add"
                   size={24}
