@@ -53,10 +53,11 @@ function RenderSingleWorkout({
 }: RenderWorkoutProps) {
   const ssIndexHolder = new Set<number>();
   const { showActionSheetWithOptions } = useActionSheet();
+  const loadWorkout = useTemplateStore((state) => state.loadWorkout);
   const { colors } = useThemeContext();
 
   const handleOptionsPress = async () => {
-    const options = ['Delete', 'Cancel'];
+    const options = ['Delete', 'Edit', 'Cancel'];
     const destructiveButtonIndex = 0;
     const cancelButtonIndex = options.length - 1;
 
@@ -74,16 +75,15 @@ function RenderSingleWorkout({
               .delete(s.workout)
               .where(eq(s.workout.id, workout.workoutId));
             break;
-          // case 1:
-          //   loadWorkout(item.workoutId);
-          //   router.push({
-          //     pathname: '/(tabs)/workout/template/upsertTemplate',
-          //     params: {
-          //       templateWorkoutId: item.workoutId,
-          //       templateWorkoutName: 'Workout',
-          //     },
-          //   });
-          //   break;
+          case 1:
+            loadWorkout(workout.workoutId);
+            router.push({
+              pathname: '/(tabs)/workout/workouts/updateWorkout',
+              params: {
+                workoutId: workout.workoutId,
+              },
+            });
+            break;
           case cancelButtonIndex:
             break;
         }
