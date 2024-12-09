@@ -23,32 +23,24 @@ type Theme = {
 export const themes: Theme = {
   dark: {
     isDark: true,
-    // colors: {
-    //   '--neutral': ' hsl(254, 59%, 26%)',
-    //   '--neutral-contrast': 'hsl(255, 40%, 96%)',
-    //   '--neutral-accent': 'hsl(253, 61%, 19%)',
-    //   '--primary': 'hsl(321, 70%, 69%)',
-    //   '--secondary': 'hsl(197, 87%, 55%)',
-    //   '--tertiary': 'hsl(48, 89%, 57%)',
-    // },
     colors: {
       '--neutral': 'hsl(0, 0%, 16%)',
-      '--neutral-contrast': 'hsl(0, 0%, 100%)',
       '--neutral-accent': 'hsl(0, 0%, 8%)',
+      '--neutral-contrast': 'hsl(0, 0%, 100%)',
       '--primary': 'hsl(0, 100%, 63%)',
-      '--secondary': 'hsl(354, 61%, 22%)',
-      '--tertiary': 'hsl(48, 89%, 57%)',
+      '--secondary': 'hsl(292, 41%, 60%)',
+      '--tertiary': 'hsl(292, 82%, 21%)',
     },
   },
   light: {
     isDark: false,
     colors: {
-      '--neutral': ' hsl(0, 0%, 90%)',
-      '--neutral-contrast': 'hsl(280, 46%, 14%)',
-      '--neutral-accent': 'hsl(219, 14%, 83%)',
+      '--neutral': ' hsl(0, 0%, 100%)',
+      '--neutral-accent': 'hsl(252, 7%, 82%)',
+      '--neutral-contrast': 'hsl(0, 0%, 8%)',
       '--primary': 'hsl(0, 90%, 63%)',
-      '--secondary': 'hsl(338, 71%, 78%)',
-      '--tertiary': 'hsl(39, 84%, 45%)',
+      '--secondary': 'hsl(292, 82%, 30%)',
+      '--tertiary': 'hsl(292, 41%, 60%)',
     },
   },
 };

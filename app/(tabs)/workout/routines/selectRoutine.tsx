@@ -39,7 +39,7 @@ export default function SelectRoutine() {
             }}
           >
             <Text
-              className={cn('text-center font-medium text-neutral-contrast', {
+              className={cn('text-center font-medium text-white', {
                 'text-neutral-contrast/40': isUnselected,
               })}
             >
@@ -53,7 +53,7 @@ export default function SelectRoutine() {
               router.push('/(tabs)/workout/routines/upsertRoutine');
             }}
           >
-            <Text className="text-center font-medium text-neutral-contrast">
+            <Text className="text-center font-medium text-white">
               Create Routine
             </Text>
           </MyButtonOpacity>

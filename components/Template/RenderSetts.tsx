@@ -73,7 +73,7 @@ export default function RenderSetts({ volume, className }: Props) {
       <Text
         key={idx}
         className={cn('text-sm text-neutral-contrast/70', {
-          'text-purple-400/70': type === 'D',
+          'text-secondary/70': type === 'D',
         })}
       >
         {finalText}
