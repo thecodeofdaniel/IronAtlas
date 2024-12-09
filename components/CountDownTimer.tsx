@@ -18,7 +18,6 @@ interface CountdownTimerProps extends TextProps {
 }
 
 export default function CountdownTimer({ className }: CountdownTimerProps) {
-  console.log('Countdown timer');
   const seconds = useTimerStore((state) => state.seconds);
   const { tick } = useTimerStore((state) => state.actions);
 
