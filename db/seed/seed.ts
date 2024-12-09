@@ -2,6 +2,8 @@ import { db } from '@/db/instance';
 import * as schema from '@/db/schema';
 import { formatTagOrExercise } from '@/utils/utils';
 import { tagTree, exercises } from './data';
+import { createWorkouts } from './workouts';
+import { reset } from '../reset';
 
 async function createTags() {
   // Helper function to process one level and get IDs for the next
@@ -72,12 +74,21 @@ async function createExercisesAndRelationships() {
 
 /** Return true if already seeded */
 export async function seed() {
-  const exercises = db.select().from(schema.exercise).all();
-  const tags = db.select().from(schema.tag).all();
-  if (exercises.length > 0 && tags.length > 0) return true;
+  await reset();
 
+  // Wait for tags to be created
   await createTags();
+  
+  // Wait for exercises to be created and verify they exist
   await createExercisesAndRelationships();
+  
+  // Verify exercises exist before creating workouts
+  const exercises = await db.select().from(schema.exercise);
+  if (exercises.length === 0) {
+    throw new Error('No exercises found in database before creating workouts');
+  }
+  
+  await createWorkouts();
 
   return false;
 }

@@ -90,18 +90,20 @@ const deleteProxy = (title: string, func: () => any) =>
 
 const seedDb = async () => {
   try {
-    const isAlreadySeeded = await seed();
-    if (isAlreadySeeded) Alert.alert('Already Seeded DB', '');
-    else Alert.alert('Seeded DB', 'Reload the app to see changes');
+    // const isAlreadySeeded = await seed();
+    await seed();
+    Alert.alert('Seeded DB', 'Reload the app to see changes');
+    // if (isAlreadySeeded) Alert.alert('Already Seeded DB', '');
+    // else Alert.alert('Seeded DB', 'Reload the app to see changes');
   } catch (error) {
     console.error('Seeding went wrong:', error);
   }
 };
 
-const seedWorkouts = async () => {
-  await createWorkouts();
-  Alert.alert('Seeded Workouts', 'Reload the app to see changes');
-};
+// const seedWorkouts = async () => {
+//   await createWorkouts();
+//   Alert.alert('Seeded Workouts', 'Reload the app to see changes');
+// };
 
 export default function DatabaseTab() {
   return (
@@ -125,11 +127,11 @@ export default function DatabaseTab() {
             onPress={seedDb}
             className="bg-blue-500"
           />
-          <MySimpleButton
+          {/* <MySimpleButton
             title="Seed Workouts"
             onPress={seedWorkouts}
             className="bg-blue-500"
-          />
+          /> */}
           <MySimpleButton
             title="Clear Tables"
             onPress={() =>

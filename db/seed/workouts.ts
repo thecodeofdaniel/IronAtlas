@@ -11,19 +11,29 @@ type ExerciseProgress = {
 
 export async function createWorkouts() {
   const exercises = await db.select().from(schema.exercise);
+
+  if (!exercises || exercises.length === 0) {
+    console.error('No exercises found in database');
+    return;
+  }
+
   const now = new Date();
   const oneYearAgo = new Date(now.setFullYear(now.getFullYear() - 1));
 
   // Initialize exercise progress tracking
   const exerciseProgress: Record<number, ExerciseProgress> = {};
   exercises.forEach((exercise) => {
-    // Set realistic starting weights based on exercise
+    if (!exercise || !exercise.label) {
+      console.error('Invalid exercise found:', exercise);
+      return;
+    }
+
     let baseWeight = 45; // Default barbell weight
     switch (exercise.label.toLowerCase()) {
       case 'bench press':
         baseWeight = 95;
         break;
-      case 'squat':
+      case 'squats':
         baseWeight = 135;
         break;
       case 'deadlift':
@@ -108,7 +118,7 @@ export async function createWorkouts() {
 
         // Add heavy, low-rep sets at the beginning (30% chance)
         const includeStrengthSets = Math.random() < 0.3;
-        
+
         if (includeStrengthSets) {
           // Do 1-2 heavy sets with 1-3 reps
           const strengthSetCount = Math.floor(Math.random() * 2) + 1;
