@@ -87,10 +87,9 @@ export default function VoiceButton({ uuid }: Props) {
 
   const extractWeightAndReps = (text: string) => {
     // First convert any word numbers to digits
-    const normalizedText = String(wordsToNumbers(text) || text)
-      .toLowerCase()
-      // Replace "for" with "4" if it appears between numbers
-      .replace(/(\d+)\s+for\s+(\d+)/i, '$1 4 $2');
+    const normalizedText = String(wordsToNumbers(text) || text).toLowerCase();
+    // Replace "for" with "4" if it appears between numbers
+    // .replace(/(\d+)\s+for\s+(\d+)/i, '$1 4 $2');
 
     // Match either:
     // - First number (weight) followed by optional "for/4/x" and second number (reps)
@@ -123,15 +122,10 @@ export default function VoiceButton({ uuid }: Props) {
         </MyButtonOpacity>
 
         {parseError && transcript && (
-          <View className="items-center justify-center border">
+          <View className="items-center justify-center">
             <TextContrast>You said: "{transcript}"</TextContrast>
             <TextContrast>Use format "255 for 6 reps"</TextContrast>
           </View>
-        )}
-        {transcript && (
-          <TextContrast className="text-center">
-            You said: {transcript}
-          </TextContrast>
         )}
       </>
     );

@@ -218,6 +218,17 @@ export function createTemplateStore() {
     addSetByVoice: (uuid, type, weight, reps) =>
       set(
         produce<TemplateStore>((state) => {
+          if (state.template[uuid].sets.length === 1) {
+            const firstSet = state.template[uuid].sets[0];
+
+            if (!firstSet.weight && !firstSet.reps) {
+              state.template[uuid].sets[0].type = type;
+              state.template[uuid].sets[0].reps = reps;
+              state.template[uuid].sets[0].weight = weight;
+              return;
+            }
+          }
+
           state.template[uuid].sets.push({
             key: Date.now(),
             type: type,
