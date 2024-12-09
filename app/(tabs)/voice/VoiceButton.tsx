@@ -1,16 +1,15 @@
-import { View, Text, Button, ScrollView } from 'react-native';
 import React, { useState } from 'react';
-import ScreenLayoutWrapper from '@/components/ui/ScreenLayoutWrapper';
+import { Text, View } from 'react-native';
 import {
   ExpoSpeechRecognitionModule,
   useSpeechRecognitionEvent,
 } from 'expo-speech-recognition';
 import { wordsToNumbers } from 'words-to-numbers';
-import MySimpleButton from '@/components/ui/MySimpleButton';
 import TextContrast from '@/components/ui/TextContrast';
-import VoiceButton from './VoiceButton';
+import MyButtonOpacity from '@/components/ui/MyButtonOpacity';
+import { Ionicons } from '@expo/vector-icons';
 
-export default function VoiceTab() {
+export default function VoiceButton() {
   const [recognizing, setRecognizing] = useState(false);
   const [transcript, setTranscript] = useState('');
   const [parseError, setParseError] = useState(false);
@@ -23,7 +22,7 @@ export default function VoiceTab() {
     if (parsed) {
       setParseError(false);
       setTranscript(
-        `${spokenText}: ${parsed.weight} lbs × ${parsed.reps} reps (${parsed.type})`,
+        `"${spokenText}": ${parsed.weight} lbs × ${parsed.reps} reps (${parsed.type})`,
       );
     } else {
       setParseError(true);
@@ -79,9 +78,37 @@ export default function VoiceTab() {
     return null;
   };
 
-  return (
-    <ScreenLayoutWrapper>
-      <VoiceButton />
-    </ScreenLayoutWrapper>
-  );
+  if (!recognizing) {
+    return (
+      <>
+        <MyButtonOpacity
+          onPress={handleStart}
+          className="items-center bg-neutral-accent"
+        >
+          <Ionicons name="mic-outline" size={24} color="white" />
+        </MyButtonOpacity>
+
+        {parseError && transcript && (
+          <View className="items-center justify-center border">
+            <TextContrast>You said: "{transcript}"</TextContrast>
+            <TextContrast>Use format "255 for 6 reps"</TextContrast>
+          </View>
+        )}
+        {transcript && (
+          <TextContrast className="text-center">
+            You said: {transcript}
+          </TextContrast>
+        )}
+      </>
+    );
+  } else {
+    return (
+      <MyButtonOpacity
+        onPress={() => ExpoSpeechRecognitionModule.stop()}
+        className="items-center bg-neutral-accent"
+      >
+        <Ionicons name="mic" size={24} color="white" />
+      </MyButtonOpacity>
+    );
+  }
 }
