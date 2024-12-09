@@ -3,8 +3,8 @@ import { Text } from 'react-native';
 import MyButtonOpacity from '@/components/ui/MyButtonOpacity';
 import { useExerciseStore } from '@/store/zustand/exercise/exerciseStore';
 import { useTagStore } from '@/store/zustand/tag/tagStore';
-import { seed } from '@/db/seed/seed';
 import { cn } from '@/lib/utils';
+import { seedExercisesAndTags } from '@/db/seed/seed';
 
 export default function InsertExercisesAndTagsButton() {
   const [clicked, setClicked] = useState(false);
@@ -20,7 +20,7 @@ export default function InsertExercisesAndTagsButton() {
         if (clicked) return;
         setClicked(true);
         try {
-          await seed();
+          await seedExercisesAndTags();
           initExerciseStore();
           initTagStore();
         } catch (error) {
