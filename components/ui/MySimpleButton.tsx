@@ -5,12 +5,13 @@ import { cn } from '@/lib/utils';
 interface ButtonProps extends TouchableOpacityProps {
   title: string;
   className?: string;
+  className2?: string;
 }
 
 const MySimpleButton = forwardRef<
   React.ComponentRef<typeof TouchableOpacity>,
   ButtonProps
->(({ title, className, ...props }, ref) => {
+>(({ title, className, className2, ...props }, ref) => {
   return (
     <TouchableOpacity
       ref={ref}
@@ -20,7 +21,9 @@ const MySimpleButton = forwardRef<
       )}
       {...props}
     >
-      <Text className="text-center font-medium text-white">{title}</Text>
+      <Text className={cn('text-center font-medium text-white', className2)}>
+        {title}
+      </Text>
     </TouchableOpacity>
   );
 });

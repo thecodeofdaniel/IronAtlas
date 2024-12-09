@@ -66,6 +66,8 @@ export default function TimerModal({ isModalVisible, setModalVisible }: Props) {
                   stopTimer();
                 }, 200);
               }}
+              className="bg-neutral-accent"
+              className2="text-neutral-contrast"
             />
           </View>
         )}
