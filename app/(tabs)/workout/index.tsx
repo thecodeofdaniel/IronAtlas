@@ -1,5 +1,5 @@
-import React from 'react';
-import { View, Text } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, Button } from 'react-native';
 import { Stack, useRouter } from 'expo-router';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import StartWorkout from '@/app/(tabs)/workout/components/StartWorkout';
@@ -10,10 +10,14 @@ import RenderWorkouts from './components/RenderWorkouts';
 import TemplateLayout from '@/components/Template/Template';
 import PushOntoStackWrapper from '@/components/PushOntoStackWrapper';
 import ScreenLayoutWrapper from '@/components/ui/ScreenLayoutWrapper';
+import CountdownTimer from '@/components/CountDownTimer';
+import TimerModal from '@/components/TimerModal';
 
 export default function WorkoutTab() {
+  console.log('Render WorkoutTab');
   const router = useRouter();
   const { template, inWorkout, actions } = useTemplateStoreHook();
+  const [isModalVisible, setModalVisible] = useState(false);
 
   return (
     <>
@@ -27,6 +31,18 @@ export default function WorkoutTab() {
       <ScreenLayoutWrapper>
         {inWorkout && (
           <View className="flex-1">
+            <View className="self-start pb-2">
+              <MyButtonOpacity
+                onPress={() => setModalVisible(true)}
+                className="bg-neutral-contrast/90 px-4 py-2"
+              >
+                <CountdownTimer className="text-neutral-accent" />
+              </MyButtonOpacity>
+            </View>
+            <TimerModal
+              isModalVisible={isModalVisible}
+              setModalVisible={setModalVisible}
+            />
             <GestureHandlerRootView>
               <TemplateLayout template={template} actions={actions} />
             </GestureHandlerRootView>
