@@ -1,12 +1,44 @@
-import { View, Text, TextInput, Pressable } from 'react-native';
 import React, { useState } from 'react';
-import { Stack } from 'expo-router';
+import { View, Text, TextInput, Pressable, Alert } from 'react-native';
+import { Stack, useRouter } from 'expo-router';
 import { FontAwesome } from '@expo/vector-icons';
 import MyButtonOpacity from '@/components/ui/MyButtonOpacity';
 
 export default function Feedback() {
+  const router = useRouter();
   const [rating, setRating] = useState(0);
   const [feedback, setFeedback] = useState('');
+  const [error, setError] = useState({
+    rating: '',
+    feedback: '',
+  });
+
+  const handleSubmit = () => {
+    let hasError = false;
+
+    if (rating === 0) {
+      setError((prevError) => ({
+        ...prevError,
+        rating: 'Please select a rating',
+      }));
+      hasError = true;
+    } else {
+      setError((prevError) => ({ ...prevError, rating: '' }));
+    }
+
+    if (feedback.length < 10) {
+      setError((prevError) => ({
+        ...prevError,
+        feedback: 'Feedback must be at least 10 characters',
+      }));
+      hasError = true;
+    }
+
+    if (hasError) return;
+
+    Alert.alert('Feedback submitted', 'Thank you for your feedback!');
+    router.back();
+  };
 
   return (
     <>
@@ -28,6 +60,7 @@ export default function Feedback() {
               </Pressable>
             ))}
           </View>
+          {error.rating && <Text className="text-red-500">{error.rating}</Text>}
         </View>
 
         {/* Feedback Text Input */}
@@ -44,13 +77,11 @@ export default function Feedback() {
             onChangeText={setFeedback}
           />
         </View>
-
+        {error.feedback && (
+          <Text className="text-red-500">{error.feedback}</Text>
+        )}
         {/* Submit Button */}
-        <MyButtonOpacity
-          onPress={() => {
-            console.log({ rating, feedback });
-          }}
-        >
+        <MyButtonOpacity onPress={handleSubmit}>
           <Text className="text-primary-contrast text-center text-lg font-medium text-white">
             Submit Feedback
           </Text>
