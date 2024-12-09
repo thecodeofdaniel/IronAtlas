@@ -11,12 +11,16 @@ import Animated, {
 } from 'react-native-reanimated';
 import { useRouter } from 'expo-router';
 import ExerciseHistory from '@/components/ExerciseHistory/ExerciseHistory';
+import MyButtonOpacity from '@/components/ui/MyButtonOpacity';
+import CountdownTimer from '@/components/CountDownTimer';
+import TimerModal from '@/components/TimerModal';
 
 export default function Exercise() {
-  // console.log('Render Exercise');
+  console.log('Render Exercise');
   const { uuid: uuid_param } = useLocalSearchParams<{ uuid: string }>();
   const { template, inWorkout } = useTemplateStore((state) => state);
   const { exerciseMap } = useExerciseStore((state) => state);
+  const [isModalVisible, setModalVisible] = useState(false);
 
   const router = useRouter();
 
@@ -82,7 +86,20 @@ export default function Exercise() {
         // style={animatedStyle}
         className="flex h-full flex-col justify-between bg-neutral p-2"
       >
-        <View></View>
+        <View>
+          <View className="self-start pb-2">
+            <MyButtonOpacity
+              onPress={() => setModalVisible(true)}
+              className="w-32 bg-neutral-contrast/90"
+            >
+              <CountdownTimer className="text-center font-medium text-neutral-accent" />
+            </MyButtonOpacity>
+          </View>
+          <TimerModal
+            isModalVisible={isModalVisible}
+            setModalVisible={setModalVisible}
+          />
+        </View>
         {index === null && (
           <SetsTable
             uuid={uuid}

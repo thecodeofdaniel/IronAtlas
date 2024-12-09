@@ -14,7 +14,7 @@ import CountdownTimer from '@/components/CountDownTimer';
 import TimerModal from '@/components/TimerModal';
 
 export default function WorkoutTab() {
-  console.log('Render WorkoutTab');
+  // console.log('Render WorkoutTab');
   const router = useRouter();
   const { template, inWorkout, actions } = useTemplateStoreHook();
   const [isModalVisible, setModalVisible] = useState(false);
