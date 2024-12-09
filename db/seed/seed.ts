@@ -72,23 +72,8 @@ async function createExercisesAndRelationships() {
   });
 }
 
-/** Return true if already seeded */
-export async function seed() {
+export async function seedExercisesAndTags() {
   await reset();
-
-  // Wait for tags to be created
   await createTags();
-  
-  // Wait for exercises to be created and verify they exist
   await createExercisesAndRelationships();
-  
-  // Verify exercises exist before creating workouts
-  const exercises = await db.select().from(schema.exercise);
-  if (exercises.length === 0) {
-    throw new Error('No exercises found in database before creating workouts');
-  }
-  
-  await createWorkouts();
-
-  return false;
 }
