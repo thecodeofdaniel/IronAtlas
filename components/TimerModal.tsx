@@ -12,7 +12,9 @@ type Props = {
 };
 
 export default function TimerModal({ isModalVisible, setModalVisible }: Props) {
-  const { seconds, actions: timerActions } = useTimerStore();
+  const seconds = useTimerStore((state) => state.seconds);
+  const { startTimer, stopTimer, incrementTimer, decrementTimer } =
+    useTimerStore((state) => state.actions);
 
   return (
     <Modal
@@ -36,18 +38,9 @@ export default function TimerModal({ isModalVisible, setModalVisible }: Props) {
       <MyBorder className="mx-4 w-[90%] bg-neutral p-4">
         {seconds === 0 && (
           <View className="gap-1">
-            <MySimpleButton
-              title="1:00"
-              onPress={() => timerActions.startTimer(60)}
-            />
-            <MySimpleButton
-              title="2:00"
-              onPress={() => timerActions.startTimer(120)}
-            />
-            <MySimpleButton
-              title="3:00"
-              onPress={() => timerActions.startTimer(180)}
-            />
+            <MySimpleButton title="1:00" onPress={() => startTimer(60)} />
+            <MySimpleButton title="2:00" onPress={() => startTimer(120)} />
+            <MySimpleButton title="3:00" onPress={() => startTimer(180)} />
           </View>
         )}
         {seconds > 0 && (
@@ -55,13 +48,13 @@ export default function TimerModal({ isModalVisible, setModalVisible }: Props) {
             <View className="flex flex-row items-center justify-center gap-2">
               <MySimpleButton
                 title="-10"
-                onPress={() => timerActions.decrementTimer(10)}
+                onPress={() => decrementTimer(10)}
                 className="flex-1"
               />
               <CountdownTimer className="px-4 text-xl text-neutral-contrast" />
               <MySimpleButton
                 title="+10"
-                onPress={() => timerActions.incrementTimer(10)}
+                onPress={() => incrementTimer(10)}
                 className="flex-1 bg-green-500"
               />
             </View>
@@ -70,7 +63,7 @@ export default function TimerModal({ isModalVisible, setModalVisible }: Props) {
               onPress={() => {
                 setModalVisible(false);
                 setTimeout(() => {
-                  timerActions.stopTimer();
+                  stopTimer();
                 }, 200);
               }}
             />
