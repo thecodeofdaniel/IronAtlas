@@ -34,21 +34,24 @@ const Tree = ({
     // Disable the tags that should be touched
     const isDisabled =
       idToBeMoved === item.id || item.id === tagMap[idToBeMoved].parentId;
+
     return (
       <MyButtonOpacity
         activeOpacity={1}
         disabled={isDisabled}
         className={cn('my-[1] bg-neutral-accent p-2', {
           'bg-primary': selected === item.id,
-          'border-black/20 bg-neutral-accent/20': isDisabled,
+          'border-black/30 bg-neutral-accent/30': isDisabled,
         })}
         onPress={() => setSelected(item.id)}
       >
         {/* Tags and options */}
         <View className="flex flex-1 flex-row items-center justify-between">
           <Text
-            className={cn('text-white', {
+            className={cn('text-neutral-contrast', {
+              'font-medium': isDisabled,
               'font-medium underline': idToBeMoved === item.id,
+              'text-white': selected === item.id,
             })}
           >
             {item.label}
