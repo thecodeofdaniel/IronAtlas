@@ -24,6 +24,12 @@ export type TemplateStateFunctions = {
   reorderTemplate: (templateObjs: TemplateObj[]) => void;
   deleteExercise: (uuid: string) => void;
   addSet: (uuid: string) => void;
+  addSetByVoice: (
+    uuid: string,
+    type: string,
+    weight: string,
+    reps: string,
+  ) => void;
   editSet: (uuid: string, index: number, newSet: SettType) => void;
   reorderSets: (uuid: string, sets: SettType[]) => void;
   upsertRoutine: (name: string, id?: number) => Promise<void>;
@@ -207,6 +213,17 @@ export function createTemplateStore() {
               reps: '',
             });
           }
+        }),
+      ),
+    addSetByVoice: (uuid, type, weight, reps) =>
+      set(
+        produce<TemplateStore>((state) => {
+          state.template[uuid].sets.push({
+            key: Date.now(),
+            type: type,
+            weight: weight,
+            reps: reps,
+          });
         }),
       ),
     editSet: (uuid, index, newSet) =>

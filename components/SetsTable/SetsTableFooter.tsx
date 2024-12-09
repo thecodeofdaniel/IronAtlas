@@ -4,6 +4,7 @@ import { Ionicons } from '@expo/vector-icons';
 import MyButtonOpacity from '../ui/MyButtonOpacity';
 import { useTemplateStore } from '@/store/zustand/template/templateStore';
 import { useThemeContext } from '@/store/context/themeContext';
+import VoiceButton from './VoiceButton';
 
 const ARROW_ICON_SIZE = 24;
 
@@ -44,11 +45,14 @@ export default function SetsTableFooter({
             />
           </TouchableOpacity>
         )}
-        <MyButtonOpacity onPress={() => addSet(uuid)} className="flex-1 py-4">
-          <Text className="text-center text-xl font-medium text-white">
-            Add set
-          </Text>
-        </MyButtonOpacity>
+        <View className="flex-1">
+          <MyButtonOpacity onPress={() => addSet(uuid)} className="flex-1">
+            <Text className="text-center text-xl font-medium text-white">
+              Add set
+            </Text>
+          </MyButtonOpacity>
+          <VoiceButton uuid={uuid} />
+        </View>
         {index !== null && (
           <TouchableOpacity
             onPress={() =>
@@ -69,7 +73,7 @@ export default function SetsTableFooter({
         )}
       </View>
       {index !== null && (
-        <Text className="text-center text-neutral-contrast">
+        <Text className="text-center font-medium text-neutral-contrast">
           {index + 1} of {superSetLength}
         </Text>
       )}

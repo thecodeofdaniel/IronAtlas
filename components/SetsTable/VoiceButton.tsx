@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Text, View } from 'react-native';
 import {
   ExpoSpeechRecognitionModule,
@@ -8,26 +8,60 @@ import { wordsToNumbers } from 'words-to-numbers';
 import TextContrast from '@/components/ui/TextContrast';
 import MyButtonOpacity from '@/components/ui/MyButtonOpacity';
 import { Ionicons } from '@expo/vector-icons';
+import { useTemplateStore } from '@/store/zustand/template/templateStore';
 
-export default function VoiceButton() {
+type Props = {
+  uuid: string;
+};
+
+export default function VoiceButton({ uuid }: Props) {
   const [recognizing, setRecognizing] = useState(false);
   const [transcript, setTranscript] = useState('');
   const [parseError, setParseError] = useState(false);
+  const [latestResult, setLatestResult] = useState('');
+  const addSetByVoice = useTemplateStore((state) => state.addSetByVoice);
 
   useSpeechRecognitionEvent('start', () => setRecognizing(true));
-  useSpeechRecognitionEvent('end', () => setRecognizing(false));
+  useSpeechRecognitionEvent('end', () => {
+    setRecognizing(false);
+    if (latestResult) {
+      const parsed = extractWeightAndReps(latestResult);
+      if (parsed) {
+        const { type, weight, reps } = parsed;
+        setParseError(false);
+        setTranscript(
+          `"${latestResult}": ${weight}lbs x ${reps} reps (${type})`,
+        );
+        addSetByVoice(uuid, type, weight, reps);
+      } else {
+        setParseError(true);
+        setTranscript(latestResult);
+      }
+    }
+    setLatestResult(''); // Reset for next time
+  });
+
+  useEffect(() => {
+    if (!recognizing && latestResult) {
+      const parsed = extractWeightAndReps(latestResult);
+      if (parsed) {
+        const { type, weight, reps } = parsed;
+        setParseError(false);
+        setTranscript(
+          `"${latestResult}": ${weight}lbs x ${reps} reps (${type})`,
+        );
+        addSetByVoice(uuid, type, weight, reps);
+      } else {
+        setParseError(true);
+        setTranscript(latestResult);
+      }
+      setLatestResult(''); // Reset for next time
+    }
+  }, [recognizing, latestResult]);
+
   useSpeechRecognitionEvent('result', (event) => {
     const spokenText = event.results[0]?.transcript || '';
-    const parsed = extractWeightAndReps(spokenText);
-    if (parsed) {
-      setParseError(false);
-      setTranscript(
-        `"${spokenText}": ${parsed.weight} lbs × ${parsed.reps} reps (${parsed.type})`,
-      );
-    } else {
-      setParseError(true);
-      setTranscript(spokenText);
-    }
+    setLatestResult(spokenText); // Just keep updating the latest result
   });
   useSpeechRecognitionEvent('error', (event) => {
     console.log('error code:', event.error, 'error message:', event.message);
@@ -65,8 +99,8 @@ export default function VoiceButton() {
 
     if (matches) {
       return {
-        weight: parseInt(matches[1]),
-        reps: parseInt(matches[2]),
+        weight: matches[1],
+        reps: matches[2],
         type:
           normalizedText.includes('dropset') ||
           normalizedText.includes('drop set')

@@ -8,7 +8,7 @@ import {
 import { wordsToNumbers } from 'words-to-numbers';
 import MySimpleButton from '@/components/ui/MySimpleButton';
 import TextContrast from '@/components/ui/TextContrast';
-import VoiceButton from './VoiceButton';
+import VoiceButton from '../../../components/SetsTable/VoiceButton';
 
 export default function VoiceTab() {
   const [recognizing, setRecognizing] = useState(false);
@@ -23,7 +23,7 @@ export default function VoiceTab() {
     if (parsed) {
       setParseError(false);
       setTranscript(
-        `${spokenText}: ${parsed.weight} lbs × ${parsed.reps} reps (${parsed.type})`,
+        `"${spokenText}": ${parsed.weight}lbs x ${parsed.reps} reps (${parsed.type})`,
       );
     } else {
       setParseError(true);
