@@ -12,6 +12,7 @@ import TextContrast from '@/components/ui/TextContrast';
 export default function VoiceTab() {
   const [recognizing, setRecognizing] = useState(false);
   const [transcript, setTranscript] = useState('');
+  const [parseError, setParseError] = useState(false);
 
   useSpeechRecognitionEvent('start', () => setRecognizing(true));
   useSpeechRecognitionEvent('end', () => setRecognizing(false));
@@ -19,13 +20,12 @@ export default function VoiceTab() {
     const spokenText = event.results[0]?.transcript || '';
     const parsed = extractWeightAndReps(spokenText);
     if (parsed) {
-      console.log(
-        `Weight: ${parsed.weight}, Reps: ${parsed.reps}, Type: ${parsed.type}`,
-      );
+      setParseError(false);
       setTranscript(
         `${spokenText}: ${parsed.weight} lbs × ${parsed.reps} reps (${parsed.type})`,
       );
     } else {
+      setParseError(true);
       setTranscript(spokenText);
     }
   });
@@ -81,11 +81,18 @@ export default function VoiceTab() {
   return (
     <ScreenLayoutWrapper>
       {!recognizing ? (
-        <MySimpleButton
-          title="Start"
-          onPress={handleStart}
-          className="bg-green-500"
-        />
+        <>
+          <MySimpleButton
+            title="Start"
+            onPress={handleStart}
+            className="bg-green-500"
+          />
+          {parseError && transcript && (
+            <TextContrast className="text-red-500">
+              Error: Use format "255 for 6 reps"
+            </TextContrast>
+          )}
+        </>
       ) : (
         <MySimpleButton
           title="Stop"
@@ -95,7 +102,7 @@ export default function VoiceTab() {
       )}
 
       <ScrollView>
-        <TextContrast>{transcript}</TextContrast>
+        <TextContrast>Transcript: {transcript}</TextContrast>
       </ScrollView>
     </ScreenLayoutWrapper>
   );
