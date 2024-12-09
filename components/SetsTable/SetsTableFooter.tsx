@@ -21,7 +21,8 @@ export default function SetsTableFooter({
   index,
   setIndex,
 }: Props) {
-  const addSet = useTemplateStore((state) => state.addSet);
+  // const addSet = useTemplateStore((state) => state.addSet);
+  const { addSet, inWorkout } = useTemplateStore();
   const { colors } = useThemeContext();
 
   return (
@@ -45,13 +46,13 @@ export default function SetsTableFooter({
             />
           </TouchableOpacity>
         )}
-        <View className="flex-1">
+        <View className="flex-1 gap-1">
           <MyButtonOpacity onPress={() => addSet(uuid)} className="flex-1">
             <Text className="text-center text-xl font-medium text-white">
               Add set
             </Text>
           </MyButtonOpacity>
-          <VoiceButton uuid={uuid} />
+          {inWorkout && <VoiceButton uuid={uuid} />}
         </View>
         {index !== null && (
           <TouchableOpacity

@@ -87,18 +87,22 @@ export default function Exercise() {
         className="flex h-full flex-col justify-between bg-neutral p-2"
       >
         <View>
-          <View className="self-start pb-2">
-            <MyButtonOpacity
-              onPress={() => setModalVisible(true)}
-              className="w-32 bg-neutral-contrast/90"
-            >
-              <CountdownTimer className="text-center font-medium text-neutral-accent" />
-            </MyButtonOpacity>
-          </View>
-          <TimerModal
-            isModalVisible={isModalVisible}
-            setModalVisible={setModalVisible}
-          />
+          {inWorkout && (
+            <>
+              <View className="self-start pb-2">
+                <MyButtonOpacity
+                  onPress={() => setModalVisible(true)}
+                  className="w-32 bg-neutral-contrast/90"
+                >
+                  <CountdownTimer className="text-center font-medium text-neutral-accent" />
+                </MyButtonOpacity>
+              </View>
+              <TimerModal
+                isModalVisible={isModalVisible}
+                setModalVisible={setModalVisible}
+              />
+            </>
+          )}
         </View>
         {index === null && (
           <SetsTable
