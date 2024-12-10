@@ -15,11 +15,18 @@ import {
 import TextContrast from '../ui/TextContrast';
 import LineChartComp from '../LineChartComp';
 
+// Format dates for display
+const formatDate = (date: Date) =>
+  date.toLocaleDateString('en-US', {
+    month: 'short',
+    day: 'numeric',
+  });
+
+const SUFFIX = 'lb';
+
 type Props = {
   exerciseId: number;
 };
-
-const SUFFIX = 'lb';
 
 export default function Progression({ exerciseId }: Props) {
   const [sets, setSets] = useState<SetData[]>([]);
@@ -79,11 +86,6 @@ export default function Progression({ exerciseId }: Props) {
   // Get the 1-3 rep PR
   const strengthPR = analysis.allTimePRs['1-3'];
 
-  // Find the set with highest reps
-  const highestRepsSet = sets.reduce((max, set) =>
-    set.reps > max.reps ? set : max,
-  );
-
   // Helper function to prepare chart data
   const prepareChartData = (
     metrics: GraphMetric[],
@@ -95,13 +97,6 @@ export default function Progression({ exerciseId }: Props) {
       values: metrics.map((d) => d.value),
     };
   };
-
-  // Format dates for display
-  const formatDate = (date: Date) =>
-    date.toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-    });
 
   if (!graphData) return null;
 
@@ -161,19 +156,6 @@ export default function Progression({ exerciseId }: Props) {
             on {formatDate(highestVolumeSets[0].date)}
           </Text>
         </View>
-
-        {/* <View className="flex-row items-center gap-2">
-          <Text className="w-48 text-lg font-semibold text-neutral-contrast">
-            Most Reps
-          </Text>
-          <Text className="text-neutral-contrast">
-            {highestRepsSet.weight}
-            {SUFFIX} x {highestRepsSet.reps}
-          </Text>
-          <Text className="text-neutral-contrast opacity-50">
-            on {formatDate(new Date(highestRepsSet.date))}
-          </Text>
-        </View> */}
       </View>
 
       {/* Existing Charts Section */}

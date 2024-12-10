@@ -68,9 +68,9 @@ export function analyzeProgression(sets: SetData[]): ProgressionMetrics[] {
   // Define rep ranges for PRs (e.g., 1-3, 4-6, 7-10, 11+)
   const repRanges = [
     { name: '1-3', min: 1, max: 3 },
-    { name: '4-6', min: 4, max: 6 },
-    { name: '7-10', min: 7, max: 10 },
-    { name: '11+', min: 11, max: Infinity },
+    // { name: '4-6', min: 4, max: 6 },
+    // { name: '7-10', min: 7, max: 10 },
+    // { name: '11+', min: 11, max: Infinity },
   ];
 
   // Calculate metrics for each workout
@@ -125,17 +125,17 @@ export function analyzeProgression(sets: SetData[]): ProgressionMetrics[] {
   // Sort by date
   workoutMetrics.sort((a, b) => a.date.getTime() - b.date.getTime());
 
-  // Calculate moving averages (using 3 workout window)
-  const WINDOW_SIZE = 3;
-  workoutMetrics.forEach((metric, index) => {
-    if (index >= WINDOW_SIZE - 1) {
-      const window = workoutMetrics.slice(index - WINDOW_SIZE + 1, index + 1);
-      metric.movingAverages = {
-        volume: window.reduce((sum, m) => sum + m.totalVolume, 0) / WINDOW_SIZE,
-        weight: window.reduce((sum, m) => sum + m.maxWeight, 0) / WINDOW_SIZE,
-      };
-    }
-  });
+  // // Calculate moving averages (using 3 workout window)
+  // const WINDOW_SIZE = 3;
+  // workoutMetrics.forEach((metric, index) => {
+  //   if (index >= WINDOW_SIZE - 1) {
+  //     const window = workoutMetrics.slice(index - WINDOW_SIZE + 1, index + 1);
+  //     metric.movingAverages = {
+  //       volume: window.reduce((sum, m) => sum + m.totalVolume, 0) / WINDOW_SIZE,
+  //       weight: window.reduce((sum, m) => sum + m.maxWeight, 0) / WINDOW_SIZE,
+  //     };
+  //   }
+  // });
 
   return workoutMetrics;
 }

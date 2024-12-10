@@ -22,7 +22,7 @@ export default function OverallProgress({ tagProgress }: Props) {
         <Text className="text-neutral-contrast">
           {tagProgress.oneRM.percentage.toFixed(1)}% overall (
           {tagProgress.oneRM.averagePerDay > 0 ? '+' : ''}
-          {tagProgress.oneRM.averagePerDay.toFixed(2)}kg/day)
+          {tagProgress.oneRM.averagePerDay.toFixed(2)}lbs/day)
         </Text>
       </View>
 
@@ -32,7 +32,7 @@ export default function OverallProgress({ tagProgress }: Props) {
         <Text className="text-neutral-contrast">
           {tagProgress.volume.percentage.toFixed(1)}% overall (
           {tagProgress.volume.averagePerDay > 0 ? '+' : ''}
-          {tagProgress.volume.averagePerDay.toFixed(2)}kg/day)
+          {tagProgress.volume.averagePerDay.toFixed(2)}lbs/day)
         </Text>
       </View>
 
@@ -42,7 +42,7 @@ export default function OverallProgress({ tagProgress }: Props) {
         <Text className="text-neutral-contrast">
           {tagProgress.maxWeight.percentage.toFixed(1)}% overall (
           {tagProgress.maxWeight.averagePerDay > 0 ? '+' : ''}
-          {tagProgress.maxWeight.averagePerDay.toFixed(2)}kg/day)
+          {tagProgress.maxWeight.averagePerDay.toFixed(2)}lbs/day)
         </Text>
       </View>
     </MyBorder>

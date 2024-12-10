@@ -14,26 +14,13 @@ import { eq, inArray } from 'drizzle-orm';
 import { analyzeTagProgress, TagProgress } from './utils';
 import MyBorder from '@/components/ui/MyBorder';
 import OverallProgress from './OverallProgress';
-
-function getAllChildrenIds(tagMap: TagMap, tagId: number): number[] {
-  const tag = tagMap[tagId];
-
-  // If tag does not have children then return
-  if (tag.children.length === 0) {
-    return [];
-  }
-
-  const childrenIds = tag.children;
-  const grandchildrenIds = tag.children.flatMap((childId) =>
-    getAllChildrenIds(tagMap, childId),
-  );
-
-  return [...childrenIds, ...grandchildrenIds];
-}
+import { getAllChildrenIds } from '@/utils/utils';
 
 export default function TagId() {
   console.log('Render TagId screen');
   const { tagId: id } = useLocalSearchParams<{ tagId: string }>();
+  const [tagProgress, setTagProgress] = useState<TagProgress | null>(null);
+
   const { exerciseMap } = useExerciseStore((state) => state);
   const { tagMap } = useTagStoreHook();
 
@@ -43,7 +30,7 @@ export default function TagId() {
     [tagMap, id],
   );
 
-  const allTagIds = [+id, ...allChildrenIds];
+  // const allTagIds = [+id, ...allChildrenIds];
 
   const exercises = useMemo(() => {
     return db
@@ -97,12 +84,15 @@ export default function TagId() {
     [exerciseIds, childrenExerciseIds],
   );
 
-  const [tagProgress, setTagProgress] = useState<TagProgress | null>(null);
-
   // Fetch progress data
   useEffect(() => {
     if (allExerciseIds.length > 0) {
-      analyzeTagProgress(allExerciseIds).then(setTagProgress);
+      const func = async () => {
+        const data = await analyzeTagProgress(allExerciseIds);
+        setTagProgress(data);
+      };
+
+      func();
     }
   }, [allExerciseIds]);
 
