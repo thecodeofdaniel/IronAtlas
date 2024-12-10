@@ -1,50 +1,82 @@
-# Welcome to your Expo app 👋
+# Iron Atlas
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+## Note!
 
-## Get started
+I used Linux (Debian/Ubuntu) during my development. So if you're on Windows, I
+would recommend using WSL (Ubuntu), so the experience is similar to mine.
 
-1. Install dependencies
+## Install the Following
 
-   ```bash
-   npm install
-   ```
+- Install [NodeJS](https://nodejs.org/en/download/prebuilt-installer).
+  Select version `20`. As of Dec 10, the latest is `v20.18.1`
+- Install [Android Studio](https://developer.android.com/studio/install)
+- Install [Java 17](https://www.oracle.com/java/technologies/javase/jdk17-archive-downloads.html)
 
-2. Start the app
+## If you're on Linux
 
-   ```bash
-    npx expo start
-   ```
-
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
+Install ninja-build
 
 ```bash
-npm run reset-project
+sudo apt install ninja-build
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+## Final Steps
 
-## Learn more
+Inside the root of the project run the following to install all dependencies
 
-To learn more about developing your project with Expo, look at the following resources:
+```bash
+npm i
+```
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+Then run
 
-## Join the community
+```bash
+npx expo run:android
+```
 
-Join our community of developers creating universal apps.
+- If you get an error saying `Failed to resolve the Android SDK path. Default install location not found: /home/user/Android/sdk. Use ANDROID_HOME to set the Android SDK location`
+  not found, run this command
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+  ```bash
+  export ANDROID_HOME="/home/user/Android/Sdk"
+  npx expo run:android
+  ```
+
+**NOTE**: This may take a while, since its your first time creating this. If
+this is your first time trying to run the application run the following.
+
+```bash
+cd android
+./gradlew clean
+cd ..
+npx expo run:android
+```
+
+## Errors You May Encounter
+
+### Android SDK Path
+
+`Failed to resolve the Android SDK path. Default install location not found: /home/user/Android/sdk. Use ANDROID_HOME to set the Android SDK location`
+
+Run the following command.
+
+```bash
+export ANDROID_HOME="/home/user/Android/Sdk"
+```
+
+### Insufficient Storage
+
+`Error: adb: failed to install /home/user/Desktop/IronAtlas/android/app/build/outputs/apk/debug/app-debug.apk: Failure [INSTALL_FAILED_INSUFFICIENT_STORAGE: Failed to override installation location]`
+
+Wipe the data like so.
+
+![Android Studio](/imgs/androidStudioWiping.png)
+
+Then run the following inside the root of the project.
+
+```bash
+cd android
+./gradlew clean
+cd ..
+npx expo run:android
+```

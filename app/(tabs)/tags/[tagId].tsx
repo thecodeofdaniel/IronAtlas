@@ -17,7 +17,7 @@ import OverallProgress from './OverallProgress';
 import { getAllChildrenIds } from '@/utils/utils';
 
 export default function TagId() {
-  console.log('Render TagId screen');
+  // console.log('Render TagId screen');
   const { tagId: id } = useLocalSearchParams<{ tagId: string }>();
   const [tagProgress, setTagProgress] = useState<TagProgress | null>(null);
 
