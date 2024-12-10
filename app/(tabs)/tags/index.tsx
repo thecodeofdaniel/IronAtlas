@@ -107,7 +107,7 @@ const DraggableTree = ({
           onLongPress={drag}
           disabled={isActive}
           className={cn('my-[1] flex flex-row items-center px-1', {
-            'bg-red-700': isActive,
+            'bg-blue-500': isActive,
           })}
         >
           <TouchableOpacity
