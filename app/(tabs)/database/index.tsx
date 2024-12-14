@@ -1,5 +1,5 @@
 import React from 'react';
-import { View } from 'react-native';
+import { Alert, View } from 'react-native';
 import { Stack } from 'expo-router';
 import { reset } from '@/db/reset';
 import ScreenLayoutWrapper from '@/components/ui/ScreenLayoutWrapper';
@@ -8,7 +8,6 @@ import MySimpleButton from '@/components/ui/MySimpleButton';
 import { createWorkouts } from '@/db/seed/workouts';
 import { useExerciseStore } from '@/store/zustand/exercise/exerciseStore';
 import { useTagStore } from '@/store/zustand/tag/tagStore';
-import { seedExercisesAndTags } from '@/db/seed/seed';
 import {
   deleteDb,
   deleteOtherDbs,
@@ -16,6 +15,8 @@ import {
   getDbTables,
   getOtherDbs,
 } from './utils';
+import { db } from '@/db/instance';
+import * as schema from '@/db/schema';
 
 export default function DatabaseTab() {
   const initExercises = useExerciseStore((state) => state.initExerciseStore);
@@ -38,18 +39,18 @@ export default function DatabaseTab() {
             className="bg-blue-500"
           />
           <MySimpleButton
-            title="Add Exercises & Tags"
-            onPress={async () => {
-              await seedExercisesAndTags();
-              initExercises();
-              initTags();
-            }}
-            className="bg-blue-500"
-          />
-          <MySimpleButton
             title="Add Workouts"
             onPress={async () => {
-              await createWorkouts();
+              const workouts = db.select().from(schema.workout).all();
+              const exercises = db.select().from(schema.exercise).all();
+
+              if (workouts.length === 0 && exercises.length > 0) {
+                await createWorkouts();
+              } else if (workouts.length === 0 && exercises.length === 0) {
+                Alert.alert('No Exercises Present!', 'Create some exercises');
+              } else {
+                Alert.alert('Workouts Exist!', 'Delete old workouts first');
+              }
             }}
             className="bg-blue-500"
           />
