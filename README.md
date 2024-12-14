@@ -35,7 +35,7 @@ npx expo run:android
 ```
 
 - If you get an error saying `Failed to resolve the Android SDK path. Default install location not found: /home/user/Android/sdk. Use ANDROID_HOME to set the Android SDK location`
-  not found, run this command
+  run this command
 
   ```bash
   export ANDROID_HOME="/home/user/Android/Sdk"
