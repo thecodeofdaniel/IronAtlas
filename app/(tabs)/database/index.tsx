@@ -58,8 +58,7 @@ export default function DatabaseTab() {
             title="Clear Tables"
             onPress={async () => {
               await reset();
-              initExercises();
-              initTags();
+              Alert.alert('Reset Tables', 'Please restart app');
             }}
             className="bg-orange-500"
           />
