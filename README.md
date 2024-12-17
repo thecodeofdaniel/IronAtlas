@@ -1,18 +1,21 @@
 # Iron Atlas
 
-## Note!
-
-I used Linux (Debian/Ubuntu) during my development. So if you're on Windows, I
-would recommend using WSL (Ubuntu), so the experience is similar to mine.
-
 ## Install the Following
 
 - Install [NodeJS](https://nodejs.org/en/download/prebuilt-installer).
   Select version `20`. As of Dec 10, the latest is `v20.18.1`
-- Install [Android Studio](https://developer.android.com/studio/install)
+- Install [Android Studio](https://developer.android.com/studio)
 - Install [Java 17](https://www.oracle.com/java/technologies/javase/jdk17-archive-downloads.html)
 
 ## If you're on Linux
+
+### Installing Android Studio
+
+Install the requried libraries
+
+```bash
+sudo apt-get install libc6:i386 libncurses5:i386 libstdc++6:i386 lib32z1 libbz2-1.0:i386
+```
 
 Install ninja-build
 
@@ -20,12 +23,30 @@ Install ninja-build
 sudo apt install ninja-build
 ```
 
+Once you install the `.tar.gz` follow the instructions or the video [here](https://developer.android.com/studio/install#64bit-libs)
+
+### Create Desktop Entry
+
+To make a desktop entry for Android Studio
+
+- Projects > New Project > No Activity > Finish >
+  "Press Hamburger Menu on Top Left" > Tools > Create Desktop Entry
+
+To go back to Main Menu
+
+- "Press Hamburger Menu on Top Left" > File > Close Project
+
+## Open Android Emulator
+
+Projects > More Actions > Virtual Device Manager >
+"Select Device and Press Play button"
+
 ## Final Steps
 
 Inside the root of the project run the following to install all dependencies
 
 ```bash
-npm i
+npm i && npx expo install
 ```
 
 Then run
@@ -35,7 +56,7 @@ npx expo run:android
 ```
 
 - If you get an error saying `Failed to resolve the Android SDK path. Default install location not found: /home/user/Android/sdk. Use ANDROID_HOME to set the Android SDK location`
-  not found, run this command
+  run this command
 
   ```bash
   export ANDROID_HOME="/home/user/Android/Sdk"
